@@ -34,14 +34,10 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 
-/**
- * @Route("/panel_agendador")
- */
+#[Route("/panel_agendador")]
 class PanelAgendadorController extends AbstractController
 {
-    /**
-     * @Route("/", name="panel_agendador_index")
-     */
+    #[Route("/", name: "panel_agendador_index")]
     public function index(AgendaRepository $agendaRepository,
                           CuentaRepository $cuentaRepository,
                           PaginatorInterface $paginator,
@@ -286,9 +282,7 @@ class PanelAgendadorController extends AbstractController
             'error_toast'=>$error_toast,
         ]);
     }
-    /**
-     * @Route("/reasignar", name="panel_agendador_reasignar", methods={"GET","POST"})
-     */
+    #[Route("/reasignar", name: "panel_agendador_reasignar", methods: ["GET","POST"])]
     public function reasignar(Request $request,UsuarioRepository $usuarioRepository,AgendaRepository $agendaRepository):Response
     {
         $user=$this->getUser();
@@ -301,9 +295,7 @@ class PanelAgendadorController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/sub_status", name="panel_agendador_sub_status", methods={"GET","POST"})
-     */
+    #[Route("/sub_status", name: "panel_agendador_sub_status", methods: ["GET","POST"])]
     public function subStatus(Request $request, 
                                 AgendaSubStatusRepository $agendaSubStatusRepository,
                                 AgendaStatusRepository $agendaStatusRepository):Response
@@ -317,9 +309,7 @@ class PanelAgendadorController extends AbstractController
     }
 
 
-    /**
-     * @Route("/horas", name="panel_agendador_horas", methods={"GET","POST"})
-     */
+    #[Route("/horas", name: "panel_agendador_horas", methods: ["GET","POST"])]
     public function hora(Request $request, 
                         UsuarioRepository $usuarioRepository,
                         AgendaRepository $agendaRepository, 
@@ -504,9 +494,7 @@ class PanelAgendadorController extends AbstractController
             'sobrecupo'=>$sobrecupo,
         ]);
     }
-    /**
-     * @Route("/{id}", name="panel_agendador_new", methods={"GET","POST"})
-     */
+    #[Route("/{id}", name: "panel_agendador_new", methods: ["GET","POST"])]
     public function new(Agenda $agenda,
                         AgendaRepository $agendaRepository,
                         AgendaStatusRepository $agendaStatusRepository,
@@ -690,9 +678,8 @@ class PanelAgendadorController extends AbstractController
      * Guarda de inmediato el tipo de cliente elegido en el prospecto (Persona/Empresa/Convenio).
      * Se llama vía AJAX al cambiar el combo, para que el formulario "Contrata" (cargado
      * aparte, con otra petición) refleje el tipo de cliente vigente al momento de renderizarse.
-     *
-     * @Route("/{id}/tipo_cliente", name="panel_agendador_tipo_cliente", methods={"POST"})
      */
+    #[Route("/{id}/tipo_cliente", name: "panel_agendador_tipo_cliente", methods: ["POST"])]
     public function tipoCliente(Agenda $agenda, Request $request, TipoClienteRepository $tipoClienteRepository): Response
     {
         $this->denyAccessUnlessGranted('create','panel_agendador');
@@ -704,9 +691,7 @@ class PanelAgendadorController extends AbstractController
         return new Response('ok');
     }
 
-    /**
-     * @Route("/{id}/engestion", name="panel_agendador_engestion", methods={"GET","POST"})
-     */
+    #[Route("/{id}/engestion", name: "panel_agendador_engestion", methods: ["GET","POST"])]
     public function engestion(Agenda $agenda):Response
     {
         return $this->render('panel_agendador/engestion.html.twig');
@@ -714,9 +699,7 @@ class PanelAgendadorController extends AbstractController
 
     
 
-    /**
-     * @Route("/{id}/abogados", name="panel_agendador_abogados", methods={"GET","POST"})
-     */
+    #[Route("/{id}/abogados", name: "panel_agendador_abogados", methods: ["GET","POST"])]
     public function abogados(Agenda $agenda,Request $request,
                         UsuarioRepository $usuarioRepository,
                         ReunionRepository $reunionRepository,
@@ -731,9 +714,7 @@ class PanelAgendadorController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/calendario", name="panel_agendador_calendario", methods={"GET","POST"})
-     */
+    #[Route("/{id}/calendario", name: "panel_agendador_calendario", methods: ["GET","POST"])]
     public function calendario(Agenda $agenda, Request $request, UsuarioRepository $usuarioRepository,AgendaRepository $agendaRepository):Response
     {
         //$agendas=$agendaRepository->findBy(['cuenta'=>$agenda->getCuenta()->getId(),'status'=>[4,5]]);
@@ -749,9 +730,7 @@ class PanelAgendadorController extends AbstractController
         ]);
     }
     
-    /**
-     * @Route("/{id}/edit", name="panel_agendador_edit", methods={"GET","POST"})
-     */
+    #[Route("/{id}/edit", name: "panel_agendador_edit", methods: ["GET","POST"])]
     public function edit(Request $request, Agenda $agenda): Response
     {
         $this->denyAccessUnlessGranted('edit','panel_agendador');

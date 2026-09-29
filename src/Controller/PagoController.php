@@ -40,14 +40,10 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\KernelInterface;
 
-/**
- * @Route("/pago")
- */
+#[Route("/pago")]
 class PagoController extends AbstractController
 {
-    /**
-     * @Route("/", name="pago_index", methods={"GET"})
-     */
+    #[Route("/", name: "pago_index", methods: ["GET"])]
     public function index(ContratoRepository $contratoRepository, CuotaRepository $cuotaRepository,PagoRepository $pagoRepository,PaginatorInterface $paginator,ModuloPerRepository $moduloPerRepository,Request $request,CuentaRepository $cuentaRepository): Response
     {
         $this->denyAccessUnlessGranted('view','pago');
@@ -136,9 +132,7 @@ class PagoController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/pagos_excel", name="pagos_excel", methods={"GET"})
-     */
+    #[Route("/pagos_excel", name: "pagos_excel", methods: ["GET"])]
     public function pagosExcel(ContratoRepository $contratoRepository, 
                         CuotaRepository $cuotaRepository,
                         PagoRepository $pagoRepository,
@@ -365,9 +359,7 @@ class PagoController extends AbstractController
 
     }
 
-    /**
-     * @Route("/finalizado", name="pago_finalizado", methods={"GET"})
-     */
+    #[Route("/finalizado", name: "pago_finalizado", methods: ["GET"])]
     public function finalizado(ContratoRepository $contratoRepository, CuotaRepository $cuotaRepository,PagoRepository $pagoRepository,PaginatorInterface $paginator,ModuloPerRepository $moduloPerRepository,Request $request,CuentaRepository $cuentaRepository): Response
     {
         $this->denyAccessUnlessGranted('view','pago_finalizado');
@@ -459,9 +451,7 @@ class PagoController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/resumen", name="pago_resumen", methods={"GET"})
-     */
+    #[Route("/resumen", name: "pago_resumen", methods: ["GET"])]
     public function resumen(ContratoRepository $contratoRepository, CuotaRepository $cuotaRepository,PagoRepository $pagoRepository,PaginatorInterface $paginator,ModuloPerRepository $moduloPerRepository,Request $request,CuentaRepository $cuentaRepository): Response
     {
 
@@ -547,9 +537,7 @@ class PagoController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/upload", name="pago_upload", methods={"GET","POST"})
-     */
+    #[Route("/upload", name: "pago_upload", methods: ["GET","POST"])]
     public function upload(Request $request){
         $brochureFile = $_FILES['file']['name'][0];
             
@@ -622,9 +610,7 @@ class PagoController extends AbstractController
 
         return $this->redirectToRoute('pago_index');
     }
-    /**
-     * @Route("/genera_cuotas", name="pago_generacuotas", methods={"GET","POST"})
-     */
+    #[Route("/genera_cuotas", name: "pago_generacuotas", methods: ["GET","POST"])]
     public function generaCuotas(CuotaRepository $cuotaRepository,ContratoRepository $contratoRepository): Response
     {
 
@@ -708,9 +694,7 @@ class PagoController extends AbstractController
         
         return $this->redirectToRoute('pago_index');
     }
-    /**
-     * @Route("/cargar_pagos", name="pago_cargarpagos", methods={"GET","POST"})
-     */
+    #[Route("/cargar_pagos", name: "pago_cargarpagos", methods: ["GET","POST"])]
     public function cargarPagos(Request $request,
                                 PagoRepository $pagoRepository,
                                 PagoTipoRepository $pagoTipoRepository,
@@ -818,9 +802,7 @@ class PagoController extends AbstractController
             'pagina'=>"Cargar Pagos",
         ]);
     }
-    /**
-     * @Route("/{id}", name="pago_show", methods={"GET"})
-     */
+    #[Route("/{id}", name: "pago_show", methods: ["GET"])]
     public function show(Pago $pago): Response
     {
         $this->denyAccessUnlessGranted('view','pago');
@@ -835,9 +817,7 @@ class PagoController extends AbstractController
             'pagina'=>"Ver Pago",
         ]);
     }
-    /**
-     * @Route("/{id}/verpagos", name="verpagos_index", methods={"GET","POST"})
-     */
+    #[Route("/{id}/verpagos", name: "verpagos_index", methods: ["GET","POST"])]
     public function verpagos(Request $request, Contrato $contrato,CuotaRepository $cuotaRepository, PagoRepository $pagoRepository,ModuloPerRepository $moduloPerRepository): Response
     {
         $this->denyAccessUnlessGranted('view','pago');
@@ -863,9 +843,7 @@ class PagoController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/verpagos_view", name="verpagos_view", methods={"GET","POST"})
-     */
+    #[Route("/{id}/verpagos_view", name: "verpagos_view", methods: ["GET","POST"])]
     public function verpagosShow(Request $request, Contrato $contrato,PagoRepository $pagoRepository,ModuloPerRepository $moduloPerRepository): Response
     {
         $this->denyAccessUnlessGranted('view','pago');
@@ -878,9 +856,7 @@ class PagoController extends AbstractController
         ]);
 
     }
-    /**
-     * @Route("/{id}/detallepagos", name="detallepagos_index", methods={"GET","POST"})
-     */
+    #[Route("/{id}/detallepagos", name: "detallepagos_index", methods: ["GET","POST"])]
     public function detallepagos(Request $request, Cuota $cuota,PagoRepository $pagoRepository,ModuloPerRepository $moduloPerRepository): Response
     {
         $this->denyAccessUnlessGranted('view','cobranza');
@@ -892,9 +868,7 @@ class PagoController extends AbstractController
         
 
     }
-    /**
-     * @Route("/{id}/new", name="pago_new", methods={"GET","POST"})
-     */
+    #[Route("/{id}/new", name: "pago_new", methods: ["GET","POST"])]
     public function new(Request $request,
                         Contrato $contrato,
                         CuotaRepository $cuotaRepository,
@@ -967,9 +941,7 @@ class PagoController extends AbstractController
     }
 
 
-    /**
-     * @Route("/{id}/edit", name="pago_edit", methods={"GET","POST"})
-     */
+    #[Route("/{id}/edit", name: "pago_edit", methods: ["GET","POST"])]
     public function edit(Request $request, Pago $pago,CuotaRepository $cuotaRepository,PagoCuotasRepository $pagoCuotasRepository,ModuloPerRepository $moduloPerRepository): Response
     {
         $this->denyAccessUnlessGranted('edit','pago');
@@ -1019,9 +991,7 @@ class PagoController extends AbstractController
             'etapa'=>2,
         ]);
     }
-    /**
-     * @Route("/{id}/isboucher", name="pago_isboucher", methods={"GET","POST"})
-     */
+    #[Route("/{id}/isboucher", name: "pago_isboucher", methods: ["GET","POST"])]
     public function isBoucher(Request $request,PagoTIpo $pagoTipo):Response
     {
         if($pagoTipo->getIsBoucher()){
@@ -1031,9 +1001,7 @@ class PagoController extends AbstractController
         }
     }
     
-    /**
-     * @Route("/{id}", name="pago_delete", methods={"DELETE"})
-     */
+    #[Route("/{id}", name: "pago_delete", methods: ["DELETE"])]
     public function delete(Request $request, Pago $pago, CuotaRepository $cuotaRepository): Response
     {
         $this->denyAccessUnlessGranted('full','pago');

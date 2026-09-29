@@ -25,14 +25,10 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 use Knp\Component\Pager\PaginatorInterface;
-/**
- * @Route("/jefe_procesos")
- */
+#[Route("/jefe_procesos")]
 class JefeProcesosController extends AbstractController
 {
-    /**
-     * @Route("/", name="jefe_procesos_index",methods={"GET"})
-     */
+    #[Route("/", name: "jefe_procesos_index",methods: ["GET"])]
     public function index(UsuarioRepository $usuarioRepository,
                     ModuloPerRepository $moduloPerRepository,
                     PaginatorInterface $paginator,
@@ -60,9 +56,7 @@ class JefeProcesosController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/new", name="jefe_procesos_new", methods={"GET","POST"})
-     */
+    #[Route("/new", name: "jefe_procesos_new", methods: ["GET","POST"])]
     public function new(Request $request,
                         UserPasswordEncoderInterface $encoder,
                         UsuarioTipoRepository $usuarioTipoRepository,
@@ -174,9 +168,7 @@ class JefeProcesosController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="jefe_procesos_show", methods={"GET"})
-     */
+    #[Route("/{id}", name: "jefe_procesos_show", methods: ["GET"])]
     public function show(Usuario $usuario,ModuloPerRepository $moduloPerRepository): Response
     {
         $this->denyAccessUnlessGranted('view','jefe_procesos');
@@ -188,9 +180,7 @@ class JefeProcesosController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/edit", name="jefe_procesos_edit", methods={"GET","POST"})
-     */
+    #[Route("/{id}/edit", name: "jefe_procesos_edit", methods: ["GET","POST"])]
     public function edit(Request $request, Usuario $usuario,UserPasswordEncoderInterface $encoder,UsuarioTipoRepository $usuarioTipoRepository,ModuloPerRepository $moduloPerRepository,
     UsuarioTipoDocumentoRepository $tipoDocumento): Response
     {
@@ -289,9 +279,7 @@ class JefeProcesosController extends AbstractController
             'cuentas_sel'=>$usuario->getUsuarioCuentas(),
         ]);
     }
-    /**
-     * @Route("/{id}/restore", name="jefe_procesos_restore", methods={"GET"})
-     */
+    #[Route("/{id}/restore", name: "jefe_procesos_restore", methods: ["GET"])]
     public function restore(Request $request, Usuario $usuario, UsuarioRepository $usuarioRepository): Response
     {
         $this->denyAccessUnlessGranted('full','jefe_procesos');
@@ -315,9 +303,7 @@ class JefeProcesosController extends AbstractController
 
         return $this->redirectToRoute('jefe_procesos_index');
     }
-    /**
-     * @Route("/{id}", name="jefe_procesos_delete", methods={"DELETE"})
-     */
+    #[Route("/{id}", name: "jefe_procesos_delete", methods: ["DELETE"])]
     public function delete(Request $request, Usuario $usuario, UsuarioRepository $usuarioRepository): Response
     {
         $this->denyAccessUnlessGranted('full','jefe_procesos');

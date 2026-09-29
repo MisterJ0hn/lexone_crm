@@ -12,14 +12,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/estrategia_juridica")
- */
+#[Route("/estrategia_juridica")]
 class EstrategiaJuridicaController extends AbstractController
 {
-    /**
-     * @Route("/", name="estrategia_juridica_index", methods={"GET"})
-     */
+    #[Route("/", name: "estrategia_juridica_index", methods: ["GET"])]
     public function index(EstrategiaJuridicaRepository $estrategiaJuridicaRepository): Response
     {
         return $this->render('estrategia_juridica/index.html.twig', [
@@ -27,9 +23,7 @@ class EstrategiaJuridicaController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/new", name="estrategia_juridica_new", methods={"GET","POST"})
-     */
+    #[Route("/new", name: "estrategia_juridica_new", methods: ["GET","POST"])]
     public function new(Request $request): Response
     {
         $estrategiaJuridica = new EstrategiaJuridica();
@@ -50,9 +44,7 @@ class EstrategiaJuridicaController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="estrategia_juridica_show", methods={"GET"})
-     */
+    #[Route("/{id}", name: "estrategia_juridica_show", methods: ["GET"])]
     public function show(EstrategiaJuridica $estrategiaJuridica): Response
     {
         return $this->render('estrategia_juridica/show.html.twig', [
@@ -60,9 +52,7 @@ class EstrategiaJuridicaController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/edit", name="estrategia_juridica_edit", methods={"GET","POST"})
-     */
+    #[Route("/{id}/edit", name: "estrategia_juridica_edit", methods: ["GET","POST"])]
     public function edit(Request $request, EstrategiaJuridica $estrategiaJuridica): Response
     {
         $form = $this->createForm(EstrategiaJuridicaType::class, $estrategiaJuridica);
@@ -80,9 +70,7 @@ class EstrategiaJuridicaController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/combo", name="estrategia_juridica_combo", methods={"GET","POST"})
-     */
+    #[Route("/{id}/combo", name: "estrategia_juridica_combo", methods: ["GET","POST"])]
     public function combo(Materia $materia,MateriaEstrategiaRepository $materiaEstrategiaRepository): Response
     {
 
@@ -93,9 +81,7 @@ class EstrategiaJuridicaController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="estrategia_juridica_delete", methods={"DELETE"})
-     */
+    #[Route("/{id}", name: "estrategia_juridica_delete", methods: ["DELETE"])]
     public function delete(Request $request, EstrategiaJuridica $estrategiaJuridica): Response
     {
         if ($this->isCsrfTokenValid('delete'.$estrategiaJuridica->getId(), $request->request->get('_token'))) {

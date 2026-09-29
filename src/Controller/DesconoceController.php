@@ -32,13 +32,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Knp\Bundle\SnappyBundle\Snappy\Response\PdfResponse;
 use Knp\Component\Pager\PaginatorInterface;
-/**
- * @Route("/desconoce")
- */
+#[Route("/desconoce")]
 class DesconoceController  extends AbstractController{
-    /**
-     * @Route("/", name="desconoce_index", methods={"GET","POST"})
-     */
+    #[Route("/", name: "desconoce_index", methods: ["GET","POST"])]
     public function index(ContratoRepository $contratoRepository,
                         PaginatorInterface $paginator,
                         ModuloPerRepository $moduloPerRepository,
@@ -155,9 +151,7 @@ class DesconoceController  extends AbstractController{
             'error_toast'=>$error_toast,
         ]);
     }
-    /**
-    * @Route("/{id}/edit", name="desconoce_edit", methods={"GET","POST"})
-    */
+    #[Route("/{id}/edit", name: "desconoce_edit", methods: ["GET","POST"])]
     public function edit(Contrato $contrato,
                         DiasPagoRepository $diasPagoRepository,
                         ModuloPerRepository $moduloPerRepository,
@@ -268,9 +262,7 @@ class DesconoceController  extends AbstractController{
             'metodo'=>'R',
         ]);
     }
-    /**
-    * @Route("/{id}", name="desconoce_show", methods={"GET"})
-    */
+    #[Route("/{id}", name: "desconoce_show", methods: ["GET"])]
     public function show(Contrato $contrato,DiasPagoRepository $diasPagoRepository,ModuloPerRepository $moduloPerRepository): Response
     {
         $this->denyAccessUnlessGranted('view','desconoce');
@@ -285,9 +277,7 @@ class DesconoceController  extends AbstractController{
         ]);
     }
 
-    /**
-     * @Route("/{id}/pdf", name="desconoce_pdf", methods={"GET","POST"})
-     */
+    #[Route("/{id}/pdf", name: "desconoce_pdf", methods: ["GET","POST"])]
     public function pdf(Contrato $contrato,
                         CuotaRepository $cuotaRepository , 
                         AgendaObservacionRepository $agendaObservacionRepository): Response

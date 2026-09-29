@@ -18,14 +18,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-/**
- * @Route("/causa")
- */
+#[Route("/causa")]
 class CausaController extends AbstractController
 {
-    /**
-     * @Route("/", name="causa_index")
-     */
+    #[Route("/", name: "causa_index")]
     public function index(): Response
     {
         return $this->render('causa/index.html.twig', [
@@ -33,9 +29,7 @@ class CausaController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/new", name="causa_new", methods={"GET"})
-     */
+    #[Route("/{id}/new", name: "causa_new", methods: ["GET"])]
     public function agregar(Agenda $agenda,
                             Request $request,
                             MateriaRepository $materiaRepository,
@@ -107,9 +101,7 @@ class CausaController extends AbstractController
         return $this->render('causa/index.html.twig');
 
     }
-     /**
-     * @Route("/{id}/list", name="causa_list", methods={"GET"})
-     */
+    #[Route("/{id}/list", name: "causa_list", methods: ["GET"])]
     public function list(Agenda $agenda,
                             Request $request, 
                             CausaRepository $causaRepository,
@@ -125,9 +117,7 @@ class CausaController extends AbstractController
 
     }
 
-     /**
-     * @Route("/{id}/delete", name="causa_delete", methods={"GET"})
-     */
+    #[Route("/{id}/delete", name: "causa_delete", methods: ["GET"])]
     public function delete(Causa $causa,
                             Request $request, 
                             CausaRepository $causaRepository,

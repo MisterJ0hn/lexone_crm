@@ -12,14 +12,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/contrato_archivos")
- */
+#[Route("/contrato_archivos")]
 class ContratoArchivosController extends AbstractController
 {
-    /**
-     * @Route("/{id}", name="contrato_archivos_index", methods={"GET"})
-     */
+    #[Route("/{id}", name: "contrato_archivos_index", methods: ["GET"])]
     public function index(Contrato $contrato): Response
     {
         $this->denyAccessUnlessGranted('view','contrato_archivos');
@@ -31,9 +27,7 @@ class ContratoArchivosController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/new", name="contrato_archivos_new", methods={"GET","POST"})
-     */
+    #[Route("/{id}/new", name: "contrato_archivos_new", methods: ["GET","POST"])]
     public function new(Contrato $contrato, Request $request): Response
     {
         $this->denyAccessUnlessGranted('create','contrato_archivos');
@@ -88,9 +82,7 @@ class ContratoArchivosController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="contrato_archivos_show", methods={"GET"})
-     */
+    #[Route("/{id}", name: "contrato_archivos_show", methods: ["GET"])]
     /*
     public function show(ContratoArchivos $contratoArchivo): Response
     {
@@ -99,9 +91,7 @@ class ContratoArchivosController extends AbstractController
         ]);
     }
 */
-    /**
-     * @Route("/{id}/edit", name="contrato_archivos_edit", methods={"GET","POST"})
-     */
+    #[Route("/{id}/edit", name: "contrato_archivos_edit", methods: ["GET","POST"])]
     public function edit(Request $request, ContratoArchivos $contratoArchivo): Response
     {
         $form = $this->createForm(ContratoArchivosType::class, $contratoArchivo);
@@ -119,9 +109,7 @@ class ContratoArchivosController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="contrato_archivos_delete", methods={"DELETE"})
-     */
+    #[Route("/{id}", name: "contrato_archivos_delete", methods: ["DELETE"])]
     public function delete(Request $request, ContratoArchivos $contratoArchivo): Response
     {
         $this->denyAccessUnlessGranted('full','contrato_archivos');

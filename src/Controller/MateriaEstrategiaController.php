@@ -11,14 +11,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/materia_estrategia")
- */
+#[Route("/materia_estrategia")]
 class MateriaEstrategiaController extends AbstractController
 {
-    /**
-     * @Route("/", name="materia_estrategia_index", methods={"GET"})
-     */
+    #[Route("/", name: "materia_estrategia_index", methods: ["GET"])]
     public function index(MateriaEstrategiaRepository $materiaEstrategiaRepository): Response
     {
         return $this->render('materia_estrategia/index.html.twig', [
@@ -26,9 +22,7 @@ class MateriaEstrategiaController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/new", name="materia_estrategia_new", methods={"GET","POST"})
-     */
+    #[Route("/{id}/new", name: "materia_estrategia_new", methods: ["GET","POST"])]
     public function new(Request $request,Materia $materia,MateriaEstrategiaRepository $materiaEstrategiaRepository): Response
     {
         $materiaEstrategium = new MateriaEstrategia();
@@ -57,9 +51,7 @@ class MateriaEstrategiaController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/delete", name="materia_estrategia_delete", methods={"GET","POST"})
-     */
+    #[Route("/{id}/delete", name: "materia_estrategia_delete", methods: ["GET","POST"])]
     public function delete(Request $request, MateriaEstrategia $materiaEstrategium): Response
     {
         
@@ -71,9 +63,7 @@ class MateriaEstrategiaController extends AbstractController
         return $this->redirectToRoute('materia_estrategia_new',['id'=>$materiaEstrategium->getMateria()->getId()]);
     }
 
-    /**
-     * @Route("/{id}", name="materia_estrategia_show", methods={"GET"})
-     */
+    #[Route("/{id}", name: "materia_estrategia_show", methods: ["GET"])]
     public function show(MateriaEstrategia $materiaEstrategium): Response
     {
         return $this->render('materia_estrategia/show.html.twig', [
@@ -81,9 +71,7 @@ class MateriaEstrategiaController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/edit", name="materia_estrategia_edit", methods={"GET","POST"})
-     */
+    #[Route("/{id}/edit", name: "materia_estrategia_edit", methods: ["GET","POST"])]
     public function edit(Request $request, MateriaEstrategia $materiaEstrategium): Response
     {
         $form = $this->createForm(MateriaEstrategiaType::class, $materiaEstrategium);

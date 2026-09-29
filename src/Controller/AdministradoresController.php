@@ -27,15 +27,11 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 use Knp\Component\Pager\PaginatorInterface;
-/**
- * @Route("/administradores")
- */
+#[Route("/administradores")]
 
 class AdministradoresController extends AbstractController
 {
-    /**
-     * @Route("/", name="administradores_index",methods={"GET"})
-     */
+    #[Route("/", name: "administradores_index",methods: ["GET"])]
     public function index(UsuarioRepository $usuarioRepository,
                     ModuloPerRepository $moduloPerRepository,
                     PaginatorInterface $paginator,
@@ -64,9 +60,7 @@ class AdministradoresController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/new", name="administradores_new", methods={"GET","POST"})
-     */
+    #[Route("/new", name: "administradores_new", methods: ["GET","POST"])]
     public function new(Request $request,
                         UserPasswordEncoderInterface $encoder,
                         UsuarioTipoRepository $usuarioTipoRepository,
@@ -172,9 +166,7 @@ class AdministradoresController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="administradores_show", methods={"GET"})
-     */
+    #[Route("/{id}", name: "administradores_show", methods: ["GET"])]
     public function show(Usuario $usuario,ModuloPerRepository $moduloPerRepository): Response
     {
         $this->denyAccessUnlessGranted('view','administradores');
@@ -186,9 +178,7 @@ class AdministradoresController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/edit", name="administradores_edit", methods={"GET","POST"})
-     */
+    #[Route("/{id}/edit", name: "administradores_edit", methods: ["GET","POST"])]
     public function edit(Request $request, 
                         Usuario $usuario,
                         UsuarioTipoRepository $usuarioTipoRepository,
@@ -299,9 +289,7 @@ class AdministradoresController extends AbstractController
             'hora_fin'=>$horaFin,
         ]);
     }
-    /**
-     * @Route("/{id}/restore", name="administradores_restore", methods={"GET"})
-     */
+    #[Route("/{id}/restore", name: "administradores_restore", methods: ["GET"])]
     public function restore(Request $request, Usuario $usuario): Response
     {
         $this->denyAccessUnlessGranted('full','administradores');
@@ -315,9 +303,7 @@ class AdministradoresController extends AbstractController
         return $this->redirectToRoute('administradores_index');
     }
 
-    /**
-     * @Route("/{id}", name="administradores_delete", methods={"DELETE"})
-     */
+    #[Route("/{id}", name: "administradores_delete", methods: ["DELETE"])]
     public function delete(Request $request, Usuario $usuario): Response
     {
         $this->denyAccessUnlessGranted('full','administradores');

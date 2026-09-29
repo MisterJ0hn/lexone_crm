@@ -16,14 +16,11 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * Plantillas de contrato editables por tenant (Empresa) y por TipoCliente,
  * usadas por ContratoController::pdf() para generar el contrato.
- *
- * @Route("/contrato_template")
  */
+#[Route("/contrato_template")]
 class ContratoTemplateController extends AbstractController
 {
-    /**
-     * @Route("/", name="contrato_template_index", methods={"GET"})
-     */
+    #[Route("/", name: "contrato_template_index", methods: ["GET"])]
     public function index(ContratoTemplateRepository $contratoTemplateRepository, ModuloPerRepository $moduloPerRepository): Response
     {
         $this->denyAccessUnlessGranted('view', 'contrato_template');
@@ -36,9 +33,7 @@ class ContratoTemplateController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/new", name="contrato_template_new", methods={"GET","POST"})
-     */
+    #[Route("/new", name: "contrato_template_new", methods: ["GET","POST"])]
     public function new(Request $request, EmpresaRepository $empresaRepository): Response
     {
         $this->denyAccessUnlessGranted('create', 'contrato_template');
@@ -69,9 +64,7 @@ class ContratoTemplateController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/edit", name="contrato_template_edit", methods={"GET","POST"})
-     */
+    #[Route("/{id}/edit", name: "contrato_template_edit", methods: ["GET","POST"])]
     public function edit(Request $request, ContratoTemplate $contratoTemplate): Response
     {
         $this->denyAccessUnlessGranted('edit', 'contrato_template');
@@ -97,9 +90,7 @@ class ContratoTemplateController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="contrato_template_delete", methods={"DELETE"})
-     */
+    #[Route("/{id}", name: "contrato_template_delete", methods: ["DELETE"])]
     public function delete(Request $request, ContratoTemplate $contratoTemplate): Response
     {
         $this->denyAccessUnlessGranted('full', 'contrato_template');

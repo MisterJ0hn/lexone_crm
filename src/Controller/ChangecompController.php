@@ -12,14 +12,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-/**
- * @Route("/changecomp")
- */
+#[Route("/changecomp")]
 class ChangecompController extends AbstractController
 {
-    /**
-     * @Route("/", name="changecomp_index")
-     */
+    #[Route("/", name: "changecomp_index")]
     public function index(string $route_name, EmpresaRepository $empresaRepository): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
@@ -38,9 +34,7 @@ class ChangecompController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/new", name="changecomp_new", methods={"GET","POST"})
-     */
+    #[Route("/new", name: "changecomp_new", methods: ["GET","POST"])]
     public function new(EmpresaRepository $empresaRepository, Request $request, UrlGeneratorInterface $urlGenerator): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');

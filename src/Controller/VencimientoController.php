@@ -12,14 +12,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/vencimiento")
- */
+#[Route("/vencimiento")]
 class VencimientoController extends AbstractController
 {
-    /**
-     * @Route("/", name="vencimiento_index", methods={"GET"})
-     */
+    #[Route("/", name: "vencimiento_index", methods: ["GET"])]
     public function index(VencimientoRepository $vencimientoRepository): Response
     {
         $user=$this->getUser();
@@ -28,9 +24,7 @@ class VencimientoController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/new", name="vencimiento_new", methods={"GET","POST"})
-     */
+    #[Route("/new", name: "vencimiento_new", methods: ["GET","POST"])]
     public function new(Request $request,EmpresaRepository $empresaRepository): Response
     {
         $user=$this->getUser();
@@ -61,9 +55,7 @@ class VencimientoController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="vencimiento_show", methods={"GET"})
-     */
+    #[Route("/{id}", name: "vencimiento_show", methods: ["GET"])]
     public function show(Vencimiento $vencimiento): Response
     {
         return $this->render('vencimiento/show.html.twig', [
@@ -71,9 +63,7 @@ class VencimientoController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/edit", name="vencimiento_edit", methods={"GET","POST"})
-     */
+    #[Route("/{id}/edit", name: "vencimiento_edit", methods: ["GET","POST"])]
     public function edit(Request $request, Vencimiento $vencimiento): Response
     {
         $user=$this->getUser();
@@ -105,9 +95,7 @@ class VencimientoController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="vencimiento_delete", methods={"DELETE"})
-     */
+    #[Route("/{id}", name: "vencimiento_delete", methods: ["DELETE"])]
     public function delete(Request $request, Vencimiento $vencimiento): Response
     {
         if ($this->isCsrfTokenValid('delete'.$vencimiento->getId(), $request->request->get('_token'))) {

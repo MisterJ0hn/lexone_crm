@@ -11,14 +11,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/configuracion")
- */
+#[Route("/configuracion")]
 class ConfiguracionController extends AbstractController
 {
-    /**
-     * @Route("/", name="configuracion_index", methods={"GET","POST"})
-     */
+    #[Route("/", name: "configuracion_index", methods: ["GET","POST"])]
     public function index(Request $request,ConfiguracionRepository $configuracionRepository,ModuloPerRepository $moduloPerRepository): Response
     {
         $this->denyAccessUnlessGranted('edit','configuracion');
@@ -44,9 +40,7 @@ class ConfiguracionController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/new", name="configuracion_new", methods={"GET","POST"})
-     */
+    #[Route("/new", name: "configuracion_new", methods: ["GET","POST"])]
     public function new(Request $request): Response
     {
         $configuracion = new Configuracion();
@@ -67,9 +61,7 @@ class ConfiguracionController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="configuracion_show", methods={"GET"})
-     */
+    #[Route("/{id}", name: "configuracion_show", methods: ["GET"])]
     public function show(Configuracion $configuracion): Response
     {
         return $this->render('configuracion/show.html.twig', [
@@ -77,9 +69,7 @@ class ConfiguracionController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/edit", name="configuracion_edit", methods={"GET","POST"})
-     */
+    #[Route("/{id}/edit", name: "configuracion_edit", methods: ["GET","POST"])]
     public function edit(Request $request, Configuracion $configuracion,ModuloPerRepository $moduloPerRepository): Response
     {
         $this->denyAccessUnlessGranted('edit','configuracion');
@@ -101,9 +91,7 @@ class ConfiguracionController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="configuracion_delete", methods={"DELETE"})
-     */
+    #[Route("/{id}", name: "configuracion_delete", methods: ["DELETE"])]
     public function delete(Request $request, Configuracion $configuracion): Response
     {
         if ($this->isCsrfTokenValid('delete'.$configuracion->getId(), $request->request->get('_token'))) {

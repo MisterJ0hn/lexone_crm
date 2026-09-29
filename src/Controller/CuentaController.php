@@ -16,14 +16,10 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 
-/**
- * @Route("/cuenta")
- */
+#[Route("/cuenta")]
 class CuentaController extends AbstractController
 {
-    /**
-     * @Route("/", name="cuenta_index", methods={"GET"})
-     */
+    #[Route("/", name: "cuenta_index", methods: ["GET"])]
     public function index(CuentaRepository $cuentaRepository,ModuloPerRepository $moduloPerRepository): Response
     {
         $this->denyAccessUnlessGranted('view','cuenta');
@@ -35,9 +31,7 @@ class CuentaController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/new", name="cuenta_new", methods={"GET","POST"})
-     */
+    #[Route("/new", name: "cuenta_new", methods: ["GET","POST"])]
     public function new(Request $request): Response
     {
         $this->denyAccessUnlessGranted('create','cuenta');
@@ -64,9 +58,7 @@ class CuentaController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="cuenta_show", methods={"GET"})
-     */
+    #[Route("/{id}", name: "cuenta_show", methods: ["GET"])]
     public function show(Cuenta $cuentum): Response
     {
         $this->denyAccessUnlessGranted('view','cuenta');
@@ -75,9 +67,7 @@ class CuentaController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/edit", name="cuenta_edit", methods={"GET","POST"})
-     */
+    #[Route("/{id}/edit", name: "cuenta_edit", methods: ["GET","POST"])]
     public function edit(Request $request, Cuenta $cuentum): Response
     {
         $this->denyAccessUnlessGranted('edit','cuenta');
@@ -96,9 +86,7 @@ class CuentaController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="cuenta_delete", methods={"DELETE"})
-     */
+    #[Route("/{id}", name: "cuenta_delete", methods: ["DELETE"])]
     public function delete(Request $request, Cuenta $cuentum): Response
     {
         $this->denyAccessUnlessGranted('full','empresa');

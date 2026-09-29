@@ -9,14 +9,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-/**
- * @Route("/max_dias_comision")
- */
+#[Route("/max_dias_comision")]
 class MaxDiasComisionController extends AbstractController
 {
-    /**
-     * @Route("/", name="max_dias_comision_index")
-     */
+    #[Route("/", name: "max_dias_comision_index")]
     public function index(Request $request,ConfiguracionRepository $configuracionRepository,ModuloPerRepository $moduloPerRepository): Response
     {
         $user=$this->getUser();

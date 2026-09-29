@@ -16,14 +16,10 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
- /**
- * @Route("/recordatorio")
- */
+#[Route("/recordatorio")]
 class RecordatorioController extends AbstractController
 {
-    /**
-     * @Route("/", name="recordatorio_index")
-     */
+    #[Route("/", name: "recordatorio_index")]
     public function index(Request $request,
                         PaginatorInterface $paginator,
                         RecordatorioRepository $recordatorioRepository,
@@ -95,9 +91,7 @@ class RecordatorioController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/agenda", name="recordatorio_avisos", methods={"GET","POST"})
-     */
+    #[Route("/agenda", name: "recordatorio_avisos", methods: ["GET","POST"])]
     public function avisos(RecordatorioRepository $recordatorioRepository): Response
     {
         $user=$this->getUser();
@@ -110,9 +104,7 @@ class RecordatorioController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/agenda/{id}", name="recordatorio_agenda", methods={"GET","POST"})
-     */
+    #[Route("/agenda/{id}", name: "recordatorio_agenda", methods: ["GET","POST"])]
     public function agenda(Contrato $contrato,Request $request,RecordatorioRepository $recordatorioRepository): Response
     {
         $user=$this->getUser();
@@ -147,9 +139,7 @@ class RecordatorioController extends AbstractController
 
     }
 
-    /**
-     * @Route("/{id}", name="recordatorio_show", methods={"GET"})
-     */
+    #[Route("/{id}", name: "recordatorio_show", methods: ["GET"])]
     public function show(Recordatorio $recordatorio): Response
     {
         
@@ -163,9 +153,7 @@ class RecordatorioController extends AbstractController
             
         ]);
     }
-    /**
-     * @Route("/{id}/leido", name="recordatorio_leido", methods={"GET"})
-     */
+    #[Route("/{id}/leido", name: "recordatorio_leido", methods: ["GET"])]
     public function leidoAgenda(Recordatorio $recordatorio): Response
     {
         
@@ -175,9 +163,7 @@ class RecordatorioController extends AbstractController
         
     }
 
-    /**
-     * @Route("/{id}/leido_list", name="recordatorio_leido_list", methods={"GET"})
-     */
+    #[Route("/{id}/leido_list", name: "recordatorio_leido_list", methods: ["GET"])]
     public function leidoList(Recordatorio $recordatorio): Response
     {
         

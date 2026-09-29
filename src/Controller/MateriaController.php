@@ -14,14 +14,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/materia")
- */
+#[Route("/materia")]
 class MateriaController extends AbstractController
 {
-    /**
-     * @Route("/", name="materia_index", methods={"GET"})
-     */
+    #[Route("/", name: "materia_index", methods: ["GET"])]
     public function index(MateriaRepository $materiaRepository): Response
     {
         // Materia es un catálogo global: mismo listado para todas las empresas.
@@ -30,9 +26,7 @@ class MateriaController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/new", name="materia_new", methods={"GET","POST"})
-     */
+    #[Route("/new", name: "materia_new", methods: ["GET","POST"])]
     public function new(Request $request): Response
     {
         $user = $this->getUser();
@@ -57,9 +51,7 @@ class MateriaController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="materia_show", methods={"GET"})
-     */
+    #[Route("/{id}", name: "materia_show", methods: ["GET"])]
     public function show(Materia $materium): Response
     {
         return $this->render('materia/show.html.twig', [
@@ -67,9 +59,7 @@ class MateriaController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/edit", name="materia_edit", methods={"GET","POST"})
-     */
+    #[Route("/{id}/edit", name: "materia_edit", methods: ["GET","POST"])]
     public function edit(Request $request, Materia $materium): Response
     {
         $form = $this->createForm(MateriaType::class, $materium);
@@ -87,9 +77,7 @@ class MateriaController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/causa_letras", name="materia_causa_letras", methods={"GET"})
-     */
+    #[Route("/{id}/causa_letras", name: "materia_causa_letras", methods: ["GET"])]
     public function letras(Materia $materia): JsonResponse
     {
         $letras = [];
@@ -108,9 +96,8 @@ class MateriaController extends AbstractController
      * {id} de la ruta se conserva por compatibilidad con los llamados existentes
      * (antes era el id de la Cuenta); la materia ya no depende de la Cuenta ni
      * de la empresa.
-     *
-     * @Route("/{id}/combo", name="materia_combo", methods={"GET","POST"})
      */
+    #[Route("/{id}/combo", name: "materia_combo", methods: ["GET","POST"])]
     public function combo(int $id, MateriaRepository $materiaRepository): Response
     {
         // Materia es un catálogo global: mismo listado para todas las empresas.
@@ -121,9 +108,8 @@ class MateriaController extends AbstractController
 
     /**
      * Cortes válidos para una materia.
-     *
-     * @Route("/{id}/corte_combo", name="materia_corte_combo", methods={"GET","POST"})
      */
+    #[Route("/{id}/corte_combo", name: "materia_corte_combo", methods: ["GET","POST"])]
     public function corteCombo(Materia $materia, MateriaCorteRepository $materiaCorteRepository): Response
     {
         return $this->render('materia/comboCorte.html.twig', [
@@ -131,9 +117,7 @@ class MateriaController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="materia_delete", methods={"DELETE"})
-     */
+    #[Route("/{id}", name: "materia_delete", methods: ["DELETE"])]
     public function delete(Request $request, Materia $materium, CausaRepository $causaRepository, MateriaCorteRepository $materiaCorteRepository): Response
     {
         if ($this->isCsrfTokenValid('delete'.$materium->getId(), $request->request->get('_token'))) {

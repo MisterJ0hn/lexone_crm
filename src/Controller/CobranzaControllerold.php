@@ -41,14 +41,10 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Validator\Constraints\IsNull;
 
 ini_set('memory_limit', '-1');
-/**
- * @Route("/cobranzaold")
- */
+#[Route("/cobranzaold")]
 class CobranzaControllerold extends AbstractController
 {
-    /**
-     * @Route("/", name="cobranza_index", methods={"GET"})
-     */
+    #[Route("/", name: "cobranza_index", methods: ["GET"])]
     public function index(ContratoRepository $contratoRepository, 
                         CuotaRepository $cuotaRepository,
                         PagoRepository $pagoRepository,
@@ -222,9 +218,7 @@ class CobranzaControllerold extends AbstractController
     }
 
     
-    /**
-     * @Route("/finalizado", name="cobranza_finalizado", methods={"GET"})
-     */
+    #[Route("/finalizado", name: "cobranza_finalizado", methods: ["GET"])]
     public function finalizado(ContratoRepository $contratoRepository, CuotaRepository $cuotaRepository,PagoRepository $pagoRepository,PaginatorInterface $paginator,ModuloPerRepository $moduloPerRepository,Request $request,CuentaRepository $cuentaRepository): Response
     {
         $this->denyAccessUnlessGranted('view','cobranza');
@@ -314,9 +308,7 @@ class CobranzaControllerold extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/resumen", name="cobranza_resumen", methods={"GET"}) 
-     */
+    #[Route("/resumen", name: "cobranza_resumen", methods: ["GET"])]
     public function resumen(CuentaRepository $cuentaRepository,CobranzaRepository $cobranzaRepository,PaginatorInterface $paginator,ModuloPerRepository $moduloPerRepository,Request $request): Response
     {
 
@@ -389,9 +381,7 @@ class CobranzaControllerold extends AbstractController
         ]);
     }
    
-    /**
-     * @Route("/excel", name="cobranza_excel", methods={"GET"})
-     */
+    #[Route("/excel", name: "cobranza_excel", methods: ["GET"])]
     public function cobranzaExcel(ContratoRepository $contratoRepository, 
                         CuotaRepository $cuotaRepository,
                         PagoRepository $pagoRepository,
@@ -602,9 +592,7 @@ class CobranzaControllerold extends AbstractController
 
     }
 
-    /**
-     * @Route("/{id}", name="cobranza_show", methods={"GET"})
-     */
+    #[Route("/{id}", name: "cobranza_show", methods: ["GET"])]
     public function show(Pago $pago): Response
     {
         $this->denyAccessUnlessGranted('view','cobranza');
@@ -619,9 +607,7 @@ class CobranzaControllerold extends AbstractController
             'pagina'=>"Ver Pago",
         ]);
     }
-    /**
-     * @Route("/{id}/vercobranza", name="vercobranza_index", methods={"GET","POST"})
-     */
+    #[Route("/{id}/vercobranza", name: "vercobranza_index", methods: ["GET","POST"])]
     public function vercobranzas(Request $request, Contrato $contrato,CobranzaRepository $cobranzaRepository,ModuloPerRepository $moduloPerRepository): Response
     {
         $this->denyAccessUnlessGranted('view','cobranza');
@@ -637,9 +623,7 @@ class CobranzaControllerold extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/vercobranza_view", name="vercobranza_view", methods={"GET","POST"})
-     */
+    #[Route("/{id}/vercobranza_view", name: "vercobranza_view", methods: ["GET","POST"])]
     public function verpagosShow(Request $request, Contrato $contrato,CobranzaRepository $cobranzaRepository,PagoRepository $pagoRepository,ModuloPerRepository $moduloPerRepository): Response
     {
         $this->denyAccessUnlessGranted('view','cobranza');
@@ -653,9 +637,7 @@ class CobranzaControllerold extends AbstractController
         ]);
 
     }
-    /**
-     * @Route("/{id}/detallepagos", name="detallepagos_index", methods={"GET","POST"})
-     */
+    #[Route("/{id}/detallepagos", name: "detallepagos_index", methods: ["GET","POST"])]
     public function detallepagos(Request $request, Cuota $cuota,PagoRepository $pagoRepository,ModuloPerRepository $moduloPerRepository): Response
     {
         $this->denyAccessUnlessGranted('view','pago');
@@ -667,9 +649,7 @@ class CobranzaControllerold extends AbstractController
         
 
     }
-    /**
-     * @Route("/{id}/new", name="cobranza_new", methods={"GET","POST"})
-     */
+    #[Route("/{id}/new", name: "cobranza_new", methods: ["GET","POST"])]
     public function new(Request $request,
                         Contrato $contrato,
                         CuotaRepository $cuotaRepository,
@@ -717,9 +697,7 @@ class CobranzaControllerold extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/lote", name="cobranza_lote", methods={"GET","POST"})
-     */
+    #[Route("/{id}/lote", name: "cobranza_lote", methods: ["GET","POST"])]
     public function lote(Request $request, 
                         Contrato $contrato,
                         ModuloPerRepository $moduloPerRepository,
@@ -748,9 +726,7 @@ class CobranzaControllerold extends AbstractController
         ]);
     }
     
-    /**
-     * @Route("/{id}/cobrador", name="cobranza_cobrador", methods={"GET","POST"})
-     */
+    #[Route("/{id}/cobrador", name: "cobranza_cobrador", methods: ["GET","POST"])]
     public function cobrador(Request $request, 
                         Lotes $lotes): Response
     { 
@@ -761,9 +737,7 @@ class CobranzaControllerold extends AbstractController
         }
         return $this->json($cobradores);
     }
-    /**
-     * @Route("/{id}/edit", name="cobranza_edit", methods={"GET","POST"})
-     */
+    #[Route("/{id}/edit", name: "cobranza_edit", methods: ["GET","POST"])]
     public function edit(Request $request, Cobranza $cobranza,CuotaRepository $cuotaRepository,ModuloPerRepository $moduloPerRepository): Response
     {
         $this->denyAccessUnlessGranted('edit','cobranza');
@@ -789,9 +763,7 @@ class CobranzaControllerold extends AbstractController
             'pagina'=>'Editar '.$pagina->getNombre(),
         ]);
     }
-    /**
-     * @Route("/{id}/terminar", name="cobranza_terminar", methods={"GET","POST"})
-     */
+    #[Route("/{id}/terminar", name: "cobranza_terminar", methods: ["GET","POST"])]
     function terminar(Contrato $contrato,
                     DiasPagoRepository $diasPagoRepository,
                     ModuloPerRepository $moduloPerRepository,
@@ -826,9 +798,7 @@ class CobranzaControllerold extends AbstractController
 
     }
    
-    /**
-     * @Route("/{id}/delete", name="cobranza_delete", methods={"GET","POST"})
-     */
+    #[Route("/{id}/delete", name: "cobranza_delete", methods: ["GET","POST"])]
     public function delete(Request $request, Cobranza $cobranza): Response
     {
         $this->denyAccessUnlessGranted('full','cobranza');
@@ -843,9 +813,7 @@ class CobranzaControllerold extends AbstractController
         return $this->redirectToRoute('vercobranza_index',['id'=>$cobranza->getContrato()->getId()]);
     }
 
-    /**
-     * @Route("/{id}/compromiso", name="cobranza_compromiso", methods={"GET","POST"})
-     */
+    #[Route("/{id}/compromiso", name: "cobranza_compromiso", methods: ["GET","POST"])]
     public function fechaCompromiso(Request $request, CobranzaRespuesta $cobranzaRespuesta): Response
     {
         if($cobranzaRespuesta->getIsFechaCompromiso()){

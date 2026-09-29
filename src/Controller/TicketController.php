@@ -22,14 +22,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/ticket")
- */
+#[Route("/ticket")]
 class TicketController extends AbstractController
 {
-    /**
-     * @Route("/", name="app_ticket_index", methods={"GET"})
-     */
+    #[Route("/", name: "app_ticket_index", methods: ["GET"])]
     public function index(TicketRepository $ticketRepository,
                         PaginatorInterface $paginator,
                         Request $request,
@@ -142,9 +138,7 @@ class TicketController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/search", name="app_ticket_search", methods={"GET", "POST"})
-     */
+    #[Route("/search", name: "app_ticket_search", methods: ["GET", "POST"])]
     public function search(Request $request, ContratoRepository $contratoRepository, TicketRepository $ticketRepository): Response
     {
 
@@ -190,9 +184,7 @@ class TicketController extends AbstractController
 
 
     
-    /**
-     * @Route("/resumen", name="app_ticket_resumen", methods={"GET","POST"})
-     */
+    #[Route("/resumen", name: "app_ticket_resumen", methods: ["GET","POST"])]
     public function resumen(Request $request,$ticketEstado,String $fechainicio, String $fechafin,$compania,$filtro,$totalStatus,$tipoFecha,$origen, TicketRepository $ticketRepository): Response
     {
         $user=$this->getUser();
@@ -239,9 +231,7 @@ class TicketController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="app_ticket_show", methods={"GET"})
-     */
+    #[Route("/{id}", name: "app_ticket_show", methods: ["GET"])]
     public function show(Ticket $ticket): Response
     {
         return $this->render('ticket/show.html.twig', [
@@ -249,9 +239,7 @@ class TicketController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/new", name="app_ticket_new", methods={"GET", "POST"})
-     */
+    #[Route("/{id}/new", name: "app_ticket_new", methods: ["GET", "POST"])]
     public function new(Contrato $contrato,Request $request, 
                         TicketRepository $ticketRepository,
                         EmpresaRepository $empresaRepository,
@@ -304,9 +292,7 @@ class TicketController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/gestionar", name="app_ticket_gestionar", methods={"GET", "POST"})
-     */
+    #[Route("/{id}/gestionar", name: "app_ticket_gestionar", methods: ["GET", "POST"])]
     public function gestionar(Request $request, 
                             Ticket $ticket, 
                             TicketRepository $ticketRepository, 
@@ -412,9 +398,7 @@ class TicketController extends AbstractController
     }
 
     
-    /**
-     * @Route("/{id}/edit", name="app_ticket_edit", methods={"GET", "POST"})
-     */
+    #[Route("/{id}/edit", name: "app_ticket_edit", methods: ["GET", "POST"])]
     public function edit(Request $request, Ticket $ticket, TicketRepository $ticketRepository): Response
     {
         $form = $this->createForm(TicketType::class, $ticket);
@@ -431,9 +415,7 @@ class TicketController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="app_ticket_delete", methods={"POST"})
-     */
+    #[Route("/{id}", name: "app_ticket_delete", methods: ["POST"])]
     public function delete(Request $request, Ticket $ticket, TicketRepository $ticketRepository): Response
     {
         if ($this->isCsrfTokenValid('delete'.$ticket->getId(), $request->request->get('_token'))) {

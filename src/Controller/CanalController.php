@@ -12,14 +12,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/canal")
- */
+#[Route("/canal")]
 class CanalController extends AbstractController
 {
-    /**
-     * @Route("/", name="canal_index", methods={"GET","POST"})
-     */
+    #[Route("/", name: "canal_index", methods: ["GET","POST"])]
     public function index(Request $request,CanalRepository $canalRepository,EmpresaRepository $empresaRepository): Response
     {
         $user=$this->getUser();
@@ -46,9 +42,7 @@ class CanalController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/new", name="canal_new", methods={"GET","POST"})
-     */
+    #[Route("/new", name: "canal_new", methods: ["GET","POST"])]
     public function new(Request $request): Response
     {
         $canal = new Canal();
@@ -69,9 +63,7 @@ class CanalController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="canal_show", methods={"GET"})
-     */
+    #[Route("/{id}", name: "canal_show", methods: ["GET"])]
     public function show(Canal $canal): Response
     {
         return $this->render('canal/show.html.twig', [
@@ -79,9 +71,7 @@ class CanalController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/edit", name="canal_edit", methods={"GET","POST"})
-     */
+    #[Route("/{id}/edit", name: "canal_edit", methods: ["GET","POST"])]
     public function edit(Request $request, Canal $canal): Response
     {
         $form = $this->createForm(CanalType::class, $canal);
@@ -99,9 +89,7 @@ class CanalController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="canal_delete", methods={"DELETE"})
-     */
+    #[Route("/{id}", name: "canal_delete", methods: ["DELETE"])]
     public function delete(Request $request, Canal $canal): Response
     {
         if ($this->isCsrfTokenValid('delete'.$canal->getId(), $request->request->get('_token'))) {

@@ -15,14 +15,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/privilegio")
- */
+#[Route("/privilegio")]
 class PrivilegioController extends AbstractController
 {
-    /**
-     * @Route("/{id}", name="privilegio_index", methods={"GET"})
-     */
+    #[Route("/{id}", name: "privilegio_index", methods: ["GET"])]
     public function index(Usuario $usuario,
                         PrivilegioRepository $privilegioRepository,
                         AccionRepository $accionRepository): Response
@@ -39,9 +35,7 @@ class PrivilegioController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/new", name="privilegio_new", methods={"GET","POST"})
-     */
+    #[Route("/{id}/new", name: "privilegio_new", methods: ["GET","POST"])]
     public function new(Request $request,
                         Usuario $usuario,
                         PrivilegioTipousuarioRepository $privilegioTipousuarioRepository,
@@ -70,9 +64,7 @@ class PrivilegioController extends AbstractController
         
     }
 
-    /**
-     * @Route("/{id}", name="privilegio_show", methods={"GET"})
-     */
+    #[Route("/{id}", name: "privilegio_show", methods: ["GET"])]
     public function show(Privilegio $privilegio): Response
     {
 
@@ -83,9 +75,7 @@ class PrivilegioController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/edit", name="privilegio_edit", methods={"GET","POST"})
-     */
+    #[Route("/{id}/edit", name: "privilegio_edit", methods: ["GET","POST"])]
     public function edit(Request $request, Privilegio $privilegio,AccionRepository $accionRepository): Response
     {
         $this->denyAccessUnlessGranted('edit','privilegio');
@@ -99,9 +89,7 @@ class PrivilegioController extends AbstractController
 
         return $this->render('privilegio/ok.html.twig');
     }
-    /**
-     * @Route("/{id}/regenerar", name="privilegio_regenerar", methods={"GET","POST"})
-     */
+    #[Route("/{id}/regenerar", name: "privilegio_regenerar", methods: ["GET","POST"])]
     public function regenerar(Request $request,
             Usuario $usuario,
             PrivilegioTipousuarioRepository $privilegioTipousuarioRepository,
@@ -142,9 +130,7 @@ class PrivilegioController extends AbstractController
         return $this->redirectToRoute('privilegio_index',['id'=>$usuario->getId()]);
     }
 
-    /**
-     * @Route("/{id}", name="privilegio_delete", methods={"DELETE"})
-     */
+    #[Route("/{id}", name: "privilegio_delete", methods: ["DELETE"])]
     public function delete(Request $request, Privilegio $privilegio): Response
     {
         $this->denyAccessUnlessGranted('full','privilegio');

@@ -11,14 +11,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/menu_cabezera")
- */
+#[Route("/menu_cabezera")]
 class MenuCabezeraController extends AbstractController
 {
-    /**
-     * @Route("/", name="menu_cabezera_index", methods={"GET"})
-     */
+    #[Route("/", name: "menu_cabezera_index", methods: ["GET"])]
     public function index(MenuCabezeraRepository $menuCabezeraRepository): Response
     {
         $this->denyAccessUnlessGranted('view','menu_cabezera');
@@ -30,9 +26,7 @@ class MenuCabezeraController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/new", name="menu_cabezera_new", methods={"GET","POST"})
-     */
+    #[Route("/new", name: "menu_cabezera_new", methods: ["GET","POST"])]
     public function new(Request $request,EmpresaRepository $empresaRepository): Response
     {
         $this->denyAccessUnlessGranted('create','menu_cabezera');
@@ -56,9 +50,7 @@ class MenuCabezeraController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="menu_cabezera_show", methods={"GET"})
-     */
+    #[Route("/{id}", name: "menu_cabezera_show", methods: ["GET"])]
     public function show(MenuCabezera $menuCabezera): Response
     {
         $this->denyAccessUnlessGranted('view','menu_cabezera');
@@ -67,9 +59,7 @@ class MenuCabezeraController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/edit", name="menu_cabezera_edit", methods={"GET","POST"})
-     */
+    #[Route("/{id}/edit", name: "menu_cabezera_edit", methods: ["GET","POST"])]
     public function edit(Request $request, MenuCabezera $menuCabezera): Response
     {
         $this->denyAccessUnlessGranted('edit','menu_cabezera');
@@ -88,9 +78,7 @@ class MenuCabezeraController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="menu_cabezera_delete", methods={"DELETE"})
-     */
+    #[Route("/{id}", name: "menu_cabezera_delete", methods: ["DELETE"])]
     public function delete(Request $request, MenuCabezera $menuCabezera): Response
     {
         $this->denyAccessUnlessGranted('full','menu_cabezera');

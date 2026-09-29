@@ -15,14 +15,10 @@ use Symfony\Component\Routing\Annotation\Route;
 
 use Knp\Component\Pager\PaginatorInterface;
 
-/**
- * @Route("/modulo")
- */
+#[Route("/modulo")]
 class ModuloController extends AbstractController
 {
-    /**
-     * @Route("/", name="modulo_index", methods={"GET"})
-     */
+    #[Route("/", name: "modulo_index", methods: ["GET"])]
     public function index(ModuloPerRepository $moduloPerRepository,PaginatorInterface $paginator,Request $request): Response
     {
         $this->denyAccessUnlessGranted('view','modulo');
@@ -41,9 +37,7 @@ class ModuloController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/new", name="modulo_new", methods={"GET","POST"})
-     */
+    #[Route("/new", name: "modulo_new", methods: ["GET","POST"])]
     public function new(Request $request,ModuloRepository $moduloRepository, ModuloPerRepository $moduloPerRepository, EmpresaRepository $empresaRepository): Response
     {
         $this->denyAccessUnlessGranted('create','modulo');
@@ -92,9 +86,7 @@ class ModuloController extends AbstractController
     }
 
     
-    /**
-     * @Route("/{id}/edit", name="modulo_edit", methods={"GET","POST"})
-     */
+    #[Route("/{id}/edit", name: "modulo_edit", methods: ["GET","POST"])]
     public function edit(Request $request, ModuloPer $modulo): Response
     {
         $this->denyAccessUnlessGranted('edit','modulo');

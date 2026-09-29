@@ -13,14 +13,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/usuario_tipo")
- */
+#[Route("/usuario_tipo")]
 class UsuarioTipoController extends AbstractController
 {
-    /**
-     * @Route("/", name="usuario_tipo_index", methods={"GET"})
-     */
+    #[Route("/", name: "usuario_tipo_index", methods: ["GET"])]
     public function index(UsuarioTipoRepository $usuarioTipoRepository): Response
     {
         $this->denyAccessUnlessGranted('view','usuario_tipo');
@@ -38,9 +34,7 @@ class UsuarioTipoController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/new", name="usuario_tipo_new", methods={"GET","POST"})
-     */
+    #[Route("/new", name: "usuario_tipo_new", methods: ["GET","POST"])]
     public function new(Request $request,EmpresaRepository $empresaRepository,AgendaStatusRepository $agendaStatusRepository): Response
     {
         $user=$this->getUser();
@@ -69,9 +63,7 @@ class UsuarioTipoController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="usuario_tipo_show", methods={"GET"})
-     */
+    #[Route("/{id}", name: "usuario_tipo_show", methods: ["GET"])]
     public function show(UsuarioTipo $usuarioTipo): Response
     {
         $this->denyAccessUnlessGranted('view','usuario_tipo');
@@ -80,9 +72,7 @@ class UsuarioTipoController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/edit", name="usuario_tipo_edit", methods={"GET","POST"})
-     */
+    #[Route("/{id}/edit", name: "usuario_tipo_edit", methods: ["GET","POST"])]
     public function edit(Request $request, UsuarioTipo $usuarioTipo,AgendaStatusRepository $agendaStatusRepository): Response
     {
         $this->denyAccessUnlessGranted('edit','usuario_tipo');
@@ -110,9 +100,7 @@ class UsuarioTipoController extends AbstractController
     }
 
     
-    /**
-     * @Route("/{id}", name="usuario_tipo_delete", methods={"DELETE"})
-     */
+    #[Route("/{id}", name: "usuario_tipo_delete", methods: ["DELETE"])]
     public function delete(Request $request, UsuarioTipo $usuarioTipo): Response
     {
         $this->denyAccessUnlessGranted('full','usuario_tipo');

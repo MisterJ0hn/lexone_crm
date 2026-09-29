@@ -12,14 +12,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/juzgado_cuenta")
- */
+#[Route("/juzgado_cuenta")]
 class JuzgadoCuentaController extends AbstractController
 {
-    /**
-     * @Route("/", name="juzgado_cuenta_index", methods={"GET"})
-     */
+    #[Route("/", name: "juzgado_cuenta_index", methods: ["GET"])]
     public function index(JuzgadoCuentaRepository $juzgadoCuentaRepository): Response
     {
         return $this->render('juzgado_cuenta/index.html.twig', [
@@ -27,9 +23,7 @@ class JuzgadoCuentaController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/new", name="juzgado_cuenta_new", methods={"GET","POST"})
-     */
+    #[Route("/new", name: "juzgado_cuenta_new", methods: ["GET","POST"])]
     public function new(Request $request): Response
     {
         $juzgadoCuentum = new JuzgadoCuenta();
@@ -50,9 +44,7 @@ class JuzgadoCuentaController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="juzgado_cuenta_show", methods={"GET"})
-     */
+    #[Route("/{id}", name: "juzgado_cuenta_show", methods: ["GET"])]
     public function show(JuzgadoCuenta $juzgadoCuentum): Response
     {
         return $this->render('juzgado_cuenta/show.html.twig', [
@@ -60,9 +52,7 @@ class JuzgadoCuentaController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/edit", name="juzgado_cuenta_edit", methods={"GET","POST"})
-     */
+    #[Route("/{id}/edit", name: "juzgado_cuenta_edit", methods: ["GET","POST"])]
     public function edit(Request $request, JuzgadoCuenta $juzgadoCuentum): Response
     {
         $form = $this->createForm(JuzgadoCuentaType::class, $juzgadoCuentum);
@@ -80,9 +70,7 @@ class JuzgadoCuentaController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/combo", name="juzgado_cuenta_combo", methods={"GET","POST"})
-     */
+    #[Route("/{id}/combo", name: "juzgado_cuenta_combo", methods: ["GET","POST"])]
     public function combo(Request $request, Cuenta $cuenta): Response
     {
 
@@ -91,9 +79,7 @@ class JuzgadoCuentaController extends AbstractController
             
         ]);
     }
-     /**
-     * @Route("/{id}/corte_combo", name="juzgado_corte_combo", methods={"GET","POST"})
-     */
+    #[Route("/{id}/corte_combo", name: "juzgado_corte_combo", methods: ["GET","POST"])]
     public function corteCombo(Request $request, Corte $corte): Response
     {
 
@@ -102,9 +88,7 @@ class JuzgadoCuentaController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="juzgado_cuenta_delete", methods={"DELETE"})
-     */
+    #[Route("/{id}", name: "juzgado_cuenta_delete", methods: ["DELETE"])]
     public function delete(Request $request, JuzgadoCuenta $juzgadoCuentum): Response
     {
         if ($this->isCsrfTokenValid('delete'.$juzgadoCuentum->getId(), $request->request->get('_token'))) {

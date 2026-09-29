@@ -17,14 +17,10 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
-/**
- * @Route("/importacion")
- */
+#[Route("/importacion")]
 class ImportacionController extends AbstractController
 {
-    /**
-     * @Route("/", name="importacion_index", methods={"GET"})
-     */
+    #[Route("/", name: "importacion_index", methods: ["GET"])]
     public function index(ImportacionRepository $importacionRepository,
     ModuloPerRepository $moduloPerRepository): Response
     {
@@ -37,9 +33,7 @@ class ImportacionController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/new", name="importacion_new", methods={"GET","POST"})
-     */
+    #[Route("/new", name: "importacion_new", methods: ["GET","POST"])]
     public function new(Request $request,
                         UsuarioRepository $usuarioRepository,
                         AgendaStatusRepository $agendaStatusRepository,
@@ -195,9 +189,7 @@ class ImportacionController extends AbstractController
             'pagina'=>$pagina->getNombre(),
         ]);
     }
-    /**
-     * @Route("/newPer", name="importacion_newPer", methods={"GET","POST"})
-     */
+    #[Route("/newPer", name: "importacion_newPer", methods: ["GET","POST"])]
     public function newPer(Request $request,UsuarioRepository $usuarioRepository,AgendaStatusRepository $agendaStatusRepository,
     ModuloPerRepository $moduloPerRepository): Response
     {
@@ -357,9 +349,7 @@ class ImportacionController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="importacion_show", methods={"GET"})
-     */
+    #[Route("/{id}", name: "importacion_show", methods: ["GET"])]
     public function show(Importacion $importacion): Response
     {
         return $this->render('importacion/show.html.twig', [
@@ -367,9 +357,7 @@ class ImportacionController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/edit", name="importacion_edit", methods={"GET","POST"})
-     */
+    #[Route("/{id}/edit", name: "importacion_edit", methods: ["GET","POST"])]
     public function edit(Request $request, Importacion $importacion): Response
     {
         $form = $this->createForm(ImportacionType::class, $importacion);
@@ -387,9 +375,7 @@ class ImportacionController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="importacion_delete", methods={"DELETE"})
-     */
+    #[Route("/{id}", name: "importacion_delete", methods: ["DELETE"])]
     public function delete(Request $request, Importacion $importacion): Response
     {
         if ($this->isCsrfTokenValid('delete'.$importacion->getId(), $request->request->get('_token'))) {

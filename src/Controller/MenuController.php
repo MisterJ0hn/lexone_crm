@@ -14,15 +14,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/menu")
- */
+#[Route("/menu")]
 class MenuController extends AbstractController
 {
     
-    /**
-     * @Route("/main", name="menu_main", methods={"GET","POST"})
-     */
+    #[Route("/main", name: "menu_main", methods: ["GET","POST"])]
     public function mainMenu(String $route_name,
                         MenuRepository $menuRepository,
                         EmpresaRepository $empresaRepository, 
@@ -133,9 +129,7 @@ class MenuController extends AbstractController
 
    
 
-    /**
-     * @Route("/{id}", name="menu_index", methods={"GET","POST"})
-     */
+    #[Route("/{id}", name: "menu_index", methods: ["GET","POST"])]
     public function index(Request $request, MenuCabezera $menuCabezera, MenuRepository $menuRepository): Response
     {
         $this->denyAccessUnlessGranted('view','menu');
@@ -147,9 +141,7 @@ class MenuController extends AbstractController
             'menuCabezera'=>$menuCabezera
         ]);
     }
-     /**
-     * @Route("/{id}/new", name="menu_new", methods={"GET","POST"})
-     */
+    #[Route("/{id}/new", name: "menu_new", methods: ["GET","POST"])]
     public function new(Request $request, 
                         MenuCabezera $menuCabezera, 
                         MenuRepository $menuRepository,
@@ -194,9 +186,7 @@ class MenuController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/edit", name="menu_edit", methods={"GET","POST"})
-     */
+    #[Route("/{id}/edit", name: "menu_edit", methods: ["GET","POST"])]
     public function edit(Request $request, Menu $menu,MenuRepository $menuRepository,ModuloPerRepository $moduloPerRepository): Response
     {
         $this->denyAccessUnlessGranted('edit','menu');
@@ -232,9 +222,7 @@ class MenuController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="menu_delete", methods={"DELETE"})
-     */
+    #[Route("/{id}", name: "menu_delete", methods: ["DELETE"])]
     public function delete(Request $request, Menu $menu): Response
     {
         $this->denyAccessUnlessGranted('full','menu');

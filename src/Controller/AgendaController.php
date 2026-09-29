@@ -20,14 +20,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 
-/**
- * @Route("/agenda")
- */
+#[Route("/agenda")]
 class AgendaController extends AbstractController
 {
-    /**
-     * @Route("/", name="agenda_index", methods={"GET"})
-     */
+    #[Route("/", name: "agenda_index", methods: ["GET"])]
     public function index(AgendaRepository $agendaRepository): Response
     {
         return $this->render('agenda/index.html.twig', [
@@ -35,9 +31,7 @@ class AgendaController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/new", name="agenda_new", methods={"GET","POST"})
-     */
+    #[Route("/new", name: "agenda_new", methods: ["GET","POST"])]
     public function new(Request $request,
                         AgendaStatusRepository $agendaStatusRepository,
                         CuentaRepository $cuentaRepository,
@@ -155,18 +149,14 @@ class AgendaController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="agenda_show", methods={"GET"})
-     */
+    #[Route("/{id}", name: "agenda_show", methods: ["GET"])]
     public function show(Agenda $agenda): Response
     {
         return $this->render('agenda/show.html.twig', [
             'agenda' => $agenda,
         ]);
     }
-    /**
-     * @Route("/resumenagendadores", name="agenda_resumenagendadores", methods={"GET","POST"})
-     */
+    #[Route("/resumenagendadores", name: "agenda_resumenagendadores", methods: ["GET","POST"])]
     public function resumenagendadores(Request $request,$agendaStatus,String $fechainicio, String $fechafin,$compania,$filtro,$totalStatus,$tipoFecha,$agendador, AgendaRepository $agendaRepository): Response
     {
         $user=$this->getUser();
@@ -208,9 +198,7 @@ class AgendaController extends AbstractController
             'nombre_status'=>$nombre_status,
         ]);
     }
-    /**
-     * @Route("/resumenabogados", name="agenda_resumenabogados", methods={"GET","POST"})
-     */
+    #[Route("/resumenabogados", name: "agenda_resumenabogados", methods: ["GET","POST"])]
     public function resumenabogados(Request $request, $agendaStatus,String $fechainicio, String $fechafin,$compania,$filtro,$totalStatus,$tipoFecha,$abogado, AgendaRepository $agendaRepository): Response
     {
         $user=$this->getUser();
@@ -254,9 +242,7 @@ class AgendaController extends AbstractController
             'nombre_status'=>$nombre_status,
         ]);
     }
-    /**
-     * @Route("/resumencobradores", name="agenda_resumencobradores", methods={"GET","POST"})
-     */
+    #[Route("/resumencobradores", name: "agenda_resumencobradores", methods: ["GET","POST"])]
     public function resumencobradores(int $status,int $total, float $montoTotal, InfComisionCobradoresRepository $infComisionCobradoresRepository): Response
     {
         $user=$this->getUser();
@@ -284,9 +270,7 @@ class AgendaController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/resumencierre", name="agenda_resumencierre", methods={"GET","POST"})
-     */
+    #[Route("/resumencierre", name: "agenda_resumencierre", methods: ["GET","POST"])]
     public function resumencierre(float $montoTotal,string $fechaInicio,string $fechaFin,int $status, ContratoRepository $contratoRepository): Response
     {
       
@@ -323,9 +307,7 @@ class AgendaController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/edit", name="agenda_edit", methods={"GET","POST"})
-     */
+    #[Route("/{id}/edit", name: "agenda_edit", methods: ["GET","POST"])]
     public function edit(Request $request, Agenda $agenda): Response
     {
         $form = $this->createForm(AgendaType::class, $agenda);
@@ -342,9 +324,7 @@ class AgendaController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-    /**
-     * @Route("/{id}/agendadores", name="agenda_agendadores", methods={"GET","POST"})
-     */
+    #[Route("/{id}/agendadores", name: "agenda_agendadores", methods: ["GET","POST"])]
     public function agendadores(Request $request, Cuenta $cuenta,UsuarioRepository $usuarioRepository): Response
     {
         $user=$this->getUser();
@@ -368,9 +348,7 @@ class AgendaController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="agenda_delete", methods={"DELETE"})
-     */
+    #[Route("/{id}", name: "agenda_delete", methods: ["DELETE"])]
     public function delete(Request $request, Agenda $agenda): Response
     {
         if ($this->isCsrfTokenValid('delete'.$agenda->getId(), $request->request->get('_token'))) {

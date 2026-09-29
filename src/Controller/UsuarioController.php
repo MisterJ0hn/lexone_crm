@@ -15,15 +15,11 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\Extension\Core\Type\DateIntervalType;
 
-/**
- * @Route("/usuario")
- */
+#[Route("/usuario")]
 class UsuarioController extends AbstractController
 {
 
-    /**
-     * @Route("/", name="usuario_index", methods={"GET"})
-     */
+    #[Route("/", name: "usuario_index", methods: ["GET"])]
     public function index(UsuarioRepository $usuarioRepository): Response
     {
         $this->denyAccessUnlessGranted('view','usuario');
@@ -34,9 +30,7 @@ class UsuarioController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/new", name="usuario_new", methods={"GET","POST"})
-     */
+    #[Route("/new", name: "usuario_new", methods: ["GET","POST"])]
     public function new(Request $request,UserPasswordEncoderInterface $encoder): Response
     {
         $this->denyAccessUnlessGranted('create','usuario');
@@ -66,9 +60,7 @@ class UsuarioController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="usuario_show", methods={"GET"})
-     */
+    #[Route("/{id}", name: "usuario_show", methods: ["GET"])]
     public function show(Usuario $usuario): Response
     {
         $this->denyAccessUnlessGranted('view','usuario');
@@ -78,9 +70,7 @@ class UsuarioController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/edit", name="usuario_edit", methods={"GET","POST"})
-     */
+    #[Route("/{id}/edit", name: "usuario_edit", methods: ["GET","POST"])]
     public function edit(Request $request, Usuario $usuario): Response
     {
         $this->denyAccessUnlessGranted('edit','usuario');
@@ -109,9 +99,7 @@ class UsuarioController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-    /**
-     * @Route("/{id}/combo", name="usuario_combo", methods={"GET","POST"})
-     */
+    #[Route("/{id}/combo", name: "usuario_combo", methods: ["GET","POST"])]
     public function combo(UsuarioTipo $usuarioTipo,UsuarioRepository $usuarioRepository): Response
     {
         $user=$this->getUser();
@@ -124,9 +112,7 @@ class UsuarioController extends AbstractController
     }
 
 
-    /**
-     * @Route("/{id}", name="usuario_delete", methods={"DELETE"})
-     */
+    #[Route("/{id}", name: "usuario_delete", methods: ["DELETE"])]
     public function delete(Request $request, Usuario $usuario): Response
     {
         $this->denyAccessUnlessGranted('full','usuario');

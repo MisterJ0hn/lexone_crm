@@ -22,14 +22,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
-/**
- * @Route("/empresa")
- */
+#[Route("/empresa")]
 class EmpresaController extends AbstractController
 {
-    /**
-     * @Route("/", name="empresa_index", methods={"GET","POST"})
-     */
+    #[Route("/", name: "empresa_index", methods: ["GET","POST"])]
     public function index(EmpresaRepository $empresaRepository,AccionRepository $accionRepository, ModuloPerRepository $moduloPerRepository,Request $request): Response
     {
         $this->denyAccessUnlessGranted('view','empresa');
@@ -58,9 +54,7 @@ class EmpresaController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/new", name="empresa_new", methods={"GET","POST"})
-     */
+    #[Route("/new", name: "empresa_new", methods: ["GET","POST"])]
     public function new(Request $request,
                     AccionRepository $accionRepository,
                     CuentaRepository $cuentaRepository, 
@@ -159,9 +153,7 @@ class EmpresaController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="empresa_show", methods={"GET"})
-     */
+    #[Route("/{id}", name: "empresa_show", methods: ["GET"])]
     public function show(Empresa $empresa): Response
     {
         $this->denyAccessUnlessGranted('view','empresa');
@@ -170,9 +162,7 @@ class EmpresaController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/edit", name="empresa_edit", methods={"GET","POST"})
-     */
+    #[Route("/{id}/edit", name: "empresa_edit", methods: ["GET","POST"])]
     public function edit(Request $request, Empresa $empresa): Response
     {
         $this->denyAccessUnlessGranted('edit','empresa');
@@ -221,9 +211,7 @@ class EmpresaController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="empresa_delete", methods={"DELETE"})
-     */
+    #[Route("/{id}", name: "empresa_delete", methods: ["DELETE"])]
     public function delete(Request $request, 
                             Empresa $empresa,
                             EmpresaRepository $empresaRepository,

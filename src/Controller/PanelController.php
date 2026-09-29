@@ -8,14 +8,10 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\AgendaRepository;
 use App\Repository\PagoRepository;
 
-/**
- * @Route("/panel")
- */
+#[Route("/panel")]
 class PanelController extends AbstractController
 {
-    /**
-     * @Route("/", name="panel_index")
-     */
+    #[Route("/", name: "panel_index")]
     public function index(AgendaRepository $agendaRepository, 
                           PagoRepository $pagoRepository): Response
     {

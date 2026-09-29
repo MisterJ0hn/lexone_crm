@@ -19,14 +19,10 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 use Knp\Component\Pager\PaginatorInterface;
-/**
- * @Route("/tramitadores")
- */
+#[Route("/tramitadores")]
 class TramitadoresController extends AbstractController
 {
-    /**
-     * @Route("/", name="tramitadores_index",methods={"GET"})
-     */
+    #[Route("/", name: "tramitadores_index",methods: ["GET"])]
     public function index(UsuarioRepository $usuarioRepository,
                     ModuloPerRepository $moduloPerRepository,
                     PaginatorInterface $paginator,
@@ -54,9 +50,7 @@ class TramitadoresController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/new", name="tramitadores_new", methods={"GET","POST"})
-     */
+    #[Route("/new", name: "tramitadores_new", methods: ["GET","POST"])]
     public function new(Request $request,
                         UserPasswordEncoderInterface $encoder,
                         UsuarioTipoRepository $usuarioTipoRepository,
@@ -138,9 +132,7 @@ class TramitadoresController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="tramitadores_show", methods={"GET"})
-     */
+    #[Route("/{id}", name: "tramitadores_show", methods: ["GET"])]
     public function show(Usuario $usuario,ModuloPerRepository $moduloPerRepository): Response
     {
         $this->denyAccessUnlessGranted('view','tramitadores');
@@ -152,9 +144,7 @@ class TramitadoresController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/edit", name="tramitadores_edit", methods={"GET","POST"})
-     */
+    #[Route("/{id}/edit", name: "tramitadores_edit", methods: ["GET","POST"])]
     public function edit(Request $request,
                         Usuario $usuario,
                         UsuarioTipoRepository $usuarioTipoRepository,
@@ -243,9 +233,7 @@ class TramitadoresController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/restore", name="tramitadores_restore", methods={"GET"})
-     */
+    #[Route("/{id}/restore", name: "tramitadores_restore", methods: ["GET"])]
     public function restore(Request $request, Usuario $usuario): Response
     {
         $this->denyAccessUnlessGranted('full','tramitadores');
@@ -257,9 +245,7 @@ class TramitadoresController extends AbstractController
 
         return $this->redirectToRoute('tramitadores_index');
     }
-    /**
-     * @Route("/{id}", name="tramitadores_delete", methods={"DELETE"})
-     */
+    #[Route("/{id}", name: "tramitadores_delete", methods: ["DELETE"])]
     public function delete(Request $request, Usuario $usuario): Response
     {
         $this->denyAccessUnlessGranted('full','tramitadores');

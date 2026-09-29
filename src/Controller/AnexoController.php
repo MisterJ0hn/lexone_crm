@@ -22,14 +22,10 @@ use Symfony\Component\Routing\Annotation\Route;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
-/**
- * @Route("/anexo")
- */
+#[Route("/anexo")]
 class AnexoController extends AbstractController
 {
-    /**
-     * @Route("/{id}", name="anexo_index", methods={"GET","POST"})
-     */
+    #[Route("/{id}", name: "anexo_index", methods: ["GET","POST"])]
     public function index(Contrato $contrato,ContratoAnexoRepository $contratoAnexoRepository ): Response
     {
         $this->denyAccessUnlessGranted('view','anexo');
@@ -42,9 +38,7 @@ class AnexoController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/new", name="anexo_new", methods={"GET","POST"})
-     */
+    #[Route("/{id}/new", name: "anexo_new", methods: ["GET","POST"])]
     public function crear(Contrato $contrato): Response
     {
         $this->denyAccessUnlessGranted('create','anexo');
@@ -54,9 +48,7 @@ class AnexoController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/causas", name="anexo_causas", methods={"GET","POST"})
-     */
+    #[Route("/{id}/causas", name: "anexo_causas", methods: ["GET","POST"])]
     public function causas(Contrato $contrato,
                             CuotaRepository $cuotaRepository,
                             JuzgadoRepository $juzgadoRepository,
@@ -211,9 +203,7 @@ class AnexoController extends AbstractController
 
   
 
-    /**
-     * @Route("/{id}/extender", name="anexo_extender", methods={"GET","POST"})
-     */
+    #[Route("/{id}/extender", name: "anexo_extender", methods: ["GET","POST"])]
     public function extender(Contrato $contrato, 
                             CuotaRepository $cuotaRepository, 
                             Request $request,
@@ -282,9 +272,7 @@ class AnexoController extends AbstractController
 
     }
 
-    /**
-     * @Route("/{id}/renegociar", name="anexo_renegociar", methods={"GET","POST"})
-     */
+    #[Route("/{id}/renegociar", name: "anexo_renegociar", methods: ["GET","POST"])]
     public function renegociar(Contrato $contrato, 
                                 CuotaRepository $cuotaRepository, 
                                 Request $request,
@@ -354,9 +342,7 @@ class AnexoController extends AbstractController
 
     }
 
-    /**
-     * @Route("/{id}/eliminar", name="anexo_eliminar", methods={"GET","POST"})
-     */
+    #[Route("/{id}/eliminar", name: "anexo_eliminar", methods: ["GET","POST"])]
     public function eliminar(ContratoAnexo $contratoAnexo,
                             ContratoAnexoRepository $contratoAnexoRepository): Response
     {
@@ -415,9 +401,7 @@ class AnexoController extends AbstractController
         return $this->redirectToRoute('anexo_index',['id'=>$contratoAnexo->getContrato()->getId()]);
        
     }
-     /**
-     * @Route("/{id}/causas_anteriores", name="anexo_causas_anteriores", methods={"GET","POST"})
-     */
+    #[Route("/{id}/causas_anteriores", name: "anexo_causas_anteriores", methods: ["GET","POST"])]
     function listarCausasAnteriores(Contrato $contrato, CausaRepository $causaRepository): Response
     {
 
@@ -426,9 +410,7 @@ class AnexoController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/causas_anteriores_eliminar", name="anexo_causas_anteriores_eliminar", methods={"GET","POST"})
-     */
+    #[Route("/{id}/causas_anteriores_eliminar", name: "anexo_causas_anteriores_eliminar", methods: ["GET","POST"])]
     function eliminarCausasAnteriores(Causa $causa, CausaRepository $causaRepository): Response
     {
         $entityManager = $this->getDoctrine()->getManager();
@@ -445,9 +427,7 @@ class AnexoController extends AbstractController
     }
 
 
-    /**
-     * @Route("/{id}/pdf", name="anexo_pdf", methods={"GET","POST"})
-     */
+    #[Route("/{id}/pdf", name: "anexo_pdf", methods: ["GET","POST"])]
     public function pdf(ContratoAnexo $contratoAnexo)
     {
         $this->denyAccessUnlessGranted('view','contrato');

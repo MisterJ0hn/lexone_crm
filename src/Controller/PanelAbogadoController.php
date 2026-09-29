@@ -54,14 +54,10 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-/**
-     * @Route("/panel_abogado")
-     */
+#[Route("/panel_abogado")]
 class PanelAbogadoController extends AbstractController
 {
-    /**
-     * @Route("/", name="panel_abogado_index", methods={"GET","POST"})
-     */
+    #[Route("/", name: "panel_abogado_index", methods: ["GET","POST"])]
     public function index(AgendaRepository $agendaRepository,
                         CuentaRepository $cuentaRepository,
                         PaginatorInterface $paginator,
@@ -179,9 +175,7 @@ class PanelAbogadoController extends AbstractController
             'bAbogado'=>$abogado
         ]);
     }
-    /**
-     * @Route("/new_rol", name="panel_abogado_new_rol", methods={"GET","POST"})
-     */
+    #[Route("/new_rol", name: "panel_abogado_new_rol", methods: ["GET","POST"])]
     public function newRol(Request $request,
                             JuzgadoRepository $juzgadoRepository,
                             ContratoRolRepository $contratoRolRepository,
@@ -212,9 +206,7 @@ class PanelAbogadoController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/reasignar", name="panel_abogado_reasignar", methods={"GET","POST"})
-     */
+    #[Route("/reasignar", name: "panel_abogado_reasignar", methods: ["GET","POST"])]
     public function reasignar(Request $request,UsuarioRepository $usuarioRepository,AgendaRepository $agendaRepository):Response
     {
         $user=$this->getUser();
@@ -227,9 +219,7 @@ class PanelAbogadoController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/tramitadores", name="panel_abogado_tramitadores", methods={"GET","POST"})
-     */
+    #[Route("/{id}/tramitadores", name: "panel_abogado_tramitadores", methods: ["GET","POST"])]
     public function tramitadores(Cuenta $cuenta, Request $request,UsuarioRepository $usuarioRepository): Response
     {
         
@@ -237,9 +227,7 @@ class PanelAbogadoController extends AbstractController
             'tramitadores'=>$usuarioRepository->findByCuenta($cuenta->getId(),['usuarioTipo'=>7,'estado'=>1]),
         ]);
     }
-    /**
-     * @Route("/{id}/sucursales", name="panel_abogado_sucursales", methods={"GET","POST"})
-     */
+    #[Route("/{id}/sucursales", name: "panel_abogado_sucursales", methods: ["GET","POST"])]
     public function sucursales(Cuenta $cuenta, Request $request,SucursalRepository $sucursalRepository): Response
     {
         
@@ -247,9 +235,7 @@ class PanelAbogadoController extends AbstractController
             'sucursales'=>$sucursalRepository->findBy(['cuenta'=>$cuenta->getId()]),
         ]);
     }
-    /**
-     * @Route("/{id}", name="panel_abogado_new", methods={"GET","POST"})
-     */
+    #[Route("/{id}", name: "panel_abogado_new", methods: ["GET","POST"])]
     public function new(Agenda $agenda,
                         AgendaRepository $agendaRepository,
                         AgendaStatusRepository $agendaStatusRepository,
@@ -317,9 +303,7 @@ class PanelAbogadoController extends AbstractController
         ]);
 
     }
-    /**
-     * @Route("/{id}/del_rol", name="panel_abogado_del_rol",  methods={"DELETE"})
-     */
+    #[Route("/{id}/del_rol", name: "panel_abogado_del_rol",  methods: ["DELETE"])]
     public function delRol(ContratoRol $contratoRol,Request $request,JuzgadoRepository $juzgadoRepository,ContratoRolRepository $contratoRolRepository): Response
     {
         
@@ -338,9 +322,7 @@ class PanelAbogadoController extends AbstractController
            
         ]);
     }
-    /**
-     * @Route("/{id}/contrata", name="panel_abogado_contrata", methods={"GET","POST"})
-     */
+    #[Route("/{id}/contrata", name: "panel_abogado_contrata", methods: ["GET","POST"])]
     public function contrata(Agenda $agenda,Request $request,
                             AgendaStatusRepository  $agendaStatusRepository,
                             JuzgadoRepository $juzgadoRepository,
@@ -701,9 +683,7 @@ class PanelAbogadoController extends AbstractController
             'materias'=>$materiaRepository->findBy([],['nombre'=>'ASC']),
         ] );
     }
-    /**
-     * @Route("/{id}/no_contrata", name="panel_abogado_no_contrata", methods={"GET","POST"})
-     */
+    #[Route("/{id}/no_contrata", name: "panel_abogado_no_contrata", methods: ["GET","POST"])]
     public function noContrata(Agenda $agenda,Request $request,
                     AgendaStatusRepository  $agendaStatusRepository,
                     JuzgadoRepository $juzgadoRepository,
@@ -757,9 +737,7 @@ class PanelAbogadoController extends AbstractController
             'status'=>$_GET['status']
         ]);
     }
-    /**
-     * @Route("/{id}/compania", name="panel_abogado_compania", methods={"GET","POST"})
-     */
+    #[Route("/{id}/compania", name: "panel_abogado_compania", methods: ["GET","POST"])]
     public function compania(Agenda $agenda,Request $request,
                    CuentaRepository  $cuentaRepository)
     {

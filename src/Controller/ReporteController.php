@@ -15,24 +15,18 @@ use App\Repository\ContratoRepository;
 use App\Repository\UsuarioRepository;
 use Knp\Component\Pager\PaginatorInterface;
 
-/**
- * @Route("/reporte")
- */
+#[Route("/reporte")]
 
 class ReporteController extends AbstractController
 {
-    /**
-     * @Route("/", name="reporte_index")
-     */
+    #[Route("/", name: "reporte_index")]
     public function index(): Response
     {
         return $this->render('reporte/index.html.twig', [
             'controller_name' => 'ReporteController',
         ]);
     }
-    /**
-     * @Route("/agendador", name="reporte_agendador")
-     */
+    #[Route("/agendador", name: "reporte_agendador")]
     public function agendador(AgendaRepository $agendaRepository,
                             CuentaRepository $cuentaRepository,
                             PaginatorInterface $paginator,
@@ -180,9 +174,7 @@ class ReporteController extends AbstractController
 
         ]);
     }
-     /**
-     * @Route("/abogado", name="reporte_abogado", methods={"GET"})
-     */
+    #[Route("/abogado", name: "reporte_abogado", methods: ["GET"])]
     public function abogado(AgendaRepository $agendaRepository,
                             CuentaRepository $cuentaRepository,
                             PaginatorInterface $paginator,
@@ -329,9 +321,7 @@ class ReporteController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/cobrador", name="reporte_cobrador", methods={"GET"})
-     */
+    #[Route("/cobrador", name: "reporte_cobrador", methods: ["GET"])]
     public function cobrador(): Response
     {
         $this->denyAccessUnlessGranted('view','reporte_cobrador');
@@ -340,9 +330,7 @@ class ReporteController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/campania", name="reporte_campania", methods={"GET"})
-     */
+    #[Route("/campania", name: "reporte_campania", methods: ["GET"])]
     public function campania(AgendaRepository $agendaRepository,
                             CuentaRepository $cuentaRepository,
                             PaginatorInterface $paginator,
@@ -456,9 +444,7 @@ class ReporteController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/contratos", name="reporte_contratos", methods={"GET"})
-     */
+    #[Route("/contratos", name: "reporte_contratos", methods: ["GET"])]
     public function contratos(AgendaRepository $agendaRepository,
                             CuentaRepository $cuentaRepository,
                             PaginatorInterface $paginator,
@@ -580,9 +566,7 @@ class ReporteController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/desiste", name="reporte_desiste", methods={"GET"})
-     */
+    #[Route("/desiste", name: "reporte_desiste", methods: ["GET"])]
     public function desiste(AgendaRepository $agendaRepository,
                             CuentaRepository $cuentaRepository,
                             PaginatorInterface $paginator,
@@ -693,9 +677,7 @@ class ReporteController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/contacto", name="reporte_contacto", methods={"GET"})
-     */
+    #[Route("/contacto", name: "reporte_contacto", methods: ["GET"])]
     public function contacto(AgendaRepository $agendaRepository,
                             CuentaRepository $cuentaRepository,
                             PaginatorInterface $paginator,
@@ -812,9 +794,7 @@ class ReporteController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/gestiones", name="reporte_gestiones")
-     */
+    #[Route("/gestiones", name: "reporte_gestiones")]
     public function gestiones(ReporteRepository $reporteRepository,
                             UsuarioTipoRepository $usuarioTipoRepository,
                             PaginatorInterface $paginator,
@@ -887,9 +867,7 @@ class ReporteController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/cbo_usuarios", name="reporte_cbo_usuarios", methods={"POST"})
-     */
+    #[Route("/cbo_usuarios", name: "reporte_cbo_usuarios", methods: ["POST"])]
     public function cboUsuario(Request $request, UsuarioRepository $usuarioRepository)
     {
         

@@ -10,15 +10,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-/**
- * @Route("/mis_datos")
- */
+#[Route("/mis_datos")]
 
 class MisDatosController extends AbstractController
 {
-    /**
-     * @Route("/", name="mis_datos_index", methods={"GET"})
-     */
+    #[Route("/", name: "mis_datos_index", methods: ["GET"])]
     public function index(
     ModuloPerRepository $moduloPerRepository)
     {
@@ -30,9 +26,7 @@ class MisDatosController extends AbstractController
             'pagina'=>$pagina->getNombre(),
             ]);
     }
-    /**
-     * @Route("/modificar", name="mis_datos_modificar", methods={"GET","POST"})
-     */
+    #[Route("/modificar", name: "mis_datos_modificar", methods: ["GET","POST"])]
     public function modificar(UsuarioRepository $usuarioRepository, Request $request): Response
     {
         $this->denyAccessUnlessGranted('edit','mis_datos');
@@ -59,9 +53,7 @@ class MisDatosController extends AbstractController
 
 
     }
-     /**
-     * @Route("/password", name="mis_datos_password", methods={"GET","POST"})
-     */
+    #[Route("/password", name: "mis_datos_password", methods: ["GET","POST"])]
     public function password(UsuarioRepository $usuarioRepository, Request $request,UserPasswordEncoderInterface $encoder): Response
     {
         $this->denyAccessUnlessGranted('edit','mis_datos');

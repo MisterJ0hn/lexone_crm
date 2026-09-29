@@ -16,15 +16,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/privilegio_tipousuario")
- */
+#[Route("/privilegio_tipousuario")]
 class PrivilegioTipousuarioController extends AbstractController
 {
     
-    /**
-     * @Route("/{id}", name="privilegio_tipousuario_index", methods={"GET"})
-     */
+    #[Route("/{id}", name: "privilegio_tipousuario_index", methods: ["GET"])]
     public function index(UsuarioTipo $usuarioTipo, 
                         PrivilegioTipousuarioRepository $privilegioTipousuarioRepository,
                         ModuloPerRepository $moduloRepository,
@@ -43,9 +39,7 @@ class PrivilegioTipousuarioController extends AbstractController
     }
 
     
-    /**
-     * @Route("/{id}/new", name="privilegio_tipousuario_new", methods={"GET","POST"})
-     */
+    #[Route("/{id}/new", name: "privilegio_tipousuario_new", methods: ["GET","POST"])]
     public function new(Request $request,
                         UsuarioTipo $usuarioTipo,
                         ModuloPerRepository $moduloPerRepository,
@@ -110,9 +104,7 @@ class PrivilegioTipousuarioController extends AbstractController
     
 
 
-    /**
-     * @Route("/{id}/edit", name="privilegio_tipousuario_edit", methods={"GET","POST"})
-     */
+    #[Route("/{id}/edit", name: "privilegio_tipousuario_edit", methods: ["GET","POST"])]
     public function edit(Request $request,PrivilegioTipousuario $privilegioTipousuario,AccionRepository $accionRepository,PrivilegioTipousuarioRepository $privilegioTipousuarioRepository,PrivilegioRepository $privilegioRepository): Response
     {
         $this->denyAccessUnlessGranted('edit','privilegio_tipousuario');
@@ -149,9 +141,7 @@ class PrivilegioTipousuarioController extends AbstractController
         return $this->render('privilegio_tipousuario/ok.html.twig');
     }
 
-    /**
-     * @Route("/{id}", name="privilegio_tipousuario_delete", methods={"DELETE"})
-     */
+    #[Route("/{id}", name: "privilegio_tipousuario_delete", methods: ["DELETE"])]
     public function delete(Request $request, PrivilegioTipousuario $privilegioTipousuario): Response
     {
         $this->denyAccessUnlessGranted('full','privilegio_tipousuario');

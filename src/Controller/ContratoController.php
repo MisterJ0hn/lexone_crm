@@ -73,14 +73,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
-/**
- * @Route("/contrato")
- */
+#[Route("/contrato")]
 class ContratoController extends AbstractController
 {
-    /**
-     * @Route("/", name="contrato_index", methods={"GET","POST"})
-     */
+    #[Route("/", name: "contrato_index", methods: ["GET","POST"])]
     public function index(ContratoRepository $contratoRepository,PaginatorInterface $paginator,ModuloPerRepository $moduloPerRepository,Request $request,CuentaRepository $cuentaRepository): Response
     {
         $this->denyAccessUnlessGranted('view','contrato');
@@ -174,9 +170,7 @@ class ContratoController extends AbstractController
         ]);
     }
 
-     /**
-     * @Route("/actualizafecha", name="contrato_actualizaFecha", methods={"GET","POST"})
-     */
+    #[Route("/actualizafecha", name: "contrato_actualizaFecha", methods: ["GET","POST"])]
     public function actualizafecha(Request $request,ContratoRepository $contratoRepository): Response
     {
         $entityManager = $this->getDoctrine()->getManager();
@@ -190,9 +184,7 @@ class ContratoController extends AbstractController
         }
         return $this->redirectToRoute('contrato_index');
     }
-    /**
-     * @Route("/new", name="contrato_new", methods={"GET","POST"})
-     */
+    #[Route("/new", name: "contrato_new", methods: ["GET","POST"])]
     public function new(Request $request): Response
     {
         $this->denyAccessUnlessGranted('create','contrato');
@@ -213,9 +205,7 @@ class ContratoController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-    /**
-     * @Route("/regenerapdfs", name="contrato_regenerapdfs", methods={"GET","POST"})
-     */
+    #[Route("/regenerapdfs", name: "contrato_regenerapdfs", methods: ["GET","POST"])]
     public function regenerapdfs(\Knp\Snappy\Pdf $snappy,ContratoRepository $contratoRepository): Response
     {
         $this->denyAccessUnlessGranted('edit','contrato');
@@ -242,9 +232,7 @@ class ContratoController extends AbstractController
         }
         return $this->redirectToRoute('contrato_index');
     }
-    /**
-     * @Route("/{id}", name="contrato_show", methods={"GET"})
-     */
+    #[Route("/{id}", name: "contrato_show", methods: ["GET"])]
     public function show(Contrato $contrato,
                         DiasPagoRepository $diasPagoRepository,
                         ModuloPerRepository $moduloPerRepository,
@@ -262,9 +250,7 @@ class ContratoController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/new_rol", name="contrato_new_rol", methods={"GET","POST"})
-     */
+    #[Route("/{id}/new_rol", name: "contrato_new_rol", methods: ["GET","POST"])]
     public function newRol(Contrato $contrato,Request $request,JuzgadoRepository $juzgadoRepository,ContratoRolRepository $contratoRolRepository): Response
     {
         
@@ -297,9 +283,7 @@ class ContratoController extends AbstractController
         ]);
     }
     
-    /**
-     * @Route("/{id}/del_rol", name="contrato_del_rol",  methods={"DELETE"})
-     */
+    #[Route("/{id}/del_rol", name: "contrato_del_rol",  methods: ["DELETE"])]
     public function delRol(ContratoRol $contratoRol,Request $request,JuzgadoRepository $juzgadoRepository,ContratoRolRepository $contratoRolRepository): Response
     {
         
@@ -316,9 +300,7 @@ class ContratoController extends AbstractController
            
         ]);
     }
-    /**
-     * @Route("/{id}/edit", name="contrato_edit", methods={"GET","POST"})
-     */
+    #[Route("/{id}/edit", name: "contrato_edit", methods: ["GET","POST"])]
     public function edit(Request $request, 
                     Contrato $contrato,
                     JuzgadoRepository $juzgadoRepository,
@@ -568,9 +550,7 @@ class ContratoController extends AbstractController
     }
 
 
-    /**
-     * @Route("/{id}/finalizar", name="contrato_finalizar", methods={"GET","POST"})
-     */
+    #[Route("/{id}/finalizar", name: "contrato_finalizar", methods: ["GET","POST"])]
     public function finalizar(Request $request, 
                             Contrato $contrato,
                             JuzgadoRepository $juzgadoRepository,
@@ -840,9 +820,7 @@ class ContratoController extends AbstractController
     }
 
    
-    /**
-     * @Route("/{id}/pdf", name="contrato_pdf", methods={"GET","POST"})
-     */
+    #[Route("/{id}/pdf", name: "contrato_pdf", methods: ["GET","POST"])]
     public function pdf(Contrato $contrato,
                         ContratoTemplateRepository $contratoTemplateRepository,
                         TipoClienteRepository $tipoClienteRepository,
@@ -1008,9 +986,7 @@ class ContratoController extends AbstractController
 
         return $this->redirectToRoute('contrato_index');
     }
-    /**
-     * @Route("/{id}/terminar", name="contrato_terminar", methods={"GET","POST"})
-     */
+    #[Route("/{id}/terminar", name: "contrato_terminar", methods: ["GET","POST"])]
     function terminar(Contrato $contrato,
                     DiasPagoRepository $diasPagoRepository,
                     ModuloPerRepository $moduloPerRepository,
@@ -1039,9 +1015,7 @@ class ContratoController extends AbstractController
         ]);
     }
 
-     /**
-     * @Route("/{id}/ciudad", name="contrato_ciudad", methods={"GET","POST"})
-     */
+    #[Route("/{id}/ciudad", name: "contrato_ciudad", methods: ["GET","POST"])]
     function ciudad(Region $region, CiudadRepository $ciudadRepository,Request $request): Response
     {
         $ciudad_def=null;
@@ -1056,9 +1030,7 @@ class ContratoController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/comuna", name="contrato_comuna", methods={"GET","POST"})
-     */
+    #[Route("/{id}/comuna", name: "contrato_comuna", methods: ["GET","POST"])]
     function comuna(Ciudad $ciudad, ComunaRepository $comunaRepository,Request $request): Response
     {
         
@@ -1079,9 +1051,8 @@ class ContratoController extends AbstractController
      * cambiar de región (ver contrato/lineaTiempoConvenio.html.twig). A diferencia
      * de ciudad(), que devuelve un <select> completo para reemplazar un <div>
      * contenedor en el flujo Persona.
-     *
-     * @Route("/{id}/ciudad_combo", name="contrato_ciudad_combo", methods={"GET","POST"})
      */
+    #[Route("/{id}/ciudad_combo", name: "contrato_ciudad_combo", methods: ["GET","POST"])]
     function ciudadCombo(Region $region, CiudadRepository $ciudadRepository): Response
     {
         return $this->render('contrato/_ciudad_combo.html.twig', [
@@ -1092,18 +1063,15 @@ class ContratoController extends AbstractController
     /**
      * Combo de comunas (solo <option>) análogo a ciudadCombo(), para el <select>
      * de comuna del cliente propio de Convenio/Empresa al cambiar de ciudad.
-     *
-     * @Route("/{id}/comuna_combo", name="contrato_comuna_combo", methods={"GET","POST"})
      */
+    #[Route("/{id}/comuna_combo", name: "contrato_comuna_combo", methods: ["GET","POST"])]
     function comunaCombo(Ciudad $ciudad, ComunaRepository $comunaRepository): Response
     {
         return $this->render('contrato/_comuna_combo.html.twig', [
             'comunas' => $comunaRepository->findBy(['ciudad' => $ciudad->getId()], ['nombre' => 'ASC']),
         ]);
     }
-    /**
-     * @Route("/{id}/linea_tiempo", name="contrato_linea_tiempo", methods={"GET","POST"})
-     */
+    #[Route("/{id}/linea_tiempo", name: "contrato_linea_tiempo", methods: ["GET","POST"])]
     function lineaTiempo(Contrato $contrato,
                         ModuloPerRepository $moduloPerRepository,
                         MateriaRepository $materiaRepository,
@@ -1184,9 +1152,7 @@ class ContratoController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/convenio/cliente", name="contrato_convenio_nuevo_cliente", methods={"GET","POST"})
-     */
+    #[Route("/{id}/convenio/cliente", name: "contrato_convenio_nuevo_cliente", methods: ["GET","POST"])]
     function nuevoClienteConvenio(Contrato $contrato,
                                 Request $request,
                                 ClienteRepository $clienteRepository,
@@ -1321,9 +1287,7 @@ class ContratoController extends AbstractController
         return $this->redirectToRoute('contrato_linea_tiempo', ['id' => $contrato->getId()]);
     }
 
-    /**
-     * @Route("/{id}/linea_tiempo_detalle", name="contrato_linea_tiempo_detalle", methods={"GET","POST"})
-     */
+    #[Route("/{id}/linea_tiempo_detalle", name: "contrato_linea_tiempo_detalle", methods: ["GET","POST"])]
     function lineaTiempoDetalle(Causa $causa, 
     LineaTiempoTerminadaRepository $lineaTiempoTerminadaRepository,
     ModuloPerRepository $moduloPerRepository,
@@ -1356,9 +1320,7 @@ class ContratoController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/linea_tiempo_observacion", name="contrato_linea_tiempo_observacion", methods={"GET","POST"})
-     */
+    #[Route("/{id}/linea_tiempo_observacion", name: "contrato_linea_tiempo_observacion", methods: ["GET","POST"])]
     function lineaTiempoObservacion(Causa $causa, 
                                     LineaTiempoEtapasRepository $lineaTiempoEtapaRepository, 
                                     LineaTiempoTerminadaRepository $lineaTiempoTerminadaRepository ,
@@ -1415,9 +1377,7 @@ class ContratoController extends AbstractController
         return $this->redirectToRoute('contrato_linea_tiempo_detalle',['id'=>$causa->getId()]);
     }
 
-    /**
-     * @Route("/{id}/observacion", name="contrato_observacion", methods={"GET","POST"})
-     */
+    #[Route("/{id}/observacion", name: "contrato_observacion", methods: ["GET","POST"])]
     function observacion(Causa $causa, 
                         LineaTiempoEtapasRepository $lineaTiempoEtapaRepository, 
                         LineaTiempoTerminadaRepository $lineaTiempoTerminadaRepository ,
@@ -1444,9 +1404,7 @@ class ContratoController extends AbstractController
         return $this->redirectToRoute('contrato_linea_tiempo',['id'=>$contrato->getId()]);
     }
 
-    /**
-     * @Route("/{id}/historial_campo/{campo}", name="contrato_historial_campo", methods={"GET"})
-     */
+    #[Route("/{id}/historial_campo/{campo}", name: "contrato_historial_campo", methods: ["GET"])]
     public function historialCampo(Contrato $contrato,
                                     string $campo,
                                     ClienteHistorialRepository $clienteHistorialRepository): Response
@@ -1465,9 +1423,7 @@ class ContratoController extends AbstractController
             'historial' => $cliente ? $clienteHistorialRepository->findHistorialCampo($cliente, $campo) : [],
         ]);
     }
-    /**
-     * @Route("/{id}/observacion_modal", name="contrato_observacion_modal", methods={"GET"})
-     */
+    #[Route("/{id}/observacion_modal", name: "contrato_observacion_modal", methods: ["GET"])]
     public function observacionModal(Contrato $contrato,
                                     ContratoObservacionRepository $contratoObservacionRepository,
                                     CausaObservacionRepository $causaObservacionRepository,
@@ -1488,9 +1444,7 @@ class ContratoController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/editar_observacion", name="contrato_observacion_editar", methods={"POST"})
-     */
+    #[Route("/{id}/editar_observacion", name: "contrato_observacion_editar", methods: ["POST"])]
     public function editarObservacion(Request $request,
                                     Contrato $contrato,
                                     ContratoObservacionRepository $contratoObservacionRepository,
@@ -1571,9 +1525,7 @@ class ContratoController extends AbstractController
     }
 
 
-    /**
-     * @Route("/{id}/modificar_servicio", name="contrato_modificar_servicio", methods={"GET","POST"})
-     */
+    #[Route("/{id}/modificar_servicio", name: "contrato_modificar_servicio", methods: ["GET","POST"])]
     function modificarServicio(Causa $causa,Request $request,
                                 MateriaEstrategiaRepository $materiaEstrategiaRepository,
                                 JuzgadoRepository $juzgadoRepository,
@@ -1614,9 +1566,7 @@ class ContratoController extends AbstractController
         return $this->redirectToRoute('contrato_linea_tiempo',['id'=>$causa->getAgenda()->getContrato()->getId()]);
     }
 
-     /**
-     * @Route("/{id}/anexos", name="contrato_anexos", methods={"GET","POST"})
-     */
+    #[Route("/{id}/anexos", name: "contrato_anexos", methods: ["GET","POST"])]
     public function anexos(Contrato $contrato, Request $request): Response
     {
 
@@ -1625,9 +1575,7 @@ class ContratoController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="contrato_delete", methods={"DELETE"})
-     */
+    #[Route("/{id}", name: "contrato_delete", methods: ["DELETE"])]
     public function delete(Request $request, Contrato $contrato,AgendaStatusRepository $agendaStatusRepository): Response
     {
         $this->denyAccessUnlessGranted('full','contrato');
@@ -1713,9 +1661,7 @@ class ContratoController extends AbstractController
             "Attachment" => true
         //]);*/
     }
-    /**
-     * @Route("/audio_upload", name="contrato_audio_upload", methods={"GET","POST"})
-     */
+    #[Route("/audio_upload", name: "contrato_audio_upload", methods: ["GET","POST"])]
     public function upload(Request $request, ContratoRepository $contratoRepository){
         $user=$this->getUser();
         
@@ -1831,9 +1777,7 @@ class ContratoController extends AbstractController
         
         return $this->redirectToRoute('contrato_index',['error_toast'=>$message]);
     }
-    /**
-     * @Route("/{id}/audio_delete", name="contrato_audio_delete", methods={"GET","POST"})
-     */
+    #[Route("/{id}/audio_delete", name: "contrato_audio_delete", methods: ["GET","POST"])]
     public function audiodelete(Contrato $contrato, Request $request, ContratoAudiosRepository $contratoAudiosRepository){
         $contratoAudios=$contratoAudiosRepository->findBy(['contrato'=>$contrato]);
         $entityManager=$this->getDoctrine()->getManager();
