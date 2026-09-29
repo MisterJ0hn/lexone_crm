@@ -7,32 +7,22 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=CobranzaFuncionRepository::class)
- */
+#[ORM\Entity(repositoryClass: CobranzaFuncionRepository::class)]
 class CobranzaFuncion
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $nombre;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Empresa::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Empresa::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private $empresa;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Cobranza::class, mappedBy="funcion")
-     */
+    #[ORM\OneToMany(targetEntity: Cobranza::class, mappedBy: "funcion")]
     private $cobranzas;
 
     public function __construct()

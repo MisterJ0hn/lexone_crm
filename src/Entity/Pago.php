@@ -7,105 +7,67 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=PagoRepository::class)
- */
+#[ORM\Entity(repositoryClass: PagoRepository::class)]
 class Pago
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=PagoTipo::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: PagoTipo::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private $pagoTipo;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=PagoCanal::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: PagoCanal::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private $pagoCanal;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: "integer")]
     private $monto;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $boleta;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: "text", nullable: true)]
     private $observacion;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: "datetime")]
     private $fechaPago;
 
-    /**
-     * @ORM\Column(type="time")
-     */
+    #[ORM\Column(type: "time")]
     private $horaPago;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: "datetime")]
     private $fechaRegistro;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Usuario::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Usuario::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private $usuarioRegistro;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: "text", nullable: true)]
     private $comprobante;
 
-    /**
-     * @ORM\OneToMany(targetEntity=PagoCuotas::class, mappedBy="pago", orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: PagoCuotas::class, mappedBy: "pago", orphanRemoval: true)]
     private $pagoCuotas;
 
-    /**
-     * @ORM\Column(type="date", nullable=true)
-     */
+    #[ORM\Column(type: "date", nullable: true)]
     private $fechaIngreso;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $ncomprobante;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=CuentaCorriente::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: CuentaCorriente::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private $cuentaCorriente;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private $anulado;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=usuario::class)
-     */
+    #[ORM\ManyToOne(targetEntity: usuario::class)]
     private $usuarioAnulacion;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: "datetime", nullable: true)]
     private $fechaAnulacion;
 
     public function __construct()

@@ -7,36 +7,24 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=MenuCabezeraRepository::class)
- */
+#[ORM\Entity(repositoryClass: MenuCabezeraRepository::class)]
 class MenuCabezera
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $nombre;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Empresa::class, inversedBy="menuCabezeras")
-     */
+    #[ORM\ManyToOne(targetEntity: Empresa::class, inversedBy: "menuCabezeras")]
     private $empresa;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Menu::class, mappedBy="menuCabezera")
-     */
+    #[ORM\OneToMany(targetEntity: Menu::class, mappedBy: "menuCabezera")]
     private $menus;
 
-    /**
-     * @ORM\OneToMany(targetEntity=UsuarioTipo::class, mappedBy="menuCabezera")
-     */
+    #[ORM\OneToMany(targetEntity: UsuarioTipo::class, mappedBy: "menuCabezera")]
     private $usuarioTipos;
 
     public function __construct()

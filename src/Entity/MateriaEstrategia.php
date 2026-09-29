@@ -7,34 +7,24 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=MateriaEstrategiaRepository::class)
- */
+#[ORM\Entity(repositoryClass: MateriaEstrategiaRepository::class)]
 class MateriaEstrategia
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Materia::class, inversedBy="materiaEstrategias")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Materia::class, inversedBy: "materiaEstrategias")]
+    #[ORM\JoinColumn(nullable: false)]
     private $materia;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=EstrategiaJuridica::class, inversedBy="materiaEstrategias")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: EstrategiaJuridica::class, inversedBy: "materiaEstrategias")]
+    #[ORM\JoinColumn(nullable: false)]
     private $estrategiaJuridica;
 
     
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: "boolean")]
     private $estado;
 
     public function __construct()

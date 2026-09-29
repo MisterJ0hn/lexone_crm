@@ -5,38 +5,26 @@ namespace App\Entity;
 use App\Repository\ContratoArchivosRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=ContratoArchivosRepository::class)
- */
+#[ORM\Entity(repositoryClass: ContratoArchivosRepository::class)]
 class ContratoArchivos
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Usuario::class, inversedBy="contratoArchivos")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Usuario::class, inversedBy: "contratoArchivos")]
+    #[ORM\JoinColumn(nullable: false)]
     private $usuarioRegistro;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Contrato::class, inversedBy="contratoArchivos")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Contrato::class, inversedBy: "contratoArchivos")]
+    #[ORM\JoinColumn(nullable: false)]
     private $contrato;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $url;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: "datetime")]
     private $fechaSubida;
 
     public function getId(): ?int

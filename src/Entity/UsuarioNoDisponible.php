@@ -5,66 +5,42 @@ namespace App\Entity;
 use App\Repository\UsuarioNoDisponibleRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=UsuarioNoDisponibleRepository::class)
- */
+#[ORM\Entity(repositoryClass: UsuarioNoDisponibleRepository::class)]
 class UsuarioNoDisponible
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\Column(type="date")
-     */
+    #[ORM\Column(type: "date")]
     private $fecha;
 
-    /**
-     * @ORM\Column(type="time")
-     */
+    #[ORM\Column(type: "time")]
     private $horaInicio;
 
-    /**
-     * @ORM\Column(type="time")
-     */
+    #[ORM\Column(type: "time")]
     private $horaFin;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Usuario::class, inversedBy="usuarioNoDisponibles")
-     */
+    #[ORM\ManyToOne(targetEntity: Usuario::class, inversedBy: "usuarioNoDisponibles")]
     private $usuario;
 
-    /**
-     * @ORM\Column(type="date", nullable=true)
-     */
+    #[ORM\Column(type: "date", nullable: true)]
     private $fechaInicio;
 
-    /**
-     * @ORM\Column(type="date", nullable=true)
-     */
+    #[ORM\Column(type: "date", nullable: true)]
     private $fechaFin;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $anio;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $mes;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $dia;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $concepto;
 
     public function getId(): ?int

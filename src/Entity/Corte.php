@@ -7,42 +7,28 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=CorteRepository::class)
- */
+#[ORM\Entity(repositoryClass: CorteRepository::class)]
 class Corte
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=100)
-     */
+    #[ORM\Column(type: "string", length: 100)]
     private $nombre;
 
     
-    /**
-     * @ORM\OneToMany(targetEntity=Juzgado::class, mappedBy="corte")
-     */
+    #[ORM\OneToMany(targetEntity: Juzgado::class, mappedBy: "corte")]
     private $juzgados;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Causa::class, mappedBy="corte")
-     */
+    #[ORM\OneToMany(targetEntity: Causa::class, mappedBy: "corte")]
     private $causas;
 
-    /**
-     * @ORM\Column(type="bigint", nullable=true)
-     */
+    #[ORM\Column(type: "bigint", nullable: true)]
     private $pjudCorteId;
 
-    /**
-     * @ORM\OneToMany(targetEntity=MateriaCorte::class, mappedBy="corte")
-     */
+    #[ORM\OneToMany(targetEntity: MateriaCorte::class, mappedBy: "corte")]
     private $materiaCortes;
 
     public function __construct()

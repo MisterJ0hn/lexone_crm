@@ -7,31 +7,21 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=AgendaSubStatusRepository::class)
- */
+#[ORM\Entity(repositoryClass: AgendaSubStatusRepository::class)]
 class AgendaSubStatus
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=AgendaStatus::class, inversedBy="agendaSubStatuses")
-     */
+    #[ORM\ManyToOne(targetEntity: AgendaStatus::class, inversedBy: "agendaSubStatuses")]
     private $agendaStatus;
 
-    /**
-     * @ORM\Column(type="string", length=30)
-     */
+    #[ORM\Column(type: "string", length: 30)]
     private $nombre;
 
-    /**
-     * @ORM\OneToMany(targetEntity=AgendaObservacion::class, mappedBy="subStatus")
-     */
+    #[ORM\OneToMany(targetEntity: AgendaObservacion::class, mappedBy: "subStatus")]
     private $agendaObservacions;
 
     public function __construct()

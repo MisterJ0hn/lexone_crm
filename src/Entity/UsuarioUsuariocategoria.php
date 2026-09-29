@@ -5,34 +5,24 @@ namespace App\Entity;
 use App\Repository\UsuarioUsuariocategoriaRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=UsuarioUsuariocategoriaRepository::class)
- */
+#[ORM\Entity(repositoryClass: UsuarioUsuariocategoriaRepository::class)]
 class UsuarioUsuariocategoria
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Usuario::class, inversedBy="usuarioUsuariocategorias")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Usuario::class, inversedBy: "usuarioUsuariocategorias")]
+    #[ORM\JoinColumn(nullable: false)]
     private $usuario;
 
     
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Cuenta::class, inversedBy="usuarioUsuariocategorias")
-     */
+    #[ORM\ManyToOne(targetEntity: Cuenta::class, inversedBy: "usuarioUsuariocategorias")]
     private $cuenta;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Agenda::class, inversedBy="usuarioUsuariocategorias")
-     */
+    #[ORM\ManyToOne(targetEntity: Agenda::class, inversedBy: "usuarioUsuariocategorias")]
     private $agenda;
 
     public function getId(): ?int

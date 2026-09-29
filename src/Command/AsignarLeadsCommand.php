@@ -15,8 +15,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Twig\Environment;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 
 
+#[AsCommand(name: 'app:asignar-leads')]
 class AsignarLeadsCommand extends Command
 {
     protected static $defaultName = 'app:asignar-leads';

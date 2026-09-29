@@ -7,81 +7,51 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=PjudMovimientoRepository::class)
- */
+#[ORM\Entity(repositoryClass: PjudMovimientoRepository::class)]
 class PjudMovimiento
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=PjudCausa::class, inversedBy="pjudMovimientos")
-     */
+    #[ORM\ManyToOne(targetEntity: PjudCausa::class, inversedBy: "pjudMovimientos")]
     private $pjudCausa;
 
-    /**
-     * @ORM\Column(type="string", length=50, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 50, nullable: true)]
     private $folio;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: "boolean")]
     private $tienePdf;
 
-    /**
-     * @ORM\Column(type="string", length=100, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 100, nullable: true)]
     private $etapa;
 
-    /**
-     * @ORM\Column(type="string", length=200)
-     */
+    #[ORM\Column(type: "string", length: 200)]
     private $tramite;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $descripcion;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: "datetime", nullable: true)]
     private $fecha;
 
-    /**
-     * @ORM\Column(type="string", length=50, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 50, nullable: true)]
     private $foja;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $indice;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $cuadernoId;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $cuadernoNombre;
 
-    /**
-     * @ORM\OneToMany(targetEntity=PjudPdf::class, mappedBy="pjudMovimiento")
-     */
+    #[ORM\OneToMany(targetEntity: PjudPdf::class, mappedBy: "pjudMovimiento")]
     private $pjudPdfs;
 
-    /**
-     * @ORM\OneToMany(targetEntity=PjudAnexoMovimiento::class, mappedBy="pjudMovimiento")
-     */
+    #[ORM\OneToMany(targetEntity: PjudAnexoMovimiento::class, mappedBy: "pjudMovimiento")]
     private $pjudAnexoMovimientos;
 
     public function __construct()

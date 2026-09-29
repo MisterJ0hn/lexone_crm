@@ -5,63 +5,41 @@ namespace App\Entity;
 use App\Repository\CobranzaRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=CobranzaRepository::class)
- */
+#[ORM\Entity(repositoryClass: CobranzaRepository::class)]
 class Cobranza
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=CobranzaFuncion::class, inversedBy="cobranzas")
-     */
+    #[ORM\ManyToOne(targetEntity: CobranzaFuncion::class, inversedBy: "cobranzas")]
     private $funcion;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=CobranzaRespuesta::class, inversedBy="cobranzas")
-     */
+    #[ORM\ManyToOne(targetEntity: CobranzaRespuesta::class, inversedBy: "cobranzas")]
     private $respuesta;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: "datetime")]
     private $fechaHora;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: "datetime", nullable: true)]
     private $fechaCompromiso;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: "text", nullable: true)]
     private $observacion;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private $isNulo;
     
-    /**
-     * @ORM\ManyToOne(targetEntity=Usuario::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Usuario::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private $usuarioRegistro;
 
-    /**
-     * @ORM\Column(type="date", nullable=true)
-     */
+    #[ORM\Column(type: "date", nullable: true)]
     private $fecha;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Contrato::class, inversedBy="cobranzas")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Contrato::class, inversedBy: "cobranzas")]
+    #[ORM\JoinColumn(nullable: false)]
     private $contrato;
 
     public function getId(): ?int

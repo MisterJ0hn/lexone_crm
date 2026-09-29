@@ -5,32 +5,22 @@ namespace App\Entity;
 use App\Repository\PasswordHistorialRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=PasswordHistorialRepository::class)
- */
+#[ORM\Entity(repositoryClass: PasswordHistorialRepository::class)]
 class PasswordHistorial
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Usuario::class, inversedBy="passwordHistorials")
-     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
-     */
+    #[ORM\ManyToOne(targetEntity: Usuario::class, inversedBy: "passwordHistorials")]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private $usuario;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $passwordHash;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: "datetime")]
     private $fechaCreacion;
 
     public function getId(): ?int

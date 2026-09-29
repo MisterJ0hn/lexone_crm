@@ -14,9 +14,11 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Console\Attribute\AsCommand;
 
 ini_set('memory_limit', '-1');
 
+#[AsCommand(name: 'app:comision-cobradores', description: 'Add a short description for your command')]
 class ComisionCobradoresCommand extends Command
 {
     protected static $defaultName = 'app:comision-cobradores';

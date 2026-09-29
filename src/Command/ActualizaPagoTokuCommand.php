@@ -13,8 +13,10 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ContainerInterface as DependencyInjectionContainerInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 
 
+#[AsCommand(name: 'ActualizaPagoToku', description: 'Add a short description for your command')]
 class ActualizaPagoTokuCommand extends Command
 {
     protected static $defaultName = 'ActualizaPagoToku';

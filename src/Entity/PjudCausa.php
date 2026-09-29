@@ -7,166 +7,102 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=PjudCausaRepository::class)
- */
+#[ORM\Entity(repositoryClass: PjudCausaRepository::class)]
 class PjudCausa
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=20)
-     */
+    #[ORM\Column(type: "string", length: 20)]
     private $rit;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $caratulado;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $tribunalNombre;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: "datetime", nullable: true)]
     private $fechaIngreso;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private $estado;
 
-    /**
-     * @ORM\Column(type="string", length=20, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 20, nullable: true)]
     private $etapa;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: "integer")]
     private $totalMovimientos;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: "integer")]
     private $totalPdfs;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: "datetime", nullable: true)]
     private $createdAt;
 
-    /**
-     * @ORM\OneToMany(targetEntity=PjudEbook::class, mappedBy="pjudCausa")
-     */
+    #[ORM\OneToMany(targetEntity: PjudEbook::class, mappedBy: "pjudCausa")]
     private $pjudEbooks;
 
-    /**
-     * @ORM\OneToMany(targetEntity=PjudMovimiento::class, mappedBy="pjudCausa")
-     */
+    #[ORM\OneToMany(targetEntity: PjudMovimiento::class, mappedBy: "pjudCausa")]
     private $pjudMovimientos;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Causa::class, inversedBy="pjudCausas")
-     */
+    #[ORM\ManyToOne(targetEntity: Causa::class, inversedBy: "pjudCausas")]
     private $causa;
 
-    /**
-     * @ORM\OneToMany(targetEntity=PjudLitigantes::class, mappedBy="pjudCausa")
-     */
+    #[ORM\OneToMany(targetEntity: PjudLitigantes::class, mappedBy: "pjudCausa")]
     private $pjudLitigantes;
 
-    /**
-     * @ORM\OneToMany(targetEntity=PjudNotificaciones::class, mappedBy="pjudCausa")
-     */
+    #[ORM\OneToMany(targetEntity: PjudNotificaciones::class, mappedBy: "pjudCausa")]
     private $pjudNotificaciones;
 
-    /**
-     * @ORM\OneToMany(targetEntity=PjudEscritos::class, mappedBy="pjudCausa")
-     */
+    #[ORM\OneToMany(targetEntity: PjudEscritos::class, mappedBy: "pjudCausa")]
     private $pjudEscritos;
 
-    /**
-     * @ORM\OneToMany(targetEntity=PjudInformacionReceptor::class, mappedBy="pjudCausa")
-     */
+    #[ORM\OneToMany(targetEntity: PjudInformacionReceptor::class, mappedBy: "pjudCausa")]
     private $pjudInformacionReceptors;
 
-    /**
-     * @ORM\OneToMany(targetEntity=PjudAnexoCausa::class, mappedBy="pjudCausa")
-     */
+    #[ORM\OneToMany(targetEntity: PjudAnexoCausa::class, mappedBy: "pjudCausa")]
     private $pjudAnexoCausas;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $docEbook;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: "text", nullable: true)]
     private $docEbookBase64;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $docDemanda;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: "text", nullable: true)]
     private $docDemandaBase64;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $docCertificadoEnvio;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: "text", nullable: true)]
     private $docCertificadoEnvioBase64;
 
-    /**
-     * @ORM\OneToMany(targetEntity=PjudExhortos::class, mappedBy="pjudCausa")
-     */
+    #[ORM\OneToMany(targetEntity: PjudExhortos::class, mappedBy: "pjudCausa")]
     private $pjudExhortos;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $estadoAdministracion;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $proceso;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $ubicacion;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private $docEbookDescargado;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private $docDemandaDescargado;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private $docCertificadoEnvioDescargado;
 
    

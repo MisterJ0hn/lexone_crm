@@ -5,48 +5,32 @@ namespace App\Entity;
 use App\Repository\AgendaObservacionRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=AgendaObservacionRepository::class)
- */
+#[ORM\Entity(repositoryClass: AgendaObservacionRepository::class)]
 class AgendaObservacion
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Agenda::class, inversedBy="agendaObservacions")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Agenda::class, inversedBy: "agendaObservacions")]
+    #[ORM\JoinColumn(nullable: false)]
     private $agenda;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Usuario::class, inversedBy="agendaObservacions")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Usuario::class, inversedBy: "agendaObservacions")]
+    #[ORM\JoinColumn(nullable: false)]
     private $usuarioRegistro;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=AgendaStatus::class, inversedBy="agendaObservacions")
-     */
+    #[ORM\ManyToOne(targetEntity: AgendaStatus::class, inversedBy: "agendaObservacions")]
     private $status;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: "datetime")]
     private $fechaRegistro;
 
-    /**
-     * @ORM\Column(type="text")
-     */
+    #[ORM\Column(type: "text")]
     private $observacion;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=AgendaSubStatus::class, inversedBy="agendaObservacions")
-     */
+    #[ORM\ManyToOne(targetEntity: AgendaSubStatus::class, inversedBy: "agendaObservacions")]
     private $subStatus;
 
     public function getId(): ?int

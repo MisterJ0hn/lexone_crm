@@ -7,37 +7,25 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=UsuarioCategoriaRepository::class)
- */
+#[ORM\Entity(repositoryClass: UsuarioCategoriaRepository::class)]
 class UsuarioCategoria
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $nombre;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: "integer")]
     private $nLeads;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Empresa::class, inversedBy="usuarioCategorias")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Empresa::class, inversedBy: "usuarioCategorias")]
+    #[ORM\JoinColumn(nullable: false)]
     private $empresa;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Usuario::class, mappedBy="categoria")
-     */
+    #[ORM\OneToMany(targetEntity: Usuario::class, mappedBy: "categoria")]
     private $usuarios;
 
     

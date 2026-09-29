@@ -7,41 +7,27 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=AccionRepository::class)
- */
+#[ORM\Entity(repositoryClass: AccionRepository::class)]
 class Accion
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $nombre;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $accion;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Empresa::class, inversedBy="acciones")
-     */
+    #[ORM\ManyToOne(targetEntity: Empresa::class, inversedBy: "acciones")]
     private $empresa;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Privilegio::class, mappedBy="accion", orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: Privilegio::class, mappedBy: "accion", orphanRemoval: true)]
     private $privilegios;
 
-    /**
-     * @ORM\OneToMany(targetEntity=PrivilegioTipousuario::class, mappedBy="accion", orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: PrivilegioTipousuario::class, mappedBy: "accion", orphanRemoval: true)]
     private $privilegioTipousuarios;
 
     public function __construct()

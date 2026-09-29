@@ -7,37 +7,25 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=ComunaRepository::class)
- */
+#[ORM\Entity(repositoryClass: ComunaRepository::class)]
 class Comuna
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=50)
-     */
+    #[ORM\Column(type: "string", length: 50)]
     private $nombre;
 
-    /**
-     * @ORM\Column(type="string", length=10)
-     */
+    #[ORM\Column(type: "string", length: 10)]
     private $codigo;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Ciudad::class, inversedBy="comunas")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Ciudad::class, inversedBy: "comunas")]
+    #[ORM\JoinColumn(nullable: false)]
     private $ciudad;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Contrato::class, mappedBy="ccomuna")
-     */
+    #[ORM\OneToMany(targetEntity: Contrato::class, mappedBy: "ccomuna")]
     private $contratos;
 
     public function __construct()

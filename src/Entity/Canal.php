@@ -7,43 +7,29 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=CanalRepository::class)
- */
+#[ORM\Entity(repositoryClass: CanalRepository::class)]
 class Canal
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Empresa::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Empresa::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private $empresa;
 
-    /**
-     * @ORM\Column(type="string", length=100)
-     */
+    #[ORM\Column(type: "string", length: 100)]
     private $nombre;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: "boolean")]
     private $estado;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Usuario::class, inversedBy="canals")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Usuario::class, inversedBy: "canals")]
+    #[ORM\JoinColumn(nullable: false)]
     private $usuarioRegistro;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Agenda::class, mappedBy="canal")
-     */
+    #[ORM\OneToMany(targetEntity: Agenda::class, mappedBy: "canal")]
     private $agendas;
 
     public function __construct()

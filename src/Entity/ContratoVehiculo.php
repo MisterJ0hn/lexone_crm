@@ -7,31 +7,21 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=ContratoVehiculoRepository::class)
- */
+#[ORM\Entity(repositoryClass: ContratoVehiculoRepository::class)]
 class ContratoVehiculo
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $nombre;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Empresa::class, inversedBy="contratoVehiculos")
-     */
+    #[ORM\ManyToOne(targetEntity: Empresa::class, inversedBy: "contratoVehiculos")]
     private $empresa;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Contrato::class, mappedBy="vehiculo")
-     */
+    #[ORM\OneToMany(targetEntity: Contrato::class, mappedBy: "vehiculo")]
     private $contratos;
 
     public function __construct()

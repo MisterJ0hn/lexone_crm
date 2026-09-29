@@ -5,41 +5,27 @@ namespace App\Entity;
 use App\Repository\PjudEbookRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=PjudEbookRepository::class)
- */
+#[ORM\Entity(repositoryClass: PjudEbookRepository::class)]
 class PjudEbook
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=PjudCausa::class, inversedBy="pjudEbooks")
-     */
+    #[ORM\ManyToOne(targetEntity: PjudCausa::class, inversedBy: "pjudEbooks")]
     private $pjudCausa;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $nombreArchivo;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $rutaRelativa;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: "integer")]
     private $tamanoBytes;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: "boolean")]
     private $descargado;
 
     public function getId(): ?int

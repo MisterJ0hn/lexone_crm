@@ -9,6 +9,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Console\Attribute\AsCommand;
 
 /**
  * Backfill único: cifra (AES-256-GCM) los valores de rut, telefono, telefono_recado,
@@ -23,6 +24,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * Requiere que las migraciones Version20260723120000 y Version20260729120000 (correo)
  * ya se hayan ejecutado.
  */
+#[AsCommand(name: 'app:cifrar-datos-cliente', description: 'Cifra (backfill) rut/telefono/telefono_recado/correo/direccion/clave_unica existentes en cliente y cliente_historial')]
 class CifrarDatosClienteCommand extends Command
 {
     protected static $defaultName        = 'app:cifrar-datos-cliente';

@@ -7,37 +7,25 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=ActuacionRepository::class)
- */
+#[ORM\Entity(repositoryClass: ActuacionRepository::class)]
 class Actuacion
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $Nombre;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Cuaderno::class, inversedBy="actuacions")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Cuaderno::class, inversedBy: "actuacions")]
+    #[ORM\JoinColumn(nullable: false)]
     private $cuaderno;
 
-    /**
-     * @ORM\OneToMany(targetEntity=AnexoProcesal::class, mappedBy="Actuacion")
-     */
+    #[ORM\OneToMany(targetEntity: AnexoProcesal::class, mappedBy: "Actuacion")]
     private $anexoProcesales;
 
-    /**
-     * @ORM\OneToMany(targetEntity=ActuacionAnexoProcesal::class, mappedBy="actuacion")
-     */
+    #[ORM\OneToMany(targetEntity: ActuacionAnexoProcesal::class, mappedBy: "actuacion")]
     private $actuacionAnexoProcesales;
 
     public function __construct()

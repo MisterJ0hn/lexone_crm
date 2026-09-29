@@ -7,37 +7,25 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=CobranzaRespuestaRepository::class)
- */
+#[ORM\Entity(repositoryClass: CobranzaRespuestaRepository::class)]
 class CobranzaRespuesta
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $nombre;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Empresa::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Empresa::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private $empresa;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Cobranza::class, mappedBy="respuesta")
-     */
+    #[ORM\OneToMany(targetEntity: Cobranza::class, mappedBy: "respuesta")]
     private $cobranzas;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private $isFechaCompromiso;
 
     public function __construct()

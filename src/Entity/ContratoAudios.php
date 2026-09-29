@@ -5,33 +5,23 @@ namespace App\Entity;
 use App\Repository\ContratoAudiosRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=ContratoAudiosRepository::class)
- */
+#[ORM\Entity(repositoryClass: ContratoAudiosRepository::class)]
 class ContratoAudios
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Contrato::class, inversedBy="contratoAudios")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Contrato::class, inversedBy: "contratoAudios")]
+    #[ORM\JoinColumn(nullable: false)]
     private $contrato;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Usuario::class, inversedBy="contratoAudios")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Usuario::class, inversedBy: "contratoAudios")]
+    #[ORM\JoinColumn(nullable: false)]
     private $usuarioRegistro;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $url;
 
     public function getId(): ?int

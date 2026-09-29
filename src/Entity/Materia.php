@@ -7,42 +7,28 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=MateriaRepository::class)
- */
+#[ORM\Entity(repositoryClass: MateriaRepository::class)]
 class Materia
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=50)
-     */
+    #[ORM\Column(type: "string", length: 50)]
     private $nombre;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Empresa::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Empresa::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private $empresa;
 
-    /**
-     * @ORM\OneToMany(targetEntity=MateriaEstrategia::class, mappedBy="materia")
-     */
+    #[ORM\OneToMany(targetEntity: MateriaEstrategia::class, mappedBy: "materia")]
     private $materiaEstrategias;
 
-     /**
-     * @ORM\OneToMany(targetEntity=CausaLetra::class, mappedBy="materia")
-     */
+    #[ORM\OneToMany(targetEntity: CausaLetra::class, mappedBy: "materia")]
     private $causaLetras;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Causa::class, mappedBy="materia")
-     */
+    #[ORM\OneToMany(targetEntity: Causa::class, mappedBy: "materia")]
     private $causas;
 
     public function __construct()

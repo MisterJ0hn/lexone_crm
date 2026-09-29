@@ -7,46 +7,30 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=EstrategiaJuridicaRepository::class)
- */
+#[ORM\Entity(repositoryClass: EstrategiaJuridicaRepository::class)]
 class EstrategiaJuridica
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $Nombre;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Empresa::class, inversedBy="estrategiaJuridicas")
-     */
+    #[ORM\ManyToOne(targetEntity: Empresa::class, inversedBy: "estrategiaJuridicas")]
     private $empresa;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Contrato::class, mappedBy="estrategiaJuridica")
-     */
+    #[ORM\OneToMany(targetEntity: Contrato::class, mappedBy: "estrategiaJuridica")]
     private $contratos;
 
-    /**
-     * @ORM\OneToMany(targetEntity=MateriaEstrategia::class, mappedBy="estrategiaJuridica")
-     */
+    #[ORM\OneToMany(targetEntity: MateriaEstrategia::class, mappedBy: "estrategiaJuridica")]
     private $materiaEstrategias;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=LineaTiempo::class, inversedBy="estrategiaJuridicas")
-     */
+    #[ORM\ManyToOne(targetEntity: LineaTiempo::class, inversedBy: "estrategiaJuridicas")]
     private $lineaTiempo;
 
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     */
+    #[ORM\Column(type: "float", nullable: true)]
     private $precio;
 
     public function __construct()

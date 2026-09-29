@@ -5,41 +5,27 @@ namespace App\Entity;
 use App\Repository\PjudInformacionReceptorRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=PjudInformacionReceptorRepository::class)
- */
+#[ORM\Entity(repositoryClass: PjudInformacionReceptorRepository::class)]
 class PjudInformacionReceptor
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $Cuaderno;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $datosRetiro;
 
-    /**
-     * @ORM\Column(type="string", length=20, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 20, nullable: true)]
     private $fechaRetiro;
 
-    /**
-     * @ORM\Column(type="string", length=20, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 20, nullable: true)]
     private $estado;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=PjudCausa::class, inversedBy="pjudInformacionReceptors")
-     */
+    #[ORM\ManyToOne(targetEntity: PjudCausa::class, inversedBy: "pjudInformacionReceptors")]
     private $pjudCausa;
 
     public function getId(): ?int

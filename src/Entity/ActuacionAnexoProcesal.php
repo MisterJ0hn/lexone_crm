@@ -5,28 +5,20 @@ namespace App\Entity;
 use App\Repository\ActuacionAnexoProcesalRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=ActuacionAnexoProcesalRepository::class)
- */
+#[ORM\Entity(repositoryClass: ActuacionAnexoProcesalRepository::class)]
 class ActuacionAnexoProcesal
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Actuacion::class, inversedBy="actuacionAnexoProcesales")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Actuacion::class, inversedBy: "actuacionAnexoProcesales")]
+    #[ORM\JoinColumn(nullable: false)]
     private $actuacion;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=AnexoProcesal::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: AnexoProcesal::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private $anexoProcesal;
 
     public function getId(): ?int

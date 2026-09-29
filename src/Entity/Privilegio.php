@@ -5,34 +5,24 @@ namespace App\Entity;
 use App\Repository\PrivilegioRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=PrivilegioRepository::class)
- */
+#[ORM\Entity(repositoryClass: PrivilegioRepository::class)]
 class Privilegio
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Usuario::class, inversedBy="privilegios")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Usuario::class, inversedBy: "privilegios")]
+    #[ORM\JoinColumn(nullable: false)]
     private $usuario;
 
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Accion::class, inversedBy="privilegios")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Accion::class, inversedBy: "privilegios")]
+    #[ORM\JoinColumn(nullable: false)]
     private $accion;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=ModuloPer::class, inversedBy="privilegios")
-     */
+    #[ORM\ManyToOne(targetEntity: ModuloPer::class, inversedBy: "privilegios")]
     private $moduloPer;
 
     public function getId(): ?int

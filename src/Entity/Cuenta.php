@@ -7,77 +7,49 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=CuentaRepository::class)
- */
+#[ORM\Entity(repositoryClass: CuentaRepository::class)]
 class Cuenta
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $nombre;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: "datetime")]
     private $fechaCreacion;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: "datetime", nullable: true)]
     private $fechaUltimamodificacion;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Empresa::class, inversedBy="cuentas")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Empresa::class, inversedBy: "cuentas")]
+    #[ORM\JoinColumn(nullable: false)]
     private $empresa;
 
-    /**
-     * @ORM\OneToMany(targetEntity=UsuarioCuenta::class, mappedBy="cuenta")
-     */
+    #[ORM\OneToMany(targetEntity: UsuarioCuenta::class, mappedBy: "cuenta")]
     private $usuarioCuentas;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Agenda::class, mappedBy="cuenta")
-     */
+    #[ORM\OneToMany(targetEntity: Agenda::class, mappedBy: "cuenta")]
     private $agendas;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Sucursal::class, mappedBy="cuenta")
-     */
+    #[ORM\OneToMany(targetEntity: Sucursal::class, mappedBy: "cuenta")]
     private $sucursals;
 
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     */
+    #[ORM\Column(type: "float", nullable: true)]
     private $pageId;
 
-    /**
-     * @ORM\OneToMany(targetEntity=UsuarioUsuariocategoria::class, mappedBy="cuenta")
-     */
+    #[ORM\OneToMany(targetEntity: UsuarioUsuariocategoria::class, mappedBy: "cuenta")]
     private $usuarioUsuariocategorias;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Importacion::class, mappedBy="cuenta")
-     */
+    #[ORM\OneToMany(targetEntity: Importacion::class, mappedBy: "cuenta")]
     private $importacions;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $vigenciaContratos;
 
-    /**
-     * @ORM\OneToMany(targetEntity=JuzgadoCuenta::class, mappedBy="cuenta")
-     */
+    #[ORM\OneToMany(targetEntity: JuzgadoCuenta::class, mappedBy: "cuenta")]
     private $juzgadoCuentas;
 
   

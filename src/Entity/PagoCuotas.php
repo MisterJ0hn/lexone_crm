@@ -5,33 +5,23 @@ namespace App\Entity;
 use App\Repository\PagoCuotasRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=PagoCuotasRepository::class)
- */
+#[ORM\Entity(repositoryClass: PagoCuotasRepository::class)]
 class PagoCuotas
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Pago::class, inversedBy="pagoCuotas")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Pago::class, inversedBy: "pagoCuotas")]
+    #[ORM\JoinColumn(nullable: false)]
     private $pago;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Cuota::class, inversedBy="pagoCuotas")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Cuota::class, inversedBy: "pagoCuotas")]
+    #[ORM\JoinColumn(nullable: false)]
     private $cuota;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: "integer")]
     private $monto;
 
     public function getId(): ?int

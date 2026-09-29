@@ -5,44 +5,30 @@ namespace App\Entity;
 use App\Repository\CausaObservacionRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=CausaObservacionRepository::class)
- */
+#[ORM\Entity(repositoryClass: CausaObservacionRepository::class)]
 class CausaObservacion
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Causa::class, inversedBy="causaObservacions")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Causa::class, inversedBy: "causaObservacions")]
+    #[ORM\JoinColumn(nullable: false)]
     private $causa;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Usuario::class, inversedBy="causaObservacions")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Usuario::class, inversedBy: "causaObservacions")]
+    #[ORM\JoinColumn(nullable: false)]
     private $usuarioRegistro;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Contrato::class, inversedBy="causaObservacions")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Contrato::class, inversedBy: "causaObservacions")]
+    #[ORM\JoinColumn(nullable: false)]
     private $contrato;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: "datetime")]
     private $fechaRegistro;
 
-    /**
-     * @ORM\Column(type="text")
-     */
+    #[ORM\Column(type: "text")]
     private $observacion;
 
     public function getId(): ?int

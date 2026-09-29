@@ -7,61 +7,41 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=MenuRepository::class)
- */
+#[ORM\Entity(repositoryClass: MenuRepository::class)]
 class Menu
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Empresa::class, inversedBy="menus")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Empresa::class, inversedBy: "menus")]
+    #[ORM\JoinColumn(nullable: false)]
     private $empresa;
 
 
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $nombre;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Menu::class, inversedBy="menus")
-     */
+    #[ORM\ManyToOne(targetEntity: Menu::class, inversedBy: "menus")]
     private $dependeDe;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Menu::class, mappedBy="dependeDe")
-     */
+    #[ORM\OneToMany(targetEntity: Menu::class, mappedBy: "dependeDe")]
     private $menus;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $icono;
 
     
 
-    /**
-     * @ORM\ManyToOne(targetEntity=MenuCabezera::class, inversedBy="menus")
-     */
+    #[ORM\ManyToOne(targetEntity: MenuCabezera::class, inversedBy: "menus")]
     private $menuCabezera;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Modulo::class, inversedBy="menus")
-     */
+    #[ORM\ManyToOne(targetEntity: Modulo::class, inversedBy: "menus")]
     private $modulo;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $orden;
 
     public function __construct()

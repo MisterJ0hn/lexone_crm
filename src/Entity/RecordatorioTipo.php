@@ -7,36 +7,24 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=RecordatorioTipoRepository::class)
- */
+#[ORM\Entity(repositoryClass: RecordatorioTipoRepository::class)]
 class RecordatorioTipo
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=50)
-     */
+    #[ORM\Column(type: "string", length: 50)]
     private $nombre;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: "boolean")]
     private $estado;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Empresa::class, inversedBy="recordatorioTipos")
-     */
+    #[ORM\ManyToOne(targetEntity: Empresa::class, inversedBy: "recordatorioTipos")]
     private $empresa;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Recordatorio::class, mappedBy="tipo")
-     */
+    #[ORM\OneToMany(targetEntity: Recordatorio::class, mappedBy: "tipo")]
     private $recordatorios;
 
     public function __construct()

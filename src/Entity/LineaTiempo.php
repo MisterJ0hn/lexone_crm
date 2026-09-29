@@ -7,41 +7,27 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=LineaTiempoRepository::class)
- */
+#[ORM\Entity(repositoryClass: LineaTiempoRepository::class)]
 class LineaTiempo
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=100)
-     */
+    #[ORM\Column(type: "string", length: 100)]
     private $nombre;
 
-    /**
-     * @ORM\Column(type="string", length=10)
-     */
+    #[ORM\Column(type: "string", length: 10)]
     private $codigo;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $orden;
 
-    /**
-     * @ORM\OneToMany(targetEntity=LineaTiempoEtapas::class, mappedBy="lineaTiempo")
-     */
+    #[ORM\OneToMany(targetEntity: LineaTiempoEtapas::class, mappedBy: "lineaTiempo")]
     private $lineaTiempoEtapas;
 
-    /**
-     * @ORM\OneToMany(targetEntity=EstrategiaJuridica::class, mappedBy="lineaTiempo")
-     */
+    #[ORM\OneToMany(targetEntity: EstrategiaJuridica::class, mappedBy: "lineaTiempo")]
     private $estrategiaJuridicas;
 
     public function __construct()

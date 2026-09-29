@@ -5,48 +5,32 @@ namespace App\Entity;
 use App\Repository\EstrategiaJuridicaReporteArchivosRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=EstrategiaJuridicaReporteArchivosRepository::class)
- */
+#[ORM\Entity(repositoryClass: EstrategiaJuridicaReporteArchivosRepository::class)]
 class EstrategiaJuridicaReporteArchivos
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Causa::class, inversedBy="estrategiaJuridicaReporteArchivos")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Causa::class, inversedBy: "estrategiaJuridicaReporteArchivos")]
+    #[ORM\JoinColumn(nullable: false)]
     private $causa;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=EstrategiaJuridicaReporte::class, inversedBy="estrategiaJuridicaReporteArchivos")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: EstrategiaJuridicaReporte::class, inversedBy: "estrategiaJuridicaReporteArchivos")]
+    #[ORM\JoinColumn(nullable: false)]
     private $estrategiaJuridicaReporte;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $archivo;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $nombre;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Usuario::class, inversedBy="estrategiaJuridicaReporteArchivos")
-     */
+    #[ORM\ManyToOne(targetEntity: Usuario::class, inversedBy: "estrategiaJuridicaReporteArchivos")]
     private $usuarioCreacion;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: "datetime")]
     private $fechaYHoraCarga;
 
     public function getId(): ?int

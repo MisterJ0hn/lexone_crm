@@ -5,38 +5,26 @@ namespace App\Entity;
 use App\Repository\ContratoObservacionRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=ContratoObservacionRepository::class)
- */
+#[ORM\Entity(repositoryClass: ContratoObservacionRepository::class)]
 class ContratoObservacion
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Usuario::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Usuario::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private $usuarioRegistro;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: "datetime")]
     private $fechaRegistro;
 
-    /**
-     * @ORM\Column(type="text")
-     */
+    #[ORM\Column(type: "text")]
     private $observacion;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Contrato::class, inversedBy="contratoObservacions")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Contrato::class, inversedBy: "contratoObservacions")]
+    #[ORM\JoinColumn(nullable: false)]
     private $contrato;
 
     public function getId(): ?int

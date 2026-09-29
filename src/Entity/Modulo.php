@@ -7,49 +7,33 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=ModuloRepository::class)
- */
+#[ORM\Entity(repositoryClass: ModuloRepository::class)]
 class Modulo
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $nombre;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $ruta;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $nombreAlt;
 
 
     
-    /**
-     * @ORM\OneToMany(targetEntity=ModuloPer::class, mappedBy="modulo", orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: ModuloPer::class, mappedBy: "modulo", orphanRemoval: true)]
     private $moduloPers;
 
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $descripcion;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Menu::class, mappedBy="modulo")
-     */
+    #[ORM\OneToMany(targetEntity: Menu::class, mappedBy: "modulo")]
     private $menus;
 
     public function __construct()

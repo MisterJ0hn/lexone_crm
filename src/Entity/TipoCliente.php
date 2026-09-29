@@ -12,26 +12,19 @@ use Doctrine\ORM\Mapping as ORM;
  * histórico: el Contrato lleva un único Cliente), 'Convenio' o 'Empresa'
  * (el Contrato agrupa varios Clientes propios, repartidos entre sus Causas
  * desde la línea de tiempo del contrato).
- *
- * @ORM\Entity(repositoryClass=TipoClienteRepository::class)
  */
+#[ORM\Entity(repositoryClass: TipoClienteRepository::class)]
 class TipoCliente
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=20, unique=true)
-     */
+    #[ORM\Column(type: "string", length: 20, unique: true)]
     private $nombre;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Agenda::class, mappedBy="tipoCliente")
-     */
+    #[ORM\OneToMany(targetEntity: Agenda::class, mappedBy: "tipoCliente")]
     private $agendas;
 
     public function __construct()

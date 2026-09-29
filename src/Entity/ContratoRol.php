@@ -5,43 +5,29 @@ namespace App\Entity;
 use App\Repository\ContratoRolRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=ContratoRolRepository::class)
- */
+#[ORM\Entity(repositoryClass: ContratoRolRepository::class)]
 class ContratoRol
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $nombreRol;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $institucionAcreedora;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Juzgado::class, inversedBy="contratoRols")
-     */
+    #[ORM\ManyToOne(targetEntity: Juzgado::class, inversedBy: "contratoRols")]
     private $juzgado;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Contrato::class, inversedBy="contratoRols")
-     * @ORM\JoinColumn(nullable=true)
-     */
+    #[ORM\ManyToOne(targetEntity: Contrato::class, inversedBy: "contratoRols")]
+    #[ORM\JoinColumn(nullable: true)]
     private $contrato;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Usuario::class, inversedBy="contratoRols")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Usuario::class, inversedBy: "contratoRols")]
+    #[ORM\JoinColumn(nullable: false)]
     private $abogado;
 
     

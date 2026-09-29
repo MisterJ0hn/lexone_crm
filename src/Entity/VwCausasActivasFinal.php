@@ -6,133 +6,71 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=VwCausasActivasFinalRepository::class)
- * @ORM\Table(name="vw_causas_activas_final")
- */
+#[ORM\Entity(repositoryClass: VwCausasActivasFinalRepository::class)]
+#[ORM\Table(name: "vw_causas_activas_final")]
 class VwCausasActivasFinal{
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $cuentaId;
-    /**
-     * @ORM\Column(type="string", length=255,nullable=true)
-     */ 
+    #[ORM\Column(type: "string", length: 255,nullable: true)]
     private $compañia;
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $contratoId;
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $agendaId;
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $folio;	
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: "datetime", nullable: true)]
     private $fechaCto;
-    /**
-     *  @ORM\Column(type="string", length=255,nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255,nullable: true)]
     private $cliente;
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $tramitadorId;
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: "string", nullable: true)]
     private $tramitador;
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $abogadoId;
-    /**
-     * @ORM\Column(type="string", length=255,nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255,nullable: true)]
     private $cerrador;
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $IdCausa;
-    /**
-     * @ORM\Column(type="string", length=255,nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255,nullable: true)]
     private $caratulado;
-    /**
-     * @ORM\Column(type="string", length=255,nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255,nullable: true)]
     private $folioActivo;
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $vigenciaActivo;
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $mesesActivo;
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-*/
+    #[ORM\Column(type: "datetime", nullable: true)]
     private $fechaCreacionAnexo;
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $vigenciaAnexo;
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: "string", nullable: true)]
     private $morosos;
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: "string", nullable: true)]
     private $VipMayor2MM;
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: "string", nullable: true)]
     private $VipReferidos;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: "string", nullable: true)]
     private $VipUnaCuota;
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(type: "string", nullable: true)]
     private $rol;
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: "datetime", nullable: true)]
     private $fechaRegistroObservacion;
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $activo;
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $moroso;
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $vip;
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $tieneRol;
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $causaFinalizada;
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $cuentaNombre;
 
     public function getCuentaId()

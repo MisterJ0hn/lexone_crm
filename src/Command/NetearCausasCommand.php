@@ -17,7 +17,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\Console\Attribute\AsCommand;
 
+#[AsCommand(name: 'app:netear-causas', description: 'Add a short description for your command')]
 class NetearCausasCommand extends Command
 {
     protected static $defaultName = 'app:netear-causas';

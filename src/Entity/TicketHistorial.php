@@ -5,43 +5,29 @@ namespace App\Entity;
 use App\Repository\TicketHistorialRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=TicketHistorialRepository::class)
- */
+#[ORM\Entity(repositoryClass: TicketHistorialRepository::class)]
 class TicketHistorial
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Ticket::class, inversedBy="ticketHistorials")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Ticket::class, inversedBy: "ticketHistorials")]
+    #[ORM\JoinColumn(nullable: false)]
     private $ticket;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Usuario::class, inversedBy="ticketHistorials")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Usuario::class, inversedBy: "ticketHistorials")]
+    #[ORM\JoinColumn(nullable: false)]
     private $usuarioRegistro;
 
-    /**
-     * @ORM\Column(type="string", length=200)
-     */
+    #[ORM\Column(type: "string", length: 200)]
     private $observacion;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=TicketEstado::class)
-     */
+    #[ORM\ManyToOne(targetEntity: TicketEstado::class)]
     private $estado;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: "datetime", nullable: true)]
     private $fecha;
 
     public function getId(): ?int

@@ -5,56 +5,36 @@ namespace App\Entity;
 use App\Repository\PjudPdfRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=PjudPdfRepository::class)
- */
+#[ORM\Entity(repositoryClass: PjudPdfRepository::class)]
 class PjudPdf
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=PjudMovimiento::class)
-     */
+    #[ORM\ManyToOne(targetEntity: PjudMovimiento::class)]
     private $movimiento;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=PjudMovimiento::class, inversedBy="pjudPdfs")
-     */
+    #[ORM\ManyToOne(targetEntity: PjudMovimiento::class, inversedBy: "pjudPdfs")]
     private $pjudMovimiento;
 
-    /**
-     * @ORM\Column(type="string", length=50)
-     */
+    #[ORM\Column(type: "string", length: 50)]
     private $tipo;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $nombreArchivo;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: "text", nullable: true)]
     private $contenidoBase64;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $tamanoBytes;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: "datetime", nullable: true)]
     private $CreatedAt;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private $archivoDescargado;
 
     public function getId(): ?int

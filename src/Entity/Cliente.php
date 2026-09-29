@@ -9,46 +9,36 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=ClienteRepository::class)
- * @ORM\Table(name="cliente")
- * @ORM\HasLifecycleCallbacks()
- */
+#[ORM\Entity(repositoryClass: ClienteRepository::class)]
+#[ORM\Table(name: "cliente")]
+#[ORM\HasLifecycleCallbacks()]
 class Cliente
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id()]
+    #[ORM\GeneratedValue()]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $nombre;
 
     /**
      * rut, telefono, telefonoRecado, correo, direccion y claveUnica se guardan cifrados
      * (AES-256-GCM, ver App\Doctrine\EncryptedStringType / App\Security\Cifrado).
      * Los getters/setters siguen trabajando en texto plano de forma transparente.
-     *
-     * @ORM\Column(type="encrypted_string", length=255)
      */
+    #[ORM\Column(type: "encrypted_string", length: 255)]
     private $rut;
 
     /**
      * Hash determinístico (HMAC-SHA256) de rut, usado únicamente para búsquedas
      * exactas (WHERE rutHash = ...), ya que la columna rut queda cifrada con IV
      * aleatorio y no es comparable directamente.
-     *
-     * @ORM\Column(type="string", length=64, nullable=true)
      */
+    #[ORM\Column(type: "string", length: 64, nullable: true)]
     private $rutHash;
 
-    /**
-     * @ORM\Column(type="encrypted_string", length=255)
-     */
+    #[ORM\Column(type: "encrypted_string", length: 255)]
     private $correo;
 
 
@@ -56,85 +46,55 @@ class Cliente
      * Hash determinístico (HMAC-SHA256) del correo, normalizado a minúsculas.
      * Como la columna correo queda cifrada, la búsqueda por correo pasa a ser
      * por igualdad exacta (ya no admite coincidencia parcial tipo LIKE).
-     *
-     * @ORM\Column(type="string", length=64, nullable=true)
      */
+    #[ORM\Column(type: "string", length: 64, nullable: true)]
     private $correoHash;
 
-    /**
-     * @ORM\Column(type="encrypted_string", length=255)
-     */
+    #[ORM\Column(type: "encrypted_string", length: 255)]
     private $telefono;
 
-    /**
-     * @ORM\Column(type="string", length=64, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 64, nullable: true)]
     private $telefonoHash;
 
-    /**
-     * @ORM\Column(type="string", length=20, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 20, nullable: true)]
     private $sexo;
-    /**
-     * @ORM\Column(type="encrypted_string", length=255, nullable=true)
-    */
+    #[ORM\Column(type: "encrypted_string", length: 255, nullable: true)]
     private $claveUnica;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Contrato::class, mappedBy="cliente")
-    */
+    #[ORM\OneToMany(targetEntity: Contrato::class, mappedBy: "cliente")]
     private $contratos;
 
-    /**
-     * @ORM\OneToMany(targetEntity=ClienteHistorial::class, mappedBy="cliente")
-    */
+    #[ORM\OneToMany(targetEntity: ClienteHistorial::class, mappedBy: "cliente")]
     private $clienteHistorials;
     
-    /**
-     * @ORM\Column(type="encrypted_string", length=255, nullable=true)
-    */
+    #[ORM\Column(type: "encrypted_string", length: 255, nullable: true)]
     private $direccion;
-    /**
-     * @ORM\Column(type="encrypted_string", length=255, nullable=true)
-    */
+    #[ORM\Column(type: "encrypted_string", length: 255, nullable: true)]
     private $telefonoRecado;
 
-    /**
-     * @ORM\Column(type="string", length=64, nullable=true)
-    */
+    #[ORM\Column(type: "string", length: 64, nullable: true)]
     private $telefonoRecadoHash;
 
     /**
      * Solo se usa para clientes de tipo Convenio/Empresa (ver Agenda::$tipoCliente).
      * Para Persona la nacionalidad del cliente se maneja vía Contrato::$pais.
-     *
-     * @ORM\Column(type="string", length=255, nullable=true)
      */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $nacionalidad;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Region::class)
-     */
+    #[ORM\ManyToOne(targetEntity: Region::class)]
     private $region;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Ciudad::class)
-     */
+    #[ORM\ManyToOne(targetEntity: Ciudad::class)]
     private $ciudad;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Comuna::class)
-     */
+    #[ORM\ManyToOne(targetEntity: Comuna::class)]
     private $comuna;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=EstadoCivil::class)
-     */
+    #[ORM\ManyToOne(targetEntity: EstadoCivil::class)]
     private $estadoCivil;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Reunion::class)
-     */
+    #[ORM\ManyToOne(targetEntity: Reunion::class)]
     private $reunion;
 
 
@@ -400,9 +360,8 @@ class Cliente
      * crear un Cliente nuevo. En este punto del ciclo de vida de Doctrine las
      * propiedades aún son texto plano; el cifrado de las columnas ocurre después,
      * a nivel de EncryptedStringType.
-     *
-     * @ORM\PrePersist()
      */
+    #[ORM\PrePersist()]
     public function calcularHashesAlCrear(): void
     {
         $this->rutHash = Cifrado::hash($this->rut, 'rut');
@@ -415,18 +374,15 @@ class Cliente
      * Recalcula los hashes de búsqueda al actualizar. PreUpdate es especial en
      * Doctrine: el changeset ya se calculó antes de que este evento se dispare, así
      * que asignar una propiedad acá no alcanza a incluirse en el UPDATE.
-     *
      * Tampoco sirve PreUpdateEventArgs::setNewValue(): ese método solo puede cambiar
      * el valor de un campo que YA está en el changeset, y un hash que no cambió (o
      * que aún es NULL en la base) no está ahí — de hecho lanza
      * "Field ... is not a valid field of the entity ... in PreUpdateEventArgs".
-     *
      * La forma correcta de agregar campos al UPDATE desde PreUpdate es asignarlos y
      * pedirle a la UnitOfWork que recalcule el changeset de esta entidad, que se
      * fusiona con el que ya existía.
-     *
-     * @ORM\PreUpdate()
      */
+    #[ORM\PreUpdate()]
     public function calcularHashesAlActualizar(PreUpdateEventArgs $event): void
     {
         $this->rutHash = Cifrado::hash($this->rut, 'rut');

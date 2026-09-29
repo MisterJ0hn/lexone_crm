@@ -7,55 +7,37 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=DetalleCuadernoRepository::class)
- */
+#[ORM\Entity(repositoryClass: DetalleCuadernoRepository::class)]
 class DetalleCuaderno
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Cuaderno::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Cuaderno::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private $cuaderno;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Actuacion::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Actuacion::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private $actuacion;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=AnexoProcesal::class)
-     */
+    #[ORM\ManyToOne(targetEntity: AnexoProcesal::class)]
     private $anexoProcesal;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Causa::class, inversedBy="detalleCuadernos")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Causa::class, inversedBy: "detalleCuadernos")]
+    #[ORM\JoinColumn(nullable: false)]
     private $causa;
 
-    /**
-     * @ORM\OneToMany(targetEntity=CausaObservacion::class, mappedBy="detalleCuaderno")
-     */
+    #[ORM\OneToMany(targetEntity: CausaObservacion::class, mappedBy: "detalleCuaderno")]
     private $causaObservaciones;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Usuario::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Usuario::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private $usuarioCreacion;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: "datetime")]
     private $fechaCreacion;
 
     public function __construct()

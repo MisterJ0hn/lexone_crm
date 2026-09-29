@@ -7,32 +7,22 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=LineaTiempoEtapasRepository::class)
- */
+#[ORM\Entity(repositoryClass: LineaTiempoEtapasRepository::class)]
 class LineaTiempoEtapas
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $nombre;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=LineaTiempo::class, inversedBy="lineaTiempoEtapas")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: LineaTiempo::class, inversedBy: "lineaTiempoEtapas")]
+    #[ORM\JoinColumn(nullable: false)]
     private $lineaTiempo;
 
-    /**
-     * @ORM\OneToMany(targetEntity=LineaTiempoTerminada::class, mappedBy="lineaTiempoEtapas")
-     */
+    #[ORM\OneToMany(targetEntity: LineaTiempoTerminada::class, mappedBy: "lineaTiempoEtapas")]
     private $lineaTiempoTerminadas;
 
     

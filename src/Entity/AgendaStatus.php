@@ -7,61 +7,39 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=AgendaStatusRepository::class)
- */
+#[ORM\Entity(repositoryClass: AgendaStatusRepository::class)]
 class AgendaStatus
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $nombre;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Agenda::class, mappedBy="status")
-     */
+    #[ORM\OneToMany(targetEntity: Agenda::class, mappedBy: "status")]
     private $agendas;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: "integer")]
     private $perfil;
 
-    /**
-     * @ORM\OneToMany(targetEntity=AgendaObservacion::class, mappedBy="status")
-     */
+    #[ORM\OneToMany(targetEntity: AgendaObservacion::class, mappedBy: "status")]
     private $agendaObservacions;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $orden;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $icon;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $color;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private $vermas;
 
-    /**
-     * @ORM\OneToMany(targetEntity=AgendaSubStatus::class, mappedBy="agendaStatus")
-     */
+    #[ORM\OneToMany(targetEntity: AgendaSubStatus::class, mappedBy: "agendaStatus")]
     private $agendaSubStatuses;
 
     public function __construct()

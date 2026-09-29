@@ -5,26 +5,18 @@ namespace App\Entity;
 use App\Repository\UsuarioCuentaRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=UsuarioCuentaRepository::class)
- */
+#[ORM\Entity(repositoryClass: UsuarioCuentaRepository::class)]
 class UsuarioCuenta
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Cuenta::class, inversedBy="usuarioCuentas")
-     */
+    #[ORM\ManyToOne(targetEntity: Cuenta::class, inversedBy: "usuarioCuentas")]
     private $cuenta;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Usuario::class, inversedBy="usuarioCuentas")
-     */
+    #[ORM\ManyToOne(targetEntity: Usuario::class, inversedBy: "usuarioCuentas")]
     private $usuario;
 
     public function getId(): ?int

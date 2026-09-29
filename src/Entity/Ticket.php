@@ -7,101 +7,65 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=TicketRepository::class)
- */
+#[ORM\Entity(repositoryClass: TicketRepository::class)]
 class Ticket
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Contrato::class, inversedBy="tickets")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Contrato::class, inversedBy: "tickets")]
+    #[ORM\JoinColumn(nullable: false)]
     private $contrato;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Usuario::class, inversedBy="tickets")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Usuario::class, inversedBy: "tickets")]
+    #[ORM\JoinColumn(nullable: false)]
     private $origen;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=UsuarioTipo::class, inversedBy="tickets")
-     * @ORM\JoinColumn(nullable=true)
-     */
+    #[ORM\ManyToOne(targetEntity: UsuarioTipo::class, inversedBy: "tickets")]
+    #[ORM\JoinColumn(nullable: true)]
     private $destino;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Usuario::class, inversedBy="tickets")
-     * @ORM\JoinColumn(nullable=true)
-     */
+    #[ORM\ManyToOne(targetEntity: Usuario::class, inversedBy: "tickets")]
+    #[ORM\JoinColumn(nullable: true)]
     private $encargado;
 
-    /**
-     * @ORM\Column(type="string", length=200, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 200, nullable: true)]
     private $motivo;
 
-    /**
-     * @ORM\Column(type="string", length=200, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 200, nullable: true)]
     private $respuesta;
 
-    /**
-     * @ORM\Column(type="string", length=200, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 200, nullable: true)]
     private $detalleCierre;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: "datetime")]
     private $fechaNuevo;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: "datetime", nullable: true)]
     private $fechaAsignado;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: "datetime", nullable: true)]
     private $fechaRespuesta;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: "datetime", nullable: true)]
     private $fechaCierre;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: "integer")]
     private $folio;
 
-    /**
-     * @ORM\OneToMany(targetEntity=TicketHistorial::class, mappedBy="ticket")
-     */
+    #[ORM\OneToMany(targetEntity: TicketHistorial::class, mappedBy: "ticket")]
     private $ticketHistorials;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Empresa::class, inversedBy="tickets")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Empresa::class, inversedBy: "tickets")]
+    #[ORM\JoinColumn(nullable: false)]
     private $empresa;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=TicketEstado::class)
-     */
+    #[ORM\ManyToOne(targetEntity: TicketEstado::class)]
     private $estado;
 
-    /**
-     * @ORM\Column(type="string", length=20, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 20, nullable: true)]
     private $folioSac;
 
     public function __construct()

@@ -7,66 +7,42 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=UsuarioTipoRepository::class)
- */
+#[ORM\Entity(repositoryClass: UsuarioTipoRepository::class)]
 class UsuarioTipo
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id()]
+    #[ORM\GeneratedValue()]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=100)
-     */
+    #[ORM\Column(type: "string", length: 100)]
     private $nombre;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $orden;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Usuario::class, mappedBy="usuarioTipo")
-     */
+    #[ORM\OneToMany(targetEntity: Usuario::class, mappedBy: "usuarioTipo")]
     private $usuarios;
 
-    /**
-     * @ORM\OneToMany(targetEntity=PrivilegioTipousuario::class, mappedBy="tipousuario", orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: PrivilegioTipousuario::class, mappedBy: "tipousuario", orphanRemoval: true)]
     private $privilegioTipousuarios;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: "boolean")]
     private $fijar;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $nombreInterno;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=MenuCabezera::class, inversedBy="usuarioTipos")
-     */
+    #[ORM\ManyToOne(targetEntity: MenuCabezera::class, inversedBy: "usuarioTipos")]
     private $menuCabezera;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Empresa::class, inversedBy="usuarioTipos")
-     */
+    #[ORM\ManyToOne(targetEntity: Empresa::class, inversedBy: "usuarioTipos")]
     private $empresa;
 
-    /**
-     * @ORM\Column(type="array", nullable=true)
-     */
+    #[ORM\Column(type: "array", nullable: true)]
     private $statues = [];
 
-    /**
-     * @ORM\OneToMany(targetEntity=Ticket::class, mappedBy="destino")
-     */
+    #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: "destino")]
     private $tickets;
 
 

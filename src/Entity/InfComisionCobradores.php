@@ -5,60 +5,40 @@ namespace App\Entity;
 use App\Repository\InfComisionCobradoresRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=InfComisionCobradoresRepository::class)
- */
+#[ORM\Entity(repositoryClass: InfComisionCobradoresRepository::class)]
 class InfComisionCobradores
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $sesion;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Contrato::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Contrato::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private $contrato;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Cobranza::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Cobranza::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private $cobranza;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Pago::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Pago::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private $pago;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Cuota::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Cuota::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private $cuota;
 
-    /**
-     * @ORM\Column(type="float")
-     */
+    #[ORM\Column(type: "float")]
     private $tiempoGestion;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: "integer")]
     private $diasMora;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: "integer")]
     private $monto;
 
     public function getId(): ?int

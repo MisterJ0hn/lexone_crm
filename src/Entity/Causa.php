@@ -7,16 +7,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=CausaRepository::class)
- */
+#[ORM\Entity(repositoryClass: CausaRepository::class)]
 class Causa
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
     
@@ -24,117 +20,77 @@ class Causa
      * Materia (área de práctica: Civil, Laboral, Familia…) de esta causa.
      * La materia pertenece a la Empresa; un contrato puede abarcar varias materias,
      * una por causa.
-     *
-     * @ORM\ManyToOne(targetEntity=Materia::class, inversedBy="causas")
-     * @ORM\JoinColumn(nullable=false)
      */
+    #[ORM\ManyToOne(targetEntity: Materia::class, inversedBy: "causas")]
+    #[ORM\JoinColumn(nullable: false)]
     private $materia;
 
     /**
      * Servicio/estrategia jurídica concreta dentro de la materia. Opcional: se
      * puede elegir después de crear la causa. Si está seteada, su materia debe
      * coincidir con $materia.
-     *
-     * @ORM\ManyToOne(targetEntity=MateriaEstrategia::class)
-     * @ORM\JoinColumn(nullable=true)
      */
+    #[ORM\ManyToOne(targetEntity: MateriaEstrategia::class)]
+    #[ORM\JoinColumn(nullable: true)]
     private $materiaEstrategia;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=JuzgadoCuenta::class)
-     * @ORM\JoinColumn(nullable=true)
-     */
+    #[ORM\ManyToOne(targetEntity: JuzgadoCuenta::class)]
+    #[ORM\JoinColumn(nullable: true)]
     private $juzgadoCuenta;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $id_causa;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $causaNombre;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Agenda::class, inversedBy="causas")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Agenda::class, inversedBy: "causas")]
+    #[ORM\JoinColumn(nullable: false)]
     private $agenda;
 
-    /**
-     * @ORM\OneToMany(targetEntity=LineaTiempoTerminada::class, mappedBy="causa")
-     */
+    #[ORM\OneToMany(targetEntity: LineaTiempoTerminada::class, mappedBy: "causa")]
     private $lineaTiempoTerminadas;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private $estado;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=ContratoAnexo::class, inversedBy="causas")
-     */
+    #[ORM\ManyToOne(targetEntity: ContratoAnexo::class, inversedBy: "causas")]
     private $anexo;
 
-    /**
-     * @ORM\OneToMany(targetEntity=CausaObservacion::class, mappedBy="causa")
-     */
+    #[ORM\OneToMany(targetEntity: CausaObservacion::class, mappedBy: "causa")]
     private $causaObservacions;
 
-     /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: "datetime", nullable: true)]
     private $fechaUltimoIngreso;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private $causaFinalizada;
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: "datetime", nullable: true)]
     private $fechaFinalizado;
 
-    /**
-     * @ORM\OneToMany(targetEntity=DetalleCuaderno::class, mappedBy="causa", orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: DetalleCuaderno::class, mappedBy: "causa", orphanRemoval: true)]
     private $detalleCuadernos;
 
-    /**
-     * @ORM\OneToMany(targetEntity=EstrategiaJuridicaReporteArchivos::class, mappedBy="causa")
-     */
+    #[ORM\OneToMany(targetEntity: EstrategiaJuridicaReporteArchivos::class, mappedBy: "causa")]
     private $estrategiaJuridicaReporteArchivos;
 
-    /**
-     * @ORM\Column(type="string", length=10, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 10, nullable: true)]
     private $letra;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $rol;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $anio;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Corte::class, inversedBy="causas")
-     */
+    #[ORM\ManyToOne(targetEntity: Corte::class, inversedBy: "causas")]
     private $corte;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Juzgado::class)
-     */
+    #[ORM\ManyToOne(targetEntity: Juzgado::class)]
     private $juzgado;
 
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $etapaPendiente;
 
     /**
@@ -142,10 +98,9 @@ class Causa
      * Contrato agrupa varios clientes, cada uno con sus propias causas). Para
      * Agendas de tipo Persona queda en null: el único cliente del caso sigue
      * viviendo en Contrato::$cliente.
-     *
-     * @ORM\ManyToOne(targetEntity=Cliente::class)
-     * @ORM\JoinColumn(nullable=true)
      */
+    #[ORM\ManyToOne(targetEntity: Cliente::class)]
+    #[ORM\JoinColumn(nullable: true)]
     private $cliente;
 
     public function __construct()

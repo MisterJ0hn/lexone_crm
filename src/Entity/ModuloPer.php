@@ -7,48 +7,32 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=ModuloPerRepository::class)
- */
+#[ORM\Entity(repositoryClass: ModuloPerRepository::class)]
 class ModuloPer
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $nombre;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Empresa::class, inversedBy="moduloPers")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Empresa::class, inversedBy: "moduloPers")]
+    #[ORM\JoinColumn(nullable: false)]
     private $empresa;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Modulo::class, inversedBy="moduloPers")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Modulo::class, inversedBy: "moduloPers")]
+    #[ORM\JoinColumn(nullable: false)]
     private $modulo;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=false)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: false)]
     private $descripcion;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Privilegio::class, mappedBy="moduloPer")
-     */
+    #[ORM\OneToMany(targetEntity: Privilegio::class, mappedBy: "moduloPer")]
     private $privilegios;
 
-    /**
-     * @ORM\OneToMany(targetEntity=PrivilegioTipousuario::class, mappedBy="moduloPer")
-     */
+    #[ORM\OneToMany(targetEntity: PrivilegioTipousuario::class, mappedBy: "moduloPer")]
     private $privilegioTipousuarios;
 
     

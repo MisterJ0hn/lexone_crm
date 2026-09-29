@@ -5,51 +5,33 @@ namespace App\Entity;
 use App\Repository\ImportacionRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=ImportacionRepository::class)
- */
+#[ORM\Entity(repositoryClass: ImportacionRepository::class)]
 class Importacion
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $nombre;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: "datetime")]
     private $fechaCarga;
 
-    /**
-     * @ORM\Column(type="text")
-     */
+    #[ORM\Column(type: "text")]
     private $url;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Cuenta::class, inversedBy="importacions")
-     */
+    #[ORM\ManyToOne(targetEntity: Cuenta::class, inversedBy: "importacions")]
     private $cuenta;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Usuario::class, inversedBy="importacions")
-     */
+    #[ORM\ManyToOne(targetEntity: Usuario::class, inversedBy: "importacions")]
     private $usuarioCarga;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $estado;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $tipoImportacion;
 
     public function getId(): ?int

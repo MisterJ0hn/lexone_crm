@@ -7,156 +7,96 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=EmpresaRepository::class)
- */
+#[ORM\Entity(repositoryClass: EmpresaRepository::class)]
 class Empresa
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $nombre;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $rol;
 
-    /**
-     * @ORM\Column(type="string", length=20)
-     */
+    #[ORM\Column(type: "string", length: 20)]
     private $rut;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $logo;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: "datetime")]
     private $fechaIngreso;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: "datetime", nullable: true)]
     private $fechaUltimamodificacion;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: "datetime")]
     private $fechaVigencia;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Cuenta::class, mappedBy="empresa")
-     */
+    #[ORM\OneToMany(targetEntity: Cuenta::class, mappedBy: "empresa")]
     private $cuentas;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Modulo::class, mappedBy="empresa", orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: Modulo::class, mappedBy: "empresa", orphanRemoval: true)]
     private $modulos;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Accion::class, mappedBy="empresa")
-     */
+    #[ORM\OneToMany(targetEntity: Accion::class, mappedBy: "empresa")]
     private $acciones;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Menu::class, mappedBy="empresa", orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: Menu::class, mappedBy: "empresa", orphanRemoval: true)]
     private $menus;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $logoAlt;
 
-    /**
-     * @ORM\OneToMany(targetEntity=ModuloPer::class, mappedBy="empresa", orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: ModuloPer::class, mappedBy: "empresa", orphanRemoval: true)]
     private $moduloPers;
 
-    /**
-     * @ORM\OneToMany(targetEntity=MenuCabezera::class, mappedBy="empresa")
-     */
+    #[ORM\OneToMany(targetEntity: MenuCabezera::class, mappedBy: "empresa")]
     private $menuCabezeras;
 
-    /**
-     * @ORM\OneToMany(targetEntity=UsuarioTipo::class, mappedBy="empresa")
-     */
+    #[ORM\OneToMany(targetEntity: UsuarioTipo::class, mappedBy: "empresa")]
     private $usuarioTipos;
 
-    /**
-     * @ORM\OneToMany(targetEntity=UsuarioCategoria::class, mappedBy="empresa")
-     */
+    #[ORM\OneToMany(targetEntity: UsuarioCategoria::class, mappedBy: "empresa")]
     private $usuarioCategorias;
 
-    /**
-     * @ORM\OneToMany(targetEntity=EstadoCivil::class, mappedBy="empresa")
-     */
+    #[ORM\OneToMany(targetEntity: EstadoCivil::class, mappedBy: "empresa")]
     private $estadoCivils;
 
-    /**
-     * @ORM\OneToMany(targetEntity=SituacionLaboral::class, mappedBy="empresa")
-     */
+    #[ORM\OneToMany(targetEntity: SituacionLaboral::class, mappedBy: "empresa")]
     private $situacionLaborals;
 
-    /**
-     * @ORM\OneToMany(targetEntity=EstrategiaJuridica::class, mappedBy="empresa")
-     */
+    #[ORM\OneToMany(targetEntity: EstrategiaJuridica::class, mappedBy: "empresa")]
     private $estrategiaJuridicas;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Escritura::class, mappedBy="empresa")
-     */
+    #[ORM\OneToMany(targetEntity: Escritura::class, mappedBy: "empresa")]
     private $escrituras;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Juzgado::class, mappedBy="empresa")
-     */
+    #[ORM\OneToMany(targetEntity: Juzgado::class, mappedBy: "empresa")]
     private $juzgados;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Reunion::class, mappedBy="empresa")
-     */
+    #[ORM\OneToMany(targetEntity: Reunion::class, mappedBy: "empresa")]
     private $reunions;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Pais::class, mappedBy="empresa")
-     */
+    #[ORM\OneToMany(targetEntity: Pais::class, mappedBy: "empresa")]
     private $pais;
 
-    /**
-     * @ORM\OneToMany(targetEntity=ContratoVivienda::class, mappedBy="empresa")
-     */
+    #[ORM\OneToMany(targetEntity: ContratoVivienda::class, mappedBy: "empresa")]
     private $contratoViviendas;
 
-    /**
-     * @ORM\OneToMany(targetEntity=ContratoVehiculo::class, mappedBy="empresa")
-     */
+    #[ORM\OneToMany(targetEntity: ContratoVehiculo::class, mappedBy: "empresa")]
     private $contratoVehiculos;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Ticket::class, mappedBy="empresa")
-     */
+    #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: "empresa")]
     private $tickets;
 
-    /**
-     * @ORM\OneToMany(targetEntity=RecordatorioTipo::class, mappedBy="empresa")
-     */
+    #[ORM\OneToMany(targetEntity: RecordatorioTipo::class, mappedBy: "empresa")]
     private $recordatorioTipos;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Agenda::class, mappedBy="empresa")
-     */
+    #[ORM\OneToMany(targetEntity: Agenda::class, mappedBy: "empresa")]
     private $agendas;
 
     

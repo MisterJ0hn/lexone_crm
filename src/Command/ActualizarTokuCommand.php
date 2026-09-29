@@ -15,10 +15,12 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ContainerInterface as DependencyInjectionContainerInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 
 
 ini_set('memory_limit', '-1');
 
+#[AsCommand(name: 'app:actualizar-toku', description: 'Actualiza los ids de toku en crm')]
 class ActualizarTokuCommand extends Command
 {
     //protected static $defaultName = 'ActualizarTokuCommand';

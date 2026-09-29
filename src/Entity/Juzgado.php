@@ -7,46 +7,30 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=JuzgadoRepository::class)
- */
+#[ORM\Entity(repositoryClass: JuzgadoRepository::class)]
 class Juzgado
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Empresa::class, inversedBy="juzgados")
-     */
+    #[ORM\ManyToOne(targetEntity: Empresa::class, inversedBy: "juzgados")]
     private $empresa;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $nombre;
 
-    /**
-     * @ORM\OneToMany(targetEntity=ContratoRol::class, mappedBy="juzgado")
-     */
+    #[ORM\OneToMany(targetEntity: ContratoRol::class, mappedBy: "juzgado")]
     private $contratoRols;
 
-    /**
-     * @ORM\OneToMany(targetEntity=JuzgadoCuenta::class, mappedBy="juzgado")
-     */
+    #[ORM\OneToMany(targetEntity: JuzgadoCuenta::class, mappedBy: "juzgado")]
     private $juzgadoCuentas;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Corte::class, inversedBy="juzgados")
-     */
+    #[ORM\ManyToOne(targetEntity: Corte::class, inversedBy: "juzgados")]
     private $corte;
 
-    /**
-     * @ORM\Column(type="bigint", nullable=true)
-     */
+    #[ORM\Column(type: "bigint", nullable: true)]
     private $pjudTribunalId;
 
 

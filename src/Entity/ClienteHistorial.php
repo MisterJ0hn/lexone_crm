@@ -5,78 +5,54 @@ namespace App\Entity;
 use App\Repository\ClienteHistorialRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=ClienteHistorialRepository::class)
- * @ORM\Table(name="cliente_historial")
- */
+#[ORM\Entity(repositoryClass: ClienteHistorialRepository::class)]
+#[ORM\Table(name: "cliente_historial")]
 class ClienteHistorial
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id()]
+    #[ORM\GeneratedValue()]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Cliente::class, inversedBy="clienteHistorials")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Cliente::class, inversedBy: "clienteHistorials")]
+    #[ORM\JoinColumn(nullable: false)]
     private $cliente;
 
     /**
      * Todos los campos de datos son nullable: en cada modificación se guarda solo
      * el dato que cambió (con su valor anterior) y los demás quedan en null.
-     *
-     * @ORM\Column(type="string", length=255, nullable=true)
      */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $nombre;
 
     /**
      * Cifrado (AES-256-GCM, ver App\Doctrine\EncryptedStringType). Sin columna hash:
      * esta tabla es solo un historial de auditoría, no se busca por estos campos.
-     *
-     * @ORM\Column(type="encrypted_string", length=255, nullable=true)
      */
+    #[ORM\Column(type: "encrypted_string", length: 255, nullable: true)]
     private $rut;
 
-    /**
-     * @ORM\Column(type="encrypted_string", length=255)
-     */
+    #[ORM\Column(type: "encrypted_string", length: 255)]
     private $correo;
 
-    /**
-     * @ORM\Column(type="encrypted_string", length=255)
-     */
+    #[ORM\Column(type: "encrypted_string", length: 255)]
     private $telefono;
 
-    /**
-     * @ORM\Column(type="string", length=20)
-     */
+    #[ORM\Column(type: "string", length: 20)]
     private $sexo;
 
-    /**
-     * @ORM\Column(type="encrypted_string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "encrypted_string", length: 255, nullable: true)]
     private $claveUnica;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: "datetime")]
     private $fechaModificacion;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $usuarioModificacion;
 
-    /**
-     * @ORM\Column(type="encrypted_string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "encrypted_string", length: 255, nullable: true)]
     private $direccion;
-     /**
-     * @ORM\Column(type="encrypted_string", length=255)
-     */
+    #[ORM\Column(type: "encrypted_string", length: 255)]
     private $telefonoRecado;
 
     public function getId(): ?int

@@ -5,49 +5,33 @@ namespace App\Entity;
 use App\Repository\LineaTiempoTerminadaRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=LineaTiempoTerminadaRepository::class)
- */
+#[ORM\Entity(repositoryClass: LineaTiempoTerminadaRepository::class)]
 class LineaTiempoTerminada
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Causa::class, inversedBy="lineaTiempoTerminadas")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Causa::class, inversedBy: "lineaTiempoTerminadas")]
+    #[ORM\JoinColumn(nullable: false)]
     private $causa;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=LineaTiempoEtapas::class, inversedBy="lineaTiempoTerminadas")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: LineaTiempoEtapas::class, inversedBy: "lineaTiempoTerminadas")]
+    #[ORM\JoinColumn(nullable: false)]
     private $lineaTiempoEtapas;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: "boolean")]
     private $estado;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Usuario::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Usuario::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private $usuarioRegistro;
 
-    /**
-     * @ORM\Column(type="text")
-     */
+    #[ORM\Column(type: "text")]
     private $observacion;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: "datetime")]
     private $fecha;
 
     public function getId(): ?int

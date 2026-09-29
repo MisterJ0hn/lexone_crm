@@ -7,77 +7,49 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=CuotaRepository::class)
- */
+#[ORM\Entity(repositoryClass: CuotaRepository::class)]
 class Cuota
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: "integer")]
     private $numero;
 
-    /**
-     * @ORM\Column(type="date")
-     */
+    #[ORM\Column(type: "date")]
     private $fechaPago;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: "integer")]
     private $monto;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $pagado;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private $anular;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: "datetime", nullable: true)]
     private $fechaAnulacion;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Usuario::class)
-     */
+    #[ORM\ManyToOne(targetEntity: Usuario::class)]
     private $usuarioAnulacion;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Contrato::class, inversedBy="detalleCuotas")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Contrato::class, inversedBy: "detalleCuotas")]
+    #[ORM\JoinColumn(nullable: false)]
     private $contrato;
 
-    /**
-     * @ORM\OneToMany(targetEntity=PagoCuotas::class, mappedBy="cuota")
-     */
+    #[ORM\OneToMany(targetEntity: PagoCuotas::class, mappedBy: "cuota")]
     private $pagoCuotas;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private $isMulta;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=ContratoAnexo::class, inversedBy="cuotas")
-     */
+    #[ORM\ManyToOne(targetEntity: ContratoAnexo::class, inversedBy: "cuotas")]
     private $anexo;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: "text", nullable: true)]
     private $invoiceId;
 
 

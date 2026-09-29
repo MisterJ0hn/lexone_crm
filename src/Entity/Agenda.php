@@ -7,173 +7,107 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=AgendaRepository::class)
- */
+#[ORM\Entity(repositoryClass: AgendaRepository::class)]
 class Agenda
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Cuenta::class, inversedBy="agendas")
-     */
+    #[ORM\ManyToOne(targetEntity: Cuenta::class, inversedBy: "agendas")]
     private $cuenta;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $campania;
 
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Gestionar::class, inversedBy="agendas")
-     */
+    #[ORM\ManyToOne(targetEntity: Gestionar::class, inversedBy: "agendas")]
     private $gestionar;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Usuario::class, inversedBy="agendas")
-     */
+    #[ORM\ManyToOne(targetEntity: Usuario::class, inversedBy: "agendas")]
     private $agendador;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $nombreCliente;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $emailCliente;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $telefonoCliente;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $ciudadCliente;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: "datetime", nullable: true)]
     private $fechaCarga;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: "datetime", nullable: true)]
     private $fechaAsignado;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Sucursal::class, inversedBy="agendas")
-     */
+    #[ORM\ManyToOne(targetEntity: Sucursal::class, inversedBy: "agendas")]
     private $sucursal;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=AgendaStatus::class, inversedBy="agendas")
-     */
+    #[ORM\ManyToOne(targetEntity: AgendaStatus::class, inversedBy: "agendas")]
     private $status;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: "text", nullable: true)]
     private $detalleCliente;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Usuario::class, inversedBy="agendaAbogados")
-     */
+    #[ORM\ManyToOne(targetEntity: Usuario::class, inversedBy: "agendaAbogados")]
     private $abogado;
 
-    /**
-     * @ORM\Column(type="decimal", precision=10, scale=0, nullable=true)
-     */
+    #[ORM\Column(type: "decimal", precision: 10, scale: 0, nullable: true)]
     private $monto;
 
-    /**
-     * @ORM\OneToMany(targetEntity=UsuarioUsuariocategoria::class, mappedBy="agenda")
-     */
+    #[ORM\OneToMany(targetEntity: UsuarioUsuariocategoria::class, mappedBy: "agenda")]
     private $usuarioUsuariocategorias;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Reunion::class, inversedBy="agendas")
-     */
+    #[ORM\ManyToOne(targetEntity: Reunion::class, inversedBy: "agendas")]
     private $reunion;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: "text", nullable: true)]
     private $observacion;
 
-    /**
-     * @ORM\OneToMany(targetEntity=AgendaObservacion::class, mappedBy="agenda", orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: AgendaObservacion::class, mappedBy: "agenda", orphanRemoval: true)]
     private $agendaObservacions;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $rutCliente;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $telefonoRecadoCliente;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: "datetime", nullable: true)]
     private $fechaContrato;
 
-    /**
-     * @ORM\OneToOne(targetEntity=Contrato::class,  mappedBy="agenda")
-     */
+    #[ORM\OneToOne(targetEntity: Contrato::class,  mappedBy: "agenda")]
     private $contrato;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $lead;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $formId;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=AgendaContacto::class)
-     */
+    #[ORM\ManyToOne(targetEntity: AgendaContacto::class)]
     private $agendaContacto;
 
-    /**
-     * @ORM\Column(type="decimal", precision=10, scale=0, nullable=true)
-     */
+    #[ORM\Column(type: "decimal", precision: 10, scale: 0, nullable: true)]
     private $pagoActual;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Causa::class, mappedBy="agenda")
-     */
+    #[ORM\OneToMany(targetEntity: Causa::class, mappedBy: "agenda")]
     private $causas;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=AgendaSubStatus::class)
-     */
+    #[ORM\ManyToOne(targetEntity: AgendaSubStatus::class)]
     private $subStatus;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Canal::class, inversedBy="agendas")
-     */
+    #[ORM\ManyToOne(targetEntity: Canal::class, inversedBy: "agendas")]
     private $canal;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Empresa::class, inversedBy="agendas")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Empresa::class, inversedBy: "agendas")]
+    #[ORM\JoinColumn(nullable: false)]
     private $empresa;
 
     /**
@@ -181,9 +115,8 @@ class Agenda
      * Determina si el Contrato lleva un único Cliente (Persona, comportamiento
      * histórico) o si sus Causas pueden repartirse entre varios Clientes propios
      * (Convenio/Empresa), creados luego desde la línea de tiempo del contrato.
-     *
-     * @ORM\ManyToOne(targetEntity=TipoCliente::class, inversedBy="agendas")
      */
+    #[ORM\ManyToOne(targetEntity: TipoCliente::class, inversedBy: "agendas")]
     private $tipoCliente;
 
     public function __construct()

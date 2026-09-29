@@ -15,7 +15,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Doctrine\ORM\EntityManagerInterface;
 use Twig\Environment;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 
+#[AsCommand(name: 'fondo-fijo')]
 class FondoFijoCommand extends Command
 {
     protected static $defaultName = 'fondo-fijo';

@@ -7,336 +7,214 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=ContratoRepository::class)
- */
+#[ORM\Entity(repositoryClass: ContratoRepository::class)]
 class Contrato
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
    
-    /**
-     * @ORM\Column(type="string", length=255,nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255,nullable: true)]
     private $ciudad;
 
    
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $comuna;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=EstadoCivil::class, inversedBy="contratos")
-     */
+    #[ORM\ManyToOne(targetEntity: EstadoCivil::class, inversedBy: "contratos")]
     private $estadoCivil;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=SituacionLaboral::class, inversedBy="contratos")
-     */
+    #[ORM\ManyToOne(targetEntity: SituacionLaboral::class, inversedBy: "contratos")]
     private $situacionLaboral;
 
     /**
      * @deprecated Vestigial. El contrato ya no tiene una única estrategia/materia:
      * cada Causa lleva su propia materia y materiaEstrategia. No se escribe; se
      * mantiene solo para vistas históricas de solo lectura. Ver Contrato::getMaterias().
-     *
-     * @ORM\ManyToOne(targetEntity=EstrategiaJuridica::class, inversedBy="contratos")
      */
+    #[ORM\ManyToOne(targetEntity: EstrategiaJuridica::class, inversedBy: "contratos")]
     private $estrategiaJuridica;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Escritura::class, inversedBy="contratos")
-     */
+    #[ORM\ManyToOne(targetEntity: Escritura::class, inversedBy: "contratos")]
     private $escritura;
 
-    /**
-     * @ORM\OneToOne(targetEntity=Agenda::class,inversedBy="contrato", cascade={"persist", "remove"})
-     */
+    #[ORM\OneToOne(targetEntity: Agenda::class,inversedBy: "contrato", cascade: ["persist", "remove"])]
     private $agenda;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $tituloContrato;
 
-    /**
-     * @ORM\Column(type="decimal", precision=10, scale=0, nullable=true)
-     */
+    #[ORM\Column(type: "decimal", precision: 10, scale: 0, nullable: true)]
     private $montoNivelDeuda;
 
-    /**
-     * @ORM\Column(type="decimal", precision=10, scale=0, nullable=true)
-     */
+    #[ORM\Column(type: "decimal", precision: 10, scale: 0, nullable: true)]
     private $MontoContrato;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $cuotas;
 
-    /**
-     * @ORM\Column(type="decimal", precision=10, scale=0, nullable=true)
-     */
+    #[ORM\Column(type: "decimal", precision: 10, scale: 0, nullable: true)]
     private $valorCuota;
 
-    /**
-     * @ORM\Column(type="decimal", precision=5, scale=2, nullable=true)
-     */
+    #[ORM\Column(type: "decimal", precision: 5, scale: 2, nullable: true)]
     private $interes;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $diaPago;
 
-    /**
-     * @ORM\OneToMany(targetEntity=ContratoRol::class, mappedBy="contrato")
-     */
+    #[ORM\OneToMany(targetEntity: ContratoRol::class, mappedBy: "contrato")]
     private $contratoRols;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: "datetime", nullable: true)]
     private $fechaCreacion;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Sucursal::class, inversedBy="contratos")
-     */
+    #[ORM\ManyToOne(targetEntity: Sucursal::class, inversedBy: "contratos")]
     private $sucursal;
 
     
     private $contratoTramitadores;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Usuario::class, inversedBy="contratos")
-     */
+    #[ORM\ManyToOne(targetEntity: Usuario::class, inversedBy: "contratos")]
     private $tramitador;
 
     
-    /**
-     * @ORM\ManyToOne(targetEntity=Cliente::class, inversedBy="contratos")
-     */
+    #[ORM\ManyToOne(targetEntity: Cliente::class, inversedBy: "contratos")]
     private $cliente;
 
   
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Pais::class, inversedBy="contratos")
-     */
+    #[ORM\ManyToOne(targetEntity: Pais::class, inversedBy: "contratos")]
     private $pais;
 
    
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: "datetime", nullable: true)]
     private $fechaPrimerPago;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=ContratoVehiculo::class, inversedBy="contratos")
-     */
+    #[ORM\ManyToOne(targetEntity: ContratoVehiculo::class, inversedBy: "contratos")]
     private $vehiculo;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=ContratoVivienda::class, inversedBy="contratos")
-     */
+    #[ORM\ManyToOne(targetEntity: ContratoVivienda::class, inversedBy: "contratos")]
     private $vivienda;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Reunion::class, inversedBy="contratos")
-     */
+    #[ORM\ManyToOne(targetEntity: Reunion::class, inversedBy: "contratos")]
     private $reunion;
 
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     */
+    #[ORM\Column(type: "float", nullable: true)]
     private $primeraCuota;
 
-    /**
-     * @ORM\Column(type="date", nullable=true)
-     */
+    #[ORM\Column(type: "date", nullable: true)]
     private $fechaPrimeraCuota;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $pdf;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: "text", nullable: true)]
     private $observacion;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private $isAbono;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Cuota::class, mappedBy="contrato", orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: Cuota::class, mappedBy: "contrato", orphanRemoval: true)]
     private $detalleCuotas;
 
-    /**
-     * @ORM\Column(type="date", nullable=true)
-     */
+    #[ORM\Column(type: "date", nullable: true)]
     private $fechaUltimoPago;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private $isFinalizado;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $lote;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $pdfTermino;
 
-    /**
-     * @ORM\OneToMany(targetEntity=ContratoAnexo::class, mappedBy="contrato")
-     */
+    #[ORM\OneToMany(targetEntity: ContratoAnexo::class, mappedBy: "contrato")]
     private $contratoAnexos;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: "datetime", nullable: true)]
     private $fechaTermino;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $vigencia;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: "datetime", nullable: true)]
     private $fechaDesiste;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: "datetime", nullable: true)]
     private $fechaPdfAnexo;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $ultimaFuncion;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $qMov;
 
-    /**
-     * @ORM\Column(type="date", nullable=true)
-     */
+    #[ORM\Column(type: "date", nullable: true)]
     private $fechaCompromiso;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Cobranza::class, mappedBy="contrato", orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: Cobranza::class, mappedBy: "contrato", orphanRemoval: true)]
     private $cobranzas;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: "integer")]
     private $folio;
 
-    /**
-     * @ORM\OneToOne(targetEntity=Lotes::class, cascade={"persist", "remove"})
-     */
+    #[ORM\OneToOne(targetEntity: Lotes::class, cascade: ["persist", "remove"])]
     private $idLote;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Comuna::class, inversedBy="contratos")
-     */
+    #[ORM\ManyToOne(targetEntity: Comuna::class, inversedBy: "contratos")]
     private $ccomuna;
 
     /**
      * Plantilla de contrato elegida por el usuario al crear el contrato (ver
      * PanelAbogadoController::contrata()); ContratoController::pdf() la usa
      * para generar el PDF en vez del twig fijo.
-     *
-     * @ORM\ManyToOne(targetEntity=ContratoTemplate::class)
-     * @ORM\JoinColumn(nullable=true)
      */
+    #[ORM\ManyToOne(targetEntity: ContratoTemplate::class)]
+    #[ORM\JoinColumn(nullable: true)]
     private $contratoTemplate;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Ciudad::class)
-     */
+    #[ORM\ManyToOne(targetEntity: Ciudad::class)]
     private $cciudad;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Region::class, inversedBy="contratos")
-     */
+    #[ORM\ManyToOne(targetEntity: Region::class, inversedBy: "contratos")]
     private $cregion;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private $IsAnexo;
 
-    /**
-     * @ORM\Column(type="date", nullable=true)
-     */
+    #[ORM\Column(type: "date", nullable: true)]
     private $proximoVencimiento;
 
-    /**
-     * @ORM\Column(type="date", nullable=true)
-     */
+    #[ORM\Column(type: "date", nullable: true)]
     private $fechaUltimaGestion;
 
-    /**
-     * @ORM\OneToMany(targetEntity=ContratoAudios::class, mappedBy="contrato")
-     */
+    #[ORM\OneToMany(targetEntity: ContratoAudios::class, mappedBy: "contrato")]
     private $contratoAudios;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Ticket::class, mappedBy="contrato")
-     */
+    #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: "contrato")]
     private $tickets;
 
-    /**
-     * @ORM\Column(type="decimal", precision=10, scale=0, nullable=true)
-     */
+    #[ORM\Column(type: "decimal", precision: 10, scale: 0, nullable: true)]
     private $pagoActual;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private $isTotal;
 
 
-    /**
-     * @ORM\OneToMany(targetEntity=CausaObservacion::class, mappedBy="contrato")
-     */
+    #[ORM\OneToMany(targetEntity: CausaObservacion::class, mappedBy: "contrato")]
     private $causaObservacions;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Recordatorio::class, mappedBy="contrato")
-     */
+    #[ORM\OneToMany(targetEntity: Recordatorio::class, mappedBy: "contrato")]
     private $recordatorios;
 
-    /**
-     * @ORM\OneToMany(targetEntity=ContratoArchivos::class, mappedBy="contrato")
-     */
+    #[ORM\OneToMany(targetEntity: ContratoArchivos::class, mappedBy: "contrato")]
     private $contratoArchivos;
 
     
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private $isIncorporacion;
 
     

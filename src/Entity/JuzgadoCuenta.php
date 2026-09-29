@@ -5,28 +5,20 @@ namespace App\Entity;
 use App\Repository\JuzgadoCuentaRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=JuzgadoCuentaRepository::class)
- */
+#[ORM\Entity(repositoryClass: JuzgadoCuentaRepository::class)]
 class JuzgadoCuenta
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Cuenta::class, inversedBy="juzgadoCuentas")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Cuenta::class, inversedBy: "juzgadoCuentas")]
+    #[ORM\JoinColumn(nullable: false)]
     private $cuenta;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Juzgado::class, inversedBy="juzgadoCuentas")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Juzgado::class, inversedBy: "juzgadoCuentas")]
+    #[ORM\JoinColumn(nullable: false)]
     private $juzgado;
 
     public function getId(): ?int

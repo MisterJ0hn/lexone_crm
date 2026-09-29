@@ -7,36 +7,24 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=CuadernoRepository::class)
- */
+#[ORM\Entity(repositoryClass: CuadernoRepository::class)]
 class Cuaderno
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $nombre;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Actuacion::class, mappedBy="cuaderno")
-     */
+    #[ORM\OneToMany(targetEntity: Actuacion::class, mappedBy: "cuaderno")]
     private $actuacions;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=EstrategiaJuridica::class, inversedBy="cuadernos")
-     */
+    #[ORM\ManyToOne(targetEntity: EstrategiaJuridica::class, inversedBy: "cuadernos")]
     private $estrategiaJuridica;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Cuaderno::class)
-     */
+    #[ORM\ManyToOne(targetEntity: Cuaderno::class)]
     private $dependeCuaderno;
 
     public function __construct()

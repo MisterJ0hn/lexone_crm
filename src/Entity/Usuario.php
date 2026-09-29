@@ -9,84 +9,59 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-/**
- * @ORM\Entity(repositoryClass=UsuarioRepository::class)
- */
+#[ORM\Entity(repositoryClass: UsuarioRepository::class)]
 class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id()]
+    #[ORM\GeneratedValue()]
+    #[ORM\Column(type: "integer")]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=180, unique=true)
-     */
+    #[ORM\Column(type: "string", length: 180, unique: true)]
     private $username;
     
-    /**
-     * @ORM\Column(type="string", length=180, unique=true)
-     */
+    #[ORM\Column(type: "string", length: 180, unique: true)]
     private $usernameOriginal;
 
     /**
      * @var string The hashed password
-     * @ORM\Column(type="string")
      */
+    #[ORM\Column(type: "string")]
     private $password;
 
-    /**
-     * @ORM\Column(type="string", length=100)
-     */
+    #[ORM\Column(type: "string", length: 100)]
     private $nombre;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: "boolean")]
     private $estado;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: "datetime")]
     private $fecha_activacion;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $correo;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: "text", nullable: true)]
     private $token;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=UsuarioTipo::class, inversedBy="usuarios")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: UsuarioTipo::class, inversedBy: "usuarios")]
+    #[ORM\JoinColumn(nullable: false)]
     private $usuarioTipo;
 
     /**
      * Empresa a la que pertenece el usuario (membresia directa). Fuente de verdad
      * de getEmpresaActual(). El super-admin (usuarioTipo=8) puede ademas operar
      * otras empresas via el override de sesion (ver TenantSubscriber).
-     *
-     * @ORM\ManyToOne(targetEntity=Empresa::class)
-     * @ORM\JoinColumn(nullable=true)
      */
+    #[ORM\ManyToOne(targetEntity: Empresa::class)]
+    #[ORM\JoinColumn(nullable: true)]
     private $empresa;
 
 
-    /**
-     * @ORM\OneToMany(targetEntity=UsuarioCuenta::class, mappedBy="usuario")
-     */
+    #[ORM\OneToMany(targetEntity: UsuarioCuenta::class, mappedBy: "usuario")]
     private $usuarioCuentas;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Privilegio::class, mappedBy="usuario", orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: Privilegio::class, mappedBy: "usuario", orphanRemoval: true)]
     private $privilegios;
 
     /**
@@ -94,9 +69,8 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
      * escribiendo esta columna (eso mezclaba "a qué empresas puedo entrar" con
      * "cuál estoy viendo ahora" y se rompía con sesiones/pestañas concurrentes).
      * Ver $empresaActualOverride y App\EventListener\TenantSubscriber.
-     *
-     * @ORM\Column(type="integer", nullable=true)
      */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $empresaActual;
 
     /**
@@ -109,285 +83,175 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $empresaActualOverride;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
+    #[ORM\Column(type: "datetime", nullable: true)]
     private $fechaNoDisponible;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $whatsapp;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $telefono;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $rut;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $direccion;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $sexo;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=UsuarioCategoria::class, inversedBy="usuarios")
-     */
+    #[ORM\ManyToOne(targetEntity: UsuarioCategoria::class, inversedBy: "usuarios")]
     private $categoria;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=UsuarioStatus::class, inversedBy="usuarios")
-     */
+    #[ORM\ManyToOne(targetEntity: UsuarioStatus::class, inversedBy: "usuarios")]
     private $status;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Agenda::class, mappedBy="agendador")
-     */
+    #[ORM\OneToMany(targetEntity: Agenda::class, mappedBy: "agendador")]
     private $agendas;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=UsuarioTipoDocumento::class, inversedBy="usuarios")
-     */
+    #[ORM\ManyToOne(targetEntity: UsuarioTipoDocumento::class, inversedBy: "usuarios")]
     private $tipoDocumento;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Agenda::class, mappedBy="abogado")
-     */
+    #[ORM\OneToMany(targetEntity: Agenda::class, mappedBy: "abogado")]
     private $agendaAbogados;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $color;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $passwordAnt;
 
-    /**
-     * @ORM\OneToMany(targetEntity=UsuarioUsuariocategoria::class, mappedBy="usuario", orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: UsuarioUsuariocategoria::class, mappedBy: "usuario", orphanRemoval: true)]
     private $usuarioUsuariocategorias;
 
-    /**
-     * @ORM\OneToMany(targetEntity=ContratoRol::class, mappedBy="abogado")
-     */
+    #[ORM\OneToMany(targetEntity: ContratoRol::class, mappedBy: "abogado")]
     private $contratoRols;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Importacion::class, mappedBy="usuarioCarga")
-     */
+    #[ORM\OneToMany(targetEntity: Importacion::class, mappedBy: "usuarioCarga")]
     private $importacions;
 
-    /**
-     * @ORM\OneToMany(targetEntity=AgendaObservacion::class, mappedBy="usuarioRegistro")
-     */
+    #[ORM\OneToMany(targetEntity: AgendaObservacion::class, mappedBy: "usuarioRegistro")]
     private $agendaObservacions;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Contrato::class, mappedBy="tramitador")
-     */
+    #[ORM\OneToMany(targetEntity: Contrato::class, mappedBy: "tramitador")]
     private $contratos;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private $lunes;
 
-    /**
-     * @ORM\Column(type="time", nullable=true)
-     */
+    #[ORM\Column(type: "time", nullable: true)]
     private $lunesStart;
 
-    /**
-     * @ORM\Column(type="time", nullable=true)
-     */
+    #[ORM\Column(type: "time", nullable: true)]
     private $lunesEnd;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private $martes;
 
-    /**
-     * @ORM\Column(type="time", nullable=true)
-     */
+    #[ORM\Column(type: "time", nullable: true)]
     private $martesStart;
 
-    /**
-     * @ORM\Column(type="time", nullable=true)
-     */
+    #[ORM\Column(type: "time", nullable: true)]
     private $martesEnd;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private $miercoles;
 
-    /**
-     * @ORM\Column(type="time", nullable=true)
-     */
+    #[ORM\Column(type: "time", nullable: true)]
     private $miercolesStart;
 
-    /**
-     * @ORM\Column(type="time", nullable=true)
-     */
+    #[ORM\Column(type: "time", nullable: true)]
     private $miercolesEnd;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private $jueves;
 
-    /**
-     * @ORM\Column(type="time", nullable=true)
-     */
+    #[ORM\Column(type: "time", nullable: true)]
     private $juevesStart;
 
-    /**
-     * @ORM\Column(type="time", nullable=true)
-     */
+    #[ORM\Column(type: "time", nullable: true)]
     private $juevesEnd;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private $viernes;
 
-    /**
-     * @ORM\Column(type="time", nullable=true)
-     */
+    #[ORM\Column(type: "time", nullable: true)]
     private $viernesStart;
 
-    /**
-     * @ORM\Column(type="time", nullable=true)
-     */
+    #[ORM\Column(type: "time", nullable: true)]
     private $viernesEnd;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private $sabado;
 
-    /**
-     * @ORM\Column(type="time", nullable=true)
-     */
+    #[ORM\Column(type: "time", nullable: true)]
     private $sabadoStart;
 
-    /**
-     * @ORM\Column(type="time", nullable=true)
-     */
+    #[ORM\Column(type: "time", nullable: true)]
     private $sabadoEnd;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: "boolean", nullable: true)]
     private $domingo;
 
-    /**
-     * @ORM\Column(type="time", nullable=true)
-     */
+    #[ORM\Column(type: "time", nullable: true)]
     private $domingoStart;
 
-    /**
-     * @ORM\Column(type="time", nullable=true)
-     */
+    #[ORM\Column(type: "time", nullable: true)]
     private $domingoEnd;
 
-    /**
-     * @ORM\OneToMany(targetEntity=UsuarioNoDisponible::class, mappedBy="usuario")
-     */
+    #[ORM\OneToMany(targetEntity: UsuarioNoDisponible::class, mappedBy: "usuario")]
     private $usuarioNoDisponibles;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $sobrecupo;
 
-    /**
-     * @ORM\Column(type="json", nullable=true)
-     */
+    #[ORM\Column(type: "json", nullable: true)]
     private $lotes = [];
 
-    /**
-     * @ORM\OneToMany(targetEntity=UsuarioLote::class, mappedBy="usuario")
-     */
+    #[ORM\OneToMany(targetEntity: UsuarioLote::class, mappedBy: "usuario")]
     private $usuarioLotes;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Reportes::class, mappedBy="usuario", orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: Reportes::class, mappedBy: "usuario", orphanRemoval: true)]
     private $reportes;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: "text", nullable: true)]
     private $tokuId;
 
-    /**
-     * @ORM\OneToMany(targetEntity=ContratoAudios::class, mappedBy="usuarioRegistro")
-     */
+    #[ORM\OneToMany(targetEntity: ContratoAudios::class, mappedBy: "usuarioRegistro")]
     private $contratoAudios;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Ticket::class, mappedBy="origen")
-     */
+    #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: "origen")]
     private $tickets;
 
-    /**
-     * @ORM\OneToMany(targetEntity=TicketHistorial::class, mappedBy="usuarioRegistro")
-     */
+    #[ORM\OneToMany(targetEntity: TicketHistorial::class, mappedBy: "usuarioRegistro")]
     private $ticketHistorials;
 
-    /**
-     * @ORM\Column(type="date", nullable=true)
-     */
+    #[ORM\Column(type: "date", nullable: true)]
     private $fechaNacimiento;
 
-    /**
-     * @ORM\Column(type="date", nullable=true)
-     */
+    #[ORM\Column(type: "date", nullable: true)]
     private $fechaAviso;
 
-    /**
-     * @ORM\OneToMany(targetEntity=CausaObservacion::class, mappedBy="usuarioRegistro")
-     */
+    #[ORM\OneToMany(targetEntity: CausaObservacion::class, mappedBy: "usuarioRegistro")]
     private $causaObservacions;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Canal::class, mappedBy="usuarioRegistro")
-     */
+    #[ORM\OneToMany(targetEntity: Canal::class, mappedBy: "usuarioRegistro")]
     private $canals;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Recordatorio::class, mappedBy="usuarioRegistro")
-     */
+    #[ORM\OneToMany(targetEntity: Recordatorio::class, mappedBy: "usuarioRegistro")]
     private $recordatorios;
 
-    /**
-     * @ORM\OneToMany(targetEntity=ContratoArchivos::class, mappedBy="usuarioRegistro")
-     */
+    #[ORM\OneToMany(targetEntity: ContratoArchivos::class, mappedBy: "usuarioRegistro")]
     private $contratoArchivos;
 
-        /**
+    /**
      * Fecha en que caduca la contraseña. NULL = sin caducidad configurada.
-     * @ORM\Column(type="datetime", nullable=true)
      */
+    #[ORM\Column(type: "datetime", nullable: true)]
     private $passwordExpiracion;
 
-    /**
-     * @ORM\OneToMany(targetEntity=PasswordHistorial::class, mappedBy="usuario", orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: PasswordHistorial::class, mappedBy: "usuario", orphanRemoval: true)]
     private $passwordHistorials;
     
     public function __construct()
