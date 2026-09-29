@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Entity\Agenda;
 use App\Entity\Usuario;
@@ -52,11 +54,15 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[Route("/panel_abogado")]
 class PanelAbogadoController extends AbstractController
 {
+
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
     #[Route("/", name: "panel_abogado_index", methods: ["GET","POST"])]
     public function index(AgendaRepository $agendaRepository,
                         CuentaRepository $cuentaRepository,
@@ -185,7 +191,7 @@ class PanelAbogadoController extends AbstractController
         $user=$this->getUser();
         $pagina=$moduloPerRepository->findOneByName('panel_abogado',$user->getEmpresaActual());
         $contrato_rol = new ContratoRol();
-        $abogado=$this->getDoctrine()->getRepository(Usuario::class)->find($user->getId());
+        $abogado=$this->entityManager->getRepository(Usuario::class)->find($user->getId());
         $contrato_rol->setAbogado($abogado);
 
         if(isset($_GET['nombre'])){
@@ -194,7 +200,7 @@ class PanelAbogadoController extends AbstractController
             $contrato_rol->setInstitucionAcreedora($_GET['institucion']);
             $contrato_rol->setJuzgado($juzgadoRepository->find($_GET['juzgado']));
 
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $entityManager->persist($contrato_rol);
             $entityManager->flush();
 
@@ -212,7 +218,7 @@ class PanelAbogadoController extends AbstractController
         $user=$this->getUser();
         $agenda_id=$request->query->get('agenda');
         $agenda=$agendaRepository->find($agenda_id);
-        $empresa=$this->getDoctrine()->getRepository(Empresa::class)->find($user->getEmpresaActual());
+        $empresa=$this->entityManager->getRepository(Empresa::class)->find($user->getEmpresaActual());
         return $this->render('panel_abogado/reasignar.html.twig', [
             'cuentas'=>$empresa->getCuentas(),
             'agenda'=> $agenda,     
@@ -272,7 +278,7 @@ class PanelAbogadoController extends AbstractController
             if(null !== $request->request->get('cboReunion')){
                 $agenda->setReunion($reunionRepository->find($request->request->get('cboReunion')));
             }
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
 
             
 
@@ -310,9 +316,9 @@ class PanelAbogadoController extends AbstractController
         $user=$this->getUser();
 
         
-        $abogado=$this->getDoctrine()->getRepository(Usuario::class)->find($user);
+        $abogado=$this->entityManager->getRepository(Usuario::class)->find($user);
 
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $entityManager->remove($contratoRol);
             $entityManager->flush();
 
@@ -331,7 +337,7 @@ class PanelAbogadoController extends AbstractController
                             SucursalRepository $sucursalRepository,
                             DiasPagoRepository $diasPagoRepository,
                             UsuarioRepository $usuarioRepository,
-                            UserPasswordEncoderInterface $encoder,
+                            UserPasswordHasherInterface $encoder,
                             usuarioTipoRepository $usuarioTipoRepository,
                             ContratoRepository $contratoRepository,
                             RegionRepository $regionRepository,
@@ -372,7 +378,7 @@ class PanelAbogadoController extends AbstractController
                 $agenda->setReunion($reunionRepository->find($request->request->get('cboReunion')));
             }
             
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $entityManager->persist($agenda);
             $entityManager->flush();
 
@@ -470,8 +476,8 @@ class PanelAbogadoController extends AbstractController
         $form->handleRequest($request);
         
         if ($form->isSubmitted() && $form->isValid()) {
-            //$this->getDoctrine()->getManager()->flush();
-            $entityManager = $this->getDoctrine()->getManager();
+            //$this->entityManager->flush();
+            $entityManager = $this->entityManager;
 
             // Convenio/Empresa no tienen sexo (el campo ni siquiera se muestra en el
             // formulario) y sus causas se agregan después, por cliente, desde la
@@ -702,7 +708,7 @@ class PanelAbogadoController extends AbstractController
         if(null !==$request->request->get('hdNoContrata')){
             $agenda->setStatus($agendaStatusRepository->find($request->request->get('hdNoContrata')));
            // $agenda->setObservacion($agenda->getObservacion()."<hr>".$request->request->get('txtObservacion'));
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $observacion=new AgendaObservacion();
             $observacion->setAgenda($agenda);
             $observacion->setUsuarioRegistro($usuarioRepository->find($user->getId()));
@@ -741,7 +747,7 @@ class PanelAbogadoController extends AbstractController
     public function compania(Agenda $agenda,Request $request,
                    CuentaRepository  $cuentaRepository)
     {
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $this->entityManager;
         
         $compania=$request->query->get('compania');
         $agenda->setCuenta($cuentaRepository->find($compania));

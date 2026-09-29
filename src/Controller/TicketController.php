@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 use App\Entity\Contrato;
 use App\Entity\ModuloPer;
 use App\Entity\Ticket;
@@ -25,6 +27,10 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route("/ticket")]
 class TicketController extends AbstractController
 {
+
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
     #[Route("/", name: "app_ticket_index", methods: ["GET"])]
     public function index(TicketRepository $ticketRepository,
                         PaginatorInterface $paginator,
@@ -35,7 +41,7 @@ class TicketController extends AbstractController
         $this->denyAccessUnlessGranted('view','ticket');
         $user=$this->getUser();
 
-        $pagina=$this->getDoctrine()->getRepository(ModuloPer::class)->findOneByName('ticket',$user->getEmpresaActual());
+        $pagina=$this->entityManager->getRepository(ModuloPer::class)->findOneByName('ticket',$user->getEmpresaActual());
         
         
         $statues='1';
@@ -146,7 +152,7 @@ class TicketController extends AbstractController
         $user=$this->getUser();
         $ticket=null;
         $contratos=null;
-        $pagina=$this->getDoctrine()->getRepository(ModuloPer::class)->findOneByName('ticket_new',$user->getEmpresaActual());
+        $pagina=$this->entityManager->getRepository(ModuloPer::class)->findOneByName('ticket_new',$user->getEmpresaActual());
         
 
         $folio = $request->request->get('txtFolio');
@@ -208,7 +214,7 @@ class TicketController extends AbstractController
         //$fecha="a.fechaCarga between '$fechainicio' and '$fechafin 23:59:59'" ;
         $nombre_status="";
         if(null != $ticketEstado){
-            $status=$this->getDoctrine()->getRepository(TicketEstado::class)->find($ticketEstado);
+            $status=$this->entityManager->getRepository(TicketEstado::class)->find($ticketEstado);
             $nombre_status=$status->getNombre();
         }
         //$queryresumen=$agendaRepository->findByAgendGroup(null,$user->getEmpresaActual(),$compania,$statuesgroup,$filtro,null,$fecha);   
@@ -252,7 +258,7 @@ class TicketController extends AbstractController
 
         $user=$this->getUser();
 
-        $pagina=$this->getDoctrine()->getRepository(ModuloPer::class)->findOneByName('ticket_new',$user->getEmpresaActual());
+        $pagina=$this->entityManager->getRepository(ModuloPer::class)->findOneByName('ticket_new',$user->getEmpresaActual());
         
 
         $ticket = new Ticket();

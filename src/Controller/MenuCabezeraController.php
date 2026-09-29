@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 use App\Entity\MenuCabezera;
 use App\Form\MenuCabezeraType;
 use App\Repository\EmpresaRepository;
@@ -14,6 +16,10 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route("/menu_cabezera")]
 class MenuCabezeraController extends AbstractController
 {
+
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
     #[Route("/", name: "menu_cabezera_index", methods: ["GET"])]
     public function index(MenuCabezeraRepository $menuCabezeraRepository): Response
     {
@@ -37,7 +43,7 @@ class MenuCabezeraController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $entityManager->persist($menuCabezera);
             $entityManager->flush();
 
@@ -67,7 +73,7 @@ class MenuCabezeraController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('menu_cabezera_index');
         }
@@ -83,7 +89,7 @@ class MenuCabezeraController extends AbstractController
     {
         $this->denyAccessUnlessGranted('full','menu_cabezera');
         if ($this->isCsrfTokenValid('delete'.$menuCabezera->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             foreach ($menuCabezera->getMenus() as $menu) {
             
                 if($menu->getDependeDe()){

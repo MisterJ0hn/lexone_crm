@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 use App\Entity\Privilegio;
 use App\Repository\UsuarioRepository;
 use App\Repository\AccionRepository;
@@ -18,6 +20,10 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route("/privilegio")]
 class PrivilegioController extends AbstractController
 {
+
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
     #[Route("/{id}", name: "privilegio_index", methods: ["GET"])]
     public function index(Usuario $usuario,
                         PrivilegioRepository $privilegioRepository,
@@ -53,7 +59,7 @@ class PrivilegioController extends AbstractController
                 $privilegioNew->setModuloPer($privilegioTipousuario->getModuloPer());
                 $privilegioNew->setAccion($privilegioTipousuario->getAccion());
 
-                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager = $this->entityManager;
                 $entityManager->persist($privilegioNew);
                 $entityManager->flush();
 
@@ -83,7 +89,7 @@ class PrivilegioController extends AbstractController
         $accion=$accionRepository->find($request->request->get('accion'));
         $privilegio->setAccion($accion);
 
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $this->entityManager;
         $entityManager->persist($privilegio);
         $entityManager->flush();
 
@@ -103,7 +109,7 @@ class PrivilegioController extends AbstractController
         $privilegios=$usuario->getPrivilegios();
         foreach($privilegios as $privilegio){
            
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $entityManager->remove($privilegio);
             $entityManager->flush();
 
@@ -121,7 +127,7 @@ class PrivilegioController extends AbstractController
                 $privilegioNew->setModuloPer($privilegioTipousuario->getModuloPer());
                 $privilegioNew->setAccion($privilegioTipousuario->getAccion());
 
-                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager = $this->entityManager;
                 $entityManager->persist($privilegioNew);
                 $entityManager->flush();
 
@@ -135,7 +141,7 @@ class PrivilegioController extends AbstractController
     {
         $this->denyAccessUnlessGranted('full','privilegio');
         if ($this->isCsrfTokenValid('delete'.$privilegio->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $entityManager->remove($privilegio);
             $entityManager->flush();
         }

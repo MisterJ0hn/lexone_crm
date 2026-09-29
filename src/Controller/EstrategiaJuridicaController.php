@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 use App\Entity\EstrategiaJuridica;
 use App\Entity\Materia;
 use App\Form\EstrategiaJuridicaType;
@@ -15,6 +17,10 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route("/estrategia_juridica")]
 class EstrategiaJuridicaController extends AbstractController
 {
+
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
     #[Route("/", name: "estrategia_juridica_index", methods: ["GET"])]
     public function index(EstrategiaJuridicaRepository $estrategiaJuridicaRepository): Response
     {
@@ -31,7 +37,7 @@ class EstrategiaJuridicaController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $entityManager->persist($estrategiaJuridica);
             $entityManager->flush();
 
@@ -59,7 +65,7 @@ class EstrategiaJuridicaController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('estrategia_juridica_index');
         }
@@ -85,7 +91,7 @@ class EstrategiaJuridicaController extends AbstractController
     public function delete(Request $request, EstrategiaJuridica $estrategiaJuridica): Response
     {
         if ($this->isCsrfTokenValid('delete'.$estrategiaJuridica->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $entityManager->remove($estrategiaJuridica);
             $entityManager->flush();
         }

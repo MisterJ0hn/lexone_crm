@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 use App\Entity\Contrato;
 use App\Entity\Empresa;
 use App\Entity\Recordatorio;
@@ -19,6 +21,10 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route("/recordatorio")]
 class RecordatorioController extends AbstractController
 {
+
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
     #[Route("/", name: "recordatorio_index")]
     public function index(Request $request,
                         PaginatorInterface $paginator,
@@ -121,7 +127,7 @@ class RecordatorioController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
 
             $entityManager->persist($recordatorio);
             $entityManager->flush();
@@ -177,7 +183,7 @@ class RecordatorioController extends AbstractController
     public function marcarLeido(Recordatorio $recordatorio){
         $recordatorio->setLeido(true);
 
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $this->entityManager;
 
         $entityManager->persist($recordatorio);
         $entityManager->flush();

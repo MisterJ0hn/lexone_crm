@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 use App\Entity\Cuenta;
 use App\Entity\Empresa;
 use App\Form\CuentaType;
@@ -19,6 +21,10 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 #[Route("/cuenta")]
 class CuentaController extends AbstractController
 {
+
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
     #[Route("/", name: "cuenta_index", methods: ["GET"])]
     public function index(CuentaRepository $cuentaRepository,ModuloPerRepository $moduloPerRepository): Response
     {
@@ -36,7 +42,7 @@ class CuentaController extends AbstractController
     {
         $this->denyAccessUnlessGranted('create','cuenta');
         $user=$this->getUser();
-        $empresa=$this->getDoctrine()->getRepository(Empresa::class)->find($user->getEmpresaActual());
+        $empresa=$this->entityManager->getRepository(Empresa::class)->find($user->getEmpresaActual());
         $cuentum = new Cuenta();
         $cuentum->setFechaCreacion(new \DateTime(date("Y-m-d h:i:s")));
         $cuentum->setFechaUltimamodificacion(new \DateTime(date("Y-m-d h:i:s")));
@@ -45,7 +51,7 @@ class CuentaController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $entityManager->persist($cuentum);
             $entityManager->flush();
 
@@ -75,7 +81,7 @@ class CuentaController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('cuenta_index');
         }
@@ -91,7 +97,7 @@ class CuentaController extends AbstractController
     {
         $this->denyAccessUnlessGranted('full','empresa');
         if ($this->isCsrfTokenValid('delete'.$cuentum->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             foreach($cuentum->getSucursals() as $sucursal){
                 foreach ($sucursal->getContratos() as $contrato) {
                     $contrato->setSucursal(null);

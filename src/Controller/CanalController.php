@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 use App\Entity\Canal;
 use App\Entity\Empresa;
 use App\Form\CanalType;
@@ -15,6 +17,10 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route("/canal")]
 class CanalController extends AbstractController
 {
+
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
     #[Route("/", name: "canal_index", methods: ["GET","POST"])]
     public function index(Request $request,CanalRepository $canalRepository,EmpresaRepository $empresaRepository): Response
     {
@@ -28,7 +34,7 @@ class CanalController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $entityManager->persist($canal);
             $entityManager->flush();
 
@@ -50,7 +56,7 @@ class CanalController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $entityManager->persist($canal);
             $entityManager->flush();
 
@@ -78,7 +84,7 @@ class CanalController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('canal_index');
         }
@@ -93,7 +99,7 @@ class CanalController extends AbstractController
     public function delete(Request $request, Canal $canal): Response
     {
         if ($this->isCsrfTokenValid('delete'.$canal->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $entityManager->remove($canal);
             $entityManager->flush();
         }

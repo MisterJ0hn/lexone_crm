@@ -18,18 +18,20 @@ use Symfony\Component\HttpFoundation\Response;
 
 class PrincipalVoter extends Voter
 {
+    private $em;
+
     public function __construct(ContainerInterface $container) {
         $this->em =$container->get('doctrine');
     }
 
-    protected function supports($attribute, $subject)
+    protected function supports(string $attribute, mixed $subject): bool
     {
         // replace with your own logic
         // https://symfony.com/doc/current/security/voters.html
         return in_array($attribute, ['view', 'edit','create','full']);
     }
 
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();
         // if the user is anonymous, do not grant access
@@ -69,8 +71,8 @@ class PrincipalVoter extends Voter
                     return $this->full($moduloPer,$user);
                     break;
             }
-        }catch(Exception $e){
-            throw("Error personalizado");
+        }catch(\Exception $e){
+            throw new \Exception("Error personalizado");
         }
 
         return false;

@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Controller;
+
+use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Usuario;
 use App\Entity\UsuarioCategoria;
 use App\Entity\Empresa;
@@ -20,7 +22,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
@@ -28,6 +30,10 @@ use Knp\Component\Pager\PaginatorInterface;
 #[Route("/jefe_procesos")]
 class JefeProcesosController extends AbstractController
 {
+
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
     #[Route("/", name: "jefe_procesos_index",methods: ["GET"])]
     public function index(UsuarioRepository $usuarioRepository,
                     ModuloPerRepository $moduloPerRepository,
@@ -58,7 +64,7 @@ class JefeProcesosController extends AbstractController
 
     #[Route("/new", name: "jefe_procesos_new", methods: ["GET","POST"])]
     public function new(Request $request,
-                        UserPasswordEncoderInterface $encoder,
+                        UserPasswordHasherInterface $encoder,
                         UsuarioTipoRepository $usuarioTipoRepository,
                         ModuloPerRepository $moduloPerRepository,
                         PrivilegioTipousuarioRepository $privilegioTipousuarioRepository,
@@ -70,7 +76,7 @@ class JefeProcesosController extends AbstractController
         $pagina=$moduloPerRepository->findOneByName('jefe_procesos',1);
         $usuario = new Usuario();
         $usuario->setEstado(1);
-        $empresa=$this->getDoctrine()->getRepository(Empresa::class)->find(1);
+        $empresa=$this->entityManager->getRepository(Empresa::class)->find(1);
        
         $cuentas=$empresa->getCuentas();
         $choices= array();
@@ -103,9 +109,9 @@ class JefeProcesosController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $password=$usuario->getPassword();
-            $encoded=$encoder->encodePassword($usuario,$password);
+            $encoded=$encoder->hashPassword($usuario,$password);
             $usuario->setPassword($encoded);
             $usuario->setUsername($usuario->getUsername().$user->getEmpresaActual());
         
@@ -122,7 +128,7 @@ class JefeProcesosController extends AbstractController
             $getcuentas=$_POST['cboEmpresa'];
          
             foreach($getcuentas as $getcuenta){
-                $cuenta=$this->getDoctrine()->getRepository(Cuenta::class)->find($getcuenta);
+                $cuenta=$this->entityManager->getRepository(Cuenta::class)->find($getcuenta);
                 
                 $usuarioCuenta=new UsuarioCuenta();
 
@@ -147,7 +153,7 @@ class JefeProcesosController extends AbstractController
                     $privilegioNew->setModuloPer($privilegioTipousuario->getModuloPer());
                     $privilegioNew->setAccion($privilegioTipousuario->getAccion());
     
-                    $entityManager = $this->getDoctrine()->getManager();
+                    $entityManager = $this->entityManager;
                     $entityManager->persist($privilegioNew);
                     $entityManager->flush();
     
@@ -181,14 +187,14 @@ class JefeProcesosController extends AbstractController
     }
 
     #[Route("/{id}/edit", name: "jefe_procesos_edit", methods: ["GET","POST"])]
-    public function edit(Request $request, Usuario $usuario,UserPasswordEncoderInterface $encoder,UsuarioTipoRepository $usuarioTipoRepository,ModuloPerRepository $moduloPerRepository,
+    public function edit(Request $request, Usuario $usuario,UserPasswordHasherInterface $encoder,UsuarioTipoRepository $usuarioTipoRepository,ModuloPerRepository $moduloPerRepository,
     UsuarioTipoDocumentoRepository $tipoDocumento): Response
     {
         $this->denyAccessUnlessGranted('edit','jefe_procesos');
         $user=$this->getUser();
         $pagina=$moduloPerRepository->findOneByName('jefe_procesos',1);
-        $empresa=$this->getDoctrine()->getRepository(Empresa::class)->find(1);
-        $usuarioCuenta=$this->getDoctrine()->getRepository(UsuarioCuenta::class)->findOneBy(['usuario'=>$usuario->getId()]);
+        $empresa=$this->entityManager->getRepository(Empresa::class)->find(1);
+        $usuarioCuenta=$this->entityManager->getRepository(UsuarioCuenta::class)->findOneBy(['usuario'=>$usuario->getId()]);
    
         $cuentas=$empresa->getCuentas();
         //$usuario->setPasswordAnt($usuario->getPassword());
@@ -219,15 +225,15 @@ class JefeProcesosController extends AbstractController
 
             if($usuario->getPasswordAnt()!=""){
                 $password=$usuario->getPasswordAnt();
-                $encoded=$encoder->encodePassword($usuario,$password);
+                $encoded=$encoder->hashPassword($usuario,$password);
                 $usuario->setPassword($encoded);
                 $usuario->setPasswordAnt("");
             }
             
-            $this->getDoctrine()->getManager()->flush();
+            $this->entityManager->flush();
             
 
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
 
             
 
@@ -244,7 +250,7 @@ class JefeProcesosController extends AbstractController
             $getcuentas=$_POST['cboEmpresa'];
          
             foreach($getcuentas as $getcuenta){
-                $cuenta=$this->getDoctrine()->getRepository(Cuenta::class)->find($getcuenta);
+                $cuenta=$this->entityManager->getRepository(Cuenta::class)->find($getcuenta);
                 
                 $usuarioCuenta=new UsuarioCuenta();
 
@@ -295,7 +301,7 @@ class JefeProcesosController extends AbstractController
             }
                 return $this->redirectToRoute('jefe_procesos_index');
         }
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $this->entityManager;
         $usuario->setEstado(1);
         $entityManager->persist($usuario);
         $entityManager->flush();
@@ -309,7 +315,7 @@ class JefeProcesosController extends AbstractController
         $this->denyAccessUnlessGranted('full','jefe_procesos');
         if ($this->isCsrfTokenValid('delete'.$usuario->getId(), $request->request->get('_token'))) {
             $usuarioRepository->respaldarUsername($usuario);
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $usuario->setEstado(0);
             $entityManager->persist($usuario);
             $entityManager->flush();

@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 use App\Entity\PrivilegioTipousuario;
 use App\Entity\Privilegio;
 use App\Entity\UsuarioTipo;
@@ -19,6 +21,10 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route("/privilegio_tipousuario")]
 class PrivilegioTipousuarioController extends AbstractController
 {
+
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
     
     #[Route("/{id}", name: "privilegio_tipousuario_index", methods: ["GET"])]
     public function index(UsuarioTipo $usuarioTipo, 
@@ -59,7 +65,7 @@ class PrivilegioTipousuarioController extends AbstractController
         $privilegioTipousuario->setTipousuario($usuarioTipo);
         $privilegioTipousuario->setAccion($accion);
 
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $this->entityManager;
         $entityManager->persist($privilegioTipousuario);
         $entityManager->flush();
 
@@ -74,7 +80,7 @@ class PrivilegioTipousuarioController extends AbstractController
                     $privilegioNew->setModuloPer($privilegioTipousuario->getModuloPer());
                     $privilegioNew->setAccion($privilegioTipousuario->getAccion());
 
-                    $entityManager = $this->getDoctrine()->getManager();
+                    $entityManager = $this->entityManager;
                     $entityManager->persist($privilegioNew);
                     $entityManager->flush();
 
@@ -88,7 +94,7 @@ class PrivilegioTipousuarioController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $entityManager->persist($privilegioTipousuario);
             $entityManager->flush();
 
@@ -113,7 +119,7 @@ class PrivilegioTipousuarioController extends AbstractController
         $privilegioTipousuario->setAccion($accion);
 
         
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $this->entityManager;
         $entityManager->persist($privilegioTipousuario);
         $entityManager->flush();
         $tipousuario=$privilegioTipousuario->getTipousuario();
@@ -130,7 +136,7 @@ class PrivilegioTipousuarioController extends AbstractController
                     //$privilegio->setModuloPer($privilegioTipousuario->getModuloPer());
                     $privilegio->setAccion($privilegioTipousuario->getAccion());
 
-                    //$entityManager = $this->getDoctrine()->getManager();
+                    //$entityManager = $this->entityManager;
                     $entityManager->persist($privilegio);
                     $entityManager->flush();
 
@@ -146,7 +152,7 @@ class PrivilegioTipousuarioController extends AbstractController
     {
         $this->denyAccessUnlessGranted('full','privilegio_tipousuario');
         if ($this->isCsrfTokenValid('delete'.$privilegioTipousuario->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $entityManager->remove($privilegioTipousuario);
             $entityManager->flush();
         }

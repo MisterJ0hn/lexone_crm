@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Controller;
+
+use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Usuario;
 use App\Entity\Empresa;
 use App\Entity\UsuarioCuenta;
@@ -14,7 +16,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
@@ -22,6 +24,10 @@ use Knp\Component\Pager\PaginatorInterface;
 #[Route("/tramitadores")]
 class TramitadoresController extends AbstractController
 {
+
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
     #[Route("/", name: "tramitadores_index",methods: ["GET"])]
     public function index(UsuarioRepository $usuarioRepository,
                     ModuloPerRepository $moduloPerRepository,
@@ -52,7 +58,7 @@ class TramitadoresController extends AbstractController
 
     #[Route("/new", name: "tramitadores_new", methods: ["GET","POST"])]
     public function new(Request $request,
-                        UserPasswordEncoderInterface $encoder,
+                        UserPasswordHasherInterface $encoder,
                         UsuarioTipoRepository $usuarioTipoRepository,
                         ModuloPerRepository $moduloPerRepository,
                         UsuarioTipoDocumentoRepository $tipoDocumento): Response
@@ -62,7 +68,7 @@ class TramitadoresController extends AbstractController
         $pagina=$moduloPerRepository->findOneByName('tramitadores',$user->getEmpresaActual());
         $usuario = new Usuario();
         $usuario->setEstado(1);
-        $empresa=$this->getDoctrine()->getRepository(Empresa::class)->find($user->getEmpresaActual());
+        $empresa=$this->entityManager->getRepository(Empresa::class)->find($user->getEmpresaActual());
 
         $cuentas=$empresa->getCuentas();
 
@@ -90,9 +96,9 @@ class TramitadoresController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $password=$usuario->getPassword();
-            $encoded=$encoder->encodePassword($usuario,$password);
+            $encoded=$encoder->hashPassword($usuario,$password);
             $usuario->setPassword($encoded);
 
             $usuario->setTipoDocumento($tipoDocumento->find($request->request->get('cboTipoDocumento')));
@@ -106,7 +112,7 @@ class TramitadoresController extends AbstractController
             $getcuentas=$_POST['cboEmpresa'] ?? [];
 
             foreach($getcuentas as $getcuenta){
-                $cuenta=$this->getDoctrine()->getRepository(Cuenta::class)->find($getcuenta);
+                $cuenta=$this->entityManager->getRepository(Cuenta::class)->find($getcuenta);
 
                 $usuarioCuenta=new UsuarioCuenta();
                 $usuarioCuenta->setCuenta($cuenta);
@@ -150,12 +156,12 @@ class TramitadoresController extends AbstractController
                         UsuarioTipoRepository $usuarioTipoRepository,
                         ModuloPerRepository $moduloPerRepository,
                         UsuarioTipoDocumentoRepository $tipoDocumento,
-                        UserPasswordEncoderInterface $encoder): Response
+                        UserPasswordHasherInterface $encoder): Response
     {
         $this->denyAccessUnlessGranted('edit','tramitadores');
         $user=$this->getUser();
         $pagina=$moduloPerRepository->findOneByName('tramitadores',$user->getEmpresaActual());
-        $empresa=$this->getDoctrine()->getRepository(Empresa::class)->find($user->getEmpresaActual());
+        $empresa=$this->entityManager->getRepository(Empresa::class)->find($user->getEmpresaActual());
 
         $cuentas=$empresa->getCuentas();
 
@@ -183,14 +189,14 @@ class TramitadoresController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             if($usuario->getPasswordAnt()!=""){
                 $password=$usuario->getPasswordAnt();
-                $encoded=$encoder->encodePassword($usuario,$password);
+                $encoded=$encoder->hashPassword($usuario,$password);
                 $usuario->setPassword($encoded);
                 $usuario->setPasswordAnt("");
             }
 
-            $this->getDoctrine()->getManager()->flush();
+            $this->entityManager->flush();
 
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
 
             $usuario->setFechaNacimiento(new \DateTime(date('Y-m-d H:i',strtotime($request->request->get('fecha_nacimiento')))));
             $usuario->setTipoDocumento($tipoDocumento->find($request->request->get('cboTipoDocumento')));
@@ -203,7 +209,7 @@ class TramitadoresController extends AbstractController
             $getcuentas=$_POST['cboEmpresa'] ?? [];
 
             foreach($getcuentas as $getcuenta){
-                $cuenta=$this->getDoctrine()->getRepository(Cuenta::class)->find($getcuenta);
+                $cuenta=$this->entityManager->getRepository(Cuenta::class)->find($getcuenta);
 
                 $usuarioCuenta=new UsuarioCuenta();
                 $usuarioCuenta->setCuenta($cuenta);
@@ -238,7 +244,7 @@ class TramitadoresController extends AbstractController
     {
         $this->denyAccessUnlessGranted('full','tramitadores');
 
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $this->entityManager;
         $usuario->setEstado(1);
         $entityManager->persist($usuario);
         $entityManager->flush();
@@ -250,7 +256,7 @@ class TramitadoresController extends AbstractController
     {
         $this->denyAccessUnlessGranted('full','tramitadores');
         if ($this->isCsrfTokenValid('delete'.$usuario->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $usuario->setEstado(0);
             $entityManager->persist($usuario);
             $entityManager->flush();

@@ -1,5 +1,5 @@
 security:
-    encoders:
+    password_hashers:
         App\Entity\Usuario:
             algorithm: bcrypt
             cost: 4
@@ -16,11 +16,10 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
-            anonymous: lazy
+            lazy: true
             provider: app_user_provider
-            guard:
-                authenticators:
-                    - App\Security\LoginAuthenticator
+            custom_authenticators:
+                - App\Security\LoginAuthenticator
             logout:
                 path: app_logout
                 # where to redirect after logout

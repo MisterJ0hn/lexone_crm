@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 use App\Entity\Pago;
 use App\Entity\Usuario;
 use App\Entity\Cuota;
@@ -43,6 +45,10 @@ use Symfony\Component\HttpKernel\KernelInterface;
 #[Route("/pago")]
 class PagoController extends AbstractController
 {
+
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
     #[Route("/", name: "pago_index", methods: ["GET"])]
     public function index(ContratoRepository $contratoRepository, CuotaRepository $cuotaRepository,PagoRepository $pagoRepository,PaginatorInterface $paginator,ModuloPerRepository $moduloPerRepository,Request $request,CuentaRepository $cuentaRepository): Response
     {
@@ -624,7 +630,7 @@ class PagoController extends AbstractController
             if(null == $cuota){
                 
                 
-                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager = $this->entityManager;
 
              
 
@@ -737,7 +743,7 @@ class PagoController extends AbstractController
                     $importacion->setNombre($originalFilename);
                     $importacion->setUrl($this->getParameter('csv_importacion').$newFilename);
                     $importacion->setUsuarioCarga($usuarioRepository->find($user->getId()));
-                    $entityManager = $this->getDoctrine()->getManager();
+                    $entityManager = $this->entityManager;
                     $entityManager->persist($importacion);
                     $entityManager->flush();
                     /*$fp = fopen($importacion->getUrl(), "r");
@@ -879,7 +885,7 @@ class PagoController extends AbstractController
         $this->denyAccessUnlessGranted('create','pago');
         $user=$this->getUser();
         $pagina=$moduloPerRepository->findOneByName('pago',$user->getEmpresaActual());
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $this->entityManager;
         $tipoPago=false;
         if(isset($_POST['cboTipo']))
             $tipoPago=$_POST['cboTipo'];
@@ -962,8 +968,8 @@ class PagoController extends AbstractController
             
             $pago->setFechaPago(new \DateTime(date('Y-m-d H:i',strtotime($fechaPago))));
             $pago->setHoraPago(new \DateTime(date('H:i',strtotime($fechaPago))));
-            $this->getDoctrine()->getManager()->flush();
-            $entityManager = $this->getDoctrine()->getManager();
+            $this->entityManager->flush();
+            $entityManager = $this->entityManager;
             $contrato=null;
             $pagoCuotas=$pago->getPagoCuotas();
             foreach($pagoCuotas as $pagoCuota){
@@ -1008,7 +1014,7 @@ class PagoController extends AbstractController
         $user=$this->getUser();
         $toku=new Toku();
         if ($this->isCsrfTokenValid('delete'.$pago->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $pago->setUsuarioAnulacion($user);
             $pago->setFechaAnulacion(new \DateTime(date("Y-m-d H:i")));
             $pago->setAnulado(true);

@@ -2,18 +2,24 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 use App\Repository\UsuarioRepository;
 use App\Repository\ModuloPerRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[Route("/mis_datos")]
 
 class MisDatosController extends AbstractController
 {
+
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
     #[Route("/", name: "mis_datos_index", methods: ["GET"])]
     public function index(
     ModuloPerRepository $moduloPerRepository)
@@ -38,7 +44,7 @@ class MisDatosController extends AbstractController
         $usuario->setCorreo($request->request->get('correo'));
 
         
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $this->entityManager;
 
         $entityManager->persist($usuario);
         $entityManager->flush();
@@ -54,7 +60,7 @@ class MisDatosController extends AbstractController
 
     }
     #[Route("/password", name: "mis_datos_password", methods: ["GET","POST"])]
-    public function password(UsuarioRepository $usuarioRepository, Request $request,UserPasswordEncoderInterface $encoder): Response
+    public function password(UsuarioRepository $usuarioRepository, Request $request,UserPasswordHasherInterface $encoder): Response
     {
         $this->denyAccessUnlessGranted('edit','mis_datos');
         $u=$this->getUser();
@@ -62,10 +68,10 @@ class MisDatosController extends AbstractController
 
         
         $password=$request->request->get('password');
-        $encoded=$encoder->encodePassword($usuario,$password);
+        $encoded=$encoder->hashPassword($usuario,$password);
         $usuario->setPassword($encoded);
 
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $this->entityManager;
 
         $entityManager->persist($usuario);
         $entityManager->flush();

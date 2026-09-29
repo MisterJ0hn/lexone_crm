@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 use App\Form\ConfiguracionType;
 use App\Repository\ConfiguracionRepository;
 use App\Repository\ModuloPerRepository;
@@ -12,6 +14,10 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route("/max_dias_comision")]
 class MaxDiasComisionController extends AbstractController
 {
+
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
     #[Route("/", name: "max_dias_comision_index")]
     public function index(Request $request,ConfiguracionRepository $configuracionRepository,ModuloPerRepository $moduloPerRepository): Response
     {
@@ -23,7 +29,7 @@ class MaxDiasComisionController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('max_dias_comision_index');
         }

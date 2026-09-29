@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 use App\Entity\ContratoTemplate;
 use App\Form\ContratoTemplateType;
 use App\Repository\ContratoTemplateRepository;
@@ -20,6 +22,10 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route("/contrato_template")]
 class ContratoTemplateController extends AbstractController
 {
+
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
     #[Route("/", name: "contrato_template_index", methods: ["GET"])]
     public function index(ContratoTemplateRepository $contratoTemplateRepository, ModuloPerRepository $moduloPerRepository): Response
     {
@@ -48,7 +54,7 @@ class ContratoTemplateController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $entityManager->persist($contratoTemplate);
             $entityManager->flush();
 
@@ -76,7 +82,7 @@ class ContratoTemplateController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $contratoTemplate->setFechaModificacion(new \DateTime());
 
-            $this->getDoctrine()->getManager()->flush();
+            $this->entityManager->flush();
 
             $this->addFlash('success', 'Plantilla actualizada correctamente.');
 
@@ -97,7 +103,7 @@ class ContratoTemplateController extends AbstractController
         $this->verificarTenant($contratoTemplate);
 
         if ($this->isCsrfTokenValid('delete'.$contratoTemplate->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $entityManager->remove($contratoTemplate);
             $entityManager->flush();
         }

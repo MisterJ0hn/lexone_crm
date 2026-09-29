@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Controller;
+
+use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Contrato;
 use App\Entity\ContratoRol;
 use App\Entity\Usuario;
@@ -34,6 +36,10 @@ use Knp\Bundle\SnappyBundle\Snappy\Response\PdfResponse;
 use Knp\Component\Pager\PaginatorInterface;
 #[Route("/desconoce")]
 class DesconoceController  extends AbstractController{
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
+
     #[Route("/", name: "desconoce_index", methods: ["GET","POST"])]
     public function index(ContratoRepository $contratoRepository,
                         PaginatorInterface $paginator,
@@ -168,7 +174,7 @@ class DesconoceController  extends AbstractController{
         if(null !== $request->query->get('status')){
             $status= $request->query->get('status');
             $observacion_texto= $request->request->get('txtObservacion');
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $agenda=$contrato->getAgenda();
             $agenda->setStatus($agendaStatusRepository->find($status));
 
@@ -283,7 +289,7 @@ class DesconoceController  extends AbstractController{
                         AgendaObservacionRepository $agendaObservacionRepository): Response
     {
         $this->denyAccessUnlessGranted('view','terminos');
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $this->entityManager;
         
         $anexos=$contrato->getContratoAnexos();
         $crear_anexo=true;

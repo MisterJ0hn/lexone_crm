@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Controller;
+
+use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Usuario;
 use App\Entity\UsuarioCategoria;
 use App\Entity\Empresa;
@@ -22,7 +24,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
@@ -31,6 +33,10 @@ use Knp\Component\Pager\PaginatorInterface;
 
 class AdministradorCuentasController extends AbstractController
 {
+
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
  
     #[Route("/", name: "administrador_cuentas_index",methods: ["GET"])]
     public function index(UsuarioRepository $usuarioRepository,
@@ -70,7 +76,7 @@ class AdministradorCuentasController extends AbstractController
 
     #[Route("/new", name: "administrador_cuentas_new", methods: ["GET","POST"])]
     public function new(Request $request,
-                        UserPasswordEncoderInterface $encoder,
+                        UserPasswordHasherInterface $encoder,
                         UsuarioTipoRepository $usuarioTipoRepository,
                         ModuloPerRepository $moduloPerRepository,
                         PrivilegioTipousuarioRepository $privilegioTipousuarioRepository,
@@ -86,7 +92,7 @@ class AdministradorCuentasController extends AbstractController
         // La empresa del nuevo administrador de cuentas es la empresa en la que
         // opera quien lo crea: asi las cuentas ofrecidas en el formulario y la
         // membresia resultante quedan en la empresa correcta (ver TenantSubscriber).
-        $empresa=$this->getDoctrine()->getRepository(Empresa::class)->find($user->getEmpresaActual());
+        $empresa=$this->entityManager->getRepository(Empresa::class)->find($user->getEmpresaActual());
          
         $cuentas=$empresa->getCuentas();
         
@@ -115,10 +121,10 @@ class AdministradorCuentasController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             
                 $password=$usuario->getPassword();
-                $encoded=$encoder->encodePassword($usuario,$password);
+                $encoded=$encoder->hashPassword($usuario,$password);
                 $usuario->setPassword($encoded);
 
                 $usuario->setUsername($usuario->getUsername().$user->getEmpresaActual());
@@ -130,7 +136,7 @@ class AdministradorCuentasController extends AbstractController
 
                 $getcuentas=$_POST['cboEmpresa'];
                 foreach($getcuentas as $getcuenta){
-                    $cuenta=$this->getDoctrine()->getRepository(Cuenta::class)->find($getcuenta);
+                    $cuenta=$this->entityManager->getRepository(Cuenta::class)->find($getcuenta);
 
                     $usuarioCuenta=new UsuarioCuenta();
                     $usuarioCuenta->setCuenta($cuenta);
@@ -156,7 +162,7 @@ class AdministradorCuentasController extends AbstractController
                         $privilegioNew->setModuloPer($privilegioTipousuario->getModuloPer());
                         $privilegioNew->setAccion($privilegioTipousuario->getAccion());
         
-                        $entityManager = $this->getDoctrine()->getManager();
+                        $entityManager = $this->entityManager;
                         $entityManager->persist($privilegioNew);
                         $entityManager->flush();
         
@@ -199,19 +205,19 @@ class AdministradorCuentasController extends AbstractController
                         UsuarioTipoRepository $usuarioTipoRepository,
                         ModuloPerRepository $moduloPerRepository,
                         UsuarioTipoDocumentoRepository $tipoDocumento,
-                        UserPasswordEncoderInterface $encoder,
+                        UserPasswordHasherInterface $encoder,
                         UsuarioNoDisponibleRepository $usuarioNoDisponibleRepository): Response
     {
         $this->denyAccessUnlessGranted('edit','administrador_cuentas');
         $user=$this->getUser();
         $pagina=$moduloPerRepository->findOneByName('administrador_cuentas',$user->getEmpresaActual());
-        $empresa=$this->getDoctrine()->getRepository(Empresa::class)->find($user->getEmpresaActual());
-        $usuarioCuenta=$this->getDoctrine()->getRepository(UsuarioCuenta::class)->findOneBy(['usuario'=>$usuario->getId()]);
+        $empresa=$this->entityManager->getRepository(Empresa::class)->find($user->getEmpresaActual());
+        $usuarioCuenta=$this->entityManager->getRepository(UsuarioCuenta::class)->findOneBy(['usuario'=>$usuario->getId()]);
    
         $usuarioCategorias=$empresa->getUsuarioCategorias();
         $cuentas=$empresa->getCuentas();
 
-        $statues=$this->getDoctrine()->getRepository(UsuarioStatus::class)->findBy(['id'=>[1,2]]);
+        $statues=$this->entityManager->getRepository(UsuarioStatus::class)->findBy(['id'=>[1,2]]);
         $form = $this->createForm(UsuarioType::class, $usuario);
 
         $form->add("password", TextType::class,[
@@ -240,22 +246,22 @@ class AdministradorCuentasController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             if($usuario->getPasswordAnt()!=""){
                 $password=$usuario->getPasswordAnt();
-                $encoded=$encoder->encodePassword($usuario,$password);
+                $encoded=$encoder->hashPassword($usuario,$password);
                 $usuario->setPassword($encoded);
                 $usuario->setPasswordAnt("");
             }
             
-            $this->getDoctrine()->getManager()->flush();
+            $this->entityManager->flush();
             
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
 
-            //$categoria=$this->getDoctrine()->getRepository(UsuarioCategoria::class)->find($request->request->get('cboUsuarioCategoria'));
+            //$categoria=$this->entityManager->getRepository(UsuarioCategoria::class)->find($request->request->get('cboUsuarioCategoria'));
             //$usuario->setCategoria($categoria);
 
 
             $usuario->setTipoDocumento($tipoDocumento->find($request->request->get('cboTipoDocumento')));
 
-            //$status=$this->getDoctrine()->getRepository(UsuarioStatus::class)->find($request->request->get('cboStatues'));
+            //$status=$this->entityManager->getRepository(UsuarioStatus::class)->find($request->request->get('cboStatues'));
             //$usuario->setStatus($status);
 
             $usuario->setFechaNacimiento(new \DateTime(date('Y-m-d H:i',strtotime($request->request->get('fecha_nacimiento')))));
@@ -268,7 +274,7 @@ class AdministradorCuentasController extends AbstractController
             $getcuentas=$_POST['cboEmpresa'];
          
             foreach($getcuentas as $getcuenta){
-                $cuenta=$this->getDoctrine()->getRepository(Cuenta::class)->find($getcuenta);
+                $cuenta=$this->entityManager->getRepository(Cuenta::class)->find($getcuenta);
                 
                 $usuarioCuenta=new UsuarioCuenta();
 
@@ -312,7 +318,7 @@ class AdministradorCuentasController extends AbstractController
     {
         $this->denyAccessUnlessGranted('full','administrador_cuentas');
       
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $usuario->setEstado(1);
             $entityManager->persist($usuario);
             $entityManager->flush();
@@ -326,7 +332,7 @@ class AdministradorCuentasController extends AbstractController
     {
         $this->denyAccessUnlessGranted('full','administrador_cuentas');
         if ($this->isCsrfTokenValid('delete'.$usuario->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $usuario->setEstado(0);
             $entityManager->persist($usuario);
             $entityManager->flush();

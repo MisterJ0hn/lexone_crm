@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 use App\Entity\Modulo;
 use App\Entity\ModuloPer;
 use App\Form\ModuloPerType;
@@ -18,6 +20,10 @@ use Knp\Component\Pager\PaginatorInterface;
 #[Route("/modulo")]
 class ModuloController extends AbstractController
 {
+
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
     #[Route("/", name: "modulo_index", methods: ["GET"])]
     public function index(ModuloPerRepository $moduloPerRepository,PaginatorInterface $paginator,Request $request): Response
     {
@@ -55,7 +61,7 @@ class ModuloController extends AbstractController
                 $moduloNew->setNombre($modulo->getNombreAlt());
                 $moduloNew->setDescripcion($modulo->getDescripcion());
 
-                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager = $this->entityManager;
                 $entityManager->persist($moduloNew);
                 $entityManager->flush();
 
@@ -72,7 +78,7 @@ class ModuloController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $entityManager->persist($modulo);
             $entityManager->flush();
 
@@ -95,7 +101,7 @@ class ModuloController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('modulo_index');
         }

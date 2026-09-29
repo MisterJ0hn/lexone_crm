@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 use App\Entity\Empresa;
 use App\Entity\Cuenta;
 use App\Entity\UsuarioCuenta;
@@ -25,6 +27,10 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 #[Route("/empresa")]
 class EmpresaController extends AbstractController
 {
+
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
     #[Route("/", name: "empresa_index", methods: ["GET","POST"])]
     public function index(EmpresaRepository $empresaRepository,AccionRepository $accionRepository, ModuloPerRepository $moduloPerRepository,Request $request): Response
     {
@@ -100,7 +106,7 @@ class EmpresaController extends AbstractController
             }
 
 
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $entityManager->persist($empresa);
             $entityManager->flush();
 
@@ -200,7 +206,7 @@ class EmpresaController extends AbstractController
             // so the PDF file must be processed only when a file is uploaded
             
 
-            $this->getDoctrine()->getManager()->flush();
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('empresa_index');
         }
@@ -220,7 +226,7 @@ class EmpresaController extends AbstractController
         $this->denyAccessUnlessGranted('edit','empresa');
         if ($this->isCsrfTokenValid('delete'.$empresa->getId(), $request->request->get('_token'))) {
             echo $empresa->getNombre();
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             
             foreach ($empresa->getCuentas() as $cuenta) {
                 foreach ($cuenta->getAgendas() as $agenda) {

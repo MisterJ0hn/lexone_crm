@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 use App\Entity\UsuarioTipo;
 use App\Entity\ModuloPer;
 use App\Form\UsuarioTipoType;
@@ -16,12 +18,16 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route("/usuario_tipo")]
 class UsuarioTipoController extends AbstractController
 {
+
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
     #[Route("/", name: "usuario_tipo_index", methods: ["GET"])]
     public function index(UsuarioTipoRepository $usuarioTipoRepository): Response
     {
         $this->denyAccessUnlessGranted('view','usuario_tipo');
         $user=$this->getUser();
-        $pagina=$this->getDoctrine()->getRepository(ModuloPer::class)->findOneByName('usuario_tipo',$user->getEmpresaActual());
+        $pagina=$this->entityManager->getRepository(ModuloPer::class)->findOneByName('usuario_tipo',$user->getEmpresaActual());
         
         if($user->getUsuarioTipo()->getId()==8){
             $listado="";
@@ -39,7 +45,7 @@ class UsuarioTipoController extends AbstractController
     {
         $user=$this->getUser();
         $this->denyAccessUnlessGranted('create','usuario_tipo');
-        $pagina=$this->getDoctrine()->getRepository(ModuloPer::class)->findOneByName('usuario_tipo',$user->getEmpresaActual());
+        $pagina=$this->entityManager->getRepository(ModuloPer::class)->findOneByName('usuario_tipo',$user->getEmpresaActual());
         
         $usuarioTipo = new UsuarioTipo();
         $empresa=$empresaRepository->find($user->getEmpresaActual());
@@ -48,7 +54,7 @@ class UsuarioTipoController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $usuarioTipo->setNombreInterno($usuarioTipo->getNombre());
             $entityManager->persist($usuarioTipo);
             $entityManager->flush();
@@ -77,7 +83,7 @@ class UsuarioTipoController extends AbstractController
     {
         $this->denyAccessUnlessGranted('edit','usuario_tipo');
         $user=$this->getUser();
-        $pagina=$this->getDoctrine()->getRepository(ModuloPer::class)->findOneByName('usuario_tipo',$user->getEmpresaActual());
+        $pagina=$this->entityManager->getRepository(ModuloPer::class)->findOneByName('usuario_tipo',$user->getEmpresaActual());
         
         $form = $this->createForm(UsuarioTipoType::class, $usuarioTipo);
         $form->handleRequest($request);
@@ -85,7 +91,7 @@ class UsuarioTipoController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $statues=$request->request->get('status');
             $usuarioTipo->setStatues($statues);
-            $this->getDoctrine()->getManager()->flush();
+            $this->entityManager->flush();
             
            // var_dump($statues);
             return $this->redirectToRoute('usuario_tipo_index');
@@ -105,7 +111,7 @@ class UsuarioTipoController extends AbstractController
     {
         $this->denyAccessUnlessGranted('full','usuario_tipo');
         if ($this->isCsrfTokenValid('delete'.$usuarioTipo->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $entityManager->remove($usuarioTipo);
             $entityManager->flush();
         }

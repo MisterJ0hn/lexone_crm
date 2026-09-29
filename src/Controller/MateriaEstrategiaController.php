@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 use App\Entity\Materia;
 use App\Entity\MateriaEstrategia;
 use App\Form\MateriaEstrategiaType;
@@ -14,6 +16,10 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route("/materia_estrategia")]
 class MateriaEstrategiaController extends AbstractController
 {
+
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
     #[Route("/", name: "materia_estrategia_index", methods: ["GET"])]
     public function index(MateriaEstrategiaRepository $materiaEstrategiaRepository): Response
     {
@@ -32,7 +38,7 @@ class MateriaEstrategiaController extends AbstractController
         $form->handleRequest($request);
         $error_toast="";
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $entityManager->persist($materiaEstrategium);
             $entityManager->flush();
 
@@ -55,7 +61,7 @@ class MateriaEstrategiaController extends AbstractController
     public function delete(Request $request, MateriaEstrategia $materiaEstrategium): Response
     {
         
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $materiaEstrategium->setEstado(0);
             $entityManager->persist($materiaEstrategium);
             $entityManager->flush();
@@ -78,7 +84,7 @@ class MateriaEstrategiaController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('materia_estrategia_index');
         }

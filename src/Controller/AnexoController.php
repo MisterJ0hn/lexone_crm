@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 use App\Entity\Causa;
 use App\Entity\Contrato;
 use App\Entity\ContratoAnexo;
@@ -25,6 +27,10 @@ use Dompdf\Options;
 #[Route("/anexo")]
 class AnexoController extends AbstractController
 {
+
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
     #[Route("/{id}", name: "anexo_index", methods: ["GET","POST"])]
     public function index(Contrato $contrato,ContratoAnexoRepository $contratoAnexoRepository ): Response
     {
@@ -89,10 +95,10 @@ class AnexoController extends AbstractController
             
             $contratoAnexo->setFolio($folio);
 
-            $this->getDoctrine()->getManager()->flush();
+            $this->entityManager->flush();
             
             
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
 
             $entityManager->persist($contratoAnexo);
             $entityManager->flush();
@@ -239,7 +245,7 @@ class AnexoController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $contratoAnexo->setDiasPago($request->request->get('chkDiasPago'));
 
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $entityManager->persist($contratoAnexo);
             $entityManager->flush();
 
@@ -307,7 +313,7 @@ class AnexoController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             
             $contratoAnexo->setDiasPago($request->request->get('chkDiasPago'));
 
@@ -348,7 +354,7 @@ class AnexoController extends AbstractController
     {
         $this->denyAccessUnlessGranted('create','anexo');
 
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $this->entityManager;
 
 
         //Eliminando un datos de anexo:::
@@ -413,7 +419,7 @@ class AnexoController extends AbstractController
     #[Route("/{id}/causas_anteriores_eliminar", name: "anexo_causas_anteriores_eliminar", methods: ["GET","POST"])]
     function eliminarCausasAnteriores(Causa $causa, CausaRepository $causaRepository): Response
     {
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $this->entityManager;
 
         $causa->setEstado(false);
 
@@ -454,7 +460,7 @@ class AnexoController extends AbstractController
             
         ));
     
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $this->entityManager;
         $contratoAnexo->setPdf($filename);
         $entityManager->persist($contratoAnexo);
         $entityManager->flush();
@@ -493,7 +499,7 @@ class AnexoController extends AbstractController
 
     public function calularCuotas(ContratoAnexo $contratoAnexo){
 
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $this->entityManager;
 
         //carga de Cuotas
         $countCuotas=$contratoAnexo->getNCuotas();

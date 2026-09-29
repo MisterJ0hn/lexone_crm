@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 use App\Entity\Contrato;
 use App\Entity\ContratoRol;
 use App\Entity\Usuario;
@@ -63,7 +65,7 @@ use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Dompdf\Dompdf;
 use Dompdf\Options;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Service\ContratoFunciones;
 use App\Service\Toku;
 use DateTime;
@@ -76,6 +78,10 @@ use Symfony\Component\Process\Process;
 #[Route("/contrato")]
 class ContratoController extends AbstractController
 {
+
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
     #[Route("/", name: "contrato_index", methods: ["GET","POST"])]
     public function index(ContratoRepository $contratoRepository,PaginatorInterface $paginator,ModuloPerRepository $moduloPerRepository,Request $request,CuentaRepository $cuentaRepository): Response
     {
@@ -173,7 +179,7 @@ class ContratoController extends AbstractController
     #[Route("/actualizafecha", name: "contrato_actualizaFecha", methods: ["GET","POST"])]
     public function actualizafecha(Request $request,ContratoRepository $contratoRepository): Response
     {
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $this->entityManager;
         
         $contratos=$contratoRepository->findAll();
         foreach($contratos as $contrato){
@@ -193,7 +199,7 @@ class ContratoController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $entityManager->persist($contrato);
             $entityManager->flush();
 
@@ -220,7 +226,7 @@ class ContratoController extends AbstractController
                 'Titulo'=>"Contrato"
             ));
 
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $contrato->setPdf($filename);
             $entityManager->persist($contrato);
             $entityManager->flush();
@@ -263,7 +269,7 @@ class ContratoController extends AbstractController
         
         $contrato_rol = new ContratoRol();
         $contrato_rol->setContrato($contrato);
-        $abogado=$this->getDoctrine()->getRepository(Usuario::class)->find($user->getId());
+        $abogado=$this->entityManager->getRepository(Usuario::class)->find($user->getId());
         $contrato_rol->setAbogado($abogado);
 
         if(isset($_GET['nombre'])){
@@ -271,7 +277,7 @@ class ContratoController extends AbstractController
             $contrato_rol->setInstitucionAcreedora($_GET['institucion']);
             $contrato_rol->setJuzgado($juzgadoRepository->find($_GET['juzgado']));
 
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $entityManager->persist($contrato_rol);
             $entityManager->flush();
 
@@ -290,7 +296,7 @@ class ContratoController extends AbstractController
         $user=$this->getUser();
 
         $contrato=$contratoRol->getContrato();
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $this->entityManager;
         $entityManager->remove($contratoRol);
         $entityManager->flush();
 
@@ -367,7 +373,7 @@ class ContratoController extends AbstractController
             }
         }
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->entityManager->flush();
             
            
 
@@ -380,7 +386,7 @@ class ContratoController extends AbstractController
             $contrato->setCregion($regionRepository->find($request->request->get('cboRegion')));
             $contrato->setCciudad($ciudadRepository->find($request->request->get('cboCiudad')));
             $contrato->setCcomuna($comunaRepository->find($request->request->get('cboComuna')));
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $contrato->setPdf(null);
 
             $agenda=$contrato->getAgenda();
@@ -557,7 +563,7 @@ class ContratoController extends AbstractController
                             SucursalRepository $sucursalRepository,
                             DiasPagoRepository $diasPagoRepository,
                             UsuarioRepository $usuarioRepository,
-                            UserPasswordEncoderInterface $encoder,
+                            UserPasswordHasherInterface $encoder,
                             UsuarioTipoRepository $usuarioTipoRepository,
                             ConfiguracionRepository $configuracionRepository,
                             ContratoRepository $contratoRepository,
@@ -615,9 +621,9 @@ class ContratoController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->entityManager->flush();
             $configuracion=$configuracionRepository->find(1);
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
 
 
             
@@ -828,7 +834,7 @@ class ContratoController extends AbstractController
     {
         $this->denyAccessUnlessGranted('view','contrato');
 
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $this->entityManager;
 
         // Generación de cuotas: antes vivía en finalizar() (que ya no se usa al
         // contratar, ver PanelAbogadoController::contrata(), que redirige directo
@@ -1217,7 +1223,7 @@ class ContratoController extends AbstractController
                 return $this->redirectToRoute('contrato_linea_tiempo', ['id' => $contrato->getId()]);
             }
 
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
 
             // Reutilizamos un cliente ya existente por RUT en vez de duplicarlo. El
             // cliente del convenio NO se asocia a Contrato::$cliente (ese campo sigue
@@ -1300,7 +1306,7 @@ class ContratoController extends AbstractController
         
         
         $causa->setFechaUltimoIngreso(new DateTime(date('Y-m-d h:i:s')));
-        $em=$this->getDoctrine()->getManager();
+        $em=$this->entityManager;
         $em->persist($causa);
         $em->flush();
 
@@ -1366,7 +1372,7 @@ class ContratoController extends AbstractController
             }
             
             
-            $em=$this->getDoctrine()->getManager();
+            $em=$this->entityManager;
             $em->persist($terminado);
             $em->flush();
         }
@@ -1395,7 +1401,7 @@ class ContratoController extends AbstractController
             $observacion->setUsuarioRegistro($user);
             $observacion->setCausa($causa);
             
-            $em=$this->getDoctrine()->getManager();
+            $em=$this->entityManager;
             $em->persist($observacion);
             $em->flush();
 
@@ -1456,7 +1462,7 @@ class ContratoController extends AbstractController
         $tieneObservaciones = $contratoObservacionRepository->count(['contrato'=>$contrato]) > 0
             || $causaObservacionRepository->count(['contrato'=>$contrato]) > 0;
 
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $this->entityManager;
 
         $cliente = $contrato->getCliente();
 
@@ -1559,7 +1565,7 @@ class ContratoController extends AbstractController
             $causa->setAnio($request->request->get('txtAnio'));
         }
 
-        $entity=$this->getDoctrine()->getManager();
+        $entity=$this->entityManager;
         $entity->persist($causa);
         $entity->flush();
         
@@ -1580,7 +1586,7 @@ class ContratoController extends AbstractController
     {
         $this->denyAccessUnlessGranted('full','contrato');
         if ($this->isCsrfTokenValid('delete'.$contrato->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $agenda=$contrato->getAgenda();
             $agenda->setStatus($agendaStatusRepository->find('5'));
 
@@ -1613,7 +1619,7 @@ class ContratoController extends AbstractController
             'Titulo'=>"Contrato"
         ));
 
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $this->entityManager;
         $contrato->setPdf($filename);
         $entityManager->persist($contrato);
         $entityManager->flush();
@@ -1686,7 +1692,7 @@ class ContratoController extends AbstractController
             $contratoAudio->setUsuarioRegistro($user);
             $contratoAudio->setContrato($contrato);
             $contratoAudio->setUrl($nombre);
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
 
             $entityManager->persist($contratoAudio);
             $entityManager->flush();
@@ -1780,7 +1786,7 @@ class ContratoController extends AbstractController
     #[Route("/{id}/audio_delete", name: "contrato_audio_delete", methods: ["GET","POST"])]
     public function audiodelete(Contrato $contrato, Request $request, ContratoAudiosRepository $contratoAudiosRepository){
         $contratoAudios=$contratoAudiosRepository->findBy(['contrato'=>$contrato]);
-        $entityManager=$this->getDoctrine()->getManager();
+        $entityManager=$this->entityManager;
         $message="";
         foreach ($contratoAudios as $contratoAudio) {
             

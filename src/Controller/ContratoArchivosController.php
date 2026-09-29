@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 use App\Entity\Contrato;
 use App\Entity\ContratoArchivos;
 use App\Form\ContratoArchivosType;
@@ -15,6 +17,10 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route("/contrato_archivos")]
 class ContratoArchivosController extends AbstractController
 {
+
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
     #[Route("/{id}", name: "contrato_archivos_index", methods: ["GET"])]
     public function index(Contrato $contrato): Response
     {
@@ -40,7 +46,7 @@ class ContratoArchivosController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             
             //subida de archivo
 
@@ -98,7 +104,7 @@ class ContratoArchivosController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('contrato_archivos_index');
         }
@@ -115,7 +121,7 @@ class ContratoArchivosController extends AbstractController
         $this->denyAccessUnlessGranted('full','contrato_archivos');
         $contrato =$contratoArchivo->getContrato();
         if ($this->isCsrfTokenValid('delete'.$contratoArchivo->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             
             $entityManager->remove($contratoArchivo);
             $entityManager->flush();

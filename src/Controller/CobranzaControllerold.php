@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 
 use App\Entity\Cobranza;
 use App\Entity\Pago;
@@ -44,6 +46,10 @@ ini_set('memory_limit', '-1');
 #[Route("/cobranzaold")]
 class CobranzaControllerold extends AbstractController
 {
+
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
     #[Route("/", name: "cobranza_index", methods: ["GET"])]
     public function index(ContratoRepository $contratoRepository, 
                         CuotaRepository $cuotaRepository,
@@ -671,7 +677,7 @@ class CobranzaControllerold extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $entityManager->persist($cobranza);
             $entityManager->flush();
 
@@ -712,7 +718,7 @@ class CobranzaControllerold extends AbstractController
        
         if($request->request->get('cboLotes')){
             $contrato->setIdLote($lotesRepository->find($request->request->get('cboLotes')));
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $entityManager->persist($contrato);
             $entityManager->flush();
             return $this->redirectToRoute('cobranza_index',['id'=>$contrato->getId()]);
@@ -750,7 +756,7 @@ class CobranzaControllerold extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->entityManager->flush();
             
             return $this->redirectToRoute('vercobranza_index',['id'=>$cobranza->getContrato()->getId()]);
             
@@ -804,7 +810,7 @@ class CobranzaControllerold extends AbstractController
         $this->denyAccessUnlessGranted('full','cobranza');
         $user=$this->getUser();
         
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $this->entityManager;
         
         $cobranza->setIsNulo(true);
         $entityManager->persist($cobranza);

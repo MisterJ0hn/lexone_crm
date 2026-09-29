@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 use App\Entity\Agenda;
 use App\Entity\AgendaStatus;
 use App\Entity\Cuenta;
@@ -23,6 +25,10 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route("/agenda")]
 class AgendaController extends AbstractController
 {
+
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
     #[Route("/", name: "agenda_index", methods: ["GET"])]
     public function index(AgendaRepository $agendaRepository): Response
     {
@@ -70,7 +76,7 @@ class AgendaController extends AbstractController
         }
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
 
             $sql="";
             $sql1="";
@@ -177,7 +183,7 @@ class AgendaController extends AbstractController
         //$fecha="a.fechaCarga between '$fechainicio' and '$fechafin 23:59:59'" ;
         $nombre_status="";
         if(null != $agendaStatus){
-            $status=$this->getDoctrine()->getRepository(AgendaStatus::class)->find($agendaStatus);
+            $status=$this->entityManager->getRepository(AgendaStatus::class)->find($agendaStatus);
             $nombre_status=$status->getNombre();
         }
         //$queryresumen=$agendaRepository->findByAgendGroup(null,$user->getEmpresaActual(),$compania,$statuesgroup,$filtro,null,$fecha);   
@@ -220,7 +226,7 @@ class AgendaController extends AbstractController
         //$fecha="a.fechaAsignado between '$fechainicio' and '$fechafin 23:59:59'" ;
         $nombre_status="";
         if(stristr($agendaStatus, ',')===False){
-            $status=$this->getDoctrine()->getRepository(AgendaStatus::class)->find($agendaStatus);
+            $status=$this->entityManager->getRepository(AgendaStatus::class)->find($agendaStatus);
             $nombre_status=$status->getNombre();
         }
         
@@ -314,7 +320,7 @@ class AgendaController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('agenda_index');
         }
@@ -352,7 +358,7 @@ class AgendaController extends AbstractController
     public function delete(Request $request, Agenda $agenda): Response
     {
         if ($this->isCsrfTokenValid('delete'.$agenda->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $entityManager->remove($agenda);
             $entityManager->flush();
         }

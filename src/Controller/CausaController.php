@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 use App\Entity\Agenda;
 use App\Entity\Causa;
 use App\Entity\MateriaEstrategia;
@@ -21,6 +23,10 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route("/causa")]
 class CausaController extends AbstractController
 {
+
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
     #[Route("/", name: "causa_index")]
     public function index(): Response
     {
@@ -37,7 +43,7 @@ class CausaController extends AbstractController
                             
                             JuzgadoRepository $juzgadoRepository,
                             ClienteRepository $clienteRepository){
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $this->entityManager;
         $causa=new Causa();
         $causa->setEstado(1);
         $causa->setAgenda($agenda);
@@ -123,7 +129,7 @@ class CausaController extends AbstractController
                             CausaRepository $causaRepository,
                             MateriaEstrategiaRepository $materiaEstrategiaRepository,
                             JuzgadoCuentaRepository $juzgadoCuentaRepository){
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $this->entityManager;
 
         $causa->setEstado(false);
 

@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 use App\Entity\Menu;
 use App\Entity\MenuCabezera;
 use App\Repository\MenuCabezeraRepository;
@@ -17,6 +19,10 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route("/menu")]
 class MenuController extends AbstractController
 {
+
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
     
     #[Route("/main", name: "menu_main", methods: ["GET","POST"])]
     public function mainMenu(String $route_name,
@@ -170,7 +176,7 @@ class MenuController extends AbstractController
             $modulo=$moduloPerRepository->find($request->request->get('cboModulo'));
             if(null !== $modulo)
                 $menu->setModulo($modulo->getModulo());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $entityManager->persist($menu);
             $entityManager->flush();
     
@@ -199,14 +205,14 @@ class MenuController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             
-            $this->getDoctrine()->getManager()->flush();
+            $this->entityManager->flush();
 
             $padre=$request->request->get('cboPadre');
             $menu->setDependeDe($menuRepository->find($padre));
             $modulo=$moduloPerRepository->find($request->request->get('cboModulo'));
             if(null !== $modulo)
                 $menu->setModulo($modulo->getModulo());
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $entityManager->persist($menu);
             $entityManager->flush();
 
@@ -228,7 +234,7 @@ class MenuController extends AbstractController
         $this->denyAccessUnlessGranted('full','menu');
         $menuCabezera=$menu->getMenuCabezera();
         if ($this->isCsrfTokenValid('delete'.$menu->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $entityManager->remove($menu);
             $entityManager->flush();
         }

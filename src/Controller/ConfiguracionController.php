@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 use App\Entity\Configuracion;
 use App\Form\ConfiguracionType;
 use App\Repository\ConfiguracionRepository;
@@ -14,6 +16,10 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route("/configuracion")]
 class ConfiguracionController extends AbstractController
 {
+
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
     #[Route("/", name: "configuracion_index", methods: ["GET","POST"])]
     public function index(Request $request,ConfiguracionRepository $configuracionRepository,ModuloPerRepository $moduloPerRepository): Response
     {
@@ -28,7 +34,7 @@ class ConfiguracionController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('configuracion_index');
         }
@@ -48,7 +54,7 @@ class ConfiguracionController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $entityManager->persist($configuracion);
             $entityManager->flush();
 
@@ -80,7 +86,7 @@ class ConfiguracionController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('configuracion_index');
         }
@@ -95,7 +101,7 @@ class ConfiguracionController extends AbstractController
     public function delete(Request $request, Configuracion $configuracion): Response
     {
         if ($this->isCsrfTokenValid('delete'.$configuracion->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $entityManager->remove($configuracion);
             $entityManager->flush();
         }

@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Entity\Agenda;
 use App\Entity\AgendaObservacion;
@@ -37,6 +39,10 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 #[Route("/panel_agendador")]
 class PanelAgendadorController extends AbstractController
 {
+
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
     #[Route("/", name: "panel_agendador_index")]
     public function index(AgendaRepository $agendaRepository,
                           CuentaRepository $cuentaRepository,
@@ -96,7 +102,7 @@ class PanelAgendadorController extends AbstractController
         }
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
 
             $sql="";
             $sql1="";
@@ -170,7 +176,7 @@ class PanelAgendadorController extends AbstractController
 
 
         //fin Carga Manual
-        $pagina=$this->getDoctrine()->getRepository(ModuloPer::class)->findOneByName('panel_agendador',1);
+        $pagina=$this->entityManager->getRepository(ModuloPer::class)->findOneByName('panel_agendador',1);
         $filtro=null;
         $compania=null;
         $fecha=null;
@@ -288,7 +294,7 @@ class PanelAgendadorController extends AbstractController
         $user=$this->getUser();
         $agenda_id=$request->query->get('agenda');
         $agenda=$agendaRepository->find($agenda_id);
-        $empresa=$this->getDoctrine()->getRepository(Empresa::class)->find($user->getEmpresaActual());
+        $empresa=$this->entityManager->getRepository(Empresa::class)->find($user->getEmpresaActual());
         return $this->render('panel_agendador/reasignar.html.twig', [
             'cuentas'=>$empresa->getCuentas(),
             'agenda'=> $agenda,     
@@ -518,7 +524,7 @@ class PanelAgendadorController extends AbstractController
         $abortar=false;
         $subStatus=null;
         $user=$this->getUser();
-        $pagina=$this->getDoctrine()->getRepository(ModuloPer::class)->findOneByName('panel_agendador',1);
+        $pagina=$this->entityManager->getRepository(ModuloPer::class)->findOneByName('panel_agendador',1);
 
         $tipoClientes = $tipoClienteRepository->findAll();
         $form = $this->createForm(AgendaType::class, $agenda);
@@ -642,8 +648,8 @@ class PanelAgendadorController extends AbstractController
             }
             $agenda->setObservacion($request->request->get('txtObservacion'));
 
-            $this->getDoctrine()->getManager()->flush();
-            $entityManager = $this->getDoctrine()->getManager();
+            $this->entityManager->flush();
+            $entityManager = $this->entityManager;
             
             if(!$abortar){
                 $agenda->setStatus($agendaStatusRepository->find($request->request->get('chkStatus')));
@@ -686,7 +692,7 @@ class PanelAgendadorController extends AbstractController
 
         $tipoClienteId = $request->request->get('tipoCliente');
         $agenda->setTipoCliente($tipoClienteId ? $tipoClienteRepository->find($tipoClienteId) : null);
-        $this->getDoctrine()->getManager()->flush();
+        $this->entityManager->flush();
 
         return new Response('ok');
     }
@@ -738,7 +744,7 @@ class PanelAgendadorController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('panel_agendador_index');
         }

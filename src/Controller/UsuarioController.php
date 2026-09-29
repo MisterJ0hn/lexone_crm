@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 use App\Entity\Usuario;
 use App\Entity\UsuarioTipo;
 use App\Form\UsuarioType;
@@ -10,7 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\Extension\Core\Type\DateIntervalType;
@@ -18,6 +20,10 @@ use Symfony\Component\Form\Extension\Core\Type\DateIntervalType;
 #[Route("/usuario")]
 class UsuarioController extends AbstractController
 {
+
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
 
     #[Route("/", name: "usuario_index", methods: ["GET"])]
     public function index(UsuarioRepository $usuarioRepository): Response
@@ -31,7 +37,7 @@ class UsuarioController extends AbstractController
     }
 
     #[Route("/new", name: "usuario_new", methods: ["GET","POST"])]
-    public function new(Request $request,UserPasswordEncoderInterface $encoder): Response
+    public function new(Request $request,UserPasswordHasherInterface $encoder): Response
     {
         $this->denyAccessUnlessGranted('create','usuario');
 
@@ -44,9 +50,9 @@ class UsuarioController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $password=$usuario->getPassword();
-            $encoded=$encoder->encodePassword($usuario,$password);
+            $encoded=$encoder->hashPassword($usuario,$password);
             $usuario->setPassword($encoded);
             $entityManager->persist($usuario);
             $entityManager->flush();
@@ -89,7 +95,7 @@ class UsuarioController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             
-            $this->getDoctrine()->getManager()->flush();
+            $this->entityManager->flush();
             
             return $this->redirectToRoute('usuario_index');
         }
@@ -117,7 +123,7 @@ class UsuarioController extends AbstractController
     {
         $this->denyAccessUnlessGranted('full','usuario');
         if ($this->isCsrfTokenValid('delete'.$usuario->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $usuario->setEstado(0);
             $entityManager->persist($usuario);
             $entityManager->flush();

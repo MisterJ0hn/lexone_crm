@@ -8,7 +8,7 @@ use App\Entity\Usuario;
 use App\Repository\ConfiguracionRepository;
 use App\Repository\PasswordHistorialRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class PasswordService
 {
@@ -16,13 +16,13 @@ class PasswordService
     private const DIAS_EXPIRACION     = 90;
 
     private EntityManagerInterface        $em;
-    private UserPasswordEncoderInterface  $encoder;
+    private UserPasswordHasherInterface  $encoder;
     private PasswordHistorialRepository   $historialRepo;
     private ConfiguracionRepository       $configuracionRepo;
     private Configuracion $configuracion;
     public function __construct(
         EntityManagerInterface       $em,
-        UserPasswordEncoderInterface $encoder,
+        UserPasswordHasherInterface $encoder,
         PasswordHistorialRepository  $historialRepo,
         ConfiguracionRepository $configuracionRepository
     ) {
@@ -87,7 +87,7 @@ class PasswordService
      */
     public function aplicarNuevoPassword(Usuario $usuario, string $plainPassword): string
     {
-        $encoded = $this->encoder->encodePassword($usuario, $plainPassword);
+        $encoded = $this->encoder->hashPassword($usuario, $plainPassword);
         $usuario->setPassword($encoded);
        
         $dias = $this->configuracion->getPasswordDiasExpiracion() ?? self::DIAS_EXPIRACION;

@@ -7,113 +7,73 @@ use App\Service\RecaptchaService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
-use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
 use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Component\Security\Csrf\CsrfToken;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
-use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticator;
-use Symfony\Component\Security\Guard\PasswordAuthenticatedInterface;
+use Symfony\Component\Security\Http\Authenticator\AbstractLoginFormAuthenticator;
+use Symfony\Component\Security\Http\Authenticator\Passport\Badge\CsrfTokenBadge;
+use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
+use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordCredentials;
+use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
-class LoginAuthenticator extends AbstractFormLoginAuthenticator implements PasswordAuthenticatedInterface
+class LoginAuthenticator extends AbstractLoginFormAuthenticator
 {
     use TargetPathTrait;
 
     public const LOGIN_ROUTE = 'app_login';
 
-    private $entityManager;
-    private $urlGenerator;
-    private $csrfTokenManager;
-    private $passwordEncoder;
-    private $recaptcha;
-
-    public function __construct(EntityManagerInterface $entityManager, 
-                                UrlGeneratorInterface $urlGenerator, 
-                                CsrfTokenManagerInterface $csrfTokenManager, 
-                                UserPasswordEncoderInterface $passwordEncoder,
-                                RecaptchaService             $recaptcha)
-    {
-        $this->entityManager = $entityManager;
-        $this->urlGenerator = $urlGenerator;
-        $this->csrfTokenManager = $csrfTokenManager;
-        $this->passwordEncoder = $passwordEncoder;
-        $this->recaptcha        = $recaptcha;
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly RecaptchaService $recaptcha,
+    ) {
     }
 
-    public function supports(Request $request)
+    public function authenticate(Request $request): Passport
     {
-        return self::LOGIN_ROUTE === $request->attributes->get('_route')
-            && $request->isMethod('POST');
-    }
+        $username = $request->request->get('username', '');
+        $recaptchaResponse = $request->request->get('g-recaptcha-response', '');
+        $clientIp = $request->getClientIp() ?? '';
 
-    public function getCredentials(Request $request)
-    {
-        $credentials = [
-            'username' => $request->request->get('username'),
-            'password' => $request->request->get('password'),
-            'csrf_token' => $request->request->get('_csrf_token'),
-            'recaptcha_response' => $request->request->get('g-recaptcha-response', ''),
-            'client_ip'          => $request->getClientIp() ?? '',
-        ];
-        $request->getSession()->set(
-            Security::LAST_USERNAME,
-            $credentials['username']
-        );
+        $request->getSession()->set(Security::LAST_USERNAME, $username);
 
-        return $credentials;
-    }
-
-    public function getUser($credentials, UserProviderInterface $userProvider)
-    {
-        $token = new CsrfToken('authenticate', $credentials['csrf_token']);
-        if (!$this->csrfTokenManager->isTokenValid($token)) {
-            throw new InvalidCsrfTokenException();
-        }
-
-        $user = $this->entityManager->getRepository(Usuario::class)->findOneBy(['username' => $credentials['username'],'estado'=>1]);
-
-        if (!$user) {
-            // fail authentication with a custom error
-            throw new CustomUserMessageAuthenticationException('Username could not be found.');
-        }
-
-        return $user;
-    }
-
-    public function checkCredentials($credentials, UserInterface $user)
-    {
-       /* if (!$this->recaptcha->verificar($credentials['recaptcha_response'], $credentials['client_ip'])) {
+        /* if (!$this->recaptcha->verificar($recaptchaResponse, $clientIp)) {
             throw new CustomUserMessageAuthenticationException('Por favor completa la verificación reCAPTCHA.');
-        }*/
-        return $this->passwordEncoder->isPasswordValid($user, $credentials['password']);
+        } */
+
+        return new Passport(
+            new UserBadge($username, function (string $userIdentifier): Usuario {
+                $user = $this->entityManager->getRepository(Usuario::class)->findOneBy([
+                    'username' => $userIdentifier,
+                    'estado' => 1,
+                ]);
+
+                if (!$user) {
+                    throw new CustomUserMessageAuthenticationException('Username could not be found.');
+                }
+
+                return $user;
+            }),
+            new PasswordCredentials($request->request->get('password', '')),
+            [
+                new CsrfTokenBadge('authenticate', $request->request->get('_csrf_token')),
+            ]
+        );
     }
 
-    /**
-     * Used to upgrade (rehash) the user's password automatically over time.
-     */
-    public function getPassword($credentials): ?string
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        return $credentials['password'];
-    }
-
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
-    {
-        if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
+        if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
             return new RedirectResponse($targetPath);
         }
 
-        // For example : return new RedirectResponse($this->urlGenerator->generate('some_route'));
-        //throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
         return new RedirectResponse($this->urlGenerator->generate('dashboard'));
     }
 
-    protected function getLoginUrl()
+    protected function getLoginUrl(Request $request): string
     {
         return $this->urlGenerator->generate(self::LOGIN_ROUTE);
     }

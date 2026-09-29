@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 use App\Entity\Materia;
 use App\Entity\Empresa;
 use App\Form\MateriaType;
@@ -17,6 +19,10 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route("/materia")]
 class MateriaController extends AbstractController
 {
+
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
     #[Route("/", name: "materia_index", methods: ["GET"])]
     public function index(MateriaRepository $materiaRepository): Response
     {
@@ -30,7 +36,7 @@ class MateriaController extends AbstractController
     public function new(Request $request): Response
     {
         $user = $this->getUser();
-        $empresa = $this->getDoctrine()->getRepository(Empresa::class)->find($user->getEmpresaActual());
+        $empresa = $this->entityManager->getRepository(Empresa::class)->find($user->getEmpresaActual());
         $materium = new Materia();
         $materium->setEmpresa($empresa);
 
@@ -38,7 +44,7 @@ class MateriaController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $entityManager->persist($materium);
             $entityManager->flush();
 
@@ -66,7 +72,7 @@ class MateriaController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('materia_index');
         }
@@ -121,7 +127,7 @@ class MateriaController extends AbstractController
     public function delete(Request $request, Materia $materium, CausaRepository $causaRepository, MateriaCorteRepository $materiaCorteRepository): Response
     {
         if ($this->isCsrfTokenValid('delete'.$materium->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
 
             // No se puede borrar una materia que tiene causas asociadas.
             if ($causaRepository->count(['materia' => $materium]) > 0) {

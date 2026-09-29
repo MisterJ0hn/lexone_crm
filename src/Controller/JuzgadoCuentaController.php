@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 use App\Entity\Corte;
 use App\Entity\Cuenta;
 use App\Entity\JuzgadoCuenta;
@@ -15,6 +17,10 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route("/juzgado_cuenta")]
 class JuzgadoCuentaController extends AbstractController
 {
+
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
     #[Route("/", name: "juzgado_cuenta_index", methods: ["GET"])]
     public function index(JuzgadoCuentaRepository $juzgadoCuentaRepository): Response
     {
@@ -31,7 +37,7 @@ class JuzgadoCuentaController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $entityManager->persist($juzgadoCuentum);
             $entityManager->flush();
 
@@ -59,7 +65,7 @@ class JuzgadoCuentaController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('juzgado_cuenta_index');
         }
@@ -92,7 +98,7 @@ class JuzgadoCuentaController extends AbstractController
     public function delete(Request $request, JuzgadoCuenta $juzgadoCuentum): Response
     {
         if ($this->isCsrfTokenValid('delete'.$juzgadoCuentum->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $entityManager->remove($juzgadoCuentum);
             $entityManager->flush();
         }

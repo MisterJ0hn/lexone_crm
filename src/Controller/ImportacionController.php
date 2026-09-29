@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 use App\Entity\Importacion;
 use App\Entity\Agenda;
 use App\Form\ImportacionType;
@@ -20,6 +22,10 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 #[Route("/importacion")]
 class ImportacionController extends AbstractController
 {
+
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
     #[Route("/", name: "importacion_index", methods: ["GET"])]
     public function index(ImportacionRepository $importacionRepository,
     ModuloPerRepository $moduloPerRepository): Response
@@ -70,7 +76,7 @@ class ImportacionController extends AbstractController
                     $importacion->setNombre($originalFilename);
                     $importacion->setUrl($this->getParameter('csv_importacion').$newFilename);
                     $importacion->setUsuarioCarga($usuarioRepository->find($user->getId()));
-                    $entityManager = $this->getDoctrine()->getManager();
+                    $entityManager = $this->entityManager;
                     $entityManager->persist($importacion);
                     $entityManager->flush();
                     $fp = fopen($importacion->getUrl(), "r");
@@ -226,7 +232,7 @@ class ImportacionController extends AbstractController
                     $importacion->setNombre($originalFilename);
                     $importacion->setUrl($this->getParameter('csv_importacion').$newFilename);
                     $importacion->setUsuarioCarga($usuarioRepository->find($user->getId()));
-                    $entityManager = $this->getDoctrine()->getManager();
+                    $entityManager = $this->entityManager;
                     $entityManager->persist($importacion);
                     $entityManager->flush();
                     $fp = fopen($importacion->getUrl(), "r");
@@ -364,7 +370,7 @@ class ImportacionController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('importacion_index');
         }
@@ -379,7 +385,7 @@ class ImportacionController extends AbstractController
     public function delete(Request $request, Importacion $importacion): Response
     {
         if ($this->isCsrfTokenValid('delete'.$importacion->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->entityManager;
             $entityManager->remove($importacion);
             $entityManager->flush();
         }
