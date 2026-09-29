@@ -1,0 +1,5 @@
+<form method="post" action="{{ path('pago_delete', {'id': pago.id}) }}" onsubmit="return confirm('Al eliminar este pago, dejaras vigente el contrato asociado?');">
+    <input type="hidden" name="_method" value="DELETE">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ pago.id) }}">
+    <button class="btn btn-danger"><i class="fas fa-trash"></i></button>
+</form>

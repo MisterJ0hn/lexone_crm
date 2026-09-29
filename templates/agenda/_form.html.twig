@@ -1,0 +1,113 @@
+{{ form_start(form,{'attr':{'onsubmit':'return validarut()'}}) }}
+    
+
+    <div class="row">
+        <div class="col-sm-6 col-md-3">
+            <small class="text-muted">Tipo Cliente</small>
+            {{form_row(form.tipoCliente,{'label':false,'attr':{'class':'form-control','required':true}})}}
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <small class="text-muted">Nombre Cliente</small>
+            {{form_row(form.nombreCliente,{'label':false,'attr':{'class':'form-control','required':true}})}}
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <small class="text-muted">Rut Cliente</small>
+            {{form_row(form.rutCliente,{'label':false,'attr':{'class':'form-control format-rut'}})}}
+        </div>
+       
+        <div class="col-sm-6 col-md-3">
+            <small class="text-muted">Email Cliente</small>
+            {{form_row(form.emailCliente,{'label':false,'attr':{'class':'form-control'}})}}
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <small class="text-muted">Telefono Movil</small>
+            {{form_row(form.telefonoCliente,{'label':false,'attr':{'class':'form-control','required':true}})}}
+        </div>
+        <div class="col-sm-6 col-md-3 telefono-recado">
+            <small class="text-muted">Telefono Recado Cliente</small>
+            {{form_row(form.telefonoRecadoCliente,{'label':false,'attr':{'class':'form-control','style':'visibility:hidden'}})}}
+        </div>
+        <div class="col-sm-6 col-md-3 cidudad-cliente" >
+            <small class="text-muted">Ciudad Cliente</small>
+            {{form_row(form.ciudadCliente,{'label':false,'attr':{'class':'form-control'}})}}
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <small class="text-muted">Canal</small>
+            <select class="form-control" name="cboCanal" required>
+                <option value=""></option>
+                <option value="Email contacto">Email contacto</option>
+                <option value="Espontaneo">Espontaneo</option>
+                <option value="Referencia">Referencia</option>
+                <option value="Facebook propio">Facebook propio</option>
+                <option value="Carta">Carta</option>
+                <option value="Web de asistencia deudores">Web de asistencia deudores</option>
+                <option value="Web de cero dicom">Web de cero dicom</option>
+                <option value="Google Wps">Google Wps</option>
+                <option value="Google Llamados">Google Llamados</option>
+                <option value="Bio Bio">Bio Bio</option>
+            </select>
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <small class="text-muted">Unidad</small>
+            <select name="cboCuenta" class="form-control" onchange="javascript:agendadores(this.value)" required>
+                <option value=""></option>
+   
+                {% for cuenta in cuentas %}
+                    <option value="{{cuenta.id}}">{{cuenta.nombre}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-sm-6 col-md-3 agendadores" id="agendadores" >
+            
+            
+        </div>
+    </div>
+    <button class="btn btn-primary">{{ button_label|default('Cargar') }}</button>
+{{ form_end(form) }}
+
+<script>
+
+    $(".cidudad-cliente").hide();
+    $(".agendadores").hide();
+    $(".telefono-recado").hide();
+    $(".format-rut").rut();
+    function agendadores(id){
+        
+            
+       
+        if(id>0){
+            $.ajax({
+                url:"/agenda/"+id+"/agendadores",
+                type: "post",
+                dataType: "html",
+                cache: false,
+                contentType: false,
+                processData: false,
+                async: true,
+                beforeSend: function(){
+                    $("#agendadores").html(' <div class="overlay"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>');
+                    
+                },
+                success:function(data){
+                    $("#agendadores").html(data);
+                }
+        
+            });
+        }else{
+            $("#agendadores").html('Sin Agendadores');
+        }
+        
+        
+    }
+    
+    function validarut(){
+
+        if($(".format-rut").val()=="") return true;
+        if($.validateRut($(".format-rut").val())) {
+            return true;
+        }
+        alert("Rut no valido");
+        $(".format-rut").focus();
+        return false;
+    }
+</script>

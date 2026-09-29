@@ -1,0 +1,120 @@
+{{ form_start(form) }}
+
+	
+<div class="card">
+	<div class="card-body">
+		<section>	
+			<div class="row">
+				<div class="col-sm-6 col-md-3">
+					<small class="text-muted">{{nombreCuenta|default('Compañia')}} *</small>
+				
+					<select name="cboEmpresa[]" class="select2" multiple="multiple" data-placeholder="Selecciona compañias" style="width: 100%;" required>
+						<option></option>
+						{% for cuenta in cuentas %}
+							<option value="{{cuenta.id}}"
+							{% if cuentas_sel is defined %}
+								{% for usuarioCuent in cuentas_sel %}
+									{% if usuarioCuent.cuenta.id==cuenta.id %}
+										selected
+									{% endif %}
+								{% endfor %}
+							{% endif %}
+							>{{cuenta.nombre}}</option>
+						{% endfor %}}
+					</select>
+				</div>
+				<div class="col-sm-6 col-md-6">
+					<small class="text-muted">Nombre *</small>
+					{{form_row(form.nombre,{'label':false,'attr':{'class':'form-control','maxlength':'50','required':true}})}}
+				</div>
+				
+				<div class="col-sm-6 col-md-3">
+					<small class="text-muted">Rut *</small>
+					{{form_row(form.rut,{'label':false,'attr':{'class':'form-control','placeholder':'Rut','required':true}})}}
+					
+				</div>
+				<div class="col-sm-6 col-md-3">
+				<small class="text-muted">Correo *</small>
+					{{form_row(form.correo,{'label':false,'attr':{'class':'form-control','required':true}})}}
+				</div>
+				<div class="col-sm-6 col-md-3">
+					<small class="text-muted">Teléfono Personal *</small>
+					{{form_row(form.telefono,{'label':false,'attr':{'class':'form-control','required':true}})}}
+					
+				</div>
+				<div class="col-sm-6 col-md-3">
+					<small class="text-muted">Teléfono Empresa *</small>
+					{{form_row(form.whatsapp,{'label':false,'attr':{'class':'form-control','required':true}})}}
+					
+				</div>
+				<div class="col-sm-6 col-md-3">
+					<small class="text-muted">Dirección *</small>
+					{{form_row(form.direccion,{'label':false,'attr':{'class':'form-control','required':true}})}}
+					
+				</div>
+				<div class="col-sm-6 col-md-3">
+					<small class="text-muted">Sexo *</small>
+					{{form_row(form.sexo,{'label':false,'attr':{'class':'form-control','required':true}})}}
+					
+				</div>
+				
+				
+				<div class="col-sm-6 col-md-3">
+					<small class="text-muted">Colaborador *</small>
+					
+					<select name="cboTipoDocumento" class="form-control" required>
+						<option></option>
+						{% for tipo_documento in tipo_documentos %}
+							<option value="{{tipo_documento.id}}"
+							{% if usuario.tipoDocumento.id is defined %}
+
+									{% if  usuario.tipoDocumento.id ==tipo_documento.id %}
+										selected
+									{% endif %}
+							
+							{% endif %}
+							>{{tipo_documento.nombre}}</option>
+						{% endfor %}}
+					</select>
+				</div>
+				<div class="col-sm-6 col-md-3">
+					<small class="text-muted">FechaIngreso *</small>
+					<input type="text" name="fecha_ingreso" class="form-control date" value="{{usuario.fechaActivacion?usuario.fechaActivacion|date('Y-m-d'):''}}" required>
+				</div>
+				<div class="col-sm-6 col-md-3">
+					<small class="text-muted">FechaNacimiento *</small>
+					<input type="text" name="fecha_nacimiento" class="form-control date" value="{{usuario.fechaNacimiento?usuario.fechaNacimiento|date('Y-m-d'):''}}" required>
+				</div>
+			</div>
+		</section>
+		<section>
+			<div class="row">
+				<div class="col-12">
+				<h1>Datos de Sesión</h1>
+				</div>
+				<div class="col-sm-6 col-md-3">
+					<small class="text-muted">Usuario</small>
+					{{form_row(form.username,{'label':false,'attr':{'class':'form-control','placeholder':'Usuario'}})}}
+				</div>
+				<div class="col-sm-6 col-md-3">
+					<small class="text-muted">Password</small>
+					{{form_row(form.password,{'label':false, 'attr':{'class':'form-control', 'placeholder':'******' ,'type':'password','required':false}})}}
+					{{form_row(form.passwordAnt,{'label':false, 'attr':{'class':'form-control', 'placeholder':'******' ,'type':'password','required':false}})}}
+				</div>
+			</div>
+		</section>
+	</div>
+	<div class="card-footer">
+		<button class="btn btn-primary">{{ button_label|default('Crear') }}</button>
+	</div>
+</div>
+
+    
+	<script>
+		$(function () {
+			//Initialize Select2 Elements
+			$('.select2').select2();
+			
+		});
+	</script>
+{{ form_end(form) }}

@@ -1,0 +1,49 @@
+<p>
+    <button class="btn btn-danger btn-desiste" type="button">
+        Desiste
+    </button>
+   <!-- <button class="btn btn-danger btn-desconoce" type="button">
+        Desconoce
+    </button>-->
+  </p>
+  <div class="collapse cerrar1" id="collapse">
+    <div class="card card-body">
+        <form action="{{path('contrato_terminar',{'id':contrato.id,'status':'13'})}}" onsubmit="return disabledButtons()" method="post">
+            <textarea name="txtObservacion" class="form-control"></textarea>
+            <button class="btn btn-primary">Gestionar</button>
+        </form>
+    </div>
+  </div>
+  <div class="collapse cerrar2" id="collapse2">
+    <div class="card card-body">
+        <form action="{{path('contrato_terminar',{'id':contrato.id,'status':'12'})}}" method="post">
+            <textarea name="txtObservacion" class="form-control"></textarea>
+            <button class="btn btn-primary">Gestionar</button>
+        </form>
+    </div>
+  </div>
+  <script>
+      $(".btn-desconoce").click(function(){
+        $("#collapse2").show();
+        $("#collapse").hide();
+        $(".btn-desconoce").addClass("btn-lg");
+        $(".btn-desconoce").removeClass("btn-sm");
+        $(".btn-desiste").addClass("btn-sm");
+        $(".btn-desiste").removeClass("btn-lg");
+      });
+      $(".btn-desiste").click(function(){
+        $("#collapse2").hide();
+        $("#collapse").show();
+        $(".btn-desconoce").addClass("btn-sm");
+        $(".btn-desconoce").removeClass("btn-lg");
+        $(".btn-desiste").addClass("btn-lg");
+        $(".btn-desiste").removeClass("btn-sm");
+      });
+
+     function disabledButtons(){
+      $('button').attr("disabled", true);
+        return true;
+      };
+
+    
+  </script>

@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Materia{% endblock %}
+
+{% block body %}
+    <h1>Edit Materia</h1>
+
+    {{ include('materia/_form.html.twig', {'button_label': 'Update'}) }}
+
+ 
+    {{ include('materia/_delete_form.html.twig') }}
+{% endblock %}

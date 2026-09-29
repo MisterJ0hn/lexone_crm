@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}PrivilegioTipousuario{% endblock %}
+
+{% block body %}
+    <h1>PrivilegioTipousuario</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ privilegio_tipousuario.id }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('privilegio_tipousuario_index') }}">back to list</a>
+
+    <a href="{{ path('privilegio_tipousuario_edit', {'id': privilegio_tipousuario.id}) }}">edit</a>
+
+    {{ include('privilegio_tipousuario/_delete_form.html.twig') }}
+{% endblock %}

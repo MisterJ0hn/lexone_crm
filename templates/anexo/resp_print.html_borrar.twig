@@ -1,0 +1,104 @@
+<style>
+    body{
+        font-size:13px;
+    }
+</style>
+<div class="page">
+    <div align="right">Nro Folio {{anexo.id}}-{{anexo.contrato.folio}} {{anexo.folio}}</div>
+  
+  <div align="center"><h4>{{tipoAnexo}} CONTRATO DE PRESTACI&Oacute;N DE SERVICIOS</h4></div>
+  <p align="justify">En Santiago de Chile a {{anexo.fechaCreacion|date("d-m-Y")}}, entre Estudio Jur&iacute;dico Alfaro y Madariaga Spa., rol &uacute;nico tributario 76.638.999-6 
+  empresa de servicios Jur&iacute;dicos con domicilio en casa matriz <strong>Hu&eacute;rfanos 1147, 
+  oficina 501</strong>, comuna de Santiago, Regi&oacute;n Metropolitana, quien en adelante se denominar&aacute; indistintamente <strong>&quot;Estudio Jur&iacute;dico&quot;</strong> y por la otra don 
+  (&ntilde;a) <strong>{{anexo.contrato.nombre|title|special_chars|raw}}</strong>, C&eacute;dula de identidad N&deg; {{anexo.contrato.rut}}, 
+  han celebrado con fecha de hoy, de manera libre y espont&aacute;nea, un anexo de contrato, desglosando su contenido en lo siguiente.</p>
+  
+  <p align="justify"><strong>PRIMERO:</strong> El cliente contrat&oacute; {{anexo.contrato.agenda.reunion|special_chars|raw}} los Servicios Profesionales con El 
+  Estudio Jur&iacute;dico, el d&iacute;a {{anexo.contrato.fechaCreacion|date("d-m-Y")}}, para que &eacute;ste en su representaci&oacute;n, otorgue Asistencia Jur&iacute;dica respecto de las 
+  siguientes causas.</p>
+  
+  {% if anexo.tipoAnexo==1 %}
+    
+<strong>Causas:</strong>
+<br>
+<table border="1"  cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th width="300px">Servicio</th>
+            <th width="100px">Id Causa</th>
+            <th>Caratulado</th>
+        </tr>
+    </thead>
+    {% for causa in anexo.contrato.agenda.causas %}
+        <tr>
+            
+            <td width="300px">
+                {{causa.materiaEstrategia.estrategiaJuridica}}
+            </td>
+            <td width="100px">
+                {{causa.idCausa}}
+            </td>
+            <td>
+                {{causa.causaNombre}}
+            </td>
+        </tr>
+    {% endfor %}
+
+
+</table>
+  {% endif %}
+
+
+  <p align="justify"><strong> SEGUNDO:</strong> Que los honorarios de los servicios profesionales pactados e indicados en el contrato {{anexo.contrato.id}} de prestaci&oacute;n de servicios, 
+  no se encuentran pagados en su totalidad</p> 
+  
+  <p align="justify"><strong>TERCERO: Por este acto las partes vienen en celebrar un anexo referido a {{tipoAnexo}}.</p>
+  
+  <p align="justify"><strong>CUARTO:</strong> Los honorarios de los servicios profesionales son a todo evento y ascienden a la suma de {{anexo.montoContrato|number_format(0,",",".")}}
+  Estos valores consideran el costo de la evaluaci&oacute;n, estudio y otros tr&aacute;mites que hayan sido practicados por el Estudio Jur&iacute;dico, los cuales se pactan en conformidad 
+  de ambas partes, de la siguiente manera:</p>
+  
+  <p align="justify"><strong>DETALLE</strong> 
+    .</p>
+    <table border="1"  cellspacing="0" width="50%">
+        {% for cuota in anexo.cuotas %}
+        <tr>
+            <td align="right">{{cuota.numero}}</td>
+            <td align="center">{{cuota.fechaPago|date('Y-m-d')}}</td>
+            <td align="right">${{cuota.monto|number_format(0,",",".")}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+  </div>
+  <div class="page">
+  
+  <p align="justify">El Calendario de pago precedentemente señalado no est&aacute; condicionado a gesti&oacute;n, alguna por parte del Estudio Jur&iacute;dico, raz&oacute;n por la cual 
+  se debe dar estricto cumplimiento a &eacute;ste en las fechas pactadas para tener vigente el servicio legal. En este sentido la modalidad de cuotas es un beneficio entregado exclusivamente 
+  al cliente que no puede pagar el honorario del servicio legal en un s&oacute;lo pago como es normal. Se entiende como el inicio del encargo y por lo tanto el derecho a percibir los 
+  honorarios el de la fecha de la firma o aceptaci&oacute;n del contrato. En caso de t&eacute;rmino del servicio por parte nuestra, desistimiento o t&eacute;rmino unilateral del contrato 
+  por parte del cliente, y habiendo el estudio realizado alguna gesti&oacute;n en el servicio encomendado, sin necesidad de haberlo terminado aun, se establece una cl&aacute;usula de aceleraci&oacute;n 
+  de las cuotas pendientes, las cuales se acumularan  en un s&oacute;lo pago  que se har&aacute; exigible inmediatamente en la eventualidad de que los honorarios no hubieran sido pagados en 
+  su totalidad a dicha fecha.</p>
+
+  <p align="justify"><strong>QUINTO:</strong> El Estudio Jurd&iacute;co se compromete a otorgar al cliente el servicio contratado y especificado en la cl&aacute;usula primera, cumpliendo todos los 
+  tr&aacute;mites legales que indica la ley en primera instancia, sin perjuicio, de las facultades privativas del respectivo tribunal de establecer plazos acordes con el funcionamiento del mismo 
+  seg&uacute;n corresponda. La obligación del estudio Jur&iacute;dico es una obligaci&oacute;n de medios, vale decir, se compromete a actuar diligentemente en todas las gestiones y tr&aacute;mites 
+  necesarios del proceso judicial. <strong>El presente contrato tiene un plazo y vigencia de {{anexo.vigencia}} meses contado desde la aceptaci&oacute;n, que es el tiempo en que 
+  durar&aacute;n los servicios contratados.</strong></p>
+
+  <p align="justify"><strong>SEXTO:</strong> Las partes declaran que en todo lo no modificado rige el contrato principal {{anexo.contrato.folio}}.</p>
+  
+  <table width="100%">
+      <tr><td width="50%" align="center"><img src="{{url_root}}/build/img/firma_contrato.jpg" width="150px"></td><td></td></tr>
+  
+      <tr>
+          <td><p align="center"><strong>ESTUDIO JURIDICO ALFARO Y MADARIAGA</strong></p>
+              <p align="center"><strong>R.U.T.: 76.638.999-6</strong></p>            </td>
+              <td><p align="center"><strong>{{anexo.contrato.nombre|special_chars|raw}}</strong></p>
+                  <p align="center"><strong>RUT: {{anexo.contrato.rut}}</strong></p>
+                  </td>
+  
+      </tr>
+  </table>
+  </div>
+  

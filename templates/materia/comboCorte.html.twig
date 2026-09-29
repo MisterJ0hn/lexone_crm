@@ -1,0 +1,4 @@
+<option value="" selected> Seleccione Corte </option>
+{% for corte in cortes %}
+<option value="{{ corte.corte.id }}" >{{ corte.corte.nombre }}</option>
+{% endfor %}

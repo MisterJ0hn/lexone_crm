@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}UsuarioStatus index{% endblock %}
+
+{% block body %}
+    <h1>UsuarioStatus index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for usuario_status in usuario_statuses %}
+            <tr>
+                <td>{{ usuario_status.id }}</td>
+                <td>{{ usuario_status.nombre }}</td>
+                <td>
+                    <a href="{{ path('usuario_status_show', {'id': usuario_status.id}) }}">show</a>
+                    <a href="{{ path('usuario_status_edit', {'id': usuario_status.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('usuario_status_new') }}">Create new</a>
+{% endblock %}

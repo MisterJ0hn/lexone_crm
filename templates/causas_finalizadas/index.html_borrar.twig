@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{pagina|default('')}}{% endblock %}
+
+{% block body %}
+<div class="card">
+    <div class="card-header">Importar csv</div>
+        <div class="card-body">
+            <div class="col-sm-12 col-md-12 border-1">
+    
+               {{ form_start(form) }}
+                    <div class="row">
+                       
+                            {{ form_row(form.cuenta,{'label':false,'attr':{'class':'form-control','style':'visibility:hidden'},'required':true}) }}
+
+                    
+                        <div class="col-sm-6 col-md-3">
+                            <small class="text-muted">Archivo</small><br>
+                            {{ form_row(form.url,{'label':false,'attr':{'accept':'.csv'}}) }}
+                        
+                        </div>
+                        <div class="col-sm-6 col-md-3">
+                            <small class="text-muted">Ver Ejemplo</small><br>
+                            <h1><a href="/build/csv/samples/sample_causas.csv"><i class="fas fa-file-csv"></i></a></h1>
+                        </div>
+                    </div>
+                
+                    
+                    <button class="btn btn-primary">{{ button_label|default('Importar') }}</button>
+                {{ form_end(form) }}
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header">Resultado Neteo</div>
+        <div class="card-body">
+
+        <table class="table">
+            <tr>
+                <th>Fecha Carga</th>
+                <th>Estado</th>
+                <th>Descargar</th>
+            </tr>
+
+            {% for imp in importaciones %}
+            <tr>
+                <td>{{imp.fechaCarga|date('Y-m-d h:s')}}</td>
+                <td>{{imp.estado}}%</td>
+                <td>
+                    {% if imp.estado >= 100 %}
+                    <a href="{{imp.url}}" >Descargar</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+       </div>
+    </div>
+</div>
+
+<script>
+
+</script>
+{% endblock %}

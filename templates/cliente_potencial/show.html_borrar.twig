@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ClientePotencial{% endblock %}
+
+{% block body %}
+    <h1>ClientePotencial</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ cliente_potencial.id }}</td>
+            </tr>
+            <tr>
+                <th>FormId</th>
+                <td>{{ cliente_potencial.formId }}</td>
+            </tr>
+            <tr>
+                <th>LeadgenId</th>
+                <td>{{ cliente_potencial.leadgenId }}</td>
+            </tr>
+            <tr>
+                <th>PageId</th>
+                <td>{{ cliente_potencial.pageId }}</td>
+            </tr>
+            <tr>
+                <th>CreatedTime</th>
+                <td>{{ cliente_potencial.createdTime }}</td>
+            </tr>
+            <tr>
+                <th>Campos</th>
+                <td>{{ cliente_potencial.campos ? cliente_potencial.campos|json_encode : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('cliente_potencial_index') }}">back to list</a>
+
+    <a href="{{ path('cliente_potencial_edit', {'id': cliente_potencial.id}) }}">edit</a>
+
+    {{ include('cliente_potencial/_delete_form.html.twig') }}
+{% endblock %}

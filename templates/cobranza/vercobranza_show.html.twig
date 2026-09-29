@@ -1,0 +1,215 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Cobranza{% endblock %}
+
+{% block body %}
+ {{ include('cabezera.html.twig') }}
+<div class="card">
+    <div class="card-header ">
+        
+    </div>
+    <div class="card-body">
+       
+        
+        <h2>Detalle</h2>
+        <div class="row">
+            <div class="col-sm-12 col-md-6">
+                <table class="table table-sm table-border">
+                    <tr>
+                        <th>Docto</th>
+                        <th>Cuota</th>
+                        <th>Vcto.</th>
+
+                        <th>V.Cuota</th>
+                        <th>M.Pgdo</th>
+                        <th>Saldo</th>
+                        <th>Ver</th>
+
+                    </tr>
+
+                    {% set total=0 %}
+                    {% set total_pagado=0 %}
+                    {% set total_deuda=0 %}
+                {% for cuota in contrato.detalleCuotas %}
+                    {% if cuota.anular %}
+                        {% if cuota.isMulta %}
+
+                        {% else %}
+                        <tr class="table-danger">
+                            <td>{% if cuota.anexo is null %}
+                                C0
+                            {% else %}
+                                A{{ cuota.anexo.folio }}
+                            {% endif %}
+                            </td>
+                            <td>
+                                {% if cuota.isMulta %}
+                                    *
+                                {% endif %}
+                                {{cuota.numero|number_format(0,",",".")}}</td>
+                            <td>{{cuota.fechaPago|date('Y-m-d')}}</td>
+                            <td>{{cuota.monto|number_format(0,",",".")}}</td>
+                            <td>
+                                {% if cuota.pagado>0 %}
+                                {{cuota.pagado|number_format(0,",",".")}}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if cuota.pagado>0 %}
+                                    
+                                
+                                    {{(cuota.monto - cuota.pagado)|number_format(0,",",".")}}
+                                    {% set total_deuda = total_deuda + (cuota.monto - cuota.pagado)%}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if cuota.pagado>0 %}
+                                <button class="btn btn-success" onclick="javascript:detallePago({{cuota.id}})"><i class="fas fa-eye"></i></button>
+                                {% endif %}
+                            </td>
+                       
+                        </tr>
+                        {% endif %}
+                    {% else %}
+                        <tr>
+                            <td>{% if cuota.anexo is null %}
+                                C0
+                            {% else %}
+                                A{{ cuota.anexo.folio }}
+                            {% endif %}
+                            </td>
+                            <td>
+                                {% if cuota.isMulta %}
+                                    *
+                                {% endif %}
+                                {{cuota.numero|number_format(0,",",".")}}</td>
+                            <td>{{cuota.fechaPago|date('Y-m-d')}}</td>
+                            <td>{{cuota.monto|number_format(0,",",".")}}</td>
+                            <td>
+                                {% if cuota.pagado>0 %}
+                                {{cuota.pagado|number_format(0,",",".")}}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if cuota.pagado>0 %}
+                                    
+                                
+                                    {{(cuota.monto - cuota.pagado)|number_format(0,",",".")}}
+                                    {% set total_deuda = total_deuda + (cuota.monto - cuota.pagado)%}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if cuota.pagado>0 %}
+                                <button class="btn btn-success" onclick="javascript:detallePago({{cuota.id}})"><i class="fas fa-eye"></i></button>
+                                {% endif %}
+                            </td>
+                            {% set total = total + cuota.monto %}
+                            {% set total_pagado = total_pagado + cuota.pagado %}
+                            
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+                    <tr>
+                        <th colspan="3">Totales</th>
+                        <th>{{total|number_format(0,",",".")}}</th>
+                        <th>
+                            {{total_pagado|number_format(0,",",".")}}
+                        </th>
+                        <th>
+                            {{total_deuda|number_format(0,",",".")}}
+                        </th>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="col-sm-12 col-md-6" id='detallePagos'>
+
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card-body table-responsive p-0" >
+            
+        <table class="table table-head-fixed text-nowrap table-striped table-sm">
+            <thead>
+                <tr>
+                    <!--<th  align="center">Lote</th>
+                    <th> Cobrador</th>-->
+                    <th align="center">Fecha Gestión</th>
+                    <th align="center">Función Cobranza</th>
+                    <th  align="center">Respuesta</th>
+                    <th align="center">Fecha Compromiso</th>
+                    <th align="center">Observación</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for cobranza in cobranzas %}
+                <tr
+                {% if cobranza.isNulo %}
+                    class="table-danger"
+                {% endif %}
+                >
+                
+                   <!-- <td align="left">{{cobranza.contrato.idLote.nombre|default('')}}</td>
+                    <td align="left">{{cobranza.usuarioRegistro.nombre}}</td>-->
+                    <td align="left">{{cobranza.fechaHora|date('Y-m-d H:i')}}</td>
+                    <td align="left">{{cobranza.funcion}}</td>
+                    <td align="left">{{cobranza.respuesta}}</td>
+                    <td>{{cobranza.fechaCompromiso ? cobranza.fechaCompromiso|date('Y-m-d'):''}}</td>
+                    <td>
+                        <span class="d-inline-block text-truncate" style="max-width: 150px;">
+                            {{cobranza.observacion}}
+                        </span>
+                        <button type="button" class="btn btn-sm btn-success" data-toggle="popover" title="Observación Completa" data-content="{{cobranza.observacion|raw}}">Ver Más</button>
+                    </td>
+                </tr>
+
+            {% endfor %}
+
+        </tbody>
+        </table>
+        </div>
+        <div class="card-footer">
+           
+                <a href="{{path('cobranza_new',{'id':contrato.id})}}" class="btn btn-primary" >Agregar gestión</a>
+
+        </div>
+    </div>
+    
+    <script>
+        $(function () {
+            $('[data-toggle="popover"]').popover()
+            $('.popover-dismiss').popover({
+                trigger: 'focus'
+              });
+            
+              $('[data-toggle="popover"]').popover({
+                  template: '<div class="popover" role="tooltip"><div class="arrow"><</div><h3 class="popover-header"></h3><div class="popover-body"></div></div>',
+              });
+        });
+    </script>
+
+<script>
+    function detallePago(cuota){
+        $.ajax({
+            url:"/pago/"+cuota+"/detallepagos",
+            type: "post",
+            dataType: "html",
+            cache: false,
+            contentType: false,
+            processData: false,
+            async: true,
+            beforeSend: function(){
+                $("#detallePagos").html(' <div class="overlay"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>');
+                
+            },
+            success:function(data){
+                $("#detallePagos").html(data);
+            }
+
+        });
+    }
+</script>
+{% endblock %}

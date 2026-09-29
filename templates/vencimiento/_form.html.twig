@@ -1,0 +1,38 @@
+{{ form_start(form) }}
+    <div class="card">
+        <div class="card-body">
+                <div class="row">
+                
+                    <div class="col-md-6 col-sm-12">
+                        <small class="text-muted" for="inputNombre">Nombre</small>
+                          {{form_row(form.nombre,{'label':false,'attr':{'class':'form-control'}})}}
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                        <small class="text-muted" for="inputNombre">Valor minimo</small>
+                          {{form_row(form.valMin,{'label':false,'attr':{'class':'form-control'}})}}
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                        <small class="text-muted" for="inputNombre">Valor maximo</small>
+                            {{form_row(form.valMax,{'label':false,'attr':{'class':'form-control'}})}}
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                        <small class="text-muted" for="inputNombre">Color</small>
+                            {{form_row(form.color,{'label':false,'attr':{'class':'form-control'}})}}
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                        <small class="text-muted" for="inputNombre">Icono</small>
+                            {{form_row(form.icono,{'label':false,'attr':{'class':'form-control'}})}}
+                    </div>
+                   <div class="col-md-6 col-sm-12">
+                        <small class="text-muted" for="inputNombre">Monto máximo</small>
+                            {{form_row(form.montoMax,{'label':false,'attr':{'class':'form-control'}})}}
+                    </div>
+                </div>
+        </div>
+        <div class="card-footer">
+           <button class="btn btn-primary">{{ button_label|default('Save') }}</button>
+        </div>
+    </div>
+
+    
+{{ form_end(form) }}

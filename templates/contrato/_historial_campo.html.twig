@@ -1,0 +1,24 @@
+{% if historial is empty %}
+    <small class="text-muted">Sin cambios registrados para {{ etiqueta }}.</small>
+{% else %}
+    <div class="border rounded" style="max-height:180px; overflow-y:auto;">
+        <table class="table table-sm table-striped mb-0">
+            <thead>
+                <tr>
+                    <th class="text-nowrap">Fecha</th>
+                    <th>Usuario</th>
+                    <th>{{ etiqueta }} anterior</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for registro in historial %}
+                    <tr>
+                        <td class="text-nowrap"><small>{{ registro.fechaModificacion|date('d-m-Y H:i') }}</small></td>
+                        <td><small>{{ registro.usuarioModificacion }}</small></td>
+                        <td><small>{{ attribute(registro, campo) }}</small></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}

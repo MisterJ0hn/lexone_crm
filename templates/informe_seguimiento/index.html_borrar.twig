@@ -1,0 +1,696 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello InformeSeguimientoController!{% endblock %}
+
+{% block body %}
+
+<form action="{{path('informe_seguimiento_index')}}" method="get" id="bForm">
+<section>
+
+
+ 
+   
+    <div class="card">
+        <div class="card-header">
+            Filtro
+        </div>
+        <div class="card-body">
+            
+            <div class="row">
+                <div class="col-sm-12 col-md-3">
+                    <input type="text" class="form-control" name="bFecha" id="bFecha"  value="">
+                </div>
+                <div class="col-sm-12 col-md-1">
+                    <button class="btn btn-primary"><i class="fas fa-search"></i></button>
+                </div>
+                
+
+            </div>
+            
+        </div>  
+        
+    </div>
+
+
+</section>
+</form>
+
+<section>
+<div class="row">
+    <div class="col-6">
+        <div class="card" height="230">
+            <div class="card-body" style="
+    height: 305px;
+">
+                <table class="table table-sm">
+                    <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>SinAtención</th>
+                        <th>0 a 24Horas</th>
+                        <th>24 a 48Horas</th>
+                        <th>Mayor 48Horas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for infSeguimiento in infSeguimientos %}
+                            <tr>
+                            <td>{{infSeguimiento[0].fechaCarga|date('Y-m-d')}}</td>
+                            <td align="right">{{infSeguimiento[1]}}</td>
+                            <td align="right">{{infSeguimiento[2]}}</td>
+                            <td align="right">{{infSeguimiento[3]}}</td>
+                            <td align="right">{{infSeguimiento[4]}}</td>
+                            </tr>
+                        {% endfor %}
+                    
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer">
+                <div class="navigation">
+                    {{ knp_pagination_render(infSeguimientos,'@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig',{},{
+                    'position': 'centered',
+                    'rounded': true,
+                    }) }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6">
+        <!--grafico agenda-->
+        
+        <div class="card">
+            <div class="card-header border-0">
+                <div class="d-flex justify-content-between">
+                    <span>Periodo: {{dateInicio|date('d-m-Y')}}  al {{dateFin|date('d-m-Y')}}  - Q. Días: {{qdias}} </span>
+                    <!--<a href="javascript:void(0);">Otro Periodo</a>-->
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="d-flex">
+                    <p class="d-flex flex-column">
+                    <!--<span class="text-bold text-lg">820</span>-->
+                    <span></span>
+                    </p>
+                    <p class="ml-auto d-flex flex-column text-right">
+                    <span class="text-success">
+                    <!--<i class="fas fa-arrow-up"></i> 12.5%-->
+                    </span>
+                    <!--<span class="text-muted">Since last week</span>-->
+                    </p>
+                </div>
+                <!-- /.d-flex -->
+
+                <div class="position-relative mb-4">
+                    <canvas id="visitors-chart" height="230"></canvas>
+                </div>
+
+                <div class="d-flex flex-row justify-content-end">
+                        <span class="mr-2">
+                        
+                        <i class="fas fa-square text-gray"></i> SinAtención
+                        </span>
+                        <span>
+                        <i class="fas fa-square text-primary"></i> 0 a 24h
+                        </span>
+                        <span>
+                        <i class="fas fa-square text-success"></i> 24 a 48h
+                        </span>
+                        <span>
+                        <i class="fas fa-square text-danger"></i> Mayor 48h
+                        </span>
+                        
+                </div>
+                <!-- /.card -->
+            </div>
+        </div>
+        <!--grafico agenda-->
+    </div>
+</div>
+</section>
+<section>
+
+<div class="row">
+    <div class="col-6">
+        <div class="card" height="250">
+            
+            <!-- .card-header -->
+            <div class="card-body" style="
+    height: 400px;
+">
+            
+                <table class="table table-head-fixed text-nowrap table-striped table-sm">
+                    <thead>
+                        <tr >
+                            <th scope="col" style="text-align: left;">Cerrador</th>
+                            <th scope="col" style="text-align: center;">Agendado</th>
+                            
+                            <th scope="col" style="text-align: center;">Prospectos</th>
+                            
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                    
+                        {% for informe in informeAgendados %}
+                    
+                        <tr>
+                            <td scope="col" style="text-align: left;">{{ informe[0].abogado }}</td>
+                            <td scope="col" style="text-align: center;">{{ informe['agendados'] }}</td>
+                            <td scope="col" style="text-align: center;">{{ informe['prospectos'] }}</td>
+                            
+                        </tr>
+                    
+                        {% else %}
+                        <tr>
+                            <td colspan="7">No hay registros</td>
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+                    <tfoot>
+                        <tr style="text-align: right;">
+                            <th></th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="card-footer">
+
+            </div>
+        </div>
+    </div>
+    <div class="col-6">
+        <!--grafico agenda-->
+        
+        <div class="card">
+            <div class="card-header border-0">
+                <div class=" justify-content-between">
+                    <div class="row">
+                        <span>Periodo: {{dateInicio|date('d-m-Y')}}  al {{dateFin|date('d-m-Y')}}  - Q. Días: {{qdias}} </span>
+                        <!--<a href="javascript:void(0);">Otro Periodo</a>-->
+                    </div>
+                    <div class="row">
+                        
+                        <spam>Agendados: <strong>
+                        {% for total in total_agendado %}
+                            {{total['agendados']|number_format(0,',','.')}}
+                        {% endfor %}
+                        </strong></spam>
+
+                        <p> - </p>
+                        {% set totalAgendaCount = 0 %}
+                        {% for total in total_agenda %}
+                            {% set totalAgendaCount = totalAgendaCount + 1 %}
+                        {% endfor %}
+                        <spam>Prospectos: <strong>{{totalAgendaCount|number_format(0,',','.')}}</strong></spam>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="d-flex">
+                    <p class="d-flex flex-column">
+                    <!--<span class="text-bold text-lg">820</span>-->
+                    <span></span>
+                    </p>
+                    <p class="ml-auto d-flex flex-column text-right">
+                    <span class="text-success">
+                    <!--<i class="fas fa-arrow-up"></i> 12.5%-->
+                    </span>
+                    <!--<span class="text-muted">Since last week</span>-->
+                    </p>
+                </div>
+                <!-- /.d-flex -->
+
+                <div class="position-relative mb-4">
+                    <canvas id="agendados-chart" height="230"></canvas>
+                </div>
+
+                <div class="d-flex flex-row justify-content-end">
+                        <span class="mr-2">
+                        
+                        <i class="fas fa-square text-gray"></i> Prospectos
+                        </span>
+                        <span>
+                        <i class="fas fa-square text-primary"></i> Agendados
+                        </span>
+                </div>
+                <!-- /.card -->
+            </div>
+        </div>
+        <!--grafico agenda-->
+    </div>
+</div>
+</section>
+
+
+<!--infoorme noo califica-->
+<section>
+
+<div class="row">
+    <div class="col-6">
+        <div class="card" height="255">
+            
+            <!-- .card-header -->
+            <div class="card-body" style="
+    height: 415px;
+">
+              <h4>No Califica</h4>
+                <table class="table table-head-fixed text-nowrap table-striped table-sm">
+                    <thead>
+                        
+                    </thead>
+                    <tbody>
+                      {% set total_no_califica=0 %}
+                        {% for informe in nocalifica %}
+                    
+                        <tr>
+                            <td scope="col" style="text-align: left;">{{ informe['nombre'] }}</td>
+                            <td scope="col" style="text-align: center;">{{ informe['cantidad'] }}</td>
+                            
+                        </tr>
+                        {% set total_no_califica = total_no_califica + informe['cantidad'] %}
+                    
+                        
+                        {% endfor %}
+                        {% for informe in nocalificaNull %}
+                    
+                        <tr>
+                            <td scope="col" style="text-align: left;">{{ informe['nombre'] }}</td>
+                            <td scope="col" style="text-align: center;">{{ informe['cantidad'] }}</td>
+                            
+                        </tr>
+                        {% set total_no_califica = total_no_califica + informe['cantidad'] %}
+                    
+                        
+                        {% endfor %}
+
+                    </tbody>
+                    <tfoot>
+                        <tr style="text-align: right;">
+                            <th></th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="card-footer">
+
+            </div>
+        </div>
+    </div>
+    <div class="col-6">
+        <!--grafico no califica-->
+        
+        <div class="card">
+            <div class="card-header border-0">
+                <div class=" justify-content-between">
+
+                  <h4>No Califica</h4>
+                    <div class="row">
+                        <span>Periodo: {{dateInicio|date('d-m-Y')}}  al {{dateFin|date('d-m-Y')}}  - Q. Días: {{qdias}} </span>
+                        <!--<a href="javascript:void(0);">Otro Periodo</a>-->
+                    </div>
+                    <div class="row">
+                        <spam>Total Leads: <strong>
+                        {% set total = 0 %}
+                        {% for total_lead in total_leads %}
+                          {% set total = total + total_lead['valor'] %}
+                        {% endfor %}
+
+                        {{total|number_format(0,',','.')}}
+                        </strong></spam>
+
+                        <p> - </p>
+                        
+                        <spam>Total No Califica: <strong>{{total_no_califica|number_format(0,',','.')}}</strong></spam>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                
+                <!-- /.d-flex -->
+
+                <div class="position-relative mb-4">
+                    <canvas id="donutChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                </div>
+
+                
+                <!-- /.card -->
+            </div>
+        </div>
+        <!--grafico Noo califica-->
+    </div>
+</div>
+</section>
+
+<script>
+    $('#bFecha').daterangepicker({
+        
+        "drops": "down",
+        "startDate":"{{dateInicio}}",
+        "endDate": "{{dateFin}}",
+        "locale": {
+            "format": "YYYY-MM-DD",
+            "applyLabel": "Apply",
+            "cancelLabel": "Cancel",
+        }
+    }, function(start, end, label) {
+    console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+    
+    });
+
+
+$(function () {
+    'use strict'
+
+  var ticksStyle = {
+    fontColor: '#495057',
+    fontStyle: 'bold'
+  }
+
+  var mode      = 'index'
+  var intersect = true
+
+  //grafico agenda
+  var $visitorsChart = $('#visitors-chart')
+  var visitorsChart  = new Chart($visitorsChart, {
+    data   : {
+      //labels  : ['18th', '20th', '22nd', '24th', '26th', '28th', '30th'],
+      labels  : [
+                {% set i = 0 %}
+            
+                {% for infSeguimiento in infSeguimientosGraf %}
+                    {% if i>0 %}
+                    ,
+                    {% endif %}
+                    '{{infSeguimiento[0].fechaCarga|date('Y-m-d')}}'
+                    {% set i = i+1 %}
+                {% endfor %}
+                ],
+      datasets: [{
+        type                : 'line',
+        data                : [
+            {% set i = 0 %}
+                {% for infSeguimiento in infSeguimientosGraf %}
+                    {% if i>0 %}
+                    ,
+                    {% endif %}
+                    {{infSeguimiento[1]}}
+                    {% set i = i+1 %}
+                {% endfor %}
+            ],
+        backgroundColor     : 'transparent',
+        borderColor         : '#6c757d',
+        pointBorderColor    : '#6c757d',
+        pointBackgroundColor: '#6c757d',
+        fill                : false
+        // pointHoverBackgroundColor: '#007bff',
+        // pointHoverBorderColor    : '#007bff'
+      },
+        {
+          type                : 'line',
+          data                : [
+            {% set i = 0 %}
+                {% for infSeguimiento in infSeguimientosGraf %}
+                    {% if i>0 %}
+                    ,
+                    {% endif %}
+                    {{infSeguimiento[2]}}
+                    {% set i = i+1 %}
+                {% endfor %}
+            ],
+          backgroundColor     : 'tansparent',
+          borderColor         : '#007bff',
+          pointBorderColor    : '#007bff',
+          pointBackgroundColor: '#007bff',
+          fill                : false
+          // pointHoverBackgroundColor: '#ced4da',
+          // pointHoverBorderColor    : '#ced4da'
+        },
+        {
+          type                : 'line',
+          data                : [
+            {% set i = 0 %}
+                {% for infSeguimiento in infSeguimientosGraf %}
+                    {% if i>0 %}
+                    ,
+                    {% endif %}
+                    {{infSeguimiento[3]}}
+                    {% set i = i+1 %}
+                {% endfor %}
+            ],
+          backgroundColor     : 'tansparent',
+          borderColor         : '#28a745',
+          pointBorderColor    : '#28a745',
+          pointBackgroundColor: '#28a745',
+          fill                : false
+          // pointHoverBackgroundColor: '#ced4da',
+          // pointHoverBorderColor    : '#ced4da'
+        },
+        {
+          type                : 'line',
+          data                : [
+            {% set i = 0 %}
+                {% for infSeguimiento in infSeguimientosGraf %}
+                    {% if i>0 %}
+                    ,
+                    {% endif %}
+                    {{infSeguimiento[4]}}
+                    {% set i = i+1 %}
+                {% endfor %}
+            ],
+          backgroundColor     : 'tansparent',
+          borderColor         : '#dc3545',
+          pointBorderColor    : '#dc3545',
+          pointBackgroundColor: '#dc3545',
+          fill                : false
+          // pointHoverBackgroundColor: '#ced4da',
+          // pointHoverBorderColor    : '#ced4da'
+        }
+        ]        
+    },
+    options: {
+      maintainAspectRatio: false,
+      tooltips           : {
+        mode     : mode,
+        intersect: intersect
+      },
+      hover              : {
+        mode     : mode,
+        intersect: intersect
+      },
+      legend             : {
+        display: false
+      },
+      scales             : {
+        yAxes: [{
+          // display: false,
+          gridLines: {
+            display      : true,
+            lineWidth    : '4px',
+            color        : 'rgba(0, 0, 0, .2)',
+            zeroLineColor: 'transparent'
+          },
+          ticks    : $.extend({
+            beginAtZero : true,
+            suggestedMax: 200
+          }, ticksStyle)
+        }],
+        xAxes: [{
+          display  : true,
+          gridLines: {
+            display: false
+          },
+          ticks    : ticksStyle
+        }]
+      }
+    }
+ });
+});
+ //grafico agenda 
+
+
+ //Grafico agendados
+  $(function () {
+    'use strict'
+  
+    var ticksStyle = {
+      fontColor: '#495057',
+      fontStyle: 'bold'
+    }
+  
+    var mode      = 'index'
+    var intersect = true
+  
+    var $salesChart = $('#agendados-chart')
+    var salesChart  = new Chart($salesChart, {
+      type   : 'bar',
+      data   : {
+        //labels  : ['JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
+        labels  : [
+            {% set i = 0 %}
+            {% for informe in informeAgendados %}
+                 {% if i>0 %}
+                ,
+                {% endif %}
+                '{{ informe[0].abogado }}'
+                {% set i = i+1 %}
+            {%  endfor %}
+                  ],
+        datasets: [
+          {
+            backgroundColor: '#007bff',
+            borderColor    : '#007bff',
+            //data           : [1000, 2000, 3000, 2500, 2700, 2500, 3000]
+            data                : [
+            {% set i = 0 %}
+            {% for informe in informeAgendados %}
+                 {% if i>0 %}
+                ,
+                {% endif %}
+                {{informe['agendados']}}
+                {% set i = i+1 %}
+            {%  endfor %}
+            ],
+          },
+          {
+            backgroundColor: '#6c757d ',
+            borderColor    : '#6c757d ',
+            //data           : [700, 1700, 2700, 2000, 1800, 1500, 2000]
+            data                : [
+            {% set i = 0 %}
+            {% for informe in informeAgendados %}
+                {% if i>0 %}
+                ,
+                {% endif %}
+                {{informe['prospectos']}}
+                {% set i = i+1 %}
+            {% endfor %}
+            ],
+          }
+        ]
+      },
+      options: {
+        maintainAspectRatio: false,
+        tooltips           : {
+          mode     : mode,
+          intersect: intersect
+        },
+        hover              : {
+          mode     : mode,
+          intersect: intersect
+        },
+        legend             : {
+          display: false
+        },
+        scales             : {
+          yAxes: [{
+            // display: false,
+            gridLines: {
+              display      : true,
+              lineWidth    : '4px',
+              color        : 'rgba(0, 0, 0, .2)',
+              zeroLineColor: 'transparent'
+            },
+            ticks    : $.extend({
+              beginAtZero: true,
+  
+              // Include a dollar sign in the ticks
+              callback: function (value, index, values) {
+                
+                return  value
+              }
+            }, ticksStyle)
+          }],
+          xAxes: [{
+            display  : true,
+            gridLines: {
+              display: false
+            },
+            ticks    : ticksStyle
+          }]
+        }
+      }
+    })
+  })
+//Grafico agendados
+
+
+
+    //-------------
+    //- DONUT CHART -
+    //-------------
+    // No Califica
+    //
+    // Get context with jQuery - using jQuery's .get() method.
+    var donutChartCanvas = $('#donutChart').get(0).getContext('2d')
+    var donutData        = {
+      labels: [
+          {% set i = 0 %}
+                {% for infSeguimiento in nocalifica %}
+                    {% if i>0 %}
+                    ,
+                    {% endif %}
+                    '{{infSeguimiento['nombre']}}'
+                    {% set i = i+1 %}
+                {% endfor %}
+                {% for infSeguimiento in nocalificaNull %}
+                    
+                    ,
+                 
+                    '{{infSeguimiento['nombre']}}'
+                    {% set i = i+1 %}
+                {% endfor %}
+      ],
+      datasets: [
+        {
+          data: [
+            {% set i = 0 %}
+                {% for infSeguimiento in nocalifica %}
+                    {% if i>0 %}
+                    ,
+                    {% endif %}
+                    {{infSeguimiento['cantidad']}}
+                    {% set i = i+1 %}
+                {% endfor %}
+                {% for infSeguimiento in nocalificaNull %}
+                    
+                    ,
+
+                    {{infSeguimiento['cantidad']}}
+                    {% set i = i+1 %}
+                {% endfor %}
+          ],
+          backgroundColor : [
+            {% set i = 0 %}
+                {% for infSeguimiento in nocalifica %}
+                    {% if i>0 %}
+                    ,
+                    {% endif %}
+                    '#{{infSeguimiento['color']}}'
+                    {% set i = i+1 %}
+                {% endfor %}
+                {% for infSeguimiento in nocalificaNull %}
+               
+                    ,
+                    '#{{infSeguimiento['color']}}'
+                    {% set i = i+1 %}
+                {% endfor %}
+            
+             ],
+        }
+      ]
+    }
+    var donutOptions     = {
+      maintainAspectRatio : false,
+      responsive : true,
+    }
+    //Create pie or douhnut chart
+    // You can switch between pie and douhnut using the method below.
+    var donutChart = new Chart(donutChartCanvas, {
+      type: 'doughnut',
+      data: donutData,
+      options: donutOptions      
+    })
+</script>
+{% endblock %}

@@ -1,0 +1,19 @@
+
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/build/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="http://localhost:8000/build/css/style.css">
+    
+    <title>{{Titulo}}</title>
+  </head>
+  <body>
+    <div class="container main-container">
+      {% block body %}{% endblock %}
+    </div>
+    {% block javascripts %}{% endblock %}
+  </body>
+</html>

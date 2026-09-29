@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Finalizar{% endblock %}
+
+{% block body %}
+<div class="row">
+  <div class="col-sm-12 col-md-8">
+    {{ include('contrato/_form.html.twig', {'button_label': 'Finalizar'}) }}
+
+    
+  </div>
+  <div class="col-sm-12 col-md-4">
+      <!-- Main content -->
+      <section class="content">
+          <div class="container-fluid">
+          {% set agenda=contrato.agenda %}
+          <!-- Timelime example  -->
+              <div class="row">
+                  <div class="col-md-12">
+                  <!-- The time line -->
+                      <div class="timeline">
+                          <!-- timeline time label -->
+                          <div class="time-label">
+                          <span class="bg-red">{{agenda.fechaCarga|date('d-m-Y H:i')}}</span>
+                          </div>
+                          <!-- /.timeline-label -->
+                          <!-- timeline item -->
+                          {% for observacion in agenda.agendaObservacions %}
+                              
+                          
+                          <div class="time-label">
+                              <span class="bg-green">{{observacion.fechaRegistro|date('d-m-Y')}}</span>
+                          </div>
+                          <div>
+                              <i class="fas fa-envelope bg-blue"></i>
+                              <div class="timeline-item">
+                                  <span class="time"><i class="fas fa-clock"></i>{{observacion.fechaRegistro|date('h:i')}}</span>
+                                  <h3 class="timeline-header"><a href="#">{{observacion.status}}</a> {{observacion.usuarioRegistro}} </h3>
+  
+                                  <div class="timeline-body">
+                                      {{observacion.observacion}}
+                                  </div>
+                                 
+                              </div>
+                          </div>
+                          {% endfor %}
+                          <div>
+                              <i class="fas fa-clock bg-gray"></i>
+                            </div>
+                      </div>
+                      
+                  </div>
+                  
+              </div>
+          </div>
+      </section>
+      </div>
+  </div>
+    <!-- Modal -->
+ <div class="modal fade" id="controles" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header bg-warning">
+            <h1>Ya falta menos</h1>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <p> finalizar revisa los datos del contrato. Al presionar en <strong>"Guardar" </strong>esto generará un usuario cliente...</p>
+        </div>
+       <div class="modal-body"><button type="button" class="btn btn-danger" data-dismiss="modal" aria-label="Close">Cerrar</button></div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

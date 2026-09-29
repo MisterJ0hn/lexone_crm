@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Importacion{% endblock %}
+
+{% block body %}
+    <h1>Edit Importacion</h1>
+
+    {{ include('importacion/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('importacion_index') }}">back to list</a>
+  
+{% endblock %}

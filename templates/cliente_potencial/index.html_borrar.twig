@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Clientes potenciales{% endblock %}
+
+{% block body %}
+    <a href="{{ path('cliente_potencial_new') }}" class="btn btn-primary">Crear Manualmente</a>
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Listado</h3> 
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body table-responsive p-0" style="height: 300px;">
+        
+            <table class="table table-head-fixed text-nowrap">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Form Id</th>
+                        <th>Leadgen Id</th>
+                        <th>Page Id</th>
+                        <th>CreatedTime</th>
+                        <th>Campos</th>
+                        <th>actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for cliente_potencial in clientes_potenciales %}
+                    <tr>
+                        <td>{{ cliente_potencial.id }}</td>
+                        <td>{{ cliente_potencial.formId }}</td>
+                        <td>{{ cliente_potencial.leadgenId }}</td>
+                        <td>{{ cliente_potencial.pageId }}</td>
+                        <td>{{ cliente_potencial.createdTime| date('U') }}</td>
+                        <td>{{ cliente_potencial.campos ? cliente_potencial.campos|json_encode : '' }}</td>
+                        <td>
+                            <a href="{{ path('cliente_potencial_show', {'id': cliente_potencial.id}) }}">show</a>
+                            <a href="{{ path('cliente_potencial_edit', {'id': cliente_potencial.id}) }}">edit</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7">no records found</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer clearfix">
+             {# display navigation #}
+        <div class="navigation">
+            {{ knp_pagination_render(clientes_potenciales,'@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig',{},{
+            'position': 'centered',
+            'rounded': true,
+            }) }}
+        </div>
+    </div>
+    </div>
+
+    
+{% endblock %}

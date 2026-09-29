@@ -1,0 +1,33 @@
+{{ form_start(form) }}
+            {{form_row(form.motivo,{'label':false,'attr':{'class':'form-control cuotas number','required':true,'style':'visibility:hidden'}})}}
+        
+        <div class="row">
+            <div class="col-sm-6 col-md-3">
+                <small class="text-muted">Destino</small><br>
+                {{ ticket.destino.nombre }}
+            </div>
+            <div class="col-sm-6 col-md-1 ">
+                <div class="loading"></div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <small class="text-muted">Encargado</small><br>
+                {{ ticket.encargado.nombre }}
+            </div>
+            <!--<div class="col-sm-6 col-md-2">
+                <small class="text-muted">Fecha Resuelto</small><br>
+                {{ ticket.fechaRespuesta ? ticket.fechaRespuesta|date('Y-m-d H:i'):''}}
+            </div>-->
+            <div class="col-sm-6 col-md-3">
+                <small class="text-muted">Fecha Finalizado</small><br>
+                {{ ticket.fechaCierre ? ticket.fechaCierre|date('Y-m-d H:i'):''}}
+            </div>
+             <div class="col-sm-12 col-md-12">
+                <small class="text-muted">Comentario: max 200 caract.</small><br>
+                <input type="text" class="form-control" name="txtObservacion" size=200 required>
+            </div>
+
+            <div class="col-sm-12 col-md-12">
+                <button class="btn btn-primary">Cerrar</button>
+            </div>
+        </div>
+{{ form_end(form) }}

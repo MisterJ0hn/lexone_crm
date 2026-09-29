@@ -1,0 +1,69 @@
+<div class="card">
+        <div class="card-header">
+            Filtro
+        </div>
+        <div class="card-body">
+            
+            <div class="row">
+                <div class="col-sm-12 col-md-2">
+                <label>Compañia</label>
+                    <select name="bCompania" class="form-control">
+                        <option value="0">Todos</option>
+                        {% for compania in companias %}
+                            <option value="{{compania.id}}"
+                            {% if bCompania==compania.id %}
+                                selected
+                            {% endif %}
+                            >{{compania.nombre}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% if TipoFiltro=='NoContrata' %}
+                <div class="col-sm-12 col-md-2">
+
+                 <label>AgendaId</label>
+                        <input type="text" class="form-control bAgendaId" name="bAgendaId" placeholder="" value="{{bAgendaId }}">
+                </div>
+                {% endif %}
+                 <div class="col-sm-12 col-md-2">
+                 <label>Nombre/Teléfono</label>
+                        <input type="text" class="form-control bFiltro" name="bFiltro" placeholder="" value="{{bFiltro}}">
+                </div>
+                <div class="col-sm-12 col-md-2">
+                <label>TipoFecha</label>
+               
+                {% if TipoFiltro=='Reasignar' %}
+                    <select name="bTipofecha" class="form-control">
+                        <option value="0" {% if tipoFecha==0 %}
+                            selected
+                        {% endif %}>Carga</option>
+                        <option value="1" {% if tipoFecha==1 %}
+                        selected
+                    {% endif %}>Asignado</option>
+                        <option value="2" {% if tipoFecha==2 %}
+                        selected
+                    {% endif %}>Contrato</option>
+
+                    </select>
+                {% endif %}
+                {% if TipoFiltro=='NoContrata' %}
+                    <select name="bTipofecha" class="form-control">
+                        <option value="0" selected>Fecha Carga</option>                       
+                    </select>
+                {% endif %}
+                </div>
+                <div class="col-sm-12 col-md-3">
+                <label>RangoFecha</label>
+                    <input type="text" class="form-control" name="bFecha" id="bFecha"  value="">
+                </div>
+                
+                <div class="col-sm-12 col-md-1">
+                    <button class="btn btn-primary" style="margin-top: 30px;"><i class="fas fa-search"></i></button>
+                </div>
+           
+
+            </div>
+            
+        </div>  
+        
+    </div>

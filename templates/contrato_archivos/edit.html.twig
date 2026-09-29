@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit ContratoArchivos{% endblock %}
+
+{% block body %}
+   {{ include('cabezera.html.twig') }}
+
+    {{ include('contrato_archivos/_form.html.twig', {'button_label': 'Update'}) }}
+
+    
+    {{ include('contrato_archivos/_delete_form.html.twig') }}
+{% endblock %}

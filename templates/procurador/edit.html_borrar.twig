@@ -1,0 +1,12 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}{{pagina|default('Secretaria')}}{% endblock %}
+
+{% block body %}
+	
+    {{ include('procurador/_form.html.twig', {'button_label': 'Modificar'}) }}
+
+    
+    
+{% endblock %}

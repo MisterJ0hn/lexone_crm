@@ -1,0 +1,26 @@
+
+    <div class="col-sm-12 col-md-12">
+        <small class="text-muted">Observación</small><br>
+        <textarea name="txtObservacion" class="form-control" cols="30" rows="5" required></textarea>
+    </div>
+
+
+    <button class="btn btn-primary">{{ button_label|default('Gestionar') }}</button>
+
+<script>
+    $('#datepicker').daterangepicker({
+        "singleDatePicker": true,
+        "timePicker":true,
+        "timePicker24Hour": true,
+        "drops": "up",
+        "locale": {
+            "format": "YYYY-MM-DD HH:mm:ss",
+        
+            "applyLabel": "Apply",
+            "cancelLabel": "Cancel",
+        }
+    }, function(start, end, label) {
+    console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+    
+    });
+</script>

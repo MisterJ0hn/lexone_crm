@@ -1,0 +1,43 @@
+{{ form_start(form) }}
+            {{form_row(form.motivo,{'label':false,'attr':{'class':'form-control cuotas number','required':true,'style':'visibility:hidden'}})}}
+        
+        <div class="row">
+            <div class="ocultar-campo">
+                <small class="text-muted">Destino</small><br>
+                <select name="cboDestino" class="form-control destino" required>
+                    
+                    {% for usuarioTipo in usuarioTipos %}
+             
+                        {% if usuarioTipo.id == 3  %}
+                        <option value="{{usuarioTipo.id}}" 
+                        {% if usuarioTipo.id==3 %}
+                            selected
+                        {% endif %}
+                        >{{usuarioTipo.nombre}}</option>
+                        {% endif %}
+              
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-sm-6 col-md-1 ocultar-campo">
+                <div class="loading"></div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <small class="text-muted">Encargado</small><br>
+                <select name="cboEncargado" class="form-control encargado" required>
+                    <option value=''>Seleccione Usuario</option>
+                    
+                </select>
+            </div>
+           
+           
+             <div class="col-sm-12 col-md-12">
+                <small class="text-muted">Comentario: max 200 caract.</small><br>
+                <input type="text" class="form-control" name="txtObservacion" size=200 required>
+            </div>
+
+            <div class="col-sm-12 col-md-12">
+                <button class="btn btn-primary">Asignar</button>
+            </div>
+        </div>
+        {{ form_end(form) }}

@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}MateriaEstrategia{% endblock %}
+
+{% block body %}
+    <h1>MateriaEstrategia</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ materia_estrategium.id }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('materia_estrategia_index') }}">back to list</a>
+
+    <a href="{{ path('materia_estrategia_edit', {'id': materia_estrategium.id}) }}">edit</a>
+
+    {{ include('materia_estrategia/_delete_form.html.twig') }}
+{% endblock %}

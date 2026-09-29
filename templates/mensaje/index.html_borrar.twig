@@ -1,0 +1,128 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mensaje index{% endblock %}
+
+{% block body %}
+     
+    <div class="card">   
+
+        <div class="card-header">
+            <form action="" method="get" class="frmBuscar">
+                
+                <div class="row">
+                    <div class="col-sm-12 col-md-3">
+                        <select name="bTipoMensaje" class="form-control">
+                            <option value="0">Tipo Mensaje</option>
+                            <option value=1 {% if tipoMensaje == 1 %}
+                                selected
+                            {% endif %}>Recordatorio</option>
+                            <option value=2 {% if tipoMensaje == 2 %}
+                                selected
+                            {% endif %}>Tarea</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-sm-12 col-md-3">
+                        <input type="text" class="form-control" name="bFecha" id="bFecha"  value="" >
+                    </div>
+                    <div class="col-sm-12 col-md-1">
+                        <button class="btn btn-primary buscar"><i class="fas fa-search"></i></button>
+                    </div>
+                    
+                    <!--<div class="col-sm-12 col-md-4 border-1">
+                        <div class="row">
+                            <div class="col">
+                                <input type="text" class="form-control" name="bFecha" id="bFecha"  value="" >
+                            </div>
+                            <div class="col-sm-12 col-md-1">
+                                <button type="button"  class="btn btn-secondary exportarxslx"><i class="fas fa-download"></i></button>
+                            </div>
+                       </div>
+                    </div>-->
+                   
+                </div>
+            </form>
+        </div>
+        <div class="card-body table-responsive p-0" style="height: 500px;">
+            <table class="table table-head-fixed text-nowrap table-striped table-sm">
+                <thead>
+                    <tr>
+                        <th>{{ knp_pagination_sortable(mensajes, 'Tipo', 'mensajeTipo') }} 
+                            {% if mensajes.isSorted('tipo') %} 
+                                <i class="fas fa-sort"></i>
+                            {% endif %}
+                        </th>
+                        <th>{{ knp_pagination_sortable(mensajes, 'Usuario', 'UsuarioRegistro') }} 
+                            {% if mensajes.isSorted('tipo') %} 
+                                <i class="fas fa-sort"></i>
+                            {% endif %}
+                        </th>
+                        <th>{{ knp_pagination_sortable(mensajes, 'Observación', 'observacion') }} 
+                            {% if mensajes.isSorted('usuarioRegistro.nombre') %} 
+                                <i class="fas fa-sort"></i>
+                            {% endif %}
+                        </th>
+                        
+                        <th>{{ knp_pagination_sortable(mensajes, 'FechaAviso', 'fechaAviso') }} 
+                            {% if mensajes.isSorted('fechaAviso') %} 
+                                <i class="fas fa-sort"></i>
+                            {% endif %}
+                        </th>
+                        <th>{{ knp_pagination_sortable(mensajes, 'Estado', 'leido') }} 
+                            {% if mensajes.isSorted('leido') %} 
+                                <i class="fas fa-sort"></i>
+                            {% endif %}
+                        </th>
+                        <th>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for mensaje in mensajes %}
+                    <tr>
+                       <td>{{mensaje.mensajeTipo}}</td>
+                       <td>{{mensaje.usuarioRegistro}}</td>
+                        <td>{{mensaje.observacion}}</td>
+                        
+                        <td>{{mensaje.fechaAviso|date("Y-m-d")}}</td>
+                        <td>{{mensaje.leido?'Leído':'No leído'}}</td>
+                        <td> 
+                        <a href="{{path('mensaje_show',{'id':mensaje.id})}}" class="btn btn-primary btn-sm"> <i class="fa fa-eye"></i></a>
+                        {% if mensaje.leido == false  %}
+                            <a href="{{path('mensaje_leido_list',{'id':mensaje.id})}}" class="btn btn-success btn-sm"><i class="fa fa-check"></i></a>
+                        {% endif %}
+                        
+                    </tr>
+                {% endfor %}
+                </tbody> 
+            </table>
+        </div>
+        <div class="card-footer">
+            <div class="card-footer clearfix">
+                {# display navigation #}
+           <div class="navigation">
+               {{ knp_pagination_render(mensajes,'@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig',{},{
+               'position': 'centered',
+               'rounded': true,
+               }) }}
+           </div>
+       </div>
+    </div>
+<script>
+$('#bFecha').daterangepicker({
+        
+            "drops": "down",
+            "startDate":"{{dateInicio}}",
+            "endDate": "{{dateFin}}",
+            "locale": {
+                "format": "YYYY-MM-DD",
+                "applyLabel": "Apply",
+                "cancelLabel": "Cancel",
+            }
+        }, function(start, end, label) {
+        console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+        
+        });
+
+</script>
+{% endblock %}

@@ -1,0 +1,23 @@
+
+    {% for observacion in causaObservaciones %}
+    <div class="card mb-0">
+        <div class="card-header pl-1 pt-0 pb-0 bg-light">
+           <small class="text-muted">{{ observacion.fechaRegistro | date('Y-m-d H:i') }}</small> - <small><strong>{{ observacion.usuarioRegistro.nombre }}</strong></small>
+        </div>
+        <div class="card-body pt-1 pb-1 pl-1">
+            <p class="mb-0" style="line-height: 1.1;">
+                <small >
+                {{ observacion.observacion | raw }}
+                </small>
+            </p>
+       
+            {% if observacion.causaObservacionArchivos|length > 0 %}
+            <div class="mt-2">                 
+                {% for archivo in observacion.causaObservacionArchivos %}
+                    <small><a href="{{url_web}}{{archivos_contratos}}{{archivo.nombreArchivo}}" ><i class="fas fa-arrow-down"></i> {{archivo.nombreOriginal}}</a></small>
+                {% endfor %}                
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}

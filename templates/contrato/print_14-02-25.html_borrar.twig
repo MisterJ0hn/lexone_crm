@@ -1,0 +1,245 @@
+<style>
+    body{
+        font-size:13px;
+    }
+    .nota{
+        font-family:'Courier New',monospace;
+    }
+</style>
+<div align="right">Nro Folio {{contrato.id}}</div>
+
+<div align="center"><h4>CONTRATO DE PRESTACI&Oacute;N DE SERVICIOS</h4></div>
+<p align="justify" >En Santiago de Chile a {{contrato.fechaCreacion|date("d-m-Y")}}, entre Estudio Jur&iacute;dico Alfaro y Madariaga Ltda., rol &uacute;nico tributario 76.638.999-6 
+empresa de servicios Jur&iacute;dicos, representada por don <strong>Fernando Cort&eacute;s Salinas</strong>, c&eacute;dula de identidad N&deg; 9.704.412-0, domiciliado  en <strong>Hu&eacute;rfanos 1147, 
+oficina 501</strong>, comuna de Santiago, Regi&oacute;n Metropolitana, quien en adelante se denominar&aacute; indistintamente <strong>&quot;Estudio Jur&iacute;dico&quot;</strong> y por la otra don 
+(&ntilde;a) <strong>{{contrato.nombre|title|special_chars|raw}}</strong>, Nacionalidad  {{contrato.pais}}, C&eacute;dula de identidad N&deg; {{contrato.rut}}, Tel&eacute;fono: {{contrato.telefono}}, 
+Recado: {{contrato.telefonoRecado}}, Domicilio: {{contrato.direccion|special_chars|raw}}, Comuna: {{contrato.ccomuna.nombre|special_chars|raw}}, Ciudad: {{contrato.cciudad.nombre|special_chars|raw}}, Correo electr&oacute;nico: {{contrato.email|special_chars|raw}}, Estado civil: {{contrato.estadoCivil|special_chars|raw}}; 
+Situaci&oacute;n laboral: {{contrato.situacionLaboral|special_chars|raw}}, han celebrado con fecha de hoy, de manera libre y espont&aacute;nea, 
+un contrato de prestaci&oacute;n de servicios jur&iacute;dicos, desglosando su contenido en las siguientes cl&aacute;usulas.</p>
+
+<p align="justify"><strong>PRIMERO:</strong> El cliente contrata {{contrato.agenda.reunion|special_chars|raw}} los Servicios Profesionales con El 
+    Estudio Jur&iacute;dico, quien se compromete a realizar, en su representaci&oacute;n, todas aquellas gestiones judiciales 
+    {% if contrato.agenda.cuenta.id==7 %}en primera instancia {% endif %}
+    que sean procedentes, en atenci&oacute;n al estado procesal en que se encuentre la(s) causa(s) contratada(s).</p>
+
+<strong>Causas:</strong>
+<br>
+<table border="1"  cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            
+            <th width="300px">Servicio</th>
+            <th width="100px">Id Causa</th>
+            <th>Caratulado</th>
+            
+        </tr>
+    </thead>
+    {% for causa in contrato.agenda.causas %}
+    {% if causa.estado == true %}
+        <tr>
+            
+            <td width="300px">
+                {{causa.materiaEstrategia.estrategiaJuridica}}
+            </td>
+            <td width="100px">
+                {{causa.idCausa}}
+            </td>
+            <td>
+                {{causa.causaNombre}}
+            </td>
+          
+            
+        </tr>
+    {% endif %}
+    {% endfor %}
+
+
+</table>
+
+<ul style="list-style: none;">
+<li> 
+*	Monitoreo diario de causas a trav&eacute;s de sistema interno del estudio.
+</li>
+<li>
+*	Compromisos: 
+    <ul style="list-style:none;"><li>
+        	Cliente se compromete a traer a la brevedad clave &uacute;nica otorgada directamente en la oficina del Registro Civil e Identificaci&oacute;n. 
+        </li>
+    </ul>
+</li>
+</ul>
+
+<p align="justify"><strong> SEGUNDO:</strong> Los honorarios de los servicios profesionales son a todo evento y ascienden a la suma de ${{contrato.montoContrato|number_format(0,",",".")}}.
+     Estos valores consideran el costo de la evaluaci&oacute;n, estudio y otros tr&aacute;mites que hayan sido practicados por
+      El Estudio Jur&iacute;dico, los cuales se pactan en conformidad de ambas partes, de la siguiente manera:</p> 
+
+      <table border="1"  cellspacing="0" width="50%">
+
+
+
+
+            {% for cuota in contrato.detalleCuotas %}
+            {% if cuota.anular!=1 %}
+            <tr>
+                <td align="right">{{cuota.numero}}</td>
+                <td align="center">{{cuota.fechaPago|date('Y-m-d')}}</td>
+                <td align="right">${{cuota.monto|number_format(0,",",".")}}</td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        
+
+
+      </table>
+
+<p align="justify">El Calendario de pago precedentemente se&ntilde;alado no est&aacute; condicionado a gesti&oacute;n alguna por parte del Estudio Jur&iacute;dico, 
+    raz&oacute;n por la cual se debe dar estricto cumplimiento a &eacute;ste en las fechas pactadas para tener vigente el 
+    servicio legal. En este sentido la modalidad de cuotas es un beneficio entregado exclusivamente al cliente que no puede pagar el honorario del servicio legal en un 
+    solo pago como es normal. Se entiende como el inicio del encargo y por lo tanto el derecho a percibir 
+    los honorarios el de la fecha de la firma o aceptaci&oacute;n del contrato. En caso de t&eacute;rmino del servicio por parte nuestra, desistimiento o t&eacute;rmino 
+    unilateral del contrato por parte del cliente y habiendo el estudio realizado alguna gesti&oacute;n en el servicio encomendado, sin necesidad de haberlo terminado aun, 
+    se establece una cl&aacute;usula de aceleraci&oacute;n de las cuotas pendientes, las cuales se acumularan en un solo pago que se har&aacute; exigible inmediatamente en la 
+    eventualidad de que los honorarios no hubieran sido pagados en su totalidad a dicha fecha.</p>
+
+<p align="justify"><strong>TERCERO: De la duraci&oacute;n del contrato:</strong> El Estudio Jur&iacute;dico se compromete a otorgar al cliente el 
+    servicio contratado y especificado en la cl&aacute;usula primera, cumpliendo todos los tr&aacute;mites legales que indica la ley en primera 
+    instancia, &nbsp;sin perjuicio, &nbsp;de las facultades privativas del respectivo tribunal de establecer plazos acordes con el funcionamiento del 
+    mismo seg&uacute;n corresponda. La obligaci&oacute;n del estudio jur&iacute;dico es una obligaci&oacute;n de medios, vale decir, se 
+    compromete a actuar diligentemente en todas las gestiones y tr&aacute;mites necesarios del proceso judicial. 
+    <strong>El presente contrato tiene un plazo y vigencia de {{ contrato.agenda.cuenta.vigenciaContratos}} meses contado desde la aceptaci&oacute;n, que es el tiempo en que durar&aacute;n los 
+    servicios contratados.</strong></p>
+
+<p align="justify"><strong>CUARTO: Del estudio y reserva;</strong> Para el adecuado estudio y asesor&iacute;a de lo se&ntilde;alado precedentemente, el 
+    cliente se obliga a entregar en un plazo establecido por acuerdo entre cliente y El Estudio Jur&iacute;dico, toda la 
+    documentaci&oacute;n y antecedentes necesarios para el cumplimiento de lo cometido.</p>
+
+<p align="justify"><strong>QUINTO:</strong> El cliente se compromete a prestar amplia colaboraci&oacute;n en especial en la entrega de antecedentes, 
+    documentos, obtenci&oacute;n de Clave &uacute;nica y otros, al Estudio Jur&iacute;dico.</p>
+
+<p align="justify"><strong>SEXTO: De los Gastos;</strong> El Cliente pagar&aacute; seg&uacute;n sea el caso, los gastos que se originen por la 
+    gesti&oacute;n del presente contrato tales como notificaciones, gestiones encargadas a Receptores Judiciales, sub-inscripciones, 
+    gastos de audiencias necesarias, Conservadores de Bienes Ra&iacute;ces, C&aacute;mara de Comercio, Archivero 
+    Judicial y todas aquellas de similar naturaleza debiendo ser pagados por el cliente al momento en que ellas sean exigibles, 
+    no siendo imputables en caso alguno a los honorarios pactados en la cl&aacute;usula segunda del presente contrato.</p>
+
+<p align="justify"><strong>SEPTIMO:</strong> El Estudio Jur&iacute;dico, llevar&aacute; la gesti&oacute;n encomendada con la mayor celeridad y diligencia 
+    posible, de manera de obtener &oacute;ptimos resultados para el cliente y cumplir con los Servicios Contratados. </p>
+
+<p align="justify"><strong>OCTAVO:</strong> El Estudio Jur&iacute;dico solamente estar&aacute; autorizado a atender presencialmente, 
+    entregar informaci&oacute;n, documentaci&oacute;n, u otro relacionado con la causa contratada al cliente titular de los servicios. 
+    Sin perjuicio de lo anterior, el cliente podr&aacute; asignar a una sola persona, a trav&eacute;s de poder simple para estos 
+    efectos, qui&eacute;n quedar&aacute; validada para su atenci&oacute;n e informaci&oacute;n, del cual quedar&aacute; registro en 
+    carpeta respectiva.</p>
+
+<p align="justify"><strong>NOVENO:</strong> El incumplimiento del pago de una o m&aacute;s cuotas pactadas en el Punto Segundo, 
+    facultar&aacute; al Estudio Jur&iacute;dico a paralizar inmediatamente las diligencias administrativas o 
+    jur&iacute;dicas a favor del cliente o persona que lo represente, retom&aacute;ndose las mismas una vez que 
+    se reanude el pago. Autorizo al Estudio Jur&iacute;dico Alfaro y Madariaga Limitada para que en caso de simple retardo, mora o 
+    incumplimiento de las obligaciones contra&iacute;das en el Punto Segundo del presente contrato, mis datos personales y los dem&aacute;s 
+    derivados del presente contrato puedan ser ingresados, procesados, tratados y comunicados a terceros sin restricciones, en la base 
+    de datos o sistema de informaci&oacute;n comercial Boletin Dicom.</p>
+    
+<p align="justify">El Estudio suspender&aacute; los servicios eximi&eacute;ndose de toda responsabilidad por daños materiales o 
+    morales que pudiera sufrir el cliente. Esta cl&aacute;usula se har&aacute; efectiva si el cliente entra en mora en 
+    un plazo igual o superior a 20 d&iacute;as contados desde la fecha de vencimiento de la cuota pactada y 
+    dar&aacute; adem&aacute;s derecho para exigir el cobro total de lo adeudado como una obligaci&oacute;n pura y 
+    simple, aceptando desde ya la renuncia al mandato judicial en las causas señaladas en la 
+    cl&aacute;usula primera.</p>
+
+<p align="justify"><strong>D&Eacute;CIMO:</strong> Para todos los efectos legales que deriven del presente contrato, las partes fijan su domicilio en la
+    ciudad de Santiago y prorrogan su competencia ante sus tribunales de justicia. </p>
+
+<p align="justify"><strong>D&Eacute;CIMO PRIMERO:</strong> Para efectos de ser atendido e informado sobre el estado de su(s) causa(s), 
+    el cliente deber&aacute; agendar previamente una reuni&oacute;n, a fin de otorgar una atenci&oacute;n expedita y ofrecer a usted un servicio de calidad. </p>
+
+<p align="justify"><strong>D&Eacute;CIMO SEGUNDO:</strong> Se deja constancia que el servicio legal ser&aacute; entregado por el Estudio Jur&iacute;dico a trav&eacute;s 
+de su equipo completo de profesionales, quienes ir&aacute;n participando conjunta o separadamente conforme a la necesidad que requiera el respectivo servicio seg&uacute;n 
+su objetivo y eficacia. <strong>Para informaciones puede contactarnos a nuestro WhatsApp SAC (+56 9) 3665 3829 y o sac@alfaromadariaga.cl</strong>. 
+Asimismo, ser&aacute; obligaci&oacute;n del cliente informar cualquier modificaci&oacute;n en sus datos de contacto tales como; n&uacute;mero 
+telef&oacute;nico, direcci&oacute;n o correo electr&oacute;nico. El cliente autoriza expresamente al Estudio Jur&iacute;dico a utilizar canales de contacto como whatsApp, 
+mensajer&iacute;a de texto, correo electr&oacute;nico, correspondencia y llamadas telef&oacute;nicas para informar estado de sus causas.</p>
+
+<p align="justify"><strong>D&Eacute;CIMO TERCERO: Cl&aacute;usula de Consentimiento:</strong> Con la firma o aceptaci&oacute;n del presente contrato, 
+    el cliente otorga su consentimiento expl&iacute;cito e informado al Estudio Jur&iacute;dico para que realice el 
+    tratamiento de los datos personales, autoriz&aacute;ndolo expresamente para transferir los datos a 
+    empresas de apoyo al giro con la exclusiva finalidad de dar cumplimiento a los servicios 
+    contratados. Asimismo, el cliente autoriza expresamente al Estudio Jur&iacute;dico a utilizar canales de 
+    contacto como WhatsApp, mensajer&iacute;a de texto, correo electr&oacute;nico, correspondencia y llamadas telef&oacute;nicas.</p>
+
+<p align="justify"><strong>D&Eacute;CIMO CUARTO:</strong> Se deja constancia que ambas partes acuerdan la celebraci&oacute;n del 
+    presente contrato de prestaci&oacute;n de servicios, 
+    {% if contrato.agenda.reunion is not null %}
+        
+        {% if contrato.agenda.reunion.id==1 %}
+        quedando una copia f&iacute;sica del contrato como medida de resguardo para ambas 
+        partes
+        {% else %}
+        siendo grabada la conversaci&oacute;n.
+        {% endif %}
+    {% else %}
+    siendo grabada la conversaci&oacute;n o quedando una copia f&iacute;sica del contrato como medida de resguardo para ambas 
+    partes.
+    {% endif %}
+    </p>
+
+{% if contrato.agenda.cuenta.id==7 %}
+
+<p align="justify"><strong>D&Eacute;CIMO QUINTO: Tramitaci&oacute;n ante Cortes:</strong> En la eventualidad de tener que recurrir 
+    a la Ilustr&iacute;sima Corte de Apelaciones o por la Exelent&iacute;sima Corte   
+    Suprema; se informar&aacute; esta situaci&oacute;n al cliente a fin de ofrecer un anexo de contrato para dicha
+    gesti&oacute;n ante una nueva instancia judicial. El anexo de contrato mencionado en la presente cl&aacute;usula ser&aacute; opcional
+    para el cliente, debiendo el abogado tramitador informar las circuntancias del caso y la viabilidad de la gesti&oacute;n.</p>
+
+<p align="justify"><strong>D&Eacute;CIMO SEXTO:</strong> Los pagos pueden ser efectuados de manera presencial en las oficinas 
+    de Estudio Jur&iacute;dico a trav&eacute;s de transferencia electr&oacute;nica o dep&oacute;sitos a 
+    cualquiera de estas dos cuenta que se mencionan a continuaci&oacute;n.</p>
+
+{% else %}
+
+<p align="justify"><strong>D&Eacute;CIMO QUINTO:</strong> Los pagos pueden ser efectuados de manera presencial en las oficinas 
+    de Estudio Jur&iacute;dico a trav&eacute;s de transferencia electr&oacute;nica o dep&oacute;sitos a 
+    cualquiera de estas dos cuenta que se mencionan a continuaci&oacute;n.</p>
+
+{% endif %}
+
+<ul style="list-style:none;">
+<li><strong>EMPRESA:</strong> Estudio Jur&iacute;dico Alfaro & Madariaga</li>
+<li><strong>Rut:</strong> 76.638.999-6</li>
+<li><strong>Banco de Chile</strong></li>
+<li><strong>Cuenta corriente</strong></li>
+<li><strong>N&deg; de cuenta: 800-51698-02</strong></li>
+<li><strong>Correo:</strong> <a href="mailto:pagos@alfaromadariaga.cl">pagos@alfaromadariaga.cl</a></li>
+<li><strong>Comentarios: {{contrato.nombre|title|special_chars|raw}} </strong></li>
+</ul>
+
+<p><strong>*Al realizar dep&oacute;sito o transferencia, debe ponerse en contacto con nuestra oficina e informar los datos del 
+    dep&oacute;sito o transferencia.</strong></p>
+
+<p align="justify">Enviar comprobante de transferencia o dep&oacute;sito a: <strong>pagos@alfaromadariaga.cl</strong> o fotograf&iacute;a del comprobante al 
+whatsapp (+569) 9255 1072  (puede escribir en el mismo comprobante el nombre del cliente).</p>
+
+
+
+</div>
+<div class="page">
+<p align="justify">El presente contrato se otorga para ambas partes, con id&eacute;ntico tenor y validez, quedando una copia en 
+    poder de cada una de las partes.</p>
+
+<table width="100%">
+
+    <tr><td width="50%" align="center"><img src="{{url_root}}/build/img/firma_contrato.jpg" width="150px"></td><td style="padding:50px;">
+        {% if contrato.agenda.reunion.id==2 %}
+        <p class="nota">Firmado por consentimiento grabado en virtud del articulo 12A de la ley 19.496 y Circular Interpretativa sobre contratación a Distancia.
+            Fecha: {{ "now"|date('Y.m.d h:i:s')}}</p>
+
+        {% endif %}
+    </td></tr>
+    
+    <tr>
+        <td><p align="center"><strong>ESTUDIO JURIDICO ALFARO Y MADARIAGA</strong></p>
+        <p align="center"><strong>R.U.T.: 76.638.999-6</strong></p>            </td>
+        <td><p align="center"><strong>{{contrato.nombre|special_chars|raw}}</strong></p>
+        <p align="center"><strong>RUT: {{contrato.rut}}</strong></p>
+        </td>
+    </tr>
+</table>

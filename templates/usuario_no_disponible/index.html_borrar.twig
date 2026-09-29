@@ -1,0 +1,42 @@
+
+
+{% block body %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Fecha Creacion</th>
+                <th>Concepto</th>
+                <th>Fecha Inicio</th>
+                <th>Fecha Fin</th>
+                <th>Año</th>
+                <th>Mes</th>
+                <th>Dia</th>
+                <th>HoraInicio</th>
+                <th>HoraFin</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for usuario_no_disponible in usuario_no_disponibles %}
+        
+            <tr>
+                <td>{{usuario_no_disponible.fecha ? usuario_no_disponible.fecha|date('Y-m-d') : ''}}</td>
+               <td>{{usuario_no_disponible.concepto}}</td>
+                <td>{{ usuario_no_disponible.fechaInicio ? usuario_no_disponible.fechaInicio|date('Y-m-d') : '' }}</td>
+                <td>{{ usuario_no_disponible.fechaFin ? usuario_no_disponible.fechaFin|date('Y-m-d') : '' }}</td>
+                <td>{{ usuario_no_disponible.anio != 0 ? usuario_no_disponible.anio : '*' }}</td>
+                <td>{{ usuario_no_disponible.mes ? usuario_no_disponible.mes : '*' }}</td>
+                <td>{{ usuario_no_disponible.dia ? usuario_no_disponible.dia : '*' }}</td>
+                <td>{{ usuario_no_disponible.horaInicio ? usuario_no_disponible.horaInicio|date('H:i') : '' }}</td>
+                <td>{{ usuario_no_disponible.horaFin ? usuario_no_disponible.horaFin|date('H:i') : '' }}</td>
+                <td><button type="button" class="btn btn-danger" onclick="javascript:eliminaHora({{usuario_no_disponible.id}})"><i class="fas fa-trash"></i></button></td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="12">Sin Registro</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

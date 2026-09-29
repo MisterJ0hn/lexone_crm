@@ -1,0 +1,162 @@
+<div class="row">
+    <div class="col-sm-12 col-md-3 ocultar-campo">
+        <small class="text-muted">Monto Deuda </small>
+        <input type="text" class="form-control monto-deuda"  name="txtMonto" value="{{agenda.monto}}" autocomplete="ÑÖcompletes">
+    </div>
+    <div class="col-sm-12 col-md-3 ocultar-campo">
+        <small class="text-muted">Pago Mensual Deuda </small>
+        <input type="text" class="form-control pago-actual"  name="txtPagoActual" value="{{agenda.pagoActual}}" autocomplete="ÑÖcompletes">
+    </div>
+    <div class="col-sm-12 col-md-3 ocultar-campo">
+        <small class="text-muted">Abogado *</small>
+        <select name="cboAbogado" id="cboAbogado" class="form-control"  onchange="javascript:verHoras()">
+            
+            {% for abogado in abogados %}
+                <option value="{{abogado.id}}"
+                {% if agenda.abogado.id is defined %}
+                    {% if abogado.id == agenda.abogado.id %}
+                        selected
+                    {% endif %}
+                {% endif %}
+                >{{abogado.nombre}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-sm-12 col-md-3 ocultar-campo">
+        <small class="text-muted">Reunión *</small>
+        <select name="cboReunion" id="cboReunion" class="form-control" >
+            <option ></option>
+            {% for reunion in reuniones %}
+
+                <option value="{{reunion.id}}"
+                    {% if agenda.reunion.id is defined %} 
+                    {% if agenda.reunion.id==reunion.id %}
+                        selected
+                    {% endif %}
+                    {% endif %}
+                >{{reunion.nombre}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-sm-12 col-md-4 ocultar-campo">
+        <small class="text-muted">Ciudad Cliente *</small>
+        <input type="text" class="form-control" name="txtCiudad" value="{{agenda.ciudadCliente}}" autocomplete="ÑÖcompletes">
+    </div>
+    <div class="col-sm-12 col-md-2">
+        <small class="text-muted">Fecha Agendada *</small>
+        <input type="text" class="form-control datepicker" name="txtFechaAgendamiento" required value="{{agenda.fechaAsignado|date('Y-m-d')|default('')}}">
+    </div>
+    <div class="col-sm-12 col-md-2 ocultar-campo">
+        <small class="text-muted">Contacto Canal *</small>
+        <br>
+        <div id="contacto">
+            <select name="cboContacto" id=""  class="form-control">
+
+                <option></option>
+                {% for contacto in contactos %}
+                <option value="{{contacto.id}}"
+                    {% if agenda.agendaContacto.id is defined %} 
+                    {% if agenda.agendaContacto.id == contacto.id %}
+                        selected
+                    {% endif %}
+                    {% endif %}
+                >{{contacto.nombre}}</option>
+            {% endfor %}
+            </select>
+
+        </div>
+    </div>
+                    
+    <div class="col-sm-12 col-md-2">
+        <small class="text-muted">Horas *</small>
+        <div id="horas">
+            <select name="cboHora" id="" required class="form-control">
+                <option></option>
+            </select>
+
+        </div>
+    </div>
+    
+    <div class="col-sm-12 col-md-2">
+        <small class="text-muted">Ver Agenda</small><br>
+        <button class="btn btn-success" type="button" onclick="javascript:verCalendario()"><i class="far fa-calendar-alt"></i></button>
+    </div>
+    <div class="col-sm-12 col-md-12">
+        <small class="text-muted">Observación *</small><br>
+        <textarea name="txtObservacion" class="form-control" cols="30" rows="5" required></textarea>
+    </div>
+</div>
+<button class="btn btn-primary">{{ button_label|default('Gestionar') }}</button>
+
+<script>
+
+    $(".ocultar-campo").hide();
+    var fecha_cal;
+    //verHoras($('.datepicker').val());
+    verHoras("{{agenda.fechaAsignado|date('Y-m-d')}}");
+    $('.datepicker').daterangepicker({
+        "singleDatePicker": true,
+        "drops": "up",
+        "locale": {
+            "format": "YYYY-MM-DD",
+        
+            "applyLabel": "Apply",
+            "cancelLabel": "Cancel",
+        }
+    }, function(start, end, label) {
+        fecha_cal=start;
+        console.log("fecha Cal: "+fecha_cal);
+        verHoras();
+    });
+    $(".monto-deuda").inputmask({
+        mask: "9",
+        repeat:20,
+    });
+    
+    function verCalendario(){
+        $.ajax({
+            url:"{{path('panel_agendador_calendario',{'id':agenda.id})}}",
+            type: "get",
+            dataType: "html",
+            data:"abogado="+$("#cboAbogado").val(),
+            cache: false,
+            contentType: false,
+            processData: false,
+            async: true,
+            success:function(data){ 
+                $("#bodyModal").html(data);
+                $('#staticBackdrop').modal();
+
+            }
+        });
+    }
+    function verHoras(fecha=null){
+        if(fecha == null){
+            var fecha= moment(fecha_cal).format("YYYY-MM-DD");
+        }else{
+            var fecha= moment(fecha).format("YYYY-MM-DD");
+            fecha_cal=fecha;
+        }
+        console.log("fecha cal: "+fecha_cal);
+        console.log("fecha: "+fecha);
+       if($("#cboAbogado").val()>0){
+            $.ajax({
+                url:"{{path('panel_agendador_horas')}}",
+                type: "get",
+                dataType: "html",
+                data:"abogado="+$("#cboAbogado").val()+"&fecha="+fecha,
+                cache: false,
+                contentType: false,
+                processData: false,
+                async: true,
+                beforeSend: function(){
+                    $("#horas").html(' <div class="overlay"><i class="fas fa-3x fa-sync-alt fa-spin"></i></div>');
+                    
+                },
+                success:function(data){
+                    $("#horas").html(data);
+                }
+            });
+        }
+    }
+</script>

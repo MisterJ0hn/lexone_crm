@@ -1,0 +1,741 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contrato{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-sm-12 col-md-12 ">
+        <div class="card">
+            <div class="card-body table-responsive pad">
+                <h3>Folio: {{contrato.folio}}</h3>
+                
+                <div class="row">
+                    <div class="col-sm-6 col-md-2">
+                        <h5>Id</h5>
+                        <p>{{causa.id}}</p>
+                    </div>
+                    <div class="col-sm-6 col-md-2">
+                        <h5>Causa</h5>
+                        <p>{{causa.idCausa}}</p>
+                    </div>
+                    {% if causa.materiaEstrategia.estrategiaJuridica.lineaTiempo is not null %}
+                    <div class="col-sm-6 col-md-2">
+                        <h5>Código</h5>
+                        
+                        <p>{{causa.materiaEstrategia.estrategiaJuridica.lineaTiempo.codigo}}</p>
+
+                       
+                    </div>
+                    <div class="col-sm-6 col-md-6">
+                        <h5>Servicio</h5>
+                        <p>{{causa.materiaEstrategia.estrategiaJuridica}}</p>
+                    </div>
+                    
+                    <!--<div class="col-sm-6 col-md-4" style="visibility:hidden">
+                        <h5>DescripciónLT</h5>
+                        <p>{{causa.materiaEstrategia.estrategiaJuridica.lineaTiempo.nombre}}</p>
+                    </div>
+                   
+                    <div class="col-sm-6 col-md-1" style="visibility:hidden">
+                        <h5>Precio</h5>
+                        {% if sesion.getSesion.usuarioTipo.id in [1] %}
+                        <p>${{causa.materiaEstrategia.estrategiaJuridica.precio|number_format(0, ',', '.')}}
+                        {% endif %}
+                    </div>-->
+                     {% endif %}
+                    
+                    
+                
+                </div>
+                <div class="row">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#recordatorioModal">Crear Recordatorio</button> 
+                     <button class="btn btn-success ml-2" data-toggle="modal" data-target="#cuadernoModal" >Crear Cuaderno</button>
+                </div>
+                
+            </div>
+        </div>
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="cuadernos-tab" data-toggle="tab" data-target="#cuadernos" type="button" role="tab" aria-controls="cuadernos" aria-selected="true">Cuadernos</button>
+  </li>
+  
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="etapas-tab" data-toggle="tab" data-target="#etapas" type="button" role="tab" aria-controls="etapas" aria-selected="false">Etapas</button>
+  </li>
+
+</ul>
+<div class="tab-content" id="myTabContent">
+<div class="tab-pane fade show active" id="cuadernos" role="tabpanel" aria-labelledby="cuadernos-tab">
+        <!-- Cuadernos -->
+
+    {% set IdCuaderno = 0 %}
+<div class="content-fluid">
+<div class="card" style="margin-bottom:0">
+    <div class="card-body pt-0 pb-0">
+        <table class="table table-sm ">
+        <tr><th width="40px">
+        </th>
+            <th width="200px"><p class="text-success mb-0">CUADERNO</p></th>
+            <th width="200px"><p class="text-success mb-0">ACTUACIÓN</p></th>
+            <th width="200px"><p class="text-success mb-0">ANEXO PROCESAL</p></th>
+            <th width="100px"></th>
+        </tr>
+        </table>
+    </div>
+</div>
+{% for detalleCuaderno in detalleCuadernos %}
+    
+    <div class="card" style="margin-bottom:0">
+        <div class="card-body pt-0 pb-0 pl-0 pr-0">
+            <table class="table table-sm ">
+            <tr><th width="30px"><button class="btn btn-success btn-sm {{detalleCuaderno.id}}_btnDetalleCuadernoShow"><i class="fas fa-plus"></i></button> 
+            <button class="btn btn-danger btn-sm {{detalleCuaderno.id}}_btnDetalleCuadernoHide"><i class="fas fa-minus"></i></button> 
+            </th>
+                <th width="200px">{{detalleCuaderno.cuaderno.nombre}}</th>
+                <th width="200px">{{detalleCuaderno.actuacion.nombre}} </th>
+                <th width="200px">{{detalleCuaderno.anexoProcesal ? detalleCuaderno.anexoProcesal.nombre : ''}}</th>
+                <th width="100px"><p><small>{{detalleCuaderno.usuarioCreacion ? detalleCuaderno.usuarioCreacion.nombre : ''}} |
+
+                {{detalleCuaderno.fechaCreacion ? detalleCuaderno.fechaCreacion|date("Y-m-d H:i") : ''}}</smal></p>
+                </th>
+            </tr>
+            </table>
+            
+            <div class="{{detalleCuaderno.id}}_detalleCuaderno">
+                <div class="row ">
+                    <div class="col-11">
+                        <textarea  size="20" class="form-control {{detalleCuaderno.id}}_txtObservacion"></textarea>
+                    </div>
+                    <div class="col-1">
+                        <div class="row">
+                            <input type="file" id="file{{detalleCuaderno.id}}" class="form-control {{detalleCuaderno.id}}_file" multiple style="display: none;" />
+                            <label for="file{{detalleCuaderno.id}}" class="btn btn-primary">                              
+                                <i class="fas fa-file"></i> 
+                            </label>
+                            <P class="cantidadArchivos{{detalleCuaderno.id}} ml-2 mt-1"></P>
+                            <button class="btn btn-sm btn-primary {{detalleCuaderno.id}}_btnGrabarObservacion" >Guardar</button>                          
+                        </div>
+                    </div>
+                </div>
+                <br>
+                
+                <script>
+                    const fileInput{{detalleCuaderno.id}} = document.getElementById('file{{detalleCuaderno.id}}');
+                   
+                    fileInput{{detalleCuaderno.id}}.addEventListener('change', (event) => {
+                        console.log(event.target.files.length);
+                        if(event.target.files.length>0){
+                            $(".cantidadArchivos{{detalleCuaderno.id}}").html(event.target.files.length+" Docs.");
+                        }
+                        
+                    });
+                    $(".{{detalleCuaderno.id}}_btnGrabarObservacion").on("click",function(){
+                        if(confirm("Confirma que quiereguardar esta observación?")==true){
+                            // Creamos el objeto FormData
+                            let formData = new FormData();
+                            // Agregamos los campos
+                            formData.append("observacion", $(".{{detalleCuaderno.id}}_txtObservacion").val());
+
+                            // Agregamos el archivo (solo el primero del input file)
+                            let fileInput = $(".{{detalleCuaderno.id}}_file")[0];
+                            if (fileInput.files.length > 0) {
+                                for ( let i = 0; i< fileInput.files.length;i++){
+                                    formData.append("files[]", fileInput.files[i]);
+                                }
+                            }
+
+                            $.ajax({
+                                url: "{{path('contrato_linea_tiempo_detalle_agregarObservacionCuaderno',{'id':detalleCuaderno.id}) }}",
+                                type: 'POST',  
+                                dataType:'json',                          
+                                data: formData,
+                                processData:false,
+                                contentType:false,
+                                beforeSend: function( xhr ) {
+                                    $('#loadingModal').modal('show');
+                                },
+                                success: function (data) {
+                                    if(data.exito===1){                           
+                                    actualizarDetalle_{{detalleCuaderno.id}}();
+                                    }else{
+                                        $('#loadingModal').modal('hide');
+                                        $('.errorContenido').html(data.mensaje);
+                                        $('#errorModal').modal('show');
+                                    }
+
+                                    $(".{{detalleCuaderno.id}}_file").val();
+                                    
+                                }
+                            }).done(function() {
+                                $('#loadingModal').modal('hide');
+                                //$('#mensajeModal').modal('show');
+                                $(".cantidadArchivos{{detalleCuaderno.id}}").html(0);
+                                fileInput{{detalleCuaderno.id}}.value="";
+                            }).fail(function(xhr, status, error) {
+                                console.error("Error AJAX:", status, error);
+                                console.error("Respuesta del servidor:", xhr.responseText);
+                                
+                                    $('#loadingModal').modal('hide');
+                                    $('.errorContenido').html(xhr.responseText);
+                                    $('#errorModal').modal('show');
+                                    fileInput{{detalleCuaderno.id}}.value="";
+                                $(".cantidadArchivos{{detalleCuaderno.id}}").html("0");
+                                    
+                            });
+                        }
+                        
+
+                    });
+
+                    function actualizarDetalle_{{detalleCuaderno.id}}(){
+                        $.ajax({
+                            url:"/contrato/{{detalleCuaderno.id}}/linea_tiempo_detalle_observacionesCuaderno",
+                            type:'GET',
+
+                            success: function (data2) {
+                            
+                                $(".{{detalleCuaderno.id}}_observaciones_detalle_cuaderno").html(data2);
+                            }
+                        });
+                        $(".{{detalleCuaderno.id}}_txtObservacion").val('');
+                    }
+                </script>
+                
+                
+        
+           
+            <div class="collapse {{detalleCuaderno.id}}_collapseExample">
+                <div class="card card-body mr-0 ml-0 pl-0 pr-0">
+                    <div class="timeline {{detalleCuaderno.id}}_observaciones_detalle_cuaderno">
+
+                    </div>
+                </div>
+            </div>
+            </div>
+            <script>
+                 $('.{{detalleCuaderno.id}}_collapseExample').collapse('show');
+                $(".{{detalleCuaderno.id}}_detalleCuaderno").hide();
+                
+                $(".{{detalleCuaderno.id}}_btnDetalleCuadernoHide").hide();
+                
+
+                $(".{{detalleCuaderno.id}}_btnDetalleCuadernoShow").on('click',function(){
+                    $(".{{detalleCuaderno.id}}_detalleCuaderno").show();
+                    $(".{{detalleCuaderno.id}}_btnDetalleCuadernoShow").hide();
+                    $(".{{detalleCuaderno.id}}_btnDetalleCuadernoHide").show();
+                });
+                $(".{{detalleCuaderno.id}}_btnDetalleCuadernoHide").on('click',function(){
+                    $(".{{detalleCuaderno.id}}_detalleCuaderno").hide();
+                    $(".{{detalleCuaderno.id}}_btnDetalleCuadernoHide").hide();
+                    $(".{{detalleCuaderno.id}}_btnDetalleCuadernoShow").show();
+                });
+                $.ajax({
+                    url:"/contrato/{{detalleCuaderno.id}}/linea_tiempo_detalle_observacionesCuaderno",
+                    type:'GET',
+
+                    success: function (data2) {
+                    
+                        $(".{{detalleCuaderno.id}}_observaciones_detalle_cuaderno").html(data2);
+                    }
+                });
+            </script>
+                
+        </div>
+    </div>
+        
+
+{% endfor %}
+
+<!-- observaciones antiguas -->
+{% if observacionesAntiguas|length >0  %}
+    
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+        <div class="card">
+            
+            <div class="card-body table-responsive">
+                <!-- The time line -->
+                <div class="row">
+                    <button class="btn btn-primary ant_btnVerCollapse" type="button" ><i class="far fa-eye"></i>
+                    </button>
+                    <button class="btn btn-danger ant_btnCerrarCollapse" type="button" ><i class="far fa-eye-slash"></i>
+                    </button>
+                    
+                    &nbsp; &nbsp;
+                    <h3>Observaciones Antiguas</h3>
+                </div>
+                
+                <script>
+                    $('.ant_btnCerrarCollapse').hide();
+                    $(".ant_btnVerCollapse").on('click',function(){
+                        $('.ant_collapseExample').collapse('show');
+                        $('.ant_btnVerCollapse').hide();
+                        $('.ant_btnCerrarCollapse').show();
+                    });
+                    $(".ant_btnCerrarCollapse").on('click',function(){
+                        $('.ant_collapseExample').collapse('hide');
+                        $('.ant_btnCerrarCollapse').hide();
+                        $('.ant_btnVerCollapse').show();
+                    });
+                    
+                </script>
+                
+                <div class="collapse ant_collapseExample">
+                    <div class="timeline">
+                    <!-- timeline time label -->
+                        
+                    {% for observacion in observacionesAntiguas %}
+                        <div>
+                            <i class="fa fa-comments bg-blue"></i>
+                            <div class="timeline-item">
+                                <span class="time"><i class="fas fa-clock"></i>{{ observacion.fechaRegistro | date('Y-m-d H:i') }}</span>
+                                <h3 class="timeline-header"><a href="#">{{ observacion.usuarioRegistro.nombre }}</a> <!-- usuario --> </h3>
+
+                                <div class="timeline-body">
+                                    {{ observacion.observacion | raw }}
+
+                                    <div class="float-right">
+                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#asignarCuadernoModal" data-idobservacion="{{observacion.id}}">Asignar a cuaderno</button>
+
+                                    </div>
+
+                                    
+                                </div>
+                            
+                            </div>
+                        </div>
+                    {% endfor %}
+                            
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+
+         
+        <!-- Fin Cuadernos -->
+</div>
+</div>
+<div class="tab-pane fade" id="etapas" role="tabpanel" aria-labelledby="etapas-tab">
+
+        <div class="row">
+            <div class="col-sm-12 col-md-12">
+                <div class="card">
+                    <div class="card-body table-responsive pad">
+                        <h3>Etapas</h3>
+                        <div class="row">
+                        {% if causa.materiaEstrategia.estrategiaJuridica.lineaTiempo is not null %}
+                        {% set utilizado = 0 %}
+                        {% set disponible_finalizar = 1 %}
+                            {% for etapa in causa.materiaEstrategia.estrategiaJuridica.lineaTiempo.lineaTiempoEtapas %}
+                                {% set pendiente = 1 %}
+                                
+                                <div class="col-6 p-1">
+                                    {{etapa.nombre}}
+                                </div>
+
+                                <div class="col-2 p-1">
+                                    {% for terminado in terminados %}
+                                        {% if terminado.lineaTiempoEtapas.id == etapa.id %}
+                                            {% set pendiente=0 %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if pendiente==0  %}
+                                        <a href="" class="btn btn-success"><i class="fas fa-check-circle"></i></a>
+                                        
+                                    {% else %}
+                                        {% set disponible_finalizar = 0 %}
+                                        <form  id="frmObservacion{{etapa.id}}" method="post" action="{{path('contrato_linea_tiempo_observacion',{'id':causa.id}) }}" >
+                                            
+                                        <button type="button"  class="btn btn-danger" onclick="javascript:finalizarEtapa({{etapa.id}});"><i class="fas fa-times"></i></button>
+                                        <input type="hidden" value="1" name="hdEstado" class="hdEstado">
+                                        <input type="hidden" value="{{etapa.id}}" name="hdEtapa">
+                                        <input type="hidden" value=" " name="txtObservacion">
+                                    </form> 
+                                    {% endif %}
+                                    
+                                </div>
+                                
+                                
+                            {% endfor %}
+                            <div class="col-6 p-1">
+                                    <p>Causa Finalizada</p>
+                            </div>
+                            <div class="col-2 p-1">
+                                <a  href="javascript:void(0);" onclick="{% if disponible_finalizar == 1 %}
+                                       if(confirm('¿Está seguro que desea finalizar la causa?')) {
+                                            window.location.href='{{ path('contrato_linea_tiempo_finalizar',{'id':causa.id}) }}';
+                                        }
+                                {% else %}
+                                    javascript:alert('No se puede finalizar la causa, debe completar todas las etapas');
+                                {% endif %}" class="btn 
+                                {% if causa.causaFinalizada == 0 %}
+                                 btn-danger
+                                {% else %}
+                                    btn-success
+                                 {% endif %}"><i class="fas {% if causa.causaFinalizada == 0 %}
+                                 fa-times
+                                {% else %}
+                                    fa-check-circle
+                                 {% endif %} "></i></a>   
+                            </div>
+                        {% else %}
+                            <h1 class="display-4 text-warning">El servicio no tiene Linea de tiempo asignada</h1>
+                        {% endif %}   
+                        </div>
+                        
+                        
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    
+</div>
+</diV>
+</div>
+<div  style="visibility:hidden">            
+    <form  id="frmObservacion" method="post" action="{{path('contrato_linea_tiempo_observacion',{'id':causa.id}) }}" onsubmit="return confirm('Estas seguro de ingresar este estado a la Causa?');">
+        <div class="row">
+            <div class="col-12">
+                <textarea name="txtObservacion" col="10" class="form-control" required></textarea>
+            </div>
+            <div class="col-6">
+                <button type="button" class="btn btn-danger btnPendiente">Pendiente</button>
+            </div>
+            <div class="col-6">
+                <button type="button" class="btn btn-success btnFinalizado">Finalizado</button>
+            </div>
+        </div>  
+        <input type="hidden" value="" name="hdEstado" class="hdEstado">  
+    </form>               
+</div>
+
+
+<!-- modal crear recordatorio -->
+<div class="modal fade" id="recordatorioModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            {{ form_start(form) }}
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Crear Mensaje</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                
+                <div class="row">
+                    <div class="col-sm-12 col-md-6">
+                        <small class="text-muted">Seleccione Tipo</small>
+                        <br />
+                        <label>Recordatorio</label>
+                        
+                        {{ form_row(form.mensajeTipo,{'label':false,'attr':{'class':'form-control','style':'visibility:hidden'}})}}
+                    </div>
+                    
+                    <div class="col-sm-12 col-md-6 ">
+                        <small class="text-muted">Seleccione Fecha</small>
+                        {{ form_row(form.fechaAviso,{'label':false,'attr':{'class':'form-control fecha_aviso date'}})}}
+                    </div>
+                    <div class="col-sm-12 col-md-12">
+                        <small class="text-muted">Observación</small>
+                        {{ form_row(form.observacion,{'label':false,'attr':{'class':'form-control'}})}}
+                    </div>
+                </div>
+                
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Crear</button>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+
+<!-- modal crear cuaderno -->
+<div class="modal fade" id="cuadernoModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            {{ form_start(form,{'action': path('contrato_linea_tiempo_detalle_agregarDetalleCuaderno',{"id":causa.id}), 'method': 'POST'}) }}
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Crear Cuaderno</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                
+                <div class="row">
+                    <div class="col-sm-12 col-md-4">
+                        <small class="text-muted">Cuaderno *</small>
+                        
+                        <select name="cboCuaderno" class="form-control cboCuaderno">
+
+                            <option value="">Seleccionar cuaderno</option>
+                            {% for cuaderno in cuadernos %}
+                                <option value="{{cuaderno.id}}">{{cuaderno.nombre}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="col-sm-12 col-md-4 ">
+                        <small class="text-muted">Actuación *</small>
+                        
+                        <select name="cboActuacion" class="form-control cboActuacion">
+                            <option value="">Seleccionar Actuacion</option>
+
+                        </select>
+                    </div>
+                    <div class="col-sm-12 col-md-4 ">
+                        <small class="text-muted">Anexo Procesal</small>
+                        
+                        <select name="cboAnexoProcesal" class="form-control cboAnexoProcesal">
+                            <option value="">Seleccionar Anexo Procesal</option>
+                        </select>
+                    </div>
+                   
+                </div>
+                
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Crear</button>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+
+
+<!-- modal Asignar cuaderno -->
+<div class="modal fade" id="asignarCuadernoModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            {{ form_start(form,{'action': path('contrato_linea_tiempo_detalle_asignarObservacionDetalleCuaderno'), 'method': 'POST'}) }}
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Crear Cuaderno</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <input type="hidden" class="id-causa-observacion" name="idObservacion">
+                    <div class="col-sm-12 col-md-4">
+                        <small class="text-muted">Cuaderno *</small>
+                        <select name="cboCuaderno-asignar" class="form-control cboCuaderno-asignar">
+
+                            <option value="">Seleccionar cuaderno</option>
+                            {% for cuaderno in cuadernos %}
+                                <option value="{{cuaderno.id}}">{{cuaderno.nombre}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="col-sm-12 col-md-4 ">
+                        <small class="text-muted">Actuación *</small>               
+                        <select name="cboActuacion-asignar" class="form-control cboActuacion-asignar">
+                            <option value="">Seleccionar Actuacion</option>
+
+                        </select>
+                    </div>
+                    <div class="col-sm-12 col-md-4 ">
+                        <small class="text-muted">Anexo Procesal</small>
+                        
+                        <select name="cboAnexoProcesal-asignar" class="form-control cboAnexoProcesal-asignar">
+                            <option value="">Seleccionar Anexo Procesal</option>
+                        </select>
+                    </div>        
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Crear</button>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+
+<!-- cargando -->
+
+<div class="modal fade" id="loadingModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">      
+      <div class="modal-body">
+        <p>Cargando ...    </p>
+      </div>
+    
+    </div>
+  </div>
+</div>
+
+<!-- Mostrar error -->
+
+<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">  
+        <div class="card-header">
+            <h1 class="color-danger"><i class="far fa-times-circle"></i></h1>
+            
+        </div>    
+      <div class="modal-body ">
+        <p class="errorContenido"></p>
+      </div>
+    
+    </div>
+  </div>
+</div>
+
+<!-- Mostrar exito -->
+
+<div class="modal fade" id="mensajeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">  
+        <div class="card-header">
+            <h1 class="color-success"><i class="far fa-check"></i></h1>
+            
+        </div>    
+      <div class="modal-body ">
+        <p >Operación exitosa</p>
+
+      </div>
+    
+    </div>
+  </div>
+</div>
+
+<script>
+    $('#asignarCuadernoModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var recipient = button.data('idobservacion') 
+        var modal = $(this)
+        modal.find('.id-causa-observacion').val(recipient)
+    });
+
+    $(".btnPendiente").click(function(){
+        //$('.hdEstado').val(0);
+        $("#frmObservacion").submit();
+    });
+    $(".btnFinalizado").click(function(){
+        //$('.hdEstado').val(1);
+        $("#frmObservacion").submit();
+    });
+    function finalizarEtapa(form){
+        if(confirm('Confirma Actualización?')){
+            $("#frmObservacion"+form).submit();
+        }else{
+           
+            location.reload();
+            
+        }
+    }
+
+//Crear cuaderno
+    $(".cboCuaderno").on("change",function(){
+        var cuadernoId = $('select[name="cboCuaderno"]').val();
+        var cboActuacion = $('select[name="cboActuacion"]');
+        cboActuacion.empty();
+        cboActuacion.append('<option value="">Seleccionar Actuacion</option>');
+        if (cuadernoId) {
+            $.ajax({
+                url: '/contrato/' + cuadernoId + '/obtener_actuaciones',
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+
+                    $.each(data, function (i, actuacion) {
+                        cboActuacion.append('<option value="' + actuacion.id + '">' + actuacion.nombre + '</option>');
+                    });
+                },
+                error: function () {
+                    alert('No se pudieron cargar las actuaciones.');
+                }
+            });
+        }
+   });
+    $(".cboActuacion").on("change",function(){
+        var actuacionId = $('select[name="cboActuacion"]').val();
+        var cboAnexoProcesal = $('select[name="cboAnexoProcesal"]');
+        cboAnexoProcesal.empty();
+        cboAnexoProcesal.append('<option value="">Seleccionar Anexo Procesal</option>');
+        if (actuacionId) {
+            $.ajax({
+                url: '/contrato/' + actuacionId + '/obtener_anexo_procesal',
+                type: 'GET',
+                dataType: 'json',
+                
+                success: function (data) {
+                   
+                    $.each(data, function (i, anexoProcesal) {
+                        cboAnexoProcesal.append('<option value="' + anexoProcesal.id + '">' + anexoProcesal.nombre + '</option>');
+                    });
+                },
+                error: function () {
+                    alert('No se pudieron cargar los anexos procesales.');
+                }
+            });
+        }
+    });
+
+    //Asignar cuaderno
+    $(".cboCuaderno-asignar").on("change",function(){
+        var cuadernoId = $('select[name="cboCuaderno-asignar"]').val();
+        var cboActuacion = $('select[name="cboActuacion-asignar"]');
+        cboActuacion.empty();
+        cboActuacion.append('<option value="">Seleccionar Actuacion</option>');
+        if (cuadernoId) {
+            $.ajax({
+                url: '/contrato/' + cuadernoId + '/obtener_actuaciones',
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+
+                    $.each(data, function (i, actuacion) {
+                        cboActuacion.append('<option value="' + actuacion.id + '">' + actuacion.nombre + '</option>');
+                    });
+                },
+                error: function () {
+                    alert('No se pudieron cargar las actuaciones.');
+                }
+            });
+        }
+   });
+    $(".cboActuacion-asignar").on("change",function(){
+        var actuacionId = $('select[name="cboActuacion-asignar"]').val();
+        var cboAnexoProcesal = $('select[name="cboAnexoProcesal-asignar"]');
+        cboAnexoProcesal.empty();
+        cboAnexoProcesal.append('<option value="">Seleccionar Anexo Procesal</option>');
+        if (actuacionId) {
+            $.ajax({
+                url: '/contrato/' + actuacionId + '/obtener_anexo_procesal',
+                type: 'GET',
+                dataType: 'json',
+                
+                success: function (data) {
+                   
+                    $.each(data, function (i, anexoProcesal) {
+                        cboAnexoProcesal.append('<option value="' + anexoProcesal.id + '">' + anexoProcesal.nombre + '</option>');
+                    });
+                },
+                error: function () {
+                    alert('No se pudieron cargar los anexos procesales.');
+                }
+            });
+        }
+    });
+
+
+</script>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Vencimiento index{% endblock %}
+
+{% block body %}
+    
+    <div class="card">
+        <div class="card-header">
+                <a href="{{ path('vencimiento_new') }}" class="btn btn-primary">Nuevo</a>
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Nombre</th>
+                        <th>ValMin</th>
+                        <th>ValMax</th>
+                        <th>Icono</th>
+                        
+                        <th></th>
+                        <th>actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for vencimiento in vencimientos %}
+                    <tr>
+                        <td>{{ vencimiento.id }}</td>
+                        <td>{{ vencimiento.nombre }}</td>
+                        <td>{{ vencimiento.valMin }}</td>
+                        <td>{{ vencimiento.valMax }}</td>
+                       
+                        <td><p class='text-{{ vencimiento.color }}' ><i class='{{ vencimiento.icono }}' ></i></p></td>
+                        <td>{{ vencimiento.soloPorAdmin?'Solo Admin':'' }}</td>
+                        <td>
+                            <a href="{{ path('vencimiento_show', {'id': vencimiento.id}) }}" class="btn btn-primary btn-sm"><i class="fas fa-eye"></i></a>
+                            <a href="{{ path('vencimiento_edit', {'id': vencimiento.id}) }}" class="btn btn-secondary btn-sm"><i class="fas fa-edit"></i></a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6">no records found</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+{% endblock %}

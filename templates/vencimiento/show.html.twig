@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Vencimiento{% endblock %}
+
+{% block body %}
+    <h1>Vencimiento</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ vencimiento.id }}</td>
+            </tr>
+            <tr>
+                <th>ValMin</th>
+                <td>{{ vencimiento.valMin }}</td>
+            </tr>
+            <tr>
+                <th>ValMax</th>
+                <td>{{ vencimiento.valMax }}</td>
+            </tr>
+            <tr>
+                <th>Color</th>
+                <td>{{ vencimiento.color }}</td>
+            </tr>
+            <tr>
+                <th>Icono</th>
+                <td>{{ vencimiento.icono }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('vencimiento_index') }}">back to list</a>
+
+    <a href="{{ path('vencimiento_edit', {'id': vencimiento.id}) }}">edit</a>
+
+    {{ include('vencimiento/_delete_form.html.twig') }}
+{% endblock %}

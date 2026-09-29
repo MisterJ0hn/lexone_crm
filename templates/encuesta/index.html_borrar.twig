@@ -1,0 +1,183 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contrato index{% endblock %}
+
+{% block body %}
+<div class="row">
+ {% set total = 0 %}
+{% set totalTipoEncuesta = 0 %}
+{% for resumen in resumenes %}
+
+        <div class="col-sm-6 col-md-3">
+            
+            <div class="info-box">
+                <span class="info-box-icon bg-success"><i class="fas fa-handshake"></i></span>
+    
+                <div class="info-box-content">
+                    <span class="info-box-text">{{resumen.tipo}}</span>
+                    <span class="info-box-number">{{resumen.cantidad}}</span>
+                    {% set total= total + resumen.cantidad %}
+                    <a href="#" class="small-box-footer" onclick="javascript:buscar('{{resumen.tipo}}')">
+                        Ver Más <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+               
+                </div>
+
+                {% if bStatus is null or bStatus == resumen.tipo %}
+                    {% set totalTipoEncuesta = totalTipoEncuesta + total %}
+                
+                {% endif %}
+
+                {% if bStatus == resumen.tipo %}
+                    {% set totalTipoEncuesta = totalTipoEncuesta + total %} 
+                {% endif %}
+                <!-- /.info-box-content -->
+            </div>
+      
+        </div>
+        {% endfor %}
+
+ 
+</div>
+
+{{ render(controller('App\\Controller\\EncuestaController::resumenencuestadores', {'fechainicio':dateInicio,'fechafin':dateFin,'status':bStatus,'totalStatus':totalTipoEncuesta,'tipoFecha':tipoFecha})) }}
+   <form action="" method="get" id="bForm">
+        {{ include('/cuadrosBusquedas/busquedaTicketsEncuestas.html.twig', {'TipoFiltro':TipoFiltro}) }}
+    </form>
+    <div class="card">
+        <div class="card-header">
+       
+        </div>
+        <div class="card-body table-responsive p-0" style="height: 500px;">
+        
+            <table class="table table-head-fixed text-nowrap table-striped table-sm">
+                <thead>
+                    <tr>
+                        <th>{{ knp_pagination_sortable(contratos, 'Compañia', 'agenda.cuenta') }} {% if contratos.isSorted('agenda.cuenta') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th>{{ knp_pagination_sortable(contratos, 'Folio', 'folio') }} {% if contratos.isSorted('folio') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th>{{ knp_pagination_sortable(contratos, 'AgendaId', 'agenda.id') }} {% if contratos.isSorted('agenda.id') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        
+                        <th>{{ knp_pagination_sortable(contratos, 'Grupo', 'grupo.id') }} {% if contratos.isSorted('grupo.id') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th>Calidad</th>
+                        <th>{{ knp_pagination_sortable(contratos, 'Cliente', 'nombre') }} {% if contratos.isSorted('nombre') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                       
+                       <th>{{ knp_pagination_sortable(contratos, 'Fecha Contrato', 'fechaCreacion') }} {% if contratos.isSorted('fechaCreacion') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th>{{ knp_pagination_sortable(contratos, 'Fecha Ult. Encuesta', 'fechaEncuesta') }} {% if contratos.isSorted('fechaEncuesta') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                       <th>{{ knp_pagination_sortable(contratos, 'Fecha Ult. Gestión', 'fechaGestion') }} {% if contratos.isSorted('fechaGestion') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                       <th>{{ knp_pagination_sortable(contratos, 'Q. Encuesta', 'qtyEncuesta') }} {% if contratos.isSorted('qtyEncuesta') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th>{{ knp_pagination_sortable(contratos, 'Q. Gestión', 'qtyGestionEncuesta') }} {% if contratos.isSorted('qtyGestionEncuesta') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th>Días Mora</th>
+                        <th>C.Pgda</th>
+                        <th>{{ knp_pagination_sortable(contratos, 'Ultima Nota', 'ultimaNota') }} {% if contratos.isSorted('ultimaNota') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        
+                        <th>Acciones</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                {% for contrato in contratos %}
+                    <tr>
+                        <td>{{contrato.agenda.cuenta.nombre}}</td>
+                        <td>{{ contrato.folio }}</td>
+                        <td>{{ contrato.agenda.id }}</td>
+                        <td>{{ contrato.grupo?contrato.grupo.id:'' }}</td>
+                        <td>
+                        {% if contrato.grupo.usuarioGrupos is defined %}
+                            {% for usuarioGrupo in contrato.grupo.usuarioGrupos %}
+                                {{usuarioGrupo.usuario}}
+                            {% endfor %}
+                        {% endif %}
+                        </td>
+                        <td>{{ contrato.nombre }}</td>
+                        
+                        <td>{{ contrato.fechaCreacion|date('d-m-Y H:i') }}</td>
+                        <td align="center">{{ contrato.fechaEncuesta?contrato.fechaEncuesta|date('d-m-Y H:i') : '' }}</td>
+                        <td align="center">{{ contrato.fechaGestion?contrato.fechaGestion|date('d-m-Y H:i') : '' }}</td>
+                        <td align="center">{{ contrato.qtyEncuesta?contrato.qtyEncuesta:0  }}</td>
+                        <td align="center">{{ contrato.qtyGestionEncuesta?contrato.qtyGestionEncuesta:0  }}</td>
+                        <td>
+                        {% set cuotaUtilizado = 0 %}
+                        {% for cuota in contrato.detalleCuotas %}
+                            {% if cuotaUtilizado == 0 %}    
+                            
+                                {% if cuota.anular is null %}
+                                    {% if cuota.monto > cuota.pagado %}
+                                        {{ diasmora(cuota.fechaPago|date('Y-m-d'))<0?0:diasmora(cuota.fechaPago() |date('Y-m-d'))}} dias
+                                        {% set cuotaUtilizado = 1 %}
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                        </td>
+                        <td align="center">{{ totalesCobranza(contrato.id) }}</td>
+                        <td align="center">{{ contrato.ultimaNota?contrato.ultimaNota:''}}</td>
+                        <td>
+
+                            <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+                            <a href="{{path('encuesta_grupo',{'id':contrato.id})}}" class="btn btn-sm btn-warning" ><i class="fas fa-edit"></i></a>
+                            
+                            <a href="{{path('encuesta_ver_encuestas',{'id':contrato.id})}}" class="btn btn-sm btn-success" ><i class="fas fa-eye"></i></a><!-- colocar un visualizador de encuesta--> 
+                            </div>
+                        </td>
+                        
+                                    
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="16">No hay contratos</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer">
+            <div class="card-footer clearfix">
+                {# display navigation #}
+           <div class="navigation">
+               {{ knp_pagination_render(contratos,'@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig',{},{
+               'position': 'centered',
+               'rounded': true,
+               }) }}
+           </div>
+       </div>
+            
+        </div>
+    </div>
+
+ 
+
+
+    <script>
+        $('#bFecha').daterangepicker({
+        
+            "drops": "down",
+            "startDate":"{{dateInicio}}",
+            "endDate": "{{dateFin}}",
+            "locale": {
+                "format": "YYYY-MM-DD",
+                "applyLabel": "Apply",
+                "cancelLabel": "Cancel",
+            }
+        }, function(start, end, label) {
+        console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+        
+        });
+        $(".bFolio").change(function(){
+            $(".bFiltro").val('');
+        });
+        $(".bFiltro").change(function(){
+            $(".bFolio").val('');
+        });
+        $(".bFecha").change(function(){
+            $(".bFolio").val('');
+        });
+
+        function buscar(status){
+            $("#bStatus").val(status);
+            $("#bForm").submit();
+        }
+
+
+
+    </script>
+{% endblock %}

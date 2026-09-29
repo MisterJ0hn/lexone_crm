@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}UsuarioCuenta index{% endblock %}
+
+{% block body %}
+    <h1>UsuarioCuenta index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for usuario_cuentum in usuario_cuentas %}
+            <tr>
+                <td>{{ usuario_cuentum.id }}</td>
+                <td>
+                    <a href="{{ path('usuario_cuenta_show', {'id': usuario_cuentum.id}) }}">show</a>
+                    <a href="{{ path('usuario_cuenta_edit', {'id': usuario_cuentum.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="2">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('usuario_cuenta_new') }}">Create new</a>
+{% endblock %}

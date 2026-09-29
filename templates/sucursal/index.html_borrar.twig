@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Sucursal index{% endblock %}
+
+{% block body %}
+    <div class="card">
+
+        <div class="card-body">
+            <a href="{{ path('sucursal_new',{'id': cuentum.id}) }}" class="btn btn-primary"><i class="fas fa-plus"></i></a>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Nombre</th>
+                        <th>actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for sucursal in sucursals %}
+                    <tr>
+                        <td>{{ sucursal.id }}</td>
+                        <td>{{ sucursal.nombre }}</td>
+                        <td>
+                            <div class="btn-group">               
+                                <a href="{{ path('sucursal_edit', {'id': sucursal.id}) }}" class="btn btn-warning"><i class="fas fa-edit"></i></a>
+                                {{ include('sucursal/_delete_form.html.twig') }}
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="3">no records found</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+    
+    
+{% endblock %}

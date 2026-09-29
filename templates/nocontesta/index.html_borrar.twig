@@ -1,0 +1,120 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{pagina|default('Reasignar')}}{% endblock %}
+
+{% block body %}
+
+    <div class="card">
+        <div class="card-header">
+            Filtro
+        </div>
+        <div class="card-body">
+            <form action="{{path('nocontesta_index')}}" method="get">
+            <div class="row">
+                <div class="col-sm-12 col-md-3">
+                    <select name="bCompania" class="form-control">
+                        <option value="0">Todos</option>
+                        {% for compania in companias %}
+                            <option value="{{compania.id}}"
+                            {% if bCompania==compania.id %}
+                                selected
+                            {% endif %}
+                            >{{compania.nombre}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <input type="text" class="form-control" name="bFiltro" placeholder="Nombre/Email/Telefono" value="{{bFiltro}}">
+                </div>
+                <div class="col-sm-12 col-md-3">
+                        <input type="text" class="form-control bFecha" name="bFecha" id="bFecha"  value="">
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <button class="btn btn-primary"><i class="fas fa-search"></i></button>
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    
+                </div>
+
+            </div>
+            </form>
+        </div>  
+        
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Listado</h3> 
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body table-responsive p-0" style="height: 300px;">
+        
+            <table class="table table-head-fixed text-nowrap table-striped table-sm">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>{{ knp_pagination_sortable(agendas, 'Compañia', 'cuenta') }} {% if agendas.isSorted('cuenta') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                <th>{{ knp_pagination_sortable(agendas, 'Canal', 'campania') }} {% if agendas.isSorted('campania') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                <th>{{ knp_pagination_sortable(agendas, 'Status', 'status') }} {% if agendas.isSorted('status') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                <th>Reasignar</th>
+                <th>{{ knp_pagination_sortable(agendas, 'Agendador', 'agendador.nombre') }} {% if agendas.isSorted('agendador.nombre') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                <th>{{ knp_pagination_sortable(agendas, 'Abogado', 'abogado.nombre') }} {% if agendas.isSorted('abogado.nombre') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                <th>{{ knp_pagination_sortable(agendas, 'Nombre', 'nombreCliente') }} {% if agendas.isSorted('nombreCliente') %} <i class="fas fa-sort"></i>{% endif %}</th>
+              <!--  <th>{{ knp_pagination_sortable(agendas, 'Email', 'emailCliente') }} {% if agendas.isSorted('emailCliente') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                <th>Telefono</th>-->
+                <th>Fecha Carga</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for agenda in agendas %}
+            <tr>
+                <td>{{ agenda.id }}</td>
+                <td>{{ agenda.cuenta.nombre }}</td>
+                <td>{{ agenda.campania }}</td>
+                <td>{{ agenda.status }}</td>
+                <td align="center"><a href="{{path('nocontesta_show',{'id':agenda.id})}}" class="btn"><i class="far fa-paper-plane"></i></a></td>
+                <td>{{ agenda.agendador.nombre }}</td>
+                <td>{{ agenda.abogado.nombre|default('') }}</td>
+                <td>{{ agenda.nombreCliente }}</td>
+               <!-- <td>{{ agenda.emailCliente }}</td>
+                <td>{{ agenda.telefonoCliente }}</td>-->
+                <td>{{ agenda.fechaCarga ? agenda.fechaCarga|date('Y-m-d H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('nocontesta_show', {'id': agenda.id}) }}" class="btn btn-primary"><i class="fas fa-eye"></i></a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="10">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+        <div class="card-footer clearfix">
+             {# display navigation #}
+        <div class="navigation">
+            {{ knp_pagination_render(agendas,'@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig',{},{
+            'position': 'centered',
+            'rounded': true,
+            }) }}
+        </div>
+    </div>
+    </div>
+    <script>
+        $('#bFecha').daterangepicker({
+        
+            "drops": "down",
+            "startDate":"{{dateInicio}}",
+            "endDate": "{{dateFin}}",
+            "locale": {
+                "format": "YYYY-MM-DD",
+                "applyLabel": "Apply",
+                "cancelLabel": "Cancel",
+            }
+        }, function(start, end, label) {
+        console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+        
+        });
+    </script>
+{% endblock %}

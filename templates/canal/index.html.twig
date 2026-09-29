@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Canal index{% endblock %}
+
+{% block body %}
+    
+<div class="card">
+    <div class="card-body">
+
+        {{ form_start(form,{'attr':{'class':'form-inline'}}) }}
+             
+            {{form_row(form.nombre,{'label':false,'attr':{'class':'form-control','required':true}})}}
+            
+            <button class="btn btn-primary">{{ button_label|default('Crear') }}</button>
+        {{ form_end(form) }}
+
+    </div>
+</div>
+<div class="card">
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                
+                    <th>Nombre</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for canal in canals %}
+                <tr>
+                    
+                    <td>{{ canal.nombre }}</td>
+                
+                    <td>
+                        
+                        <a href="{{ path('canal_edit', {'id': canal.id}) }}"><i class="fa fa-pen"></i></a>
+                        <a href="{{ path('canal_edit', {'id': canal.id}) }}"><i class="fa fa-trash"></i></a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+       
+    </div>
+</div>
+{% endblock %}

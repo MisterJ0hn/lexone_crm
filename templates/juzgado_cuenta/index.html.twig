@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}JuzgadoCuenta index{% endblock %}
+
+{% block body %}
+    <h1>JuzgadoCuenta index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for juzgado_cuentum in juzgado_cuentas %}
+            <tr>
+                <td>{{ juzgado_cuentum.id }}</td>
+                <td>
+                    <a href="{{ path('juzgado_cuenta_show', {'id': juzgado_cuentum.id}) }}">show</a>
+                    <a href="{{ path('juzgado_cuenta_edit', {'id': juzgado_cuentum.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="2">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('juzgado_cuenta_new') }}">Create new</a>
+{% endblock %}

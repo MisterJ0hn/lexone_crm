@@ -1,0 +1,249 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{pagina|default('agenda agendador')}}{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-sm-12 col-md-8 ">
+    <section class="sticky-top">
+        <div class="card">
+            <div class="card-body table-responsive pad">
+                {{ form_start(form) }}
+                <h4>Datos Lead</h4>
+                <div class="row">
+                    <div class="col-sm-12 col-md-6">
+                        <small class="text-muted">Campaña</small><br>
+                        <label>{{agenda.campania}}</label>
+                        
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <small class="text-muted">Compañia</small><br>
+                        <label>{{agenda.cuenta.nombre}}</label>
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <small class="text-muted">Nombre Cliente</small>
+                        {{ form_row(form.nombreCliente,{'label':false,'attr':{'class':'form-control'}})}}
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <small class="text-muted">Rut Cliente</small>
+                        {{form_row(form.rutCliente,{'label':false,'attr':{'class':'form-control format-rut'}})}}
+                    </div>
+                   
+                    <div class="col-sm-12 col-md-3">
+                        <small class="text-muted">Telefono Cliente</small>
+                        {{ form_row(form.telefonoCliente,{'label':false,'attr':{'class':'form-control'}})}}
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <small class="text-muted">Telefono Recado Cliente</small>
+                        {{form_row(form.telefonoRecadoCliente,{'label':false,'attr':{'class':'form-control'}})}}
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <small class="text-muted">Correo Cliente</small>
+                        {{ form_row(form.emailCliente,{'label':false,'attr':{'class':'form-control'}})}}
+                    </div>
+                    
+                </div>
+                <br />
+                
+
+                <h1>Reasignar</h1>
+                <div class="row">
+                    
+                    <div class="col-sm-12 col-md-9">
+                        <small class="text-muted">Observación</small>
+                        <textarea name="txtObservacion" cols="10" rows="3" class="form-control"></textarea>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-9 col-md-3">
+                        <small class="text-muted">Compañia</small>
+                        <select name="cboCuenta" class="form-control" onchange="javascript:agendadores(this.value)" required disabled>
+                            <option value=""></option>
+            
+                            {% for cuenta in cuentas %}
+                                <option value="{{cuenta.id}}"
+                                {% if cuenta.id == agenda.cuenta.id %}
+                                selected
+                                {% endif %}
+                                >{{cuenta.nombre}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-sm-6 col-md-3" id="agendadores">
+            
+            
+                    </div>
+                    <div class="col-sm-3 col-md-3">
+                        <button class="btn btn-primary">Aceptar</button>
+                    </div>
+                </div>
+                
+
+                
+            {{ form_end(form) }}
+                
+            </div>
+
+        </div>
+    </section>
+    </div>
+    <div class="col-sm-12 col-md-4">
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+        
+        <!-- Timelime example  -->
+            <div class="row">
+                <div class="col-md-12">
+                <!-- The time line -->
+                    <div class="timeline">
+                        <!-- timeline time label -->
+                        <div class="time-label">
+                        <span class="bg-red">{{agenda.fechaCarga|date('d-m-Y')}}</span>
+                        </div>
+                        <!-- /.timeline-label -->
+                        <!-- timeline item -->
+                        {% for observacion in agenda.agendaObservacions %}
+                            
+                        
+                        <div class="time-label">
+                            <span class="bg-green">{{observacion.fechaRegistro|date('d-m-Y')}}</span>
+                        </div>
+                        <div>
+                            <i class="fas fa-envelope bg-blue"></i>
+                            <div class="timeline-item">
+                                <span class="time"><i class="fas fa-clock"></i>{{observacion.fechaRegistro|date('H:i')}}</span>
+                                <h3 class="timeline-header"><a href="#">{{observacion.status}}</a> {{observacion.usuarioRegistro}} </h3>
+
+                                <div class="timeline-body">
+                                    {{observacion.observacion}}
+                                </div>
+                               
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <div>
+                            <i class="fas fa-clock bg-gray"></i>
+                          </div>
+                    </div>
+                    
+                </div>
+                
+            </div>
+        </div>
+    </section>
+    </div>
+</div>
+    <!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Calendario</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="bodyModal">
+          
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<script>
+
+        function verCalendario(){
+            $.ajax({
+                url:"{{path('panel_agendador_calendario',{'id':agenda.id})}}",
+                type: "post",
+                dataType: "html",
+                cache: false,
+                contentType: false,
+                processData: false,
+                async: true,
+                success:function(data){
+                    $("#bodyModal").html(data);
+                    $('#staticBackdrop').modal();
+                }
+            });
+        }
+        function agendadores(id){
+        
+            
+       
+            if(id>0){
+                $.ajax({
+                    url:"/agenda/"+id+"/agendadores",
+                    type: "post",
+                    dataType: "html",
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    async: true,
+                    success:function(data){
+                        $("#agendadores").html(data);
+                    }
+            
+                });
+            }else{
+                $("#agendadores").html('');
+            }
+        }
+        /*function getAbogados(status){
+            if(status==5){
+                $.ajax({
+                    url:"{{path('panel_agendador_abogados',{'id':agenda.id})}}",
+                    type: "post",
+                    dataType: "html",
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    async: true,
+                    success:function(data){
+                        $("#abogado").html(data);
+                    }
+        
+                });
+            }
+            else{
+                $.ajax({
+                    url:"{{path('panel_agendador_engestion',{'id':agenda.id})}}",
+                    type: "post",
+                    dataType: "html",
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    async: true,
+                    success:function(data){
+                        $("#abogado").html(data);
+                    }
+        
+                });
+            }
+            
+        }*/
+       
+        $(document).ready(function(){
+            console.log("paso");
+             $.ajax({
+                 url:"/agenda/{{agenda.cuenta.id}}/agendadores",
+                 type: "get",
+                 data: "agendador={{agenda.agendador.id}}",
+                 dataType: "html",
+                 cache: false,
+                 contentType: false,
+                 processData: false,
+                 async: true,
+                 success:function(data){
+                     $("#agendadores").html(data);
+                 }
+         
+             });
+        });
+
+    </script>
+
+{% endblock %}

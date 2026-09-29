@@ -1,0 +1,26 @@
+<div class="card">
+    <div class="card-header">Carga Personalizada</div>
+    <div class="card-body">
+        {{ form_start(form) }}
+        <div class="row">
+            <div class="col-sm-6 col-md-3">
+                <small class="text-muted">Compañia</small>
+                {{ form_row(form.cuenta,{'label':false,'attr':{'class':'form-control'},'required':true}) }}
+
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <small class="text-muted">Archivo</small><br>
+                {{ form_row(form.url,{'label':false,'attr':{'accept':'.csv'}}) }}
+               
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <small class="text-muted">Ver Ejemplo</small><br>
+                <h1><a href="/build/csv/samples/sample_personalizado.csv"><i class="fas fa-file-csv"></i></a></h1>
+            </div>
+        </div>
+       
+            
+            <button class="btn btn-primary">{{ button_label|default('Importar') }}</button>
+        {{ form_end(form) }}
+    </div>
+</div>

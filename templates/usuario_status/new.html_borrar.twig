@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New UsuarioStatus{% endblock %}
+
+{% block body %}
+    <h1>Create new UsuarioStatus</h1>
+
+    {{ include('usuario_status/_form.html.twig') }}
+
+    <a href="{{ path('usuario_status_index') }}">back to list</a>
+{% endblock %}

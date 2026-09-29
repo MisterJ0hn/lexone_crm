@@ -1,0 +1,305 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}resumen causas{% endblock %}
+
+{% block body %}
+<section>
+    
+    <div class="row">
+        {% set total = 0 %}
+   
+       {% if bTipoCuenta=='activas' or bTipoCuenta=='' %}
+        
+        <div class="col-sm-6 col-md-3">            
+            <div class="info-box">
+                <span class="info-box-icon bg-info"><i class="fas fa-search"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Causas Activas</span>
+                    <span class="info-box-number">{{resumen[0].causasActivas}}</span>
+                    
+                    {% set total= total + resumen[0].causasActivas %}
+                    <a href="javascript:enviar('activas')" class="small-box-footer" >
+                        Ver Más <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+
+                <!-- /.info-box-content -->
+            </div>
+      
+        </div>
+        {% endif %}
+         {% if bTipoCuenta=='alDia' or bTipoCuenta=='' %}
+        <div class="col-sm-6 col-md-3">
+            
+            <div class="info-box">
+                <span class="info-box-icon bg-info"><i class="fas fa-search"></i></span>
+    
+                <div class="info-box-content">
+                <span class="info-box-text">Causas Al Día</span>
+                <span class="info-box-number">{{resumen[0].causasAlDia}}</span>
+                {% set total= total + resumen[0].causasAlDia %}
+                <a href="javascript:enviar('alDia')" class="small-box-footer" >
+                    Ver Más <i class="fas fa-arrow-circle-right"></i>
+                </a>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+      
+        </div>
+        {% endif %}
+        {% if bTipoCuenta=='clientesActivos' or bTipoCuenta=='' %} 
+        <div class="col-sm-6 col-md-3">
+            
+            <div class="info-box">
+                <span class="info-box-icon bg-info"><i class="fas fa-search"></i></span>
+    
+                <div class="info-box-content">
+                <span class="info-box-text">Clientes Activos</span>
+                <span class="info-box-number">{{resumen[0].clientesActivos}}</span>
+                {% set total= total + resumen[0].clientesActivos %}
+                <a href="javascript:enviar('clientesActivos')" class="small-box-footer" >
+                    Ver Más <i class="fas fa-arrow-circle-right"></i>
+                </a>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+      
+        </div>
+        {% endif %}
+        {% if bTipoCuenta=='clientesAlDia' or bTipoCuenta=='' %}
+        <div class="col-sm-6 col-md-3">
+            
+            <div class="info-box">
+                <span class="info-box-icon bg-info"><i class="fas fa-search"></i></span>
+    
+                <div class="info-box-content">
+                <span class="info-box-text">Clientes Al Día</span>
+                <span class="info-box-number">{{resumen[0].clientesAlDia}}</span>
+                {% set total= total + resumen[0].clientesAlDia %}
+                <a href="javascript:enviar('clientesAlDia')" class="small-box-footer" >
+                    Ver Más <i class="fas fa-arrow-circle-right"></i>
+                </a>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+      
+        </div>
+        {% endif %}
+        {% if bTipoCuenta=='clientesMorosos' or bTipoCuenta=='' %}
+        <div class="col-sm-6 col-md-3">
+            
+            <div class="info-box">
+                <span class="info-box-icon bg-info"><i class="fas fa-search"></i></span>
+    
+                <div class="info-box-content">
+                <span class="info-box-text">Clientes Morosos</span>
+                <span class="info-box-number">{{resumen[0].clientesMorosos}}</span>
+                {% set total= total + resumen[0].clientesMorosos %}
+                <a href="javascript:enviar('clientesMorosos')" class="small-box-footer" >
+                    Ver Más <i class="fas fa-arrow-circle-right"></i>
+                </a>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+      
+        </div>
+        {% endif %}
+        {% if bTipoCuenta=='clientesActivosVIP' or bTipoCuenta=='' %}
+        <div class="col-sm-6 col-md-3">
+            
+            <div class="info-box">
+                <span class="info-box-icon bg-info"><i class="fas fa-search"></i></span>
+    
+                <div class="info-box-content">
+                <span class="info-box-text">Clientes Activos VIP</span>
+                <span class="info-box-number">{{resumen[0].clientesActivosVIP}}</span>
+                {% set total= total + resumen[0].clientesActivosVIP %}
+                <a href="javascript:enviar('clientesActivosVIP')" class="small-box-footer" >
+                    Ver Más <i class="fas fa-arrow-circle-right"></i>
+                </a>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+      
+        </div>
+        {% endif %}
+        {% if bTipoCuenta=='clientesAlDiaVIP' or bTipoCuenta=='' %}
+        <div class="col-sm-6 col-md-3">
+            
+            <div class="info-box">
+                <span class="info-box-icon bg-info"><i class="fas fa-search"></i></span>
+    
+                <div class="info-box-content">
+                <span class="info-box-text">Clientes Al Día VIP</span>
+                <span class="info-box-number">{{resumen[0].clientesAlDiaVIP}}</span>
+                {% set total= total + resumen[0].clientesAlDiaVIP %}
+                <a href="javascript:enviar('clientesAlDiaVIP')" class="small-box-footer" >
+                    Ver Más <i class="fas fa-arrow-circle-right"></i>
+                </a>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+      
+        </div>
+        {% endif %}
+        {% if bTipoCuenta=='conRol' or bTipoCuenta=='' %}
+        <div class="col-sm-6 col-md-3">
+            
+            <div class="info-box">
+                <span class="info-box-icon bg-info"><i class="fas fa-search"></i></span>
+    
+                <div class="info-box-content">
+                <span class="info-box-text">Causas activas con ROl</span>
+                <span class="info-box-number">{{resumen[0].causasActivasConRol}}</span>
+                {% set total= total + resumen[0].causasActivasConRol %}
+                <a href="javascript:enviar('conRol')" class="small-box-footer" >
+                    Ver Más <i class="fas fa-arrow-circle-right"></i>
+                </a>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+      
+        </div>
+        {% endif %}
+        {% if bTipoCuenta=='sinRol' or bTipoCuenta=='' %}
+        <div class="col-sm-6 col-md-3">
+            
+            <div class="info-box">
+                <span class="info-box-icon bg-info"><i class="fas fa-search"></i></span>
+    
+                <div class="info-box-content">
+                <span class="info-box-text">Causas activas sin Rol</span>
+                <span class="info-box-number">{{resumen[0].causasActivasSinRol}}</span>
+                {% set total= total + resumen[0].causasActivasSinRol %}
+                <a href="javascript:enviar('sinRol')" class="small-box-footer" >
+                    Ver Más <i class="fas fa-arrow-circle-right"></i>
+                </a>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+      
+        </div>
+        {% endif %}
+        {% if bTipoCuenta=='finalizadas' or bTipoCuenta=='' %}
+        <div class="col-sm-6 col-md-3">
+            
+            <div class="info-box">
+                <span class="info-box-icon bg-info"><i class="fas fa-search"></i></span>
+    
+                <div class="info-box-content">
+                <span class="info-box-text">Causas activas finalizadas</span>
+                <span class="info-box-number">{{resumen[0].causasActivasFinalizadas}}</span>
+                {% set total= total + resumen[0].causasActivasFinalizadas %}
+                <a href="javascript:enviar('finalizadas')" class="small-box-footer" >
+                    Ver Más <i class="fas fa-arrow-circle-right"></i>
+                </a>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+      
+        </div>
+
+        {% endif %}
+        
+  
+        
+    </div>
+    
+</section>
+<section>
+{% if total>0 %}
+    {{ render(controller('App\\Controller\\ResumenCausasController::resumencausastramitadores', {'cuentasId':companias,'tipoCausa':bTipoCuenta,'total':total})) }}
+{% endif %}
+        
+</section>
+
+
+<form method="get" class="form-envio" id="form-envio">               
+
+    <input type="hidden" name="bTipoCuenta" id="bTipoCuenta" value="{{bTipoCuenta}}">
+    <input type="hidden" name="bMateria" id="bMateria" value="{{bMateria}}">
+</form>
+
+
+<section>
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Listado de Causas</h3>
+            <div class="card-tools">
+                <button type="button" class="btn btn-success btn-exportar"><i class="fas fa-file-excel"></i>
+                </button>
+
+            </div>
+        </div>
+        <div class="card-body p-0 table-responsive">
+            <table class="table table-head-fixed text-nowrap table-striped table-sm">
+                <thead>
+                    <tr>
+                        <th>{{ knp_pagination_sortable(listado, 'Materia', 'cuentaNombre') }} {% if listado.isSorted('cuentaNombre') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th>{{ knp_pagination_sortable(listado, 'AgendaId', 'agendaId') }} {% if listado.isSorted('agendaId') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th>{{ knp_pagination_sortable(listado, 'Folio', 'folio') }} {% if listado.isSorted('folio') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th>{{ knp_pagination_sortable(listado, 'FechaCto', 'fechaCto') }} {% if listado.isSorted('fechaCto') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th>{{ knp_pagination_sortable(listado, 'Cliente', 'cliente') }} {% if listado.isSorted('cliente') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th>{{ knp_pagination_sortable(listado, 'Tramitador', 'tramitador') }} {% if listado.isSorted('tramitador') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th>{{ knp_pagination_sortable(listado, 'Cerrador', 'cerrador') }} {% if listado.isSorted('cerrador') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th>Activo</th>
+                        <th>Moroso</th>
+                        <th>VIP</th>
+                        <th>Rol</th>
+                        <th>{{ knp_pagination_sortable(listado, 'U.Observación', 'fechaRegistroObservacion') }} {% if listado.isSorted('fechaRegistroObservacion') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th>C.Finalizada</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for causa in listado %}
+                        <tr>
+                            <td>{{ causa.cuentaNombre }}</td>
+                            <td>{{ causa.agendaId}}</td>
+                            <td>{{ causa.folio }}</td>
+                            <td>{{ causa.fechaCto?causa.fechaCto|date("Y-m-d"):"" }}</td>
+                            <td>{{ causa.cliente }}</td>
+                            <td>{{ causa.tramitador}}</td>
+                            <td>{{ causa.cerrador }}</td>
+                            <td align="center">{{ causa.activo?'<i class="fas fa-check text-success"></i>':'' }}</td>
+                            <td align="center">{{ causa.moroso ? '<i class="fas fa-stopwatch text-danger"></i>' : '' }}</td>
+                            <td>{{ getVip(causa.vip)|raw}}</td>
+                            <td>{{ causa.rol}}</td>
+                            <td>{{ causa.fechaRegistroObservacion?causa.fechaRegistroObservacion|date("Y-m-d"):""}}</td>
+                            <td>{{ causa.causaFinalizada}}</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="10">No se encontraron causas.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                </table>
+                </div>
+                <div class="card-footer clearfix">
+                    {# display navigation #}
+                <div class="navigation">
+                    {{ knp_pagination_render(listado,'@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig',{},{
+                    'position': 'centered',
+                    'rounded': true,
+                    }) }}
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+
+    function enviar(tipoCuenta) {
+        document.getElementById("bTipoCuenta").value = tipoCuenta;
+        document.getElementById("form-envio").submit();
+    }
+    $(".btn-exportar").click(function(){
+        document.getElementById("form-envio").action = "/resumen_causas/excel";
+        document.getElementById("form-envio").submit();
+        document.getElementById("form-envio").action = "#";
+    });
+</script>
+
+{% endblock %}

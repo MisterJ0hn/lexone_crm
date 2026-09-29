@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New JuzgadoCuenta{% endblock %}
+
+{% block body %}
+    <h1>Create new JuzgadoCuenta</h1>
+
+    {{ include('juzgado_cuenta/_form.html.twig') }}
+
+    <a href="{{ path('juzgado_cuenta_index') }}">back to list</a>
+{% endblock %}

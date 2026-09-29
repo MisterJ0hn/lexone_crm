@@ -1,0 +1,21 @@
+{{ form_start(form) }}
+<div class="card">
+    <div class="card-body table-responsive pad">
+
+        <div class="row">
+            
+            <div class="col-sm-12 col-md-6">
+                <small class="text-muted">Seleccione archivo PDF</small><br>
+                {{form_row(form.url,{'label':false,'attr':{'accept':'.pdf'}})}}
+                
+            </div>
+            <div class="col-sm-12 col-md-3">
+                <button class="btn btn-primary mt-3" >{{ button_label|default('Subir') }}</button>
+            </div>
+        </div>
+    </div>
+    
+</div>
+    
+    
+{{ form_end(form) }}

@@ -1,0 +1,217 @@
+{{ form_start(form,{attr:{'class':'dropzone','id':'my-awesome-dropzone'}}) }}
+    <div class="row">
+        <div class="col-sm-12  col-md-8">
+
+            <div class="card">
+                <div class="card-header">
+                    <h1>Folio: {{contrato.id}}</h1>
+                </div>
+                <div class="card-body table-responsive pad">
+                
+            
+                    <div class="row">
+                        <div class="col-sm-12 col-md-4">
+                            <small class="text-muted">Monto Multa (*)</small>
+                            
+                            {{form_row(form.monto,{'label':false,'attr':{'class':'form-control monto','style':'display:none'}})}}
+                            <strong><label id="m-monto">${{pago.monto|number_format(0,',','.')}}</label></strong>
+                        </div>
+                        <div class="col-sm-12 col-md-4">
+                            <small class="text-muted">Fecha Comprobante (*)</small>
+                            <input class="form-control datetimepicker-pago" name="fechaPago">
+                                    
+                                    
+                        </div>
+                        <div class="col-sm-12 col-md-4">
+                            <small class="text-muted">Fecha Ingreso Comprobante</small>
+                            <br>
+                            {{"now"|date('Y-m-d')}}
+                        </div>
+                        <div class="col-sm-12 col-md-4">
+                            <small class="text-muted">N° Comprobante</small>
+                            {{form_row(form.ncomprobante,{'label':false,'attr':{'class':'form-control'}})}}
+                        </div>
+                        <div class="col-sm-12 col-md-4">
+                            <small class="text-muted">N° Boleta</small>
+                            {{form_row(form.boleta,{'label':false,'attr':{'class':'form-control'}})}}
+                        </div>
+                        <div class="col-sm-12 col-md-4">
+                            <small class="text-muted">Tipo Deposito (*)</small>
+                            {{form_row(form.pagoTipo,{'label':false,'attr':{'class':'form-control'}})}}
+                        </div>
+                        <div class="col-sm-12 col-md-4">
+                            <small class="text-muted">Cta. Cte. (*)</small>
+                            {{form_row(form.cuentaCorriente,{'label':false,'attr':{'class':'form-control'}})}}
+                        </div>
+                        <div class="col-sm-12 col-md-4">
+                            <small class="text-muted">Canal (*)</small>
+                            {{form_row(form.pagoCanal,{'label':false,'attr':{'class':'form-control'}})}}
+                        </div>
+                        <div class="col-sm-12 col-md-12">
+                            <small class="text-muted">Observación</small>
+                            {{form_row(form.observacion,{'label':false,'attr':{'class':'form-control'}})}}
+                            {{form_row(form.comprobante,{'label':false,'attr':{'class':'form-control comprobante','style':'display:none'}})}}
+                            
+                        </div>
+                    </div> 
+                </div>
+                
+                <div class="card-footer">
+                    {% if contrato.isFinalizado is null or not contrato.isFinalizado %}
+                    <button class="btn btn-primary" type="submit">{{ button_label|default('Guardar') }}</button>
+                    {% endif %}
+                </div>
+            </div>
+            
+        </div>
+        <div class="col-sm-12  col-md-4">
+            <div class="card">
+                <div class="card-body table-responsive pad">
+                    <div class="dz-default dz-message">
+                        <button class="dz-button" type="button">
+                        <div class="dropzone-previews">
+                            Arrastra el comprobante aqui o puedes hacer click <strong>aquí</strong> y busca la imagen.
+                            <p>Solo acepta <strong>.jpg, .gif y png</strong></p>
+                        </div>
+                    </button>
+                    </div>
+                </div>
+            </div>
+            
+            {% if pago.comprobante is not empty %}
+                
+            
+                    <div class="card">
+                        <div class="card-body table-responsive pad">
+                            <img src="{{url_web}}{{img_pagos}}{{pago.comprobante}}">
+                        </div>
+                    </div>
+                {% endif %}
+        </div>
+    </div>   
+    {{ form_end(form) }}
+
+<script>
+    $('.monto').change(function(){
+
+        $("#m-monto").html($.number( $(this).val(), 0, ',', '.' ));
+    });
+    $('.datetimepicker-registro').daterangepicker({
+        
+        "singleDatePicker": true,
+        "locale": {
+            "format": "YYYY-MM-DD",
+
+            "applyLabel": "Apply",
+            "cancelLabel": "Cancel",
+        }
+    }, function(start, end, label) {
+        console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+
+    });
+    $('.datetimepicker-pago').daterangepicker({
+        "timePicker": true,
+        "singleDatePicker": true,
+        "locale": {
+            "format": "YYYY-MM-DD hh:mm A",
+
+            "applyLabel": "Apply",
+            "cancelLabel": "Cancel",
+        }
+    }, function(start, end, label) {
+        console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+
+    });
+   
+    var newName;
+    Dropzone.options.myAwesomeDropzone = { // The camelized version of the ID of the form element
+        url: "{{path('pago_upload')}}",
+        // The configuration we've talked about above
+        autoProcessQueue: false,
+        uploadMultiple: true,
+        parallelUploads: 100,
+        maxFiles: 1,
+        previewsContainer: ".dropzone-previews",
+        renameFile: function (file) {
+            newName = new Date().getTime() + '_' + file.name;
+
+            return newName;
+        },
+        // The setting up of the dropzone
+        init: function() {
+            var myDropzone = this;
+
+            // First change the button to actually tell Dropzone to process the queue.
+            this.element.querySelector("button[type=submit]").addEventListener("click", function(e) {
+            // Make sure that the form isn't actually being sent.
+                {% if pago.comprobante is not empty %}
+                    if(newName==null){
+                        $("#my-awesome-dropzone").submit();
+                    }else{
+                        e.preventDefault();
+                        e.stopPropagation();
+                        myDropzone.processQueue();
+                    }
+                {% else %}
+                    e.preventDefault();
+                    e.stopPropagation();
+                    myDropzone.processQueue();
+                {% endif %}
+            });
+
+            // Listen to the sendingmultiple event. In this case, it's the sendingmultiple event instead
+            // of the sending event because uploadMultiple is set to true.
+            this.on("sendingmultiple", function() {
+            // Gets triggered when the form is actually being sent.
+            // Hide the success button or the complete form.
+
+            });
+            this.on("successmultiple", function(files, response) {
+            // Gets triggered when the files have successfully been sent.
+            // Redirect user or notify of success
+        
+            });
+            this.on("errormultiple", function(files, response) {
+                // Gets triggered when there was an error sending the files.
+                // Maybe show form again, and notify user of error
+                alert("Error, la imagen no se puede subir. Intenta bajar el peso de esta");
+            });
+            this.on("success", function(file, serverResponse) {
+                // Called after the file successfully uploaded.
+                console.log(serverResponse);
+                $("#my-awesome-dropzone").submit();
+            });
+            this.on("addedfile", function(file) {
+
+                // Create the remove button
+                $(".comprobante").val(newName);
+                var removeButton = Dropzone.createElement("<button class='btn btn-danger'>Eliminar</button>");
+
+
+                // Capture the Dropzone instance as closure.
+                var _this = this;
+
+                // Listen to the click event
+                removeButton.addEventListener("click", function(e) {
+                    // Make sure the button click doesn't submit the form:
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    // Remove the file preview.
+                    _this.removeFile(file);
+                    $(".comprobante").val('');
+                    // If you want to the delete the file on the server as well,
+                    // you can do the AJAX request here.
+                });
+
+                // Add the button to the file preview element.
+                file.previewElement.appendChild(removeButton);
+            });
+
+
+        }
+
+    }
+
+ 
+</script>

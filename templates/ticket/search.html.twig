@@ -1,0 +1,110 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{pagina|default('agenda agendador')}}{% endblock %}
+
+
+{% block body %}
+<!--<div class="card">
+    <div class="card-body">
+        <form method="POST">
+            <div class="row">
+                <div class="col-sm-6 col-md-3">
+                    <input type="text" placeholder="Folio Sac" name="txtFolio" class="form-control">
+                </div>
+               <div class="col-sm-6 col-md-3">
+                    <input type="text" placeholder="Nombre/Rut" name="txtNombreRut" class="form-control">
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <button class="btn btn-primary"><i class="fas fa-search"></i></button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>-->
+
+{% if ticket is not null %}
+<div class="card">
+    <div class="card-header  text-white bg-danger">
+        Ya existe un ticket para este cliente
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-6 col-md-3">
+                <small class="text-muted">SacFolio</small><br>
+                {{ticket.folioSac}}
+            </div>
+    
+            <div class="col-sm-6 col-md-3">
+                <small class="text-muted">Estado</small><br>
+                {{ticket.estado.nombre}}
+            </div>
+        
+            <!--<div class="col-sm-6 col-md-3">
+            <small class="text-muted">Folio</small><br>
+                {{ticket.contrato.folio}}
+            </div>-->
+        
+            <div class="col-sm-6 col-md-3">
+            <small class="text-muted">Origen</small><br>
+                {{ticket.origen.nombre}}
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <a href="{{path('app_ticket_new',{'id':ticket.contrato.folio})}}" class="btn btn-primary" >Ingresar Ticket</a> <a href="{{path('app_ticket_gestionar',{'id':ticket.id})}}" class="btn btn-success" >Revisar Ticket Abierto</a>
+    </div>
+</div>
+{% endif %}
+
+{% if contratos is not null %}
+<div class="card">
+    <div class="card-header text-white bg-success">
+        Seleccione un cliente
+    </div>
+    <div class="card-body">
+        <div class="table-responsive p-0" style="height: 500px;">
+        
+            <table class="table table-head-fixed text-nowrap table-striped table-sm">
+                <thead>
+                    <tr>
+                        
+                        <th>Materia</th>
+                        <!--<th>Folio</th>-->
+                        <th>Cliente</th>
+                        <!--<th>Agendador</th>
+                        <th>Abogado</th>
+                        <th>Tramitador</th>
+                        <th>Sucursal</th>-->
+                        <th>Fecha Contrato</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for contrato in contratos %}
+                    <tr>
+                        <td>{{contrato.agenda.cuenta.nombre}}</td>
+                        <!--<td>{{ contrato.folio }}</td>-->
+                        <td>{{ contrato.nombre }}</td>
+                        <!--<td>{{ contrato.agenda.agendador.nombre }}</td>
+                        <td>{{ contrato.agenda.abogado ? contrato.agenda.abogado.nombre:'' }}</td>
+                        <td>{{ contrato.tramitador.nombre }}</td>
+                        <td>{{ contrato.sucursal}}</td>-->
+                        <td>{{ contrato.fechaCreacion|date('d-m-Y H:i') }}</td>
+                        <td><a href="{{path('app_ticket_new',{'id':contrato.folio})}}" class="btn btn-primary">Crear</a></td>
+                        
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="8">No hay clientes</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+{% endif %}
+{% endblock %}

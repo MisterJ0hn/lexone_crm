@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}PagoTipo{% endblock %}
+
+{% block body %}
+    <h1>PagoTipo</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ pago_tipo.id }}</td>
+            </tr>
+            <tr>
+                <th>Nombre</th>
+                <td>{{ pago_tipo.nombre }}</td>
+            </tr>
+            <tr>
+                <th>Orden</th>
+                <td>{{ pago_tipo.orden }}</td>
+            </tr>
+            <tr>
+                <th>Estado</th>
+                <td>{{ pago_tipo.estado ? 'Yes' : 'No' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('pago_tipo_index') }}">back to list</a>
+
+    <a href="{{ path('pago_tipo_edit', {'id': pago_tipo.id}) }}">edit</a>
+
+    {{ include('pago_tipo/_delete_form.html.twig') }}
+{% endblock %}

@@ -1,0 +1,96 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Anexo{% endblock %}
+
+{% block body %}
+
+    <div class="card">
+        <div class="card-body">
+            
+
+            <div class="row">
+                <div class="col-sm-12 col-md-3">
+                    <select name="cboTipoAnexo" class="form-control tipoAnexo">
+                        <option value="">Seleccione</option>
+                        <option value="1">Agregar causa</option>
+                        <option value="2">Extensión del plazo</option>
+                        <option value="3">Renegociación</option>
+                    </select>
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    Folio {{contrato.folio}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body detalleAnexo">
+            
+        </div>
+    </div>
+
+<script>
+
+
+    $(".tipoAnexo").on("change",function(){
+
+        if($(this).val()==1){
+            $.ajax({
+                url:"/anexo/{{contrato.id}}/causas",
+                type: "post",
+                dataType: "html",
+                cache: false,
+                contentType: false,
+                processData: false,
+                async: true,
+                beforeSend: function(){
+                    $(".detalleAnexo").html(' <div class="overlay"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>'); 
+                },
+                success:function(data){
+                    $(".detalleAnexo").html(data);
+                }
+
+            });
+        }
+        if($(this).val()==2){
+            $.ajax({
+                url:"/anexo/{{contrato.id}}/extender",
+                type: "post",
+                dataType: "html",
+                cache: false,
+                contentType: false,
+                processData: false,
+                async: true,
+                beforeSend: function(){
+                    $(".detalleAnexo").html(' <div class="overlay"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>'); 
+                },
+                success:function(data){
+                    $(".detalleAnexo").html(data);
+                }
+
+            });
+        }
+        if($(this).val()==3){
+            $.ajax({
+                url:"/anexo/{{contrato.id}}/renegociar",
+                type: "post",
+                dataType: "html",
+                cache: false,
+                contentType: false,
+                processData: false,
+                async: true,
+                beforeSend: function(){
+                    $(".detalleAnexo").html(' <div class="overlay"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>'); 
+                },
+                success:function(data){
+                    $(".detalleAnexo").html(data);
+                }
+
+            });
+        }
+
+    });
+    
+</script>
+{% endblock %}

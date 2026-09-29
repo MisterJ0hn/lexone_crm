@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Mee{% endblock %}
+
+{% block body %}
+<a href="{{path('materia_estrategia_new',{'id':mee.materiaEstrategia.id} )}}">Volver</a>
+    <div class="card">
+        <div class="card-header">
+            Datos Materia
+        </div>
+        <div class="card-body">
+            <div class="col-sm-6 col-md-6">
+                <small class="text-muted">Nombre</small><br>
+                {{ mee.materiaEstrategia.materia.nombre}}
+            </div>
+            <div class="col-sm-6 col-md-6">
+                <small class="text-muted">Compañia(s)</small><br>
+                {% for cuenta_materia in mee.materiaEstrategia.materia.cuentaMaterias %}
+                    {{ cuenta_materia.cuenta.nombre}}<br>
+                {% endfor %}
+               
+            </div>
+            <div class="col-sm-6 col-md-6">
+                <small class="text-muted">Sub Materia</small><br>
+                {{ mee.materiaEstrategia.estrategiaJuridica.nombre}}
+            </div>
+        </div>
+
+    </div>
+
+    {{ include('mee/_form.html.twig') }}
+
+    <div class="card">
+        <div class="card-header">
+            Escrituras
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Nombre</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for mee in mees %}
+                    <tr>
+                        <td>{{ mee.id }}</td>
+                        <td>{{mee.escritura.nombre}}</td>
+                        <td>
+                       <!-- <a href="{{ path('materia_estrategia_delete',{'id':mee.id })}}" class="btn btn-danger"><i class="fas fa-trash"></i></a>-->
+                       </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="2">no records found</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

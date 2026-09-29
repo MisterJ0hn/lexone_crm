@@ -1,0 +1,683 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contrato{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+        {{ include('cabezera.html.twig') }}
+
+        <div class="card">
+            <div class="card-body">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalNuevoCliente">
+                    <i class="fas fa-plus"></i> 
+                    {% if contrato.agenda.tipoCliente.nombre == 'Convenio' %}
+                        Nueva Persona
+                    {% else %}
+                        Nueva Empresa
+                    {% endif %}
+                    
+                </button>
+            </div>
+        </div>
+
+        {% for grupo in clientes %}
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title"><strong>{{ grupo.cliente.nombre }}</strong> - {{ grupo.cliente.rut }}</h5>
+            </div>
+            <div class="card-body">
+                <div class="card card-outline collapsed-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Datos {% if contrato.agenda.tipoCliente.nombre == 'Convenio' %}
+                                Persona
+                            {% else %}
+                                Empresa
+                            {% endif %}
+                        </h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-sm btn-primary rounded-circle" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-3">
+                                <small class="text-muted">Correo</small><br>
+                                <label>{{ grupo.cliente.correo }}</label>
+                            </div>
+                            <div class="col-sm-12 col-md-3">
+                                <small class="text-muted">Teléfono</small><br>
+                                <label>{{ grupo.cliente.telefono }}</label>
+                            </div>
+                            <div class="col-sm-12 col-md-3">
+                                <small class="text-muted">Dirección</small><br>
+                                <label>{{ grupo.cliente.direccion }}</label>
+                            </div>
+                            {% if tipoCliente == 'Convenio' %}
+                            <div class="col-sm-12 col-md-3">
+                                <small class="text-muted">Sexo</small><br>
+                                <label>{{ grupo.cliente.sexo }}</label>
+                            </div>
+                            {% endif %}
+                            <div class="col-sm-12 col-md-3">
+                                <small class="text-muted">Nacionalidad</small><br>
+                                <label>{{ grupo.cliente.nacionalidad }}</label>
+                            </div>
+                            <div class="col-sm-12 col-md-3">
+                                <small class="text-muted">Región / Ciudad / Comuna</small><br>
+                                <label>{{ grupo.cliente.region ? grupo.cliente.region.nombre : '' }}{% if grupo.cliente.ciudad %} / {{ grupo.cliente.ciudad.nombre }}{% endif %}{% if grupo.cliente.comuna %} / {{ grupo.cliente.comuna.nombre }}{% endif %}</label>
+                            </div>
+                            {% if tipoCliente == 'Convenio' %}
+                            <div class="col-sm-12 col-md-3">
+                                <small class="text-muted">Estado Civil</small><br>
+                                <label>{{ grupo.cliente.estadoCivil }}</label>
+                            </div>
+                            {% endif %}
+                            <div class="col-sm-12 col-md-3">
+                                <small class="text-muted">Reunión</small><br>
+                                <label>{{ grupo.cliente.reunion }}</label>
+                            </div>
+                        </div>
+                        <h6>Agregar Causa</h6>
+                        <div class="row agregar-causa-cliente">
+                            <div class="col-sm-12 col-md-2">
+                                <select class="form-control cbomateria-cliente" onchange="cambiaMateriaCausaCliente(this)">
+                                    <option value="">Seleccione Materia</option>
+                                    {% for materia in materias %}
+                                    <option value="{{ materia.id }}">{{ materia.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-sm-12 col-md-2">
+                                <select class="form-control cboSubMateria-cliente">
+                                    <option value="">Seleccione Servicio</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-12 col-md-3">
+                                <div class="row no-gutters">
+                                    <div class="col-4 letras-cliente">
+                                        <input type="text" class="form-control txtLetra-cliente" placeholder="Letra" size="3" maxlength="10">
+                                    </div>
+                                    <div class="col-1" align="center">-</div>
+                                    <div class="col-3">
+                                        <input type="text" class="form-control txtRol-cliente" placeholder="N°" size="6" maxlength="255">
+                                    </div>
+                                    <div class="col-1" align="center">-</div>
+                                    <div class="col-3">
+                                        <input type="text" class="form-control txtAnio-cliente" placeholder="Año" size="4" maxlength="4">
+                                    </div>
+                                </div>
+                                <small class="text-muted">Formato: Letra-Rol-Año</small>
+                            </div>
+                            <div class="col-sm-12 col-md-3">
+                                <input type="text" class="form-control txtCaratulado-cliente" placeholder="Caratulado" maxlength="30">
+                            </div>
+                            <div class="col-sm-12 col-md-5">
+
+                                <select class="form-control corte-cliente" onchange="cambiaCorteCausaCliente(this)">
+                                    <option value=""> Seleccione Corte </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-12 col-md-5">
+                                <select class="form-control juzgado-cliente">
+                                    <option value="">Seleccione Juzgado</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-12 col-md-2">
+                                <button type="button" class="btn btn-primary" onclick="agregarCausaCliente(this, {{ grupo.cliente.id }})"><i class="fas fa-plus"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+                <table class="table table-head-fixed text-nowrap table-striped table-sm">
+                    <thead>
+                        <tr>
+                            <th>Materia</th>
+                            <th>Caratulado</th>
+                            <th>Servicio</th>
+                            <th>Rit/Rol</th>
+                            <th>Corte</th>
+                            <th>Tribunal</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for causa in grupo.causas %}
+                    {% if causa.estado == true %}
+                        <tr>
+                            <td><strong>{{ causa.materia.nombre }}</strong></td>
+                            <td>{{ causa.causaNombre }}</td>
+                            <td>                                
+                                {% if causa.materiaEstrategia %}{{ causa.materiaEstrategia.estrategiaJuridica }}{% endif %}
+                            </td>
+                            <td>{{ causa.letra }}-{{ causa.rol }}-{{ causa.anio }}</td>
+                            <td>{{ causa.corte ? causa.corte.nombre : '' }}</td>
+                            <td>{{ causa.juzgado is null ? '' : causa.juzgado }}</td>
+                            <td>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal"
+                                        data-whatever="@fat"
+                                        data-servicio="{{ causa.materiaEstrategia.estrategiaJuridica }}"
+                                        data-idcausa="{{ causa.idCausa }}"
+                                        data-letra="{{ causa.letra }}"
+                                        data-rol="{{ causa.rol }}"
+                                        data-anio="{{ causa.anio }}"
+                                        data-nombre="{{ causa.causaNombre }}"
+                                        data-juzgado="{{ causa.juzgado is null ? '' : causa.juzgado.id }}"
+                                        data-causa="{{ causa.id }}"
+                                        data-corteid="{{ causa.corte is null ? '' : causa.corte.id }}"
+                                        data-cuenta="{{ causa.agenda.cuenta.id }}"
+                                        data-materia="{{ causa.materia.id }}"
+                                        ><i class="fas fa-edit"></i></button>
+                                    <a href="{{ path('contrato_linea_tiempo_detalle', {'id': causa.id}) }}" class="btn btn-sm text-white bg-dark">LT</a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endif %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+                <hr>
+                
+            </div>
+        </div>
+        {% else %}
+        <div class="alert alert-info">Aún no hay clientes creados para este {{ tipoCliente }}. Use el botón "Nuevo Cliente" para agregar el primero.</div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Modal: Nuevo Cliente (+ causa inicial opcional) -->
+<div class="modal fade" id="modalNuevoCliente" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            {{ form_start(formNuevoCliente, {'action': path('contrato_convenio_nuevo_cliente', {'id': contrato.id}), 'method': 'post'}) }}
+            <div class="modal-header">
+                <h5 class="modal-title">Nuevo Cliente</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12 col-md-4">
+                        <small class="text-muted">Nombre</small>
+                        {{ form_widget(formNuevoCliente.nombre, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                        <small class="text-muted">Rut</small>
+                        {{ form_widget(formNuevoCliente.rut, {'attr': {'class': 'form-control format-rut'}}) }}
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                        <small class="text-muted">Correo</small>
+                        {{ form_widget(formNuevoCliente.correo, {'attr': {'class': 'form-control mail-format'}}) }}
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                        <small class="text-muted">Teléfono</small>
+                        {{ form_widget(formNuevoCliente.telefono, {'attr': {'class': 'form-control telefonoCliente'}}) }}
+                    </div>
+                    {% if formNuevoCliente.sexo is defined %}
+                    <div class="col-sm-12 col-md-4">
+                        <small class="text-muted">Sexo</small>
+                        {{ form_widget(formNuevoCliente.sexo, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    {% endif %}
+                    <div class="col-sm-12 col-md-4">
+                        <small class="text-muted">Nacionalidad</small>
+                        {{ form_widget(formNuevoCliente.nacionalidad, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                        <small class="text-muted">Región</small>
+                        {{ form_widget(formNuevoCliente.region, {'attr': {'class': 'form-control region-cliente', 'onchange': 'cambiaRegionCliente(this)'}}) }}
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                        <small class="text-muted">Ciudad</small>
+                        {{ form_widget(formNuevoCliente.ciudad, {'attr': {'class': 'form-control ciudad-cliente', 'onchange': 'cambiaCiudadCliente(this)'}}) }}
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                        <small class="text-muted">Comuna</small>
+                        {{ form_widget(formNuevoCliente.comuna, {'attr': {'class': 'form-control comuna-cliente'}}) }}
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <small class="text-muted">Dirección</small>
+                        {{ form_widget(formNuevoCliente.direccion, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    {% if formNuevoCliente.estadoCivil is defined %}
+                    <div class="col-sm-12 col-md-4">
+                        <small class="text-muted">Estado Civil</small>
+                        {{ form_widget(formNuevoCliente.estadoCivil, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    {% endif %}
+                    <div class="col-sm-12 col-md-4">
+                        <small class="text-muted">Reunión</small>
+                        {{ form_widget(formNuevoCliente.reunion, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                        <small class="text-muted">Clave única</small>
+                        {{ form_widget(formNuevoCliente.claveUnica, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                </div>
+
+                <hr>
+                <h5>Causa *</h5>
+                <small class="text-muted">Obligatoria: se crea junto con el cliente. Pueden agregarse más después, desde su tarjeta.</small>
+                <div class="row mt-2">
+                    <div class="col-sm-12 col-md-2">
+                        <select name="cboMateria" class="form-control cbomateria-convenio" required onchange="cambiaMateriaCausaConvenio(this.value)">
+                            <option value="">Seleccione Materia</option>
+                            {% for materia in materias %}
+                            <option value="{{ materia.id }}">{{ materia.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-sm-12 col-md-3 submateria-convenio">
+                        <select name="cboSubMateria" class="form-control cboSubMateria-convenio" required>
+                            <option value="">Seleccione Servicio</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                        <div class="row no-gutters">
+                            <div class="col-4 letras-convenio">
+                                <input type="text" name="txtLetra" placeholder="Letra" class="form-control txtLetra-convenio" size="3" maxlength="10">
+                            </div>
+                            <div class="col-1" align="center">-</div>
+                            <div class="col-3">
+                                <input type="text" name="txtRol" placeholder="N°" class="form-control txtRol-convenio" size="6" maxlength="255">
+                            </div>
+                            <div class="col-1" align="center">-</div>
+                            <div class="col-3">
+                                <input type="text" name="txtAnio" placeholder="Año" class="form-control txtAnio-convenio" size="4" maxlength="4">
+                            </div>
+                        </div>
+                        <small class="text-muted">Formato: Letra-Rol-Año</small>
+                    </div>
+                    <div class="col-sm-12 col-md-3">
+                        <input type="text" name="txtCaratulado" placeholder="Caratulado" class="form-control" maxlength="30">
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <select name="corte" class="form-control corte-convenio">
+                            <option value="">Seleccione Corte</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <select name="juzgado" class="form-control juzgado-convenio">
+                            <option value="">Seleccione Juzgado</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Guardar</button>
+            </div>
+            {{ form_end(formNuevoCliente) }}
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Modificar Servicio de una causa existente (igual que contrato/lineaTiempo.html.twig) -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Editar</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="" method="post" id="frmEditar">
+                <div class="row">
+                    <div class="col-sm-12 col-md-3 submateria pt-2">
+
+                    </div>
+                    <div class="col-sm-12 col-md-3 ">
+
+                        <div class="row">
+                            <div class="col-sm-12 col-md-3 ml-0 mr-0 pl-0 pr-0 letras">
+                                <input type="text" name="txtLetra" placeholder="Letra" class="form-control txtLetra" size="3" maxlength="10">
+                            </div>
+                            <div class="col-sm-12 col-md-1 ml-0 mr-0 pl-0 pr-0" align="center">
+                                -
+                            </div>
+                            <div class="col-sm-12 col-md-3 ml-0 mr-0 pl-0 pr-0">
+                                <input type="text" name="txtRol" placeholder="N°" class="form-control txtRol" size="6" maxlength="255">
+                            </div>
+                            <div class="col-sm-12 col-md-1 ml-0 mr-0 pl-0 pr-0" align="center">
+                                -
+                            </div>
+                            <div class="col-sm-12 col-md-3 ml-0 mr-0 pl-0 pr-0">
+                                <input type="text" name="txtAnio" placeholder="Año" class="form-control txtAnio" size="4" maxlength="4">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-sm-12 col-md-6 ">
+                        <input type="text" name="txtCaratulado" placeholder="Caratulado" class="form-control txtCaratulado" size="50" maxlength="30">
+                        <small class="text-muted">Caracteres max. 50</small>
+                    </div>
+
+
+                     <div class="col-sm-12 col-md-6">
+
+                        <select name="corte" class="form-control corte">
+                            <option value=""> Seleccione Corte </option>
+                        </select>
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+
+                        <select name="juzgado" class="form-control juzgado">
+                            <option value=""> Seleccione Juzgado </option>
+                            {% for juzgado in juzgados %}
+                                <option value="{{juzgado.juzgado.id}}">{{juzgado.juzgado.nombre}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-sm-12 col-md-12">
+                        <input type="hidden" class="hdCausa">
+                        <button type="submit" class="btn btn-primary btn-agregar" >Modficar</button>
+
+                    </div>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(".format-rut").rut();
+
+    // Cascada Región -> Ciudad -> Comuna del cliente propio (modal "Nuevo Cliente").
+    function cambiaRegionCliente(select){
+        var regionId = $(select).val();
+        var $ciudad = $(".ciudad-cliente");
+        var $comuna = $(".comuna-cliente");
+        $comuna.html('<option value="">Seleccione Comuna</option>');
+        if(!regionId){
+            $ciudad.html('<option value="">Seleccione Ciudad</option>');
+            return;
+        }
+        $.ajax({
+            url: "/contrato/"+regionId+"/ciudad_combo",
+            type: "get",
+            dataType: "html",
+            cache: false,
+            success: function(data){
+                $ciudad.html(data);
+            }
+        });
+    }
+
+    function cambiaCiudadCliente(select){
+        var ciudadId = $(select).val();
+        var $comuna = $(".comuna-cliente");
+        if(!ciudadId){
+            $comuna.html('<option value="">Seleccione Comuna</option>');
+            return;
+        }
+        $.ajax({
+            url: "/contrato/"+ciudadId+"/comuna_combo",
+            type: "get",
+            dataType: "html",
+            cache: false,
+            success: function(data){
+                $comuna.html(data);
+            }
+        });
+    }
+
+    function cambiaMateriaCausaConvenio(materiaId){
+        if(!materiaId){
+            $(".cboSubMateria-convenio").html('<option value="">Seleccione Servicio</option>');
+            $(".corte-convenio").html('<option value="">Seleccione Corte</option>');
+            $(".juzgado-convenio").html('<option value="">Seleccione Juzgado</option>');
+            return;
+        }
+        $.ajax({
+            url:"/estrategia_juridica/"+materiaId+"/combo",
+            type: "post",
+            dataType: "html",
+            cache: false,
+            contentType: false,
+            processData: false,
+            async: true,
+            success:function(data){
+                $(".cboSubMateria-convenio").html(data);
+            }
+        });
+        $.ajax({
+            url:"/materia/"+materiaId+"/corte_combo",
+            type: "post",
+            dataType: "html",
+            cache: false,
+            contentType: false,
+            processData: false,
+            async: true,
+            success:function(data){
+                $(".corte-convenio").html(data);
+                $(".juzgado-convenio").html('<option value="">Seleccione Juzgado</option>');
+            }
+        });
+        letrasCausaConvenio(materiaId);
+    }
+
+    $(".corte-convenio").on("change",function(){
+        $.ajax({
+            url:"/juzgado_cuenta/"+$(this).val()+"/corte_combo",
+            type: "post",
+            dataType: "html",
+            cache: false,
+            contentType: false,
+            processData: false,
+            async: true,
+            success:function(data){
+                $(".juzgado-convenio").html(data);
+            }
+        });
+    });
+
+    // Igual que letrasCausa() (contrata.html.twig / edición de causa de este modal),
+    // pero con sus propias clases para no interferir con el modal "Editar" (#exampleModal).
+    function letrasCausaConvenio(materia_id){
+        $.ajax({
+            url:"/materia/"+materia_id+"/causa_letras",
+            type: "get",
+            dataType: "json",
+            cache: false,
+            contentType: false,
+            processData: false,
+            async: true,
+            success:function(data){
+                var letras=data;
+                $('.letras-convenio').html('<select name="txtLetra" class="form-control txtLetra-convenio"><option value=""> Letra </option></select>');
+                $.each(letras,function(i,letra){
+                    $('.txtLetra-convenio').append('<option value="'+letra+'">'+letra+'</option>');
+                });
+            },error:function(error){
+                $(".letras-convenio").html('<input type="text" name="txtLetra" placeholder="Letra" class="form-control txtLetra-convenio" size="3" maxlength="10">');
+            }
+        });
+    }
+
+    // Agregar una causa a un cliente (subcliente) ya existente, directo desde su
+    // tarjeta (a diferencia de la causa inicial opcional del modal "Nuevo Cliente").
+    // Hay una fila ".agregar-causa-cliente" por subcliente en la página, así que
+    // todo se busca con closest()/find() en vez de clases globales.
+    function cambiaMateriaCausaCliente(select){
+        var $fila = $(select).closest('.agregar-causa-cliente');
+        var materiaId = $(select).val();
+        var $submateria = $fila.find('.cboSubMateria-cliente');
+        var $corte = $fila.find('.corte-cliente');
+        var $juzgado = $fila.find('.juzgado-cliente');
+        if(!materiaId){
+            $submateria.html('<option value="">Seleccione Servicio</option>');
+            $corte.html('<option value="">Seleccione Corte</option>');
+            $juzgado.html('<option value="">Seleccione Juzgado</option>');
+            return;
+        }
+        $.ajax({
+            url: "/estrategia_juridica/"+materiaId+"/combo",
+            type: "post",
+            dataType: "html",
+            cache: false,
+            contentType: false,
+            processData: false,
+            async: true,
+            success: function(data){
+                $submateria.html(data);
+            }
+        });
+
+        $.ajax({
+            url: "/materia/"+materiaId+"/corte_combo",
+            type: "post",
+            dataType: "html",
+            cache: false,
+            contentType: false,
+            processData: false,
+            async: true,
+            success: function(data){
+                $corte.html(data);
+                $juzgado.html('<option value="">Seleccione Juzgado</option>');
+            }
+        });
+
+        var $letras = $fila.find('.letras-cliente');
+        $.ajax({
+            url:"/materia/"+materiaId+"/causa_letras",
+            type: "get",
+            dataType: "json",
+            cache: false,
+            contentType: false,
+            processData: false,
+            async: true,
+            success:function(data){
+                var $select = $('<select class="form-control txtLetra-cliente"><option value=""> Letra </option></select>');
+                $.each(data,function(i,letra){
+                    $select.append('<option value="'+letra+'">'+letra+'</option>');
+                });
+                $letras.html($select);
+            },error:function(error){
+                $letras.html('<input type="text" placeholder="Letra" class="form-control txtLetra-cliente" size="3" maxlength="10">');
+            }
+        });
+    }
+
+    function cambiaCorteCausaCliente(select){
+        var $fila = $(select).closest('.agregar-causa-cliente');
+        $.ajax({
+            url: "/juzgado_cuenta/"+$(select).val()+"/corte_combo",
+            type: "post",
+            dataType: "html",
+            cache: false,
+            contentType: false,
+            processData: false,
+            async: true,
+            success: function(data){
+                $fila.find('.juzgado-cliente').html(data);
+            }
+        });
+    }
+
+    function agregarCausaCliente(boton, clienteId){
+        var $fila = $(boton).closest('.agregar-causa-cliente');
+        var materia = $fila.find('.cbomateria-cliente').val();
+        if(!materia){
+            alert('Debe seleccionar una materia');
+            return;
+        }
+        $.ajax({
+            url: "{{ path('causa_new', {'id': contrato.agenda.id}) }}",
+            type: 'get',
+            data: {
+                cliente: clienteId,
+                cboMateria: materia,
+                cboSubMateria: $fila.find('.cboSubMateria-cliente').val(),
+                txtLetra: $fila.find('.txtLetra-cliente').val(),
+                txtRol: $fila.find('.txtRol-cliente').val(),
+                txtAnio: $fila.find('.txtAnio-cliente').val(),
+                txtCaratulado: $fila.find('.txtCaratulado-cliente').val(),
+                corte: $fila.find('.corte-cliente').val(),
+                juzgado: $fila.find('.juzgado-cliente').val()
+            },
+            cache: false,
+            success: function(){
+                location.reload();
+            },
+            error: function(){
+                alert('No se pudo agregar la causa');
+            }
+        });
+    }
+
+    $('#exampleModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget)
+        var recipient = button.data('whatever')
+        var causa = button.data('causa')
+        var idCausa = button.data('idcausa')
+        var servicio = button.data('servicio')
+        var nombre = button.data('nombre')
+        var juzgado = button.data('juzgado')
+        var materia = button.data('materia')
+
+        $(".submateria").html(servicio)
+        $(".txtNombreCausa").val(idCausa)
+        $(".txtCaratulado").val(nombre)
+        $(".juzgado").val(juzgado)
+        $(".hdCausa").val(causa)
+        $("#frmEditar").attr("action","/contrato/"+causa+"/modificar_servicio")
+
+        letrasCausa(materia)
+        $.ajax({
+            url:"/materia/"+materia+"/corte_combo",
+            type:"post",
+            dataType:"html",
+            cache:false,
+            success:function(data){ $(".corte").html(data); }
+        })
+    })
+
+    $(".corte").on("change",function(){
+        $.ajax({
+            url:"/juzgado_cuenta/"+$(this).val()+"/corte_combo",
+            type: "post",
+            dataType: "html",
+            cache: false,
+            contentType: false,
+            processData: false,
+            async: true,
+            success:function(data){
+                $(".juzgado").html(data);
+            }
+        });
+    });
+
+    function letrasCausa(materia_id){
+        $.ajax({
+            url:"/materia/"+materia_id+"/causa_letras",
+            type: "get",
+            dataType: "json",
+            cache: false,
+            contentType: false,
+            processData: false,
+            async: true,
+            success:function(data){
+                var letras=data;
+                $('.letras').html('<select name="txtLetra" class="form-control txtLetra"><option value=""> Letra </option></select>');
+                $.each(letras,function(i,letra){
+                    $('.txtLetra').append('<option value="'+letra+'">'+letra+'</option>');
+                });
+            },error:function(error){
+                $(".letras").html('<input type="text" name="txtLetra" placeholder="Letra" class="form-control txtLetra" size="3" maxlength="10">');
+            }
+        });
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,171 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mis Datos{% endblock %}
+
+{% block body %}
+
+<br>
+<br>
+
+
+
+<div class="row">
+    <div class="col-md-6 col-sm-12">
+        <div class="card">
+    
+            <div class="card-body">
+                <form action="{{path('mis_datos_modificar')}}" method="post">
+                <div id="mensaje" class="row">{{mensaje|default('')|raw}}</div>
+                <div class="row">
+                    
+                    <div class="col-md-4 col-sm-12">
+                        <small class="text-muted" for="inputNombre">Usuario</small>
+                        <p>{{misdatos.username}}</p>
+                        
+                    </div>
+                    <div class="col-md-8 col-sm-12">
+                        <small class="text-muted" for="inputNombre">Cargo</small>
+                        <p>{{misdatos.usuarioTipo.nombre}}</p>
+                    </div>
+
+                    <div class="col-md-3 col-sm-12">
+                        <small class="text-muted" for="inputNombre">Nombre</small>
+                        <p>{{misdatos.nombre}}</p>
+                        
+                    </div>
+                     <div class="col-md-3 col-sm-12">
+                        <small class="text-muted" for="inputNombre">Correo</small>
+                        <p>{{misdatos.correo}}</p>
+                        
+                    </div>
+                     <div class="col-md-3 col-sm-12">
+                        <small class="text-muted" for="inputNombre">RUN</small>
+                        <p>{{misdatos.rut}}</p>
+                        
+                    </div>
+                     <div class="col-md-3 col-sm-12">
+                        <small class="text-muted" for="inputNombre">Dirección</small>
+                        <p>{{misdatos.direccion}}</p>
+                        
+                    </div>
+                     <div class="col-md-3 col-sm-12">
+                        <small class="text-muted" for="inputNombre">TelefonoPersonal</small>
+                        <p>{{misdatos.telefono}}</p>
+                        
+                    </div>
+                     <div class="col-md-3 col-sm-12">
+                        <small class="text-muted" for="inputNombre">TelefonoEmpresa</small>
+                        <p>{{misdatos.whatsapp}}</p>
+                        
+                    </div>
+                     <div class="col-md-3 col-sm-12">
+                        <small class="text-muted" for="inputNombre">FechaIngreso</small>
+                        <p>{{misdatos.fechaActivacion|date('Y-m-d')}}</p>
+                        
+                    </div>
+                     <div class="col-md-3 col-sm-12">
+                        <small class="text-muted" for="inputNombre">FechaNacimiento</small>
+                        <p>{{misdatos.fechaNacimiento|date('Y-m-d')}}</p>
+                        
+                    </div>
+                    
+                    
+                </div>
+                
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 col-sm-12">
+        <div class="card">
+    
+            <div class="card-body">
+                <form action="{{path('mis_datos_password')}}" method="post" onsubmit="return validaPassword()">
+                    <div class="row">
+                        <div id="error">{{error|default('')|raw}}</div>
+                        <div class="col-md-6 col-sm-12">
+                            <small class="text-muted" for="inputNombre">Nueva Password</small>
+                            <input type="password" class="form-control" name="password" id="password" aria-describedby="nombreHelp" value="" required>
+                        </div>
+                        <div class="col-md-6 col-sm-12">
+                            <small class="text-muted" for="inputNombre">Repetir Password</small>
+                            <input type="password" class="form-control" name="rePassword" id="rePassword" aria-describedby="nombreHelp" value="" required>
+                            
+                        </div>
+                        <div class="mx-auto"><button type="submit" class="btn btn-primary">Cambiar Password</button></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+ document.querySelectorAll('.toggle-pwd').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var input = this.closest('.input-group').querySelector('input');
+            var icon  = this.querySelector('i');
+            if (input.type === 'password') {
+                input.type     = 'text';
+                icon.className = 'fas fa-eye-slash';
+            } else {
+                input.type     = 'password';
+                icon.className = 'fas fa-eye';
+            }
+        });
+    });
+
+    function checkRequisito(id, cumple) {
+        var el = document.getElementById(id);
+        if (cumple) {
+            el.className = 'text-success';
+            el.querySelector('i').className = 'fas fa-check';
+        } else {
+            el.className = 'text-danger';
+            el.querySelector('i').className = 'fas fa-times';
+        }
+       
+    }
+
+    $('#password').on('input', function() {
+        var val = $(this).val();
+        checkRequisito('req-len',     val.length >= 8);
+        checkRequisito('req-upper',   /[A-Z]/.test(val));
+        checkRequisito('req-num',     /\d/.test(val));
+        checkRequisito('req-special', /[^a-zA-Z0-9]/.test(val));
+        $("button").prop('disabled', false);
+    });
+    function validaPassword(){
+
+       var pwd = $("#password").val();
+        if (pwd === "") {
+            return false;
+        }
+        if (pwd.length < 8) {
+            $("#error").html("<div class='alert alert-danger alert-dismissible fade show' role='alert'><strong>Error</strong> La contraseña debe tener al menos 8 caracteres.<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button></div>");
+            return false;
+        }
+        if (!/[A-Z]/.test(pwd)) {
+            $("#error").html("<div class='alert alert-danger alert-dismissible fade show' role='alert'><strong>Error</strong> La contraseña debe contener al menos una mayúscula.<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button></div>");
+            return false;
+        }
+        if (!/\d/.test(pwd)) {
+            $("#error").html("<div class='alert alert-danger alert-dismissible fade show' role='alert'><strong>Error</strong> La contraseña debe contener al menos un número.<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button></div>");
+            return false;
+        }
+        if (!/[^a-zA-Z0-9]/.test(pwd)) {
+            $("#error").html("<div class='alert alert-danger alert-dismissible fade show' role='alert'><strong>Error</strong> La contraseña debe contener al menos un carácter especial.<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button></div>");
+            return false;
+        }
+        if (pwd !== $("#rePassword").val()) {
+            $("#error").html("<div class='alert alert-danger alert-dismissible fade show' role='alert'><strong>Error</strong> Los passwords deben ser iguales.<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button></div>");
+            return false;
+        }
+        return true;
+    }
+</script>
+
+{% endblock %}
+

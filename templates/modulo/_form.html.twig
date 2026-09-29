@@ -1,0 +1,18 @@
+{{ form_start(form) }}
+    
+    <div class="col-sm-6 col-md-4">
+        <small class="text_mute">Nombre <code>{{modulo.modulo.nombre}}</code></small> 
+        
+        {{ form_row(form.nombre,{'label':false,'attr':{'class':'form-control'}})}}
+        
+    </div>
+    <div class="col-sm-6 col-md-4">
+        <small class="text_mute">Descripcion </small>*
+        
+        {{ form_row(form.descripcion,{'label':false,'attr':{'class':'form-control','required':'required'}})}}
+        
+    </div>
+    <div class="col-12">
+    <button class="btn btn-primary">{{ button_label|default('Guardar') }}</button>
+    </div>
+{{ form_end(form) }}

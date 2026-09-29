@@ -1,0 +1,171 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{pagina|default('')}}{% endblock %}
+
+{% block body %}
+<section>
+
+
+    
+    <div class="card">
+        <div class="card-header">
+            Filtro
+        </div>
+        <div class="card-body">
+            
+            <form action="{{path('reporte_agendador')}}" method="get" id="bForm">
+            <div class="row">
+                <div class="col-sm-12 col-md-3">
+                    <select name="bCompania" class="form-control" >
+                        <option value='0'>Todos</option>
+                        {% for compania in companias %}
+                            <option value="{{compania.id}}"
+                            {% if bCompania==compania.id %}
+                                selected
+                            {% endif %}
+                            >{{compania.nombre}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <input type="text" class="form-control" name="bFiltro" placeholder="Nombre agendador" value="{{bFiltro}}">
+                </div>
+                <div class="col-sm-12 col-md-2">
+                    <select name="bTipofecha" class="form-control">
+                        <option value="0" {% if tipoFecha==0 %}
+                            selected
+                        {% endif %}>Fecha Carga</option>
+                        
+                    </select>
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <input type="text" class="form-control" name="bFecha" id="bFecha"  value="">
+                </div>
+                <div class="col-sm-12 col-md-1">
+                    <button class="btn btn-primary"><i class="fas fa-search"></i></button>
+                </div>
+           
+
+            </div>
+            </form>
+        </div>  
+        
+    </div>
+</section>
+</form>
+<section>
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Listado</h3> 
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body table-responsive p-0" style="height: 400px;">
+        
+            <table class="table table-head-fixed text-nowrap table-striped table-sm">
+                <thead>
+                    <tr >
+                        <th scope="col" align="right">Agendador</th>
+                        <th scope="col" style="text-align: right;">Lead</th>
+                        <th scope="col" style="text-align: right;">Agendó</th>
+                        <th scope="col" style="text-align: right;">AgendóvsLead</th>
+                        <th scope="col" style="text-align: right;">NoCalifica</th>
+                        
+                        <th scope="col" style="text-align: right;">NoCalificavsLead</th>
+                        
+
+                        <!--<th scope="col" style="text-align: right;">NoContesta</th>
+                        <th scope="col" style="text-align: right;">NoContesta vs Lead</th>-->
+                        <th scope="col" style="text-align: right;">Seguimiento</th>
+                        <th scope="col" style="text-align: right;">SeguimientovsLead</th>
+                       <!-- <th scope="col" style="text-align: right;">NoCalificaA</th>
+                        -->
+                        <th scope="col" style="text-align: right;">Efectividad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set suma_total=0 %}
+                    {% set suma_agendado=0 %}
+                    {% set suma_nocontesta=0 %}
+                    {% set suma_nocalificaAB=0 %}
+                    {% set suma_nocalifica=0 %}
+                     {% set suma_seguimiento=0 %}
+                    {% for reporte in reportes %}
+                   
+                    <tr>
+                        <td>{{ reporte.agendador_nombre }}</td>
+                        <td align="right">{{ reporte.total}}</td>
+                        <td  align="right">{{ reporte.agendado }}</td>
+                       
+                        <td align="right">{{(reporte.agendado/(reporte.total?reporte.total:1)*100)|number_format(0,",",".")}}%</td>
+                        <!--<td  align="right">{{ reporte.nocalificaAB }}</td>
+                       
+                        <td align="right">{{(reporte.nocalificaAB/(reporte.agendado?reporte.agendado:1)*100)|number_format(0,",",".")}}%</td>-->
+
+                        <td  align="right">{{ reporte.nocalifica }}</td>
+                        <td align="right">{{(reporte.nocalifica/reporte.total*100)|number_format(0,",",".")}}%</td>
+                        
+                        <!--<td  align="right">{{ reporte.nocontesta }}</td>
+                       
+                        <td align="right">{{(reporte.nocontesta/(reporte.total?reporte.total:1)*100)|number_format(0,",",".")}}%</td>-->
+                        <td  align="right">{{ reporte.seguimiento }}</td>
+                        <td align="right">{{(reporte.seguimiento/(reporte.total?reporte.total:1)*100)|number_format(0,",",".")}}%</td>
+                        <td align="right">{{(reporte.agendado/((reporte.total-reporte.nocalifica)?(reporte.total-reporte.nocalifica):1)*100)|number_format(0,",",".")}}%</td>
+                    </tr>
+                    {% set suma_total = suma_total + reporte.total %}
+                   
+                    {% set suma_agendado = suma_agendado + reporte.agendado %}
+                    {% set suma_nocontesta = suma_nocontesta + reporte.nocontesta %}
+                    {% set suma_nocalificaAB = suma_nocalificaAB + reporte.nocalificaAB %}
+                    
+                    {% set suma_nocalifica = suma_nocalifica + reporte.nocalifica %}
+                    {% set suma_seguimiento = suma_seguimiento + reporte.seguimiento %}
+                   
+                    {% else %}
+                    <tr>
+                        <td colspan="10">No hay registros</td>
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+                <tfoot>
+                    <tr style="text-align: right;">
+                        <th></th>
+                        <th>{{ suma_total|number_format(0,",",".")}}</th>
+                        <th>{{ suma_agendado|number_format(0,",",".")}}</th>
+                        <th>{{(suma_agendado/(suma_total?suma_total:1)*100)|number_format(0,",",".") }}%</th>
+                        <!--<th>{{ suma_nocalificaAB|number_format(0,",",".")}}</th>
+                        <th>{{(suma_nocalificaAB/(suma_agendado?suma_agendado:1)*100)|number_format(0,",",".") }}%</th>-->
+                        <th>{{ suma_nocalifica|number_format(0,",",".")}}</th>
+                        <th>{{(suma_nocalifica/(suma_total?suma_total:1)*100)|number_format(0,",",".") }}%</th>
+                        
+                        <!--<th>{{ suma_nocontesta|number_format(0,",",".")}}</th>
+                        <th>{{(suma_nocontesta/(suma_total?suma_total:1)*100)|number_format(0,",",".") }}%</th>-->
+                        <th>{{ suma_seguimiento|number_format(0,",",".")}}</th>
+                        <th>{{(suma_seguimiento/(suma_total?suma_total:1)*100)|number_format(0,",",".") }}%</th>
+                        <th>{{(suma_agendado/((suma_total-suma_nocalifica)?(suma_total-suma_nocalifica):1)*100)|number_format(0,",",".") }}%</th>
+                    </tr>
+
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</section>
+
+<script>
+    $('#bFecha').daterangepicker({
+        
+        "drops": "down",
+        "startDate":"{{dateInicio}}",
+        "endDate": "{{dateFin}}",
+        "locale": {
+            "format": "YYYY-MM-DD",
+            "applyLabel": "Apply",
+            "cancelLabel": "Cancel",
+        }
+    }, function(start, end, label) {
+    console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+    
+    });
+    
+</script>
+{% endblock %}

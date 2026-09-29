@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New MateriaEstrategia{% endblock %}
+
+{% block body %}
+     <div class="card">
+        <div class="card-header">
+            Datos Materia
+        </div>
+        <div class="card-body">
+            <div class="col-sm-6 col-md-6">
+                <small class="text-muted">Nombre</small><br>
+                {{ materia_estrategium.materia.nombre}}
+            </div>
+            <div class="col-sm-6 col-md-6">
+                <small class="text-muted">Empresa</small><br>
+                {{ materia_estrategium.materia.empresa.nombre }}
+            </div>
+
+        </div>
+
+    </div>
+    {{ include('materia_estrategia/_form.html.twig') }}
+    <div class="card">
+        <div class="card-header">
+            Sub Materia
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Nombre</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for materia_estrategium in materia_estrategias %}
+                    <tr>
+                        <td>{{ materia_estrategium.id }}</td>
+                        <td>{{materia_estrategium.estrategiaJuridica.nombre}}</td>
+                        <td>
+                            <a href="{{ path('materia_estrategia_delete',{'id':materia_estrategium.id })}}" class="btn btn-danger"><i class="fas fa-trash"></i></a>
+                            <a href="{{ path('mee_new', {'id': materia_estrategium.id}) }}"  class="btn btn-warning" alt="Sub Materias" > <i class="fas fa-share-alt"></i></a>
+                            
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="2">no records found</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}

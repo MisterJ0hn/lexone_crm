@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit UsuarioTipo{% endblock %}
+
+{% block body %}
+    <div class="card">
+        <div class="card-header">
+
+        </div>
+        <div class="card-body">
+            {{ include('usuario_tipo/_delete_form.html.twig') }}
+
+
+         {{ include('usuario_tipo/_form.html.twig', {'button_label': 'Modificar'}) }}
+
+        </div>
+    </div>
+    
+{% endblock %}

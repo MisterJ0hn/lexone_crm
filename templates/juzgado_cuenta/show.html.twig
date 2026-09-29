@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}JuzgadoCuenta{% endblock %}
+
+{% block body %}
+    <h1>JuzgadoCuenta</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ juzgado_cuentum.id }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('juzgado_cuenta_index') }}">back to list</a>
+
+    <a href="{{ path('juzgado_cuenta_edit', {'id': juzgado_cuentum.id}) }}">edit</a>
+
+    {{ include('juzgado_cuenta/_delete_form.html.twig') }}
+{% endblock %}

@@ -1,0 +1,118 @@
+{{ form_start(form,{attr:{'class':'dropzone','id':'my-awesome-dropzone'}}) }}
+    <div class="row">
+        <div class="col-sm-12  col-md-8">
+
+            <div class="card">
+                <div class="card-header">
+                    <h1>Folio: {{contrato.id}}</h1>
+                </div>
+                <div class="card-body table-responsive pad">
+                
+            
+                    <div class="row">
+                        <div class="col-sm-12 col-md-4">
+                            <small class="text-muted">Monto Pagado (*)</small>
+                            {{form_row(form.monto,{'label':false,'attr':{'class':'form-control monto'}})}}
+                            <strong><label id="m-monto"></label></strong>
+                        </div>
+                        <div class="col-sm-12 col-md-4">
+                            <small class="text-muted">Fecha Comprobante (*)</small>
+                            <input class="form-control datetimepicker-pago" name="fechaPago">
+                                    
+                                    
+                        </div>
+                        <div class="col-sm-12 col-md-4">
+                            <small class="text-muted">Fecha Ingreso Comprobante</small>
+                            <br>
+                            {{"now"|date('Y-m-d')}}
+                        </div>
+                        <div class="col-sm-12 col-md-4">
+                            <small class="text-muted">N° Comprobante</small>
+                            {{form_row(form.ncomprobante,{'label':false,'attr':{'class':'form-control'}})}}
+                        </div>
+                        <div class="col-sm-12 col-md-4">
+                            <small class="text-muted">N° Boleta</small>
+                            {{form_row(form.boleta,{'label':false,'attr':{'class':'form-control'}})}}
+                        </div>
+                        <div class="col-sm-12 col-md-4">
+                            <small class="text-muted">Tipo Deposito (*)</small>
+                            {{form_row(form.pagoTipo,{'label':false,'attr':{'class':'form-control cboTipo','style':'display:none'}})}}
+                     
+                            <p>{{pago.pagoTipo}}</p>
+                        </div>
+                        <div class="col-sm-12 col-md-4">
+                            <small class="text-muted">Cta. Cte. (*)</small>
+                            {{form_row(form.cuentaCorriente,{'label':false,'attr':{'class':'form-control'}})}}
+                        </div>
+                        <div class="col-sm-12 col-md-4">
+                            <small class="text-muted">Canal (*)</small>
+                            {{form_row(form.pagoCanal,{'label':false,'attr':{'class':'form-control'}})}}
+                        </div>
+                        <div class="col-sm-12 col-md-12">
+                            <small class="text-muted">Observación</small>
+                            {{form_row(form.observacion,{'label':false,'attr':{'class':'form-control'}})}}
+                            {{form_row(form.comprobante,{'label':false,'attr':{'class':'form-control comprobante','style':'display:none'}})}}
+                            
+                        </div>
+                    </div> 
+                </div>
+                {% if pago.comprobante is not empty %}
+                
+            
+                    <div class="card">
+                        <div class="card-body table-responsive pad">
+                            {% if etapa==2 %}
+                            <img src="{{url_web}}{{img_pagos}}{{pago.comprobante}}">
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="card-footer">
+                    {% if contrato.isFinalizado is null or not contrato.isFinalizado %}
+                    <button class="btn btn-primary btn-guardar" type="submit" >{{ button_label|default('Guardar') }}</button>
+                    {% endif %}
+                </div>
+            </div>
+            
+        </div>
+        <div class="col-sm-12  col-md-4">
+            <div class="card">
+                <div class="card-body table-responsive pad">
+                    
+                </div>
+            </div>
+            
+        </div>
+    </div>   
+    {{ form_end(form) }}
+
+<script>
+
+    $('.datetimepicker-registro').daterangepicker({
+        
+        "singleDatePicker": true,
+        "locale": {
+            "format": "YYYY-MM-DD",
+
+            "applyLabel": "Apply",
+            "cancelLabel": "Cancel",
+        }
+    }, function(start, end, label) {
+        console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+
+    });
+    $('.datetimepicker-pago').daterangepicker({
+        "timePicker": true,
+        "singleDatePicker": true,
+        "locale": {
+            "format": "YYYY-MM-DD hh:mm A",
+
+            "applyLabel": "Apply",
+            "cancelLabel": "Cancel",
+        }
+    }, function(start, end, label) {
+        console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+
+    });
+    
+</script>

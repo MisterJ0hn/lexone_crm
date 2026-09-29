@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nuevo Pago{% endblock %}
+
+{% block body %}
+        {{ include('cabezera.html.twig') }}
+       {% if isBoucher %}
+       {{ include('pago/_form.html.twig') }}
+       {% else %}
+       {{ include('pago/_formSBoucher.html.twig') }}
+       {% endif %}
+       
+{% endblock %}

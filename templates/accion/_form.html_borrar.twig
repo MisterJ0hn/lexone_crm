@@ -1,0 +1,22 @@
+{{ form_start(form) }}
+     <div class="row">
+        <div class="col-sm-12 col-md-4">
+            <small class="text_mute">Nombre</small>
+            
+            {{ form_row(form.nombre,{'label':false,'attr':{'class':'form-control'}})}}
+            
+        </div>
+        <div class="col-sm-12 col-md-4">
+            <small class="text_mute">Accion</small>
+            {{ form_row(form.accion,{'label':false,'attr':{'class':'form-control'}})}}
+        </div>
+        <div class="col-sm-12 col-md-4">
+            <small class="text_mute">Empresa</small>
+            
+            {{ form_row(form.empresa,{'label':false,'attr':{'class':'form-control'}})}}
+            
+        </div>
+    </div>
+
+    <button class="btn">{{ button_label|default('Save') }}</button>
+{{ form_end(form) }}

@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit EstrategiaJuridica{% endblock %}
+
+{% block body %}
+    <h1>Edit EstrategiaJuridica</h1>
+
+    {{ include('estrategia_juridica/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('estrategia_juridica_index') }}">back to list</a>
+
+    {{ include('estrategia_juridica/_delete_form.html.twig') }}
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}UsuarioTipo{% endblock %}
+
+{% block body %}
+    <h1>UsuarioTipo</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ usuario_tipo.id }}</td>
+            </tr>
+            <tr>
+                <th>Nombre</th>
+                <td>{{ usuario_tipo.nombre }}</td>
+            </tr>
+            <tr>
+                <th>Orden</th>
+                <td>{{ usuario_tipo.orden }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('usuario_tipo_index') }}">back to list</a>
+
+    <a href="{{ path('usuario_tipo_edit', {'id': usuario_tipo.id}) }}">edit</a>
+
+    {{ include('usuario_tipo/_delete_form.html.twig') }}
+{% endblock %}

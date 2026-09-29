@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Sucursal{% endblock %}
+
+{% block body %}
+    <h1>Edit Sucursal</h1>
+
+    {{ include('sucursal/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('sucursal_index',{'id':cuentum.id}) }}">Volver</a>
+
+    
+{% endblock %}

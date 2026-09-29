@@ -1,0 +1,10 @@
+<select name="cboCiudad" class="form-control"  required onchange="javascript:getComunas(this.value)">
+    <option></option>
+    {% for ciudad in ciudades %}
+    <option value="{{ciudad.id}}" 
+    {% if  ciudad.id==ciudad_def %}
+        selected
+    {% endif %}
+     >{{ciudad.nombre}}</option>
+    {% endfor %}
+</select>

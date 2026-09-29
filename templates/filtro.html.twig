@@ -1,0 +1,34 @@
+<div class="card bg-calipso">
+    
+        <div class="card-header">
+            
+            <div class="row">
+                <div class="col-sm-12 col-md-2">
+                    <select name="bCompania" class="form-control">
+                        <option value="0">Todos</option>
+                        {% for compania in companias %}
+                            <option value="{{compania.id}}"
+                            {% if bCompania==compania.id %}
+                                selected
+                            {% endif %}
+                            >{{compania.nombre}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-sm-12 col-md-4 ">
+                    <input type="text" class="form-control" name="bFiltro" placeholder="Nombre/Email/Teléfono" value="{{bFiltro}}">
+                </div>
+                
+                <div class="col-sm-12 col-md-3">
+                    <input type="text" class="form-control" name="bFecha" id="bFecha"  value="">
+                </div>
+                <div class="col-sm-12 col-md-1">
+                    <button class="btn btn-primary"><i class="fas fa-search"></i></button>
+                </div>
+                
+
+            </div>
+            
+        </div>  
+        
+    </div>

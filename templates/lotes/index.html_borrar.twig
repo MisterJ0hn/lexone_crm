@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Lotes index{% endblock %}
+
+{% block body %}
+    <h1>Lotes index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Estado</th>
+                <th>Orden</th>
+                <th>IsUtilizado</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for lote in lotes %}
+            <tr>
+                <td>{{ lote.id }}</td>
+                <td>{{ lote.nombre }}</td>
+                <td>{{ lote.estado ? 'Yes' : 'No' }}</td>
+                <td>{{ lote.orden }}</td>
+                <td>{{ lote.isUtilizado ? 'Yes' : 'No' }}</td>
+                <td>
+                    <a href="{{ path('lotes_show', {'id': lote.id}) }}">show</a>
+                    <a href="{{ path('lotes_edit', {'id': lote.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('lotes_new') }}">Create new</a>
+{% endblock %}

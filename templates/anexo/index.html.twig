@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Anexo{% endblock %}
+
+{% block body %}
+
+<div class="card">
+    <div class="card-header">
+        <h1>Folio: {{contrato.folio}}</h1>
+        <a href="{{path('anexo_new',{'id':contrato.id})}}" class="btn btn-primary" >Crear Anexo</a>
+           
+    </div>
+    <div class="card-body">
+        <div class="card-body table-responsive p-0" style="height: 500px;">
+
+            
+            <table class="table table-head-fixed text-nowrap table-striped table-sm">
+                <thead>
+                    <tr>
+                        <th>Materia</th>
+                        <th>Folio</th>
+                        <th>Cliente</th>
+                        <!--<th >Agendador</th>
+                        <th>Abogado</th>
+                        <th>Tramitador</th>
+                        <th>Sucursal</th>-->
+                        <th>Fecha Anexo</th>
+                        <th>Tipo Anexo</th>
+                        <th>Acciones</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                {% for anexo in contratoAnexos  %}
+                    <tr>
+                        <td>{{contrato.agenda.cuenta}}</td>
+                        <td>{{anexo.id}}-{{contrato.folio}} {{anexo.folio}}</td>
+                        <td>{{contrato.cliente.nombre}}</td>
+                        <!--<td>{{contrato.agenda.agendador}}</td>
+                        <td>{{contrato.agenda.abogado}}</td>
+                        <td>{{contrato.tramitador}}</td>
+                        <td>{{contrato.sucursal}}</td>-->
+                        <td>{{anexo.fechaCreacion|date("Y-m-d")}}</td>
+                        
+                        <td>
+                            {% if anexo.tipoAnexo==1 %}
+                                    <p>Agregar causa</p>
+                            {% endif %}
+                            {% if anexo.tipoAnexo==2 %}   
+                                    <p>Extensión del plazo</p>
+                            {% endif %}
+                            {% if anexo.tipoAnexo==3 %}
+                                    <p>Renegociación</p>
+                            {% endif %}
+                        
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+                                <a href="{{url_web}}{{pdf_contrato}}{{anexo.pdf}}" class="btn btn-success btn-sm"><i class="fas fa-file-pdf"></i></a>
+                                {% if loop.last %}
+                                <!--<a href="{{path('anexo_eliminar',{'id':anexo.id})}}" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>-->
+                                {% endif %}
+                            </div>
+
+                        </td>
+                        
+
+                    </tr>
+                {% else %}
+                    <tr>
+                        <th colspan="9">
+                            <p>Sin registros</p>
+                        </th>
+                    </tr>
+                {% endfor %}
+
+                </tbody>
+            </table>
+        
+            
+        </div>
+    </div>
+    <div class="card-footer">
+           
+                
+        </div>
+</div>
+        
+{% endblock %}

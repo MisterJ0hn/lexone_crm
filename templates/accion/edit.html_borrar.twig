@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Accion{% endblock %}
+
+{% block body %}
+    <h1>Edit Accion</h1>
+
+    {{ include('accion/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('accion_index') }}">back to list</a>
+
+    {{ include('accion/_delete_form.html.twig') }}
+{% endblock %}

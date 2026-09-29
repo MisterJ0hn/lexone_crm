@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{pagina}}{% endblock %}
+
+{% block body %}
+<div class="card">
+        <div class="card-header">
+            Listado
+        </div>
+        <div class="card-body">
+        
+        {% if modo == 1 %}
+            <a href="{{path('cobradores_new')}}" class="btn btn-primary" id="btn-agregar"><i class="fas fa-plus"></i></a>
+            <a href="{{path('cobradores_index',{'modo':'trash'})}}" class="btn btn-danger"><i class="fas fa-trash"></i> Usuarios Eliminados</a>
+        {% else %}
+            <a href="{{path('cobradores_index')}}" class="btn btn-success"><i class="fas fa-trash-restore"></i> Usuarios Activos</a>
+        {% endif %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Usuario</th>
+                        <th>Nombre</th>
+                        <th>TipoUsuario</th>
+                        <th>Estado</th>
+                        <th>Disponible</th>
+                        
+                        <th>FechaIngreso</th>
+                        <th>Correo</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for usuario in usuarios %}
+                    <tr>
+                        <td>{{ usuario.id }}</td>
+                        <td>{{ usuario.username }}</td>
+                        <td>{{ usuario.nombre }}</td>
+                        <td>{{ usuario.usuarioTipo.nombre }}</td>
+                        <td>{{ usuario.estado ? 'Activo' : 'Deshabilitado' }}</td>
+                        <td>{{usuario.status }} </td>
+                        
+                        <td>{{ usuario.fechaActivacion ? usuario.fechaActivacion|date('Y-m-d H:i:s') : '' }}</td>
+                        <td>{{ usuario.correo }}</td>
+                        
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+                                {% if modo == 1 %}
+                                <a href="{{path('cobradores_edit',{'id':usuario.id})}}" class="btn btn-secondary"><spam class='fas fa-edit'></spam></a>
+                                {{ include('cobradores/_delete_form.html.twig',{'id_usuario':usuario.id}) }}
+                                <a href="{{path('privilegio_index',{'id':usuario.id})}}" class="btn btn-warning" > <i class="fas fa-share-alt"></i></a>
+                                {% else %}
+                                <a href="{{path('cobradores_restore',{'id':usuario.id})}}" class="btn btn-success"><spam class='fas fa-trash-restore'></spam></a>
+
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="8">No hay Usuarios</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer">
+            <div class="navigation">
+                {{ knp_pagination_render(usuarios,'@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig',{},{
+                'position': 'centered',
+                'rounded': true,
+                }) }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="controles" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+        
+          </div>
+         
+        </div>
+      </div>
+    </div>
+    
+{% endblock %}

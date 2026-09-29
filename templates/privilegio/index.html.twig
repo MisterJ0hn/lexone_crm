@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}PrivilegioTipousuario index{% endblock %}
+
+{% block body %}
+
+    <div class="card">
+        <div class="card-header">
+        <p class="text-muted">Privilegios para:</p> <h1>{{usuario.nombre}}</h1>
+        </div>
+        <div class="row">
+                
+            </div>
+        <div class="card-body">
+            <form action="{{path('privilegio_new',{'id':usuario.id})}}" method="post">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-refresh"></i>Actualizar</button>
+                </form>
+                <form action="{{path('privilegio_regenerar',{'id':usuario.id})}}" method="post">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-recycle"></i>Regenerar</button>
+                </form>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Módulo</th>
+                        <th>Descripción</th>
+                        <th>Accion</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for privilegio in privilegios %}
+                    <tr>
+                        <td>{{ privilegio.moduloPer.nombre }}</td>
+                        <td>{{ privilegio.moduloPer.descripcion }}</td>
+                        <td>
+                            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                            {% for accion in acciones %}
+                                <label class="btn bg-primary active">
+                                    <input type="radio" name="options" id="option{{privilegio.id}}{{accion.id}}" autocomplete="off" 
+                                    {% if accion.id == privilegio.accion.id %}
+                                            checked
+                                        {% endif %}
+                                    onclick="javascript:checkAccion('{{accion.id}}','{{privilegio.id}}')"> {{accion.nombre}}
+                                </label>
+                            {% endfor %}
+                            </div>
+                        
+                            <div id="checked{{privilegio.id}}" class="checked{{privilegio.id}}"> 
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="2">Sin registros</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script>
+        function checkAccion(accion,privilegio){
+            $.ajax({
+                url:"/privilegio/"+privilegio+"/edit",
+                type: "post",
+                dataType: "json",
+                data:{"accion":accion},
+                success:function(data){
+                    
+                     $(".checked"+privilegio).html(data);
+                }
+
+            });
+
+        }
+    </script>
+
+    
+{% endblock %}

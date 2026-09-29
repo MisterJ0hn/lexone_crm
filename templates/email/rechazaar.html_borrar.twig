@@ -1,0 +1,9 @@
+{% extends 'pdf/base.html.twig' %}
+{% block body %}
+
+<h1>{{rendicion.tipo.nombre}} N° {{rendicion.numero}} ha sido rechazada por el monto  {{rendicion.monto}}</h1>
+
+Motivo:
+<p>{{rendicion.observacionAprecAr}}</p>
+
+{% endblock %}

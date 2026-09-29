@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit PagoCanal{% endblock %}
+
+{% block body %}
+    <h1>Edit PagoCanal</h1>
+
+    {{ include('pago_canal/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('pago_canal_index') }}">back to list</a>
+
+    {{ include('pago_canal/_delete_form.html.twig') }}
+{% endblock %}

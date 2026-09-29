@@ -1,0 +1,157 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{pagina}}{% endblock %}
+
+{% block body %}
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">{{ message }}</div>
+    {% endfor %}
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Busqueda</h3>
+        </div>
+        <div class="card-body">
+
+
+            <form method="post">
+            <div class="row">
+                <div class="col-md-3 col-sm-6">
+                    <label>Nombre {{pagina}}:</label>
+                    <input type="text" class="form-control" name="txtNombre" placeholder="Nombre" value="{{nombre}}">
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <!-- Date range -->
+                    <div class="form-group">
+                        <label>Fecha ingreso:</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    <i class="far fa-calendar-alt"></i>
+                                </span>
+                                </div>
+                                <input type="text" class="form-control float-right" id="reservation" name="txtFechaBusqueda" autocomplete="off">
+                            </div>
+                    </div>
+                       
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <!-- Date range -->
+                    <div class="form-group">
+                        <label>Fecha vigencia:</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    <i class="far fa-calendar-alt"></i>
+                                </span>
+                                </div>
+                                <input type="text" class="form-control float-right" id="reservation2" name="txtFechaVigencia" autocomplete="off">
+                            </div>
+                    </div>
+                       
+                </div>
+                <div class="col-md-2 col-sm-6">
+                    <button class="btn btn-secondary"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+            </form>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Listado</h3> 
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body table-responsive p-0" style="height: 300px;">
+            <a href="{{ path('empresa_new') }}" class="btn btn-primary"><i class="fas fa-plus"></i></a>
+
+            <table class="table table-head-fixed text-nowrap">
+                <thead>
+                    <tr>
+                    <th>Logo</th>
+                        <th>Id</th>
+                        <th>Nombre</th>
+                        <th>Rol</th>
+                        <th>Rut</th>
+                        
+                        <th>Fecha Ingreso</th>
+                        <th>Fecha ult. mod.</th>
+                        <th>Fecha vigencia</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for empresa in empresas %}
+                    <tr><td><img src="/build/img/empresas/{{empresa.logo}}" width='50px'> </td>
+                        <td>{{ empresa.id }}</td>
+                        <td>{{ empresa.nombre }}</td>
+                        <td>{{ empresa.rol }}</td>
+                        <td>{{ empresa.rut }}</td>
+                        
+                        <td>{{ empresa.fechaIngreso ? empresa.fechaIngreso|date('Y-m-d H:i:s') : '' }}</td>
+                        <td>{{ empresa.fechaUltimamodificacion ? empresa.fechaUltimamodificacion|date('Y-m-d H:i:s') : '' }}</td>
+                        <td>{{ empresa.fechaVigencia ? empresa.fechaVigencia|date('Y-m-d H:i:s') : '' }}</td>
+                        <td>
+                            <a href="{{ path('empresa_show', {'id': empresa.id}) }}" class="btn btn-primary"><i class="fas fa-eye"></i></a>
+                            <a href="{{ path('empresa_edit', {'id': empresa.id}) }}" class="btn btn-warning"><i class="fas fa-edit"></i></a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="9">No hay registro</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    
+    
+    <script>
+        $(function () {
+            
+            
+            //Date range picker
+   
+
+            $('#reservation').daterangepicker({
+                autoUpdateInput: false,
+                locale: {
+                    cancelLabel: 'Clear'
+                }
+            });
+
+            $('#reservation').on('apply.daterangepicker', function(ev, picker) {
+                $(this).val(picker.startDate.format('YYYY/MM/DD') + ' - ' + picker.endDate.format('YYYY/MM/DD'));
+            });
+
+            $('#reservation').on('cancel.daterangepicker', function(ev, picker) {
+                $(this).val('');
+            });
+            $('#reservation').val('{{rngFechaIngreso}}');
+
+
+
+
+            $('#reservation2').daterangepicker({
+                autoUpdateInput: false,
+                locale: {
+                    cancelLabel: 'Clear'
+                }
+            });
+
+            $('#reservation2').on('apply.daterangepicker', function(ev, picker) {
+                $(this).val(picker.startDate.format('YYYY/MM/DD') + ' - ' + picker.endDate.format('YYYY/MM/DD'));
+            });
+
+            $('#reservation2').on('cancel.daterangepicker', function(ev, picker) {
+                $(this).val('');
+            });
+            $('#reservation2').val('{{rngFechaVigencia}}');
+
+        
+        
+
+        })
+    </script>
+{% endblock %}

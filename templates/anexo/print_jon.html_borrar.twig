@@ -1,0 +1,142 @@
+<style>
+    body{
+        font-size:13px;
+    }
+</style>
+<div class="page">
+    <div align="right">Nro Folio {{anexo.id}}-{{anexo.contrato.folio}} {{anexo.folio}}</div>
+  
+  <div align="center"><h4>{{tipoAnexo|upper }} ANEXO DE PRESTACI&Oacute;N DE SERVICIOS</h4></div>
+  <p align="justify">En Santiago de Chile a {{anexo.fechaCreacion|date("d-m-Y")}}, entre Estudio Jur&iacute;dico Alfaro y Madariaga Ltda., rol &uacute;nico tributario 76.638.999-6 
+  empresa de servicios Jur&iacute;dicos con domicilio en casa matriz <strong>Hu&eacute;rfanos 1147, 
+  oficina 501</strong>, comuna de Santiago, Regi&oacute;n Metropolitana, quien en adelante se denominar&aacute; indistintamente <strong>&quot;Estudio Jur&iacute;dico&quot;</strong> y por la otra don 
+  (&ntilde;a) <strong>{{anexo.contrato.nombre|title|special_chars|raw}}</strong>, C&eacute;dula de identidad N&deg; {{anexo.contrato.rut}}, 
+  han celebrado con fecha de hoy, de manera libre y espont&aacute;nea, un anexo de contrato, desglosando su contenido en lo siguiente.</p>
+  
+  <p align="justify"><strong>PRIMERO:</strong> El cliente contrat&oacute; {{anexo.contrato.agenda.reunion|special_chars|raw}} los Servicios Profesionales con El 
+  Estudio Jur&iacute;dico, el d&iacute;a {{anexo.contrato.fechaCreacion|date("d-m-Y")}}, para que &eacute;ste en su representaci&oacute;n, otorgue Asistencia Jur&iacute;dica respecto de las 
+  siguientes causas.</p>
+  
+  {% if anexo.tipoAnexo==1 %}
+    
+<strong>Causas:</strong>
+<br>
+<table border="1"  cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th width="300px">Servicio</th>
+            <th width="100px">Id Causa</th>
+            <th>Caratulado</th>
+        </tr>
+    </thead>
+    {% for causa in anexo.contrato.agenda.causas %}
+        {% if causa.estado==1 %}
+        <tr>
+            
+            <td width="300px">
+                {{causa.materiaEstrategia.estrategiaJuridica}}
+            </td>
+            <td width="100px">
+                {{causa.idCausa}}
+            </td>
+            <td>
+                {{causa.causaNombre}}
+            </td>
+        </tr>
+        {% endif %}
+    {% endfor %}
+
+
+</table>
+  {% endif %}
+  
+  <p align="justify"><strong>SEGUNDO:</strong> Por este acto las partes vienen en celebrar un anexo referido a {{tipoAnexo}}.</p>
+  
+  <p align="justify"><strong>TERCERO:</strong> Los honorarios de los servicios profesionales son a todo evento y ascienden a la suma de {{anexo.montoContrato|number_format(0,",",".")}}
+  Estos valores consideran el costo de la evaluaci&oacute;n, estudio y otros tr&aacute;mites que hayan sido practicados por el Estudio Jur&iacute;dico, los cuales se pactan en conformidad 
+  de ambas partes, de la siguiente manera:</p>
+  
+    <table border="1"  cellspacing="0" width="50%">
+        {% for cuota in anexo.cuotas %}
+        <tr>
+            <td align="right">{{cuota.numero}}</td>
+            <td align="center">{{cuota.fechaPago|date('Y-m-d')}}</td>
+            <td align="right">${{cuota.monto|number_format(0,",",".")}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+  </div>
+  <div class="page">
+  
+  <p align="justify">El Calendario de pago precedentemente señalado no est&aacute; condicionado a gesti&oacute;n, alguna por parte del Estudio Jur&iacute;dico, raz&oacute;n por la cual 
+  se debe dar estricto cumplimiento a &eacute;ste en las fechas pactadas para tener vigente el servicio legal. En este sentido la modalidad de cuotas es un beneficio entregado exclusivamente 
+  al cliente que no puede pagar el honorario del servicio legal en un s&oacute;lo pago como es normal. Se entiende como el inicio del encargo y por lo tanto el derecho a percibir los 
+  honorarios el de la fecha de la firma o aceptaci&oacute;n del contrato. En caso de t&eacute;rmino del servicio por parte nuestra, desistimiento o t&eacute;rmino unilateral del contrato 
+  por parte del cliente, y habiendo el estudio realizado alguna gesti&oacute;n en el servicio encomendado, sin necesidad de haberlo terminado aun, se establece una cl&aacute;usula de aceleraci&oacute;n 
+  de las cuotas pendientes, las cuales se acumularan  en un s&oacute;lo pago  que se har&aacute; exigible inmediatamente en la eventualidad de que los honorarios no hubieran sido pagados en 
+  su totalidad a dicha fecha.</p>
+
+  <p align="justify"><strong>CUARTO:</strong> El Estudio Jurd&iacute;co se compromete a otorgar al cliente el servicio contratado y especificado en la cl&aacute;usula primera, cumpliendo todos los 
+  tr&aacute;mites legales que indica la ley en primera instancia, sin perjuicio, de las facultades privativas del respectivo tribunal de establecer plazos acordes con el funcionamiento del mismo 
+  seg&uacute;n corresponda. La obligación del estudio Jur&iacute;dico es una obligaci&oacute;n de medios, vale decir, se compromete a actuar diligentemente en todas las gestiones y tr&aacute;mites 
+  necesarios del proceso judicial. <strong>El presente contrato tiene un plazo y vigencia de {{anexo.vigencia}} meses contado desde la aceptaci&oacute;n, que es el tiempo en que 
+  durar&aacute;n los servicios contratados.</strong></p>
+
+  <p align="justify"><strong>QUINTO:</strong> Las partes declaran que en todo lo no modificado rige el contrato principal {{anexo.contrato.folio}}.</p>
+
+  <p align="justify"><strong>SEXTO:</strong> Los pagos pueden ser efectuados de manera presencial en las oficinas de Estudio Jur&iacute;dico a trav&eacute;s de transferencia electr&oacute;nica o 
+  dep&oacute;sitos a cualquiera de estas dos cuenta que se mencionan a continuaci&oacute;n.</p>
+
+  <ul style="list-style:none;">
+    <li><strong>EMPRESA:</strong> Estudio Jur&iacute;dico Alfaro & Madariaga</li>
+    <li><strong>Rut:</strong> 76.638.999-6</li>
+    <li><strong>Banco de Chile</strong></li>
+    <li><strong>Cuenta corriente</strong></li>
+    <li><strong>N&deg; de cuenta: 800-51698-02</strong></li>
+    <li><strong>Correo:</strong> <a href="mailto:pagos@alfaromadariaga.cl">pagos@alfaromadariaga.cl</a></li>
+    <li><strong>Comentarios: {{anexo.contrato.nombre|title|special_chars|raw}} </strong></li>
+  </ul>
+
+  <ul style="list-style:none;">
+    <li><strong>EMPRESA:</strong> Estudio Jur&iacute;dico Alfaro & Madariaga</li>
+    <li><strong>Rut:</strong> 76.638.999-6</li>
+    <li><strong>Banco Estado</strong></li>
+    <li><strong>Cuenta vista o chequera electr&oacute;nica</strong></li>
+    <li><strong>N&deg; de cuenta: 291 7 068 468-9</strong></li>
+    <li><strong>Correo:</strong> <a href="mailto:pagos@alfaromadariaga.cl">pagos@alfaromadariaga.cl</a></li>
+    <li><strong>Comentarios: {{anexo.contrato.nombre|title|special_chars|raw}} </strong></li>
+  </ul>
+
+<p><strong>*Al realizar dep&oacute;sito o transferencia, debe ponerse en contacto con nuestra oficina e informar los datos del dep&oacute;sito o transferencia.</strong></p>
+
+<p align="justify">Enviar comprobante de transferencia o dep&oacute;sito a: <strong>pagos@alfaromadariaga.cl</strong> o fotograf&iacute;a del comprobante al 
+whatsapp (+569) 9255 1072  (puede escribir en el mismo comprobante el nombre del cliente). El Estudio Jur&iacute;dico mantendr&aacute; en su poder por el periodo de 6 meses 
+contados desde la firma o aceptaci&oacute;n del contrato de prestaci&oacute;n de servicios, las boletas correspondientes a los pagos realizados por el cliente, siendo 
+obligaci&oacute;n de este solicitarlas mes a mes.</p>
+
+<p align="justify">El presente anexo de contrato se otorga para ambas partes, con id&eacute;ntico tenor y validez, quedando una copia en poder de cada una de las partes.</p>
+
+</div>
+<div class="page">
+<p align="justify">El presente contrato se otorga para ambas partes, con id&eacute;ntico tenor y validez, quedando una copia en 
+    poder de cada una de las partes.</p>
+
+<table width="100%">
+
+    <tr><td width="50%" align="center"><img src="{{url_root}}/build/img/firma_contrato.jpg" width="150px"></td><td style="padding:50px;">
+        {% if anexo.contrato.agenda.reunion.id==2 %}
+        <p>Firmado por consentimiento grabado en virtud del articulo 12A de la ley 19.496 y Circular Interpretativa sobre contratación a Distancia.
+            Fecha: {{ "now"|date('Y.m.d h:i:s')}}</p>
+
+        {% endif %}
+    </td></tr>
+    
+    <tr>
+        <td><p align="center"><strong>ESTUDIO JURIDICO ALFARO Y MADARIAGA</strong></p>
+        <p align="center"><strong>R.U.T.: 76.638.999-6</strong></p>            </td>
+        <td><p align="center"><strong>{{anexo.contrato.nombre|special_chars|raw}}</strong></p>
+        <p align="center"><strong>RUT: {{anexo.contrato.rut}}</strong></p>
+        </td>
+    </tr>
+</table>
+</div>

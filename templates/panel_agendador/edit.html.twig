@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Agenda{% endblock %}
+
+{% block body %}
+    <h1>Edit Agenda</h1>
+
+    {{ include('agenda/_form.html.twig', {'button_label': 'Modificar'}) }}
+
+
+    {{ include('agenda/_delete_form.html.twig') }}
+{% endblock %}

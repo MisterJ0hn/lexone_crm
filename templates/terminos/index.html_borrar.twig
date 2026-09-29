@@ -1,0 +1,153 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contrato index{% endblock %}
+
+{% block body %}
+    <div class="card bg-calipso">
+        <div class="card-header">
+            <form action="" method="get">
+                <div class="row">
+                    <div class="col-sm-12 col-md-2">
+                        <select name="bCompania" class="form-control">
+                            <option value="0">Todos</option>
+                            {% for compania in companias %}
+                                <option value="{{compania.id}}" 
+                                {% if bCompania==compania.id %}
+                                    selected
+                                {% endif %}
+                                >{{compania.nombre}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                        <input type="text" class="form-control bFiltro" name="bFiltro" placeholder="Nombre/Email/Teléfono" value="">
+                    </div>
+                    <div class="col-sm-12 col-md-3">
+                        <input type="text" class="form-control " name="bFecha" id="bFecha"  value="">
+                    </div>
+                    <div class="col-sm-12 col-md-2">
+                        <button class="btn btn-primary"><i class="fas fa-search"></i></button>
+                    </div>
+                    <div class="col-sm-12 col-md-3">
+                        
+                    </div>
+    
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body table-responsive p-0" style="height: 500px;">
+            <table class="table table-head-fixed text-nowrap table-striped table-sm">
+                <thead>
+                    <tr>
+                        <th>{{ knp_pagination_sortable(contratos, 'Materia', 'agenda.cuenta') }} {% if contratos.isSorted('agenda.cuenta') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th>{{ knp_pagination_sortable(contratos, 'Folio', 'id') }} {% if contratos.isSorted('id') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th>{{ knp_pagination_sortable(contratos, 'Cliente', 'nombre') }} {% if contratos.isSorted('nombre') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <!--<th>{{ knp_pagination_sortable(contratos, 'Agendador', 'agenda.agendador') }} {% if contratos.isSorted('agenda.agendador') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th>{{ knp_pagination_sortable(contratos, 'Abogado', 'agenda.abogado') }} {% if contratos.isSorted('agenda.abogado') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th>{{ knp_pagination_sortable(contratos, 'Tramitador', 'tramitador') }} {% if contratos.isSorted('tramitador') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th>{{ knp_pagination_sortable(contratos, 'Sucursal', 'sucursal') }} {% if contratos.isSorted('sucursal') %} <i class="fas fa-sort"></i>{% endif %}</th>-->
+                        <th>{{ knp_pagination_sortable(contratos, 'Fecha Contrato', 'fechaCreacion') }} {% if contratos.isSorted('fechaCreacion') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th align="center">{{ knp_pagination_sortable(contratos, 'Aviso Termino', 'fechaDesiste') }} {% if contratos.isSorted('fechaDesiste') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th align="center">{{ knp_pagination_sortable(contratos, 'Confirma Termino', 'fechaTermino') }} {% if contratos.isSorted('fechaTermino') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th align="center">{{ knp_pagination_sortable(contratos, 'PDF Anexo', 'fechaPdfAnexo') }} {% if contratos.isSorted('fechaPdfAnexo') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                          
+                        {% if sesion.getSesion.usuarioTipo.id in [1,4,8,7] %}
+                        <th>Acciones</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                {% for contrato in contratos %}
+                    <tr>
+                        <td>{{contrato.agenda.cuenta.nombre}}</td>
+                        <td>{{ contrato.id }}</td>
+                        <td>{{ contrato.nombre }}</td>
+                        <!--<td>{{ contrato.agenda.agendador.nombre }}</td>
+                        <td>{{ contrato.agenda.abogado?contrato.agenda.abogado.nombre:'' }}</td>
+                        <td>{{ contrato.tramitador?contrato.tramitador.nombre:'' }}</td>
+                        <td>{{ contrato.sucursal?contrato.sucursal:''}}</td>-->
+                        <td>{{ contrato.fechaCreacion|date('d-m-Y H:i') }}</td>
+                        <td>{{ contrato.fechaDesiste ? contrato.fechaDesiste|date('d-m-Y H:i'): '' }}</td>
+                        <td>{{ contrato.fechaTermino ? contrato.fechaTermino|date('d-m-Y H:i'): '' }}</td>
+                        <td>{{ contrato.fechaPdfAnexo ? contrato.fechaPdfAnexo|date('d-m-Y H:i'): '' }}</td>
+                        
+                        {% if sesion.getSesion.usuarioTipo.id in [1,3,4,6,8,7,13] %}
+                        <td>
+                            {% if contrato.pdf is null %}
+                                <a href="#" class="btn btn-danger btn-sm"><i class="fas fa-ban"></i></a>
+                            {% else %}
+                                <a href="{{url_web}}{{pdf_contrato}}{{contrato.pdf}}" class="btn btn-success btn-sm"><i class="fas fa-file-pdf"></i></a>
+                            {% endif %}
+                                <a href="{{ path('terminos_show', {'id': contrato.id}) }}" class="btn btn-primary btn-sm"><i class="fas fa-eye"></i></a>
+                            
+                            {% for anexo in contrato.contratoAnexos %}
+                                {% if anexo.isDesiste and anexo.pdf is not null %}
+                                <a href="{{url_web}}{{pdf_contrato}}{{anexo.pdf}}" class="btn btn-success btn-sm"><i class="fas fa-file-pdf"></i></a>
+                       
+                                {% else %}
+                                <button onclick="javascript:generaPdf('{{ path('terminos_pdf', {'id': contrato.id}) }}')" class="btn btn-primary btn-sm btn-pdf"><i class="far fa-check-circle"></i></button>
+                                {% endif %}  
+                                
+                            {% else %}
+                                <button onclick="javascript:generaPdf('{{ path('terminos_pdf', {'id': contrato.id}) }}')" class="btn btn-primary btn-sm btn-pdf"><i class="far fa-check-circle"></i></button>
+                            {% endfor %}
+                            
+                        </td>
+                        {% endif %}
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="16">No hay contratos</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer">
+            <div class="card-footer clearfix">
+                {# display navigation #}
+           <div class="navigation">
+               {{ knp_pagination_render(contratos,'@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig',{},{
+               'position': 'centered',
+               'rounded': true,
+               }) }}
+           </div>
+       </div>
+            
+        </div>
+    </div>
+    <script>
+        $('#bFecha').daterangepicker({
+        
+            "drops": "down",
+            "startDate":"{{dateInicio}}",
+            "endDate": "{{dateFin}}",
+            "locale": {
+                "format": "YYYY-MM-DD",
+                "applyLabel": "Apply",
+                "cancelLabel": "Cancel",
+            }
+        }, function(start, end, label) {
+        console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+        
+        });
+        /*$(".btn-pdf").click(function(){
+            window.setTimeout(function(){window.location.reload();}, 5000);
+            
+        });*/
+        function generaPdf(pag){
+            $('button').attr("disabled", true);
+            window.location.href=pag;
+            window.setTimeout(function(){window.location.reload();},10000);
+            
+        }
+        $(".bFolio").change(function(){
+            $(".bFiltro").val('');
+        });
+        $(".bFiltro").change(function(){
+            $(".bFolio").val('');
+        });
+    </script>
+{% endblock %}

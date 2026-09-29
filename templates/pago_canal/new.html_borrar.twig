@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New PagoCanal{% endblock %}
+
+{% block body %}
+    <h1>Create new PagoCanal</h1>
+
+    {{ include('pago_canal/_form.html.twig') }}
+
+    <a href="{{ path('pago_canal_index') }}">back to list</a>
+{% endblock %}

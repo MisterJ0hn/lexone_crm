@@ -1,0 +1,176 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{pagina|default('')}}{% endblock %}
+
+{% block body %}
+<section>
+
+
+    
+    <div class="card">
+        <div class="card-header">
+            Filtro
+        </div>
+        <div class="card-body">
+            
+            <form action="{{path('reporte_desiste')}}" method="get" id="bForm">
+            <div class="row">
+                <div class="col-sm-12 col-md-3">
+                    <select name="bCompania" class="form-control">
+                        <option value="0">Todos</option>
+                        {% for compania in companias %}
+                            <option value="{{compania.id}}"
+                            {% if bCompania==compania.id %}
+                                selected
+                            {% endif %}
+                            >{{compania.nombre}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-sm-12 col-md-1">
+                    <input type="text" class="form-control bFolio" name="bFolio"  placeholder="Folio" value="{{bFolio}}">
+                </div>
+               
+                <div class="col-sm-12 col-md-2">
+                    <select name="bTipofecha" class="form-control" >
+                        
+                        <option value="2" {% if tipoFecha==2 %}
+                        selected
+                    {% endif %}>Fecha Contrato</option>
+                       
+
+                    </select>
+                </div>
+                <div class="col-sm-12 col-md-2">
+                    <input type="text" class="form-control" name="bFecha" id="bFecha"  value="">
+                </div>
+                <div class="col-sm-12 col-md-1">
+                    <button class="btn btn-primary"><i class="fas fa-search"></i></button>
+                </div>
+           
+
+            </div>
+            </form>
+        </div>  
+        
+    </div>
+</section>
+</form>
+<section>
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Listado</h3> 
+        </div>
+        <!-- /.card-header -->
+         {# display navigation #}
+           <div class="navigation">
+               {{ knp_pagination_render(reportes,'@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig',{},{
+               'position': 'centered',
+               'rounded': true,
+               }) }}
+           </div>
+        <div class="card-body table-responsive p-0" style="height: 400px;">
+        
+            <table class="table table-head-fixed text-nowrap table-striped table-sm">
+                <thead>
+                    <tr >
+                    
+                    <th scope="col" align="right">{{ knp_pagination_sortable(reportes, 'Compañia', 'cuenta.nombre') }} {% if reportes.isSorted('cuenta.nombre') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th scope="col" align="right">{{ knp_pagination_sortable(reportes, 'Folio', 'contrato.folio') }} {% if reportes.isSorted('contrato.folio') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th scope="col" >{{ knp_pagination_sortable(reportes, 'Cliente', 'contrato.cliente.nombre') }} {% if reportes.isSorted('contrato.cliente.nombre') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th scope="col" >{{ knp_pagination_sortable(reportes, 'Abogado', 'abogado.nombre') }} {% if reportes.isSorted('abogado.nombre') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th scope="col" >{{ knp_pagination_sortable(reportes, 'Tramitador', 'contrato.tramitador.nombre') }} {% if reportes.isSorted('contrato.tramitador.nombre') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th scope="col" >{{ knp_pagination_sortable(reportes, 'Estado', 'status.nombre') }} {% if reportes.isSorted('status.nombre') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th scope="col" >{{ knp_pagination_sortable(reportes, 'Fecha Contrato', 'contrato.fechaCreacion') }} {% if reportes.isSorted('contrato.fechaCreacion') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th scope="col" >{{ knp_pagination_sortable(reportes, 'Aviso Termino', 'contrato.fechaDesiste') }} {% if reportes.isSorted('contrato.fechaDesiste') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th scope="col" >{{ knp_pagination_sortable(reportes, 'Confirma Termino', 'contrato.fechaTermino') }} {% if reportes.isSorted('contrato.fechaTermino') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th scope="col" >PDF Anexo</th>
+                        <th scope="col" >Observación</th>   
+                    </tr>
+                </thead>
+                <tbody>
+                  
+                    {% for reporte in reportes %}
+
+                    <tr>
+                        <td>{{ reporte.cuenta }}</td>
+                        <td>{{ reporte.contrato.folio }}</td>
+                        <td align="left">{{ reporte.contrato.cliente}}</td>
+                        <td align="left">{{ reporte.abogado}}</td>
+                         <td align="left">{{ reporte.contrato.tramitador}}</td>
+                        <td align="left">{{ reporte.status}}</td>
+                        <td>{{ reporte.contrato.fechaCreacion?reporte.contrato.fechaCreacion|date('Y-m-d H:i'):''}}</td>
+                        <td>{{ reporte.contrato.fechaDesiste?reporte.contrato.fechaDesiste|date('Y-m-d  H:i'):''}}</td>
+                        <td>{{ reporte.contrato.fechaTermino?reporte.contrato.fechaTermino|date('Y-m-d  H:i'):''}}</td>
+                        
+                        <td>
+                            {{ reporte.contrato.fechaPdfAnexo ? reporte.contrato.fechaPdfAnexo|date('d-m-Y H:i'): '' }}
+                        </td>
+                        <td align="right">
+                        {% for observacion in reporte.agendaObservacions %}
+                            {% if observacion.status.id == 13 %}
+                            <span class="d-inline-block text-truncate" style="max-width: 150px;">
+                                {{ observacion.observacion }}
+                            </span>
+                            <button type="button" class="btn btn-sm btn-success" data-toggle="popover" title="Observación Completa" data-content="{{observacion.observacion|raw}}">Ver Más</button>
+                            {% endif %}
+                        {% endfor %}
+                        </td>
+                        
+                    </tr>
+                   
+                    
+                    {% else %}
+                    <tr>
+                        <td colspan="10">No hay registros</td>
+                    </tr>
+                    {% endfor %}
+                 </tbody>
+            </table>
+        </div>
+         {# display navigation #}
+           <div class="navigation">
+               {{ knp_pagination_render(reportes,'@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig',{},{
+               'position': 'centered',
+               'rounded': true,
+               }) }}
+           </div>
+    </div>
+</section>
+
+<script>
+    $('#bFecha').daterangepicker({
+        
+        "drops": "down",
+        "startDate":"{{dateInicio}}",
+        "endDate": "{{dateFin}}",
+        "locale": {
+            "format": "YYYY-MM-DD",
+            "applyLabel": "Apply",
+            "cancelLabel": "Cancel",
+        }
+    }, function(start, end, label) {
+    console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+    
+    });
+
+    $(function () {
+            $('[data-toggle="popover"]').popover()
+            $('.popover-dismiss').popover({
+                trigger: 'focus'
+              });
+            
+              $('[data-toggle="popover"]').popover({
+                  template: '<div class="popover" role="tooltip"><div class="arrow"><</div><h3 class="popover-header"></h3><div class="popover-body"></div></div>',
+              });
+        });
+
+        $(".bFolio").change(function(){
+            $(".bFiltro").val('');
+        });
+        $("#bFecha").change(function(){
+            $(".bFolio").val('');
+        });
+    
+</script>
+{% endblock %}

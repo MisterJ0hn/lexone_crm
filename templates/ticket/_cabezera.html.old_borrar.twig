@@ -1,0 +1,26 @@
+ <div class="row">
+            <div class="col-sm-6 col-md-6">
+            <small class="text-muted">Nombre Cliente</small><br>
+                {{ticket.contrato.nombre}}
+            </div>
+            <div class="col-sm-6 col-md-3">
+            <small class="text-muted">Rut Cliente</small><br>
+                {{ticket.contrato.rut}}
+            </div>
+            <div class="col-sm-6 col-md-3">
+            <small class="text-muted">Teléfono Cliente</small><br>
+                {{ticket.contrato.telefono}}
+            </div>
+            <div class="col-sm-6 col-md-3">
+            <small class="text-muted">Teléfono recado Cliente</small><br>
+                {{ticket.contrato.telefonoRecado}}
+            </div>
+            <div class="col-sm-6 col-md-6">
+            <small class="text-muted">Correo Cliente</small><br>
+                {{ticket.contrato.email}}
+            </div>
+            <div class="col-sm-6 col-md-3">
+            <small class="text-muted">Fecha Contrato</small><br>
+                {{ticket.contrato.fechaCreacion|date('Y-m-d H:i')}}
+            </div>
+        </div>

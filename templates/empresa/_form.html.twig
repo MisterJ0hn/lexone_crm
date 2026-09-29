@@ -1,0 +1,60 @@
+
+        {{ form_start(form) }}
+            <div class="row">
+                <div class="col-sm-12 col-md-4">
+                    <small class="text_mute">Nombre</small>
+                   
+                    {{ form_row(form.nombre,{'label':false,'attr':{'class':'form-control'}})}}
+                    
+                </div>
+                <div class="col-sm-6 col-md-4">
+                    <small class="text_mute">Rut</small>
+                   
+                    {{ form_row(form.rut,{'label':false,'attr':{'class':'form-control'}})}}
+                    
+                </div>
+                <div class="col-sm-6 col-md-4">
+                    <small class="text_mute">Rol</small>
+                   
+                    {{ form_row(form.rol,{'label':false,'attr':{'class':'form-control'}})}}
+                    
+                </div>
+                
+                <div class="col-sm-6 col-md-4">
+                    <small class="text_mute">Logo</small>
+                   
+                    {{ form_row(form.logo,{'label':false,'attr':{'class':'form-control'}})}}
+                    
+                </div>
+                <div class="col-sm-6 col-md-4">
+                    <small class="text_mute">Fecha vigencia</small>
+                   
+                    {{ form_row(form.fechaVigencia,{'label':false,'attr':{'class':'form-control datetimepicker-input'}})}}
+                    
+                </div>
+                <div class="col-sm-6 col-md-4">
+                    <small class="text_mute"> - </small>
+                    
+               
+         
+                </div>
+            </div>
+            <button class="btn btn-primary">{{ button_label|default('Guardar') }}</button>
+
+            <script>
+               $('.datetimepicker-input').daterangepicker({
+                    "singleDatePicker": true,
+                    "locale": {
+                        "format": "YYYY-MM-DD",
+                    
+                        "applyLabel": "Apply",
+                        "cancelLabel": "Cancel",
+                    }
+                }, function(start, end, label) {
+                console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+                
+                });
+        
+            </script>
+        {{ form_end(form) }}
+   

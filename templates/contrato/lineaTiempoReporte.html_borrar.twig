@@ -1,0 +1,215 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contrato{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+        <div class="card">
+            <div class="card-body table-responsive pad">
+                <h1>Folio: {{contrato.folio}}</h1>
+                <h4>Datos Cliente</h4>
+                <div class="row">
+                    <div class="col-sm-12 col-md-4">
+                        <small class="text-muted">Compañia</small>
+                        <p>{{contrato.agenda.cuenta}}</p>
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                        <small class="text-muted">Sucursal</small>
+                        <p>{{contrato.sucursal.nombre}}</p>   
+                        
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                        <small class="text-muted">Clave Unica</small>
+                        <div class="input-group">
+                            <input type="password" name="txtClaveUnica" id="txtClaveUnica" value="{{contrato.claveUnica}}">  
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-primary btn-ver" ><i class="fa fa-eye"></i></button>
+                                <button type="button" class="btn btn-danger btn-ocultar" ><i class="fa fa-eye-slash"></i></button>
+                                <button type="button" class="btn btn-success btn-modificar" ><i class="fas fa-edit"></i></button>
+                                <button type="button" class="btn btn-secondary btn-OK"><i class="fas fa-check"></i></button>
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                        <small class="text-muted">Abogado</small><br>
+                        <p>{{contrato.agenda.abogado.nombre}}</p>                    
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                        <small class="text-muted">Tramitador</small><br>
+                        <p>{{contrato.tramitador ? contrato.tramitador.nombre:''}}</p>                    
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                        <small class="text-muted">Fecha Contrato</small><br>
+                        <p>{{contrato.fechaCreacion|date('Y-m-d')}}</p>                    
+                    </div>
+                    
+                    <div class="col-sm-12 col-md-4">
+                        <small class="text-muted">Nombre</small><br>
+                        <p>{{contrato.nombre}}</p>                    
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                        <small class="text-muted">Rut</small><br>
+                        <p>{{contrato.rut}}</p>    
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                        <small class="text-muted">Teléfono</small><br>
+                        <p>{{contrato.telefono}}</p>   
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                        <small class="text-muted">Teléfono Recado</small><br>
+                    
+                        <p>{{contrato.telefonoRecado}}</p>   
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                        <small class="text-muted">Email</small><br>
+                        <p>{{contrato.email}}</p>   
+                    </div>
+
+                    <div class="col-sm-12 col-md-3">
+                        <small class="text-muted">Dirección</small><br>
+                        
+                        <p>{{contrato.direccion}}</p>   
+                    </div>
+                </div>
+            </div>     
+
+        </div>
+
+        
+        <div class="card">
+            <div class="card-header">
+                <a class="btn btn-primary btn-agregar-reporte"><i class="fa fa-plus bg-blue"></i></a>
+                <a class="btn btn-danger btn-ocultar-reporte"><i class="fa fa-minus bg-red"></i></a>
+                <h3>Reportes</h3>
+                <div class="agregar-reporte">
+                    <form method="post" enctype="multipart/form-data" class="frm-archivo-reporte" action="{{path('contrato_linea_tiempo_reporte_subir_archivo',{'id':causa.id})}}">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-6">
+                                <select name="reporte" class="form-control reporte-nombre">
+                                    <option value="">-- Seleccione Reporte --</option>
+                                    {% for reporte in reportes %}
+                                        <option value="{{reporte.id}}">{{reporte.nombre}}</option>
+                                    {% endfor %}  
+                                </select>              
+                            </div>
+                            <div class="col-sm-12 col-md-6">              
+                                <input type="file" id="archivoReporte" class="archivo-reporte-input" name="archivoReporte" required accept=".pdf" style="display: none;" >
+                                <label for="archivoReporte" class="btn btn-primary">                              
+                                        <i class="fas fa-file"></i> 
+                                    </label>
+                                <button class="btn btn-primary btn-subir-reporte mb-2" type="button">Subir reporte</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                
+                    {% for archivo in archivosReporte %}
+                       
+                <div class="card">
+                    <div class="card-header p-0 bg-light">
+                        <small class="text-muted">{{archivo.fechaYHoraCarga|date('Y-m-d H:i')}}</small> - <strong><small>{{archivo.usuarioCreacion.nombre}}</small></strong>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-0">
+                            <small>
+                            {{archivo.estrategiaJuridicaReporte.nombre}}
+                            </small>
+                        </p>
+                        <div class="mt-2">
+                            <small><a href="{{url_web}}{{causa_reportes}}{{archivo.archivo}}" target="_blank"><i class="bi bi-arrow-bar-down"></i>{{archivo.nombre}}</a></small>
+                        </div>
+                    </div>
+                </div>
+                    {% endfor %}
+                                        
+
+            </div>
+        </div>
+    </div>
+</div>
+
+ 
+<script>
+$('.btn-ocultar').hide();
+    $('.btn-modificar').hide();
+     $('.btn-OK').hide();
+$('.btn-ocultar-reporte').hide();
+    $('.agregar-reporte').hide();
+    $('.btn-agregar-reporte').on('click',function(){
+        $('.agregar-reporte').show();
+        $('.btn-agregar-reporte').hide();
+        $('.btn-ocultar-reporte').show();
+    });
+    $('.btn-ocultar-reporte').on('click',function(){
+        $('.agregar-reporte').hide();
+        $('.btn-agregar-reporte').show();
+        $('.btn-ocultar-reporte').hide();
+    });
+    $('.btn-ver').on('click', function () {
+        $("#txtClaveUnica").attr('type', 'text'); 
+        $(this).hide();
+        $('.btn-ocultar').show();
+    });
+    $('.btn-ocultar').on('click', function () {
+        $("#txtClaveUnica").attr('type', 'password'); 
+        $(this).hide();
+        $('.btn-ver').show();
+    });
+    $("#txtClaveUnica").on('change',function(){
+        $('.btn-modificar').show();
+        $('.btn-OK').hide();
+    })
+    $('.btn-modificar').on('click',function(){
+        $.ajax({
+            url:"{{path('contrato_mod_clave_unica',{'id':contrato.id})}}",
+            type: "get",
+            data:"txtClaveUnica="+encodeURIComponent($('#txtClaveUnica').val()),
+            dataType: "html",
+            cache: false,
+            contentType: false,
+            processData: false,
+            async: true,
+            beforeSend: function(){
+                
+            },
+            success:function(data){
+                $('.btn-OK').show();
+                $('.btn-modificar').hide();
+                $('.btn-OK').hide(3000);
+            }
+
+        });
+    });
+
+    $(".btn-subir-reporte").on("click",function(){
+        if(confirm("Confirma que quiereguardar esta observación?")==true){
+            let fileInput = $(".archivo-reporte-input")[0];
+            if (fileInput.files.length <= 0) {
+                alert("Debe seleccionar un archivo para subir.");
+                return;
+            }
+            
+            if($(".reporte-nombre").val()==''){
+                alert("Debe seleccionar un reporte.");
+                return;
+            }
+            $(".frm-archivo-reporte").submit();
+        }
+    });
+$('.archivo-reporte-input').on('change', function() {
+    var archivo = this.files[0];
+    var extensionesPermitidas = /(\.pdf)$/i;
+    
+    if(!extensionesPermitidas.exec(archivo.name)){
+        alert('Por favor, sube un archivo con extensión permitida: PDF');
+        this.value = '';
+        return false;
+    }
+});
+</script>
+{% endblock %}

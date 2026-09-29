@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Encuestas{% endblock %}
+
+{% block body %}
+<div class="card">
+{{ include('encuesta/_cabecera.html.twig') }}
+</div>
+
+{{ form_start(form) }}
+    <div class="row">
+        <div class="col-sm-12  col-md-8">
+
+            <div class="card">
+                <div class="card-header">
+                    <h1>Folio: {{contrato.folio}}</h1>
+                </div>
+                <div class="card-body table-responsive pad">
+                
+            
+                    <div class="row">
+                        <div class="col-sm-12 col-md-3">
+                            <small class="text-muted">Fecha Gestión (*)</small><br>
+                            <p>{{encuesta.fechaCreacion|date("Y-m-d H:i")}}</p>
+                            
+                        </div>
+                        <div class="col-sm-12 col-md-3">
+                            <small class="text-muted">Función Gestión (*)</small>
+                            {{form_row(form.funcionEncuesta,{'label':false,'attr':{'class':'form-control cbo-funcion'}})}}
+                                    
+                                    
+                        </div>
+                        <div class="col-sm-12 col-md-3">
+                            <small class="text-muted">Respuesta (*)</small>
+                            <select name="cboRespuesta" class="form-control cbo-respuesta" required>
+
+                            </select>
+                        </div>
+                        
+                        <div class="col-sm-12 col-md-12 col-observacion">
+                            <small class="text-muted">Observación</small>
+                            {{form_row(form.observacion,{'label':false,'attr':{'class':'form-control txt-observacion'}})}}
+                            
+                        </div>
+                    </div> 
+                </div>
+                <div class="card-footer">
+                    
+                    <button class="btn btn-primary" type="submit">{{ button_label|default('Guardar') }}</button>
+               
+                </div>
+            </div>
+            
+        </div>
+        <div class="col-sm-12  col-md-4">
+            
+            
+        </div>
+    </div>   
+    {{ form_end(form) }}
+
+<script>
+
+   
+    $(".cbo-funcion").on('change',function(){
+        
+
+        $.ajax({
+            method: "POST",
+            url: "/encuesta/"+$(this).val()+"/"+{{tieneEncuestas}}+"/respuestas",
+            
+          })
+            .done(function( msg ) {
+              
+               $(".cbo-respuesta").html(msg)
+              
+            });
+    })
+
+    $(".cbo-respuesta").on("change",function(){
+        if($(this).val()==1){
+            $('.txt-observacion').val(".");
+            $('.col-observacion').hide();
+        }else{
+            $('.col-observacion').show();
+        }
+    })
+</script>
+
+
+
+{% endblock %}

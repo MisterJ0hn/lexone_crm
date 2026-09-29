@@ -1,0 +1,123 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Pagos{% endblock %}
+
+{% block body %}
+     <form action="" method="get" class="frmBuscar">
+        {{ include('filtro.html.twig') }}
+    </form>
+    
+
+    
+    <div class="card">
+        <div class="card-body table-responsive p-0" style="height: 500px;">
+        
+            <table class="table table-head-fixed text-nowrap table-striped table-sm">
+                <thead>
+                    <tr>
+  
+                        <th>{{ knp_pagination_sortable(cuotas, 'Cliente', 'contrato.cliente.nombre') }} {% if cuotas.isSorted('contrato.cliente.nombre') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th style="text-align:center">{{ knp_pagination_sortable(cuotas, 'Rut', 'contrato.rut') }} {% if cuotas.isSorted('contrato.rut') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th style="text-align:center">{{ knp_pagination_sortable(cuotas, 'Fecha Contrato', 'contrato.fechaCreacion') }} {% if cuotas.isSorted('contrato.fechaCreacion') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <!--<th>{{ knp_pagination_sortable(cuotas, 'Vencimiento', 'fechaPago') }} {% if cuotas.isSorted('fechaPago') %} <i class="fas fa-sort"></i>{% endif %}</th>-->
+                        <th style="text-align:center">Último Pago</th>
+                        {% if finalizado is null or not finalizado %}
+                            
+                        <th><i class="fas fa-traffic-light"></i></th>
+                        
+                        
+                        {% endif %}
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for cuota in cuotas %}
+              
+                {% set contrato = cuota.contrato %}
+                    <tr>
+
+                        <td >{{ contrato.cliente.nombre }}</td>
+                        <td align="center">{{ contrato.cliente.rut }}</td>
+                        <td align="center">{{ contrato.fechaCreacion|date('d-m-Y H:i') }}</td>
+                        <!--<td >{{ cuota.fechaPago|date('d-m-Y') }}</td>-->
+                        <td align="center">{{ ultimoPago(contrato.id) ? ultimoPago(contrato.id) |date('d-m-Y H:i') : '' }}
+                            
+                        </td>
+                        
+                        {% if finalizado is null or not finalizado %}
+                        <td>
+                           {{semaforo(cuota.fechaPago|date('Y-m-d'), (cuota.monto-cuota.pagado))|raw}}
+                        </td>
+                        <td>
+
+
+                                <a href="{{ path('verpagos_index', {'id': contrato.id}) }}" class="btn btn-primary btn-sm"><i class="far fa-plus-square"></i></a>
+                                <a href="{{ path('verpagos_view', {'id': contrato.id}) }}" class="btn btn-success btn-sm"><i class="fas fa-eye"></i></a>
+                        </td>
+                        {% else %}
+                        <td>
+                            <a href="{{ path('verpagos_index', {'id': contrato.id}) }}" class="btn btn-primary btn-sm"><i class="far fa-plus-square"></i></a>
+                            
+                            <a href="{{ path('verpagos_view', {'id': contrato.id}) }}" class="btn btn-success btn-sm"><i class="fas fa-eye"></i></a>
+                             <a href="{{url_web}}{{pdf_contrato}}{{contrato.pdf}}" class="btn btn-success btn-sm"><i class="fas fa-file-pdf"></i></a>
+                            
+                        </td>
+                        {% endif %}
+                        
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="16">No hay contratos</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer">
+            <div class="card-footer clearfix">
+                {# display navigation #}
+           <div class="navigation">
+               {{ knp_pagination_render(cuotas,'@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig',{},{
+               'position': 'centered',
+               'rounded': true,
+               }) }}
+           </div>
+       </div>
+            
+        </div>
+    </div>
+    <script>
+        $('#bFecha').daterangepicker({
+        
+            "drops": "down",
+            "startDate":"{{sesion.getEmpresaActual.fechaIngreso|date('Y-m-d')}}",
+            "endDate": "{{dateFin}}",
+            "locale": {
+                "format": "YYYY-MM-DD",
+                "applyLabel": "Apply",
+                "cancelLabel": "Cancel",
+            }
+        }, function(start, end, label) {
+        console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+        
+        });
+        $(".bFolio").change(function(){
+            $(".bFiltro").val('');
+        });
+        $(".bFiltro").change(function(){
+            $(".bFolio").val('');
+        });
+
+        $(".exportarxslx").on('click',function(){
+            $(".frmBuscar").attr('action',"{{path('pagos_excel')}}");
+            $(".frmBuscar").submit();
+
+            $("button").prop('disabled',false);
+        });
+
+        $(".buscar").on('click',function(){
+            $(".frmBuscar").attr('action',"#");
+            $(".frmBuscar").submit();
+        });
+    </script>
+{% endblock %}

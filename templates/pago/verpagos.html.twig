@@ -1,0 +1,118 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Pago{% endblock %}
+
+{% block body %}
+ {{ include('cabezera.html.twig') }}
+<div class="card">
+   
+    <div class="card-body table-responsive p-0" >
+            
+        <table class="table table-head-fixed text-nowrap table-striped table-sm">
+            <thead>
+                <tr>
+                    <!--<th>TipoDocto
+                    </th>-->
+                    <th  align="center">MontoPagado</th>
+                    <th align="center">FechaComprobante</th>
+                    <th align="center">FechaIngreso</th>
+                    <th  align="center">N°Comprobante</th>
+                    <th align="center">N°Boleta</th>
+                    <th align="center">TipoDepósito</th>
+                    <!--<th align="center">Cta. Cte.</th>
+                    <th align="center">Canal</th>-->
+                    <th align="center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for pago in pagos %}
+            {% set isMulta = false %}
+            {% for pagoCuota in pago.pagoCuotas %}
+                {% if pagoCuota.cuota.isMulta %}
+                    {% set isMulta = true %}  
+                {% endif %}
+            {% endfor %}
+            <tr>
+                   <!-- <td>
+                        {% for pagoCuota in pago.pagoCuotas %}
+                            {% if loop.last %}
+                                {% if pagoCuota.cuota.anexo is null %}
+                                    C0
+                                {% else %}
+                                    A{{ pagoCuota.cuota.anexo.folio }}
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    </td>-->
+                    <td >${{pago.monto|number_format(0,',','.')}}</td>
+                    <td >{{pago.fechaPago?pago.fechaPago|date('Y-m-d'):''}} {{pago.horaPago?pago.horaPago|date('H:i'):''}}</td>
+                    <td >{{pago.fechaRegistro|date('Y-m-d H:i')}}</td>
+                    <td >{{pago.ncomprobante}}</td>
+                    <td >{{pago.boleta}}</td>
+                    <td>{{pago.pagotipo.nombre}}</td>
+                    <!--<td>{{pago.cuentaCorriente?pago.cuentaCorriente.nombre:''}}</td>
+                    <td>{{pago.pagoCanal?pago.pagoCanal.nombre:''}}</td>-->
+                    <td>
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                            {% if isMulta %}
+                            <a href="{{path('pago_show',{'id':pago.id})}}" class="btn btn-success"><i class="fas fa-eye"></i></a>
+                            <a href="{{url_web}}{{img_pagos}}{{pago.comprobante}}" class="btn btn-primary"><i class="far fa-file-image"></i></a>
+                            {% if loop.last %}
+                                {% if contrato.isFinalizado is null or not contrato.isFinalizado %}
+                                    <a href="{{ path('pago_edit', {'id': pago.id}) }}" class="btn btn-warning"><i class="fas fa-edit"></i></a>
+                                    <form method="post" action="{{ path('pago_delete', {'id': pago.id}) }}" onsubmit="return confirm('Estas seguro de eliminar este comprobante?');">
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ pago.id) }}">
+                                        <button class="btn btn-danger"><i class="fas fa-trash"></i></button>
+                                    </form>
+                                {% endif %}
+                            {% endif %}
+                            {% else %}
+                                <a href="{{path('pago_show',{'id':pago.id})}}" class="btn btn-success"><i class="fas fa-eye"></i></a>
+                                <a href="{{url_web}}{{img_pagos}}{{pago.comprobante}}" class="btn btn-primary"><i class="far fa-file-image"></i></a>
+                                {% if loop.last %}
+                                    {% if contrato.isFinalizado is null or not contrato.isFinalizado %}
+                                        <a href="{{ path('pago_edit', {'id': pago.id}) }}" class="btn btn-warning"><i class="fas fa-edit"></i></a>
+                                        <form method="post" action="{{ path('pago_delete', {'id': pago.id}) }}" onsubmit="return confirm('Estas seguro de eliminar este comprobante?');">
+                                            <input type="hidden" name="_method" value="DELETE">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ pago.id) }}">
+                                            <button class="btn btn-danger"><i class="fas fa-trash"></i></button>
+                                        </form>
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
+                            
+                        </div>
+                    </td>
+                </tr>
+
+            {% endfor %}
+
+           
+            {% if cuotas_multa is not null %}
+            <tr class="table-danger">
+                <td align="right">${{cuotas_multa.monto|number_format(0,',','.')}}</td>
+                <td align="center"></td>
+                <td align="center">{{cuotas_multa.fechaPago|date('Y-m-d H:i')}}</td>
+                <td align="right"></td>
+                <td align="right"></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>
+                    <a href="{{path('multa_new',{'id':cuotas_multa.id})}}" class="btn btn-success" alt="Pagar Multa"><i class="fas fa-dollar-sign"></i></a>
+                    <a href="{{path('multa_edit',{'id':cuotas_multa.id})}}" class="btn btn-success" alt="Editar Multa"><i class="fas fa-edit"></i></a>
+                </td>
+            </tr>
+            {% endif %}
+        </tbody>
+        </table>
+        </div>
+        <div class="card-footer">
+            {% if not contrato.isFinalizado and cuotas_multa is null %}
+                <a href="{{path('pago_new',{'id':contrato.id})}}" class="btn btn-primary" >Agregar pago</a>
+            {% endif %}
+        </div>
+    </div>
+    
+{% endblock %}

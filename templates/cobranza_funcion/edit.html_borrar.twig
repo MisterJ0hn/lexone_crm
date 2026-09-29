@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit CobranzaFuncion{% endblock %}
+
+{% block body %}
+    <h1>Edit CobranzaFuncion</h1>
+
+    {{ include('cobranza_funcion/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('cobranza_funcion_index') }}">back to list</a>
+
+    {{ include('cobranza_funcion/_delete_form.html.twig') }}
+{% endblock %}

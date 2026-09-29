@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Sucursal{% endblock %}
+
+{% block body %}
+<div class="card">
+
+    <div class="card-body">
+    {{ include('sucursal/_form.html.twig') }}
+    </div>
+    </div>
+
+    <a href="{{ path('sucursal_index',{'id':cuentum.id}) }}">volver</a>
+{% endblock %}

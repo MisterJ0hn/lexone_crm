@@ -1,0 +1,147 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contrato index{% endblock %}
+
+{% block body %}
+<div class="card">
+{{ include('encuesta/_cabecera.html.twig') }}
+</div>
+<form action="{{path('encuesta_new',{'id':contrato.id})}}" name="frmEncuesta" method="post">
+    <div class="card">
+        
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6 p-3">
+                    <p>En una escala de 1 a 7 ¿que nota le pondria a nuestro ESTUDIO JURIDICO?... siendo 1 la mas baja y 7 la mas alta (*)</p>
+                </div>
+                <div class="col-1 p-3">
+                </div>
+                <div class="col-3 p-3">
+                    <select name="cboSelector1" class="form-control" required>
+                        <option ></option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                    </select>
+                </div>
+                <div class="col-2 p-3">
+                </div>
+
+                <div class="col-12 ">
+                </div>
+
+                <div class="col-6 p-3">
+                    <p>¿Cuando fue la ultima vez que hablo con su ABOGADO DE TRAMITACION? (*)</p>
+                </div>
+                <div class="col-1 p-3">
+                </div>
+                <div class="col-3 p-3">
+                    <select name="cboSelector2" class="form-control" required>
+                        <option ></option>
+                        <option value="No Recuerdo">No Recuerdo</option>
+                        <option value="Hace 1 dia">Hace 1 dia</option>
+                        <option value="Hace una semana">Hace una semana</option>
+                        <option value="Hace mas de un mes">Hace mas de un mes</option>
+                        <option value="Nunca">Nunca</option>
+                    </select>
+                </div>
+                <div class="col-2 p-3">
+                </div>
+
+                <div class="col-12 ">
+                </div>
+
+                <div class="col-6 p-3">
+                    <p>¿Ha tenido algun problema con el ABOGADO DE TRAMITACIÓN? (*)</p>
+                </div>
+                <div class="col-1 p-3">
+                </div>
+                <div class="col-3 p-3">
+                    <textarea name="txtPregunta1" class="form-control" required></textarea>
+                </div>
+                <div class="col-2 p-3">
+                </div>
+
+                <div class="col-12 ">
+                </div>
+
+                <div class="col-6 p-3">
+                    <p>¿Tiene alguna sugerencia para que podamos mejorar nuestro servicio legal? (*)</p>
+                </div>
+                <div class="col-1 p-3">
+                </div>
+                <div class="col-3 p-3">
+                    <textarea name="txtPregunta2" class="form-control" required></textarea>
+                </div>
+                <div class="col-2 p-3">
+                </div>
+
+                <div class="col-12 ">
+                </div>
+
+                <div class="col-6 p-3">
+                    <p>¿Cuándo fue la ultima vez que hablo con alguna opreadora de NORMALIZACIÓN? *</p>
+                </div>
+                <div class="col-1 p-3">
+                </div>
+                <div class="col-3 p-3">
+                     <select name="cboSelector3" class="form-control" required>
+                        <option ></option>
+                        <option value="No Recuerdo">No Recuerdo</option>
+                        <option value="Hace 1 dia">Hace 1 dia</option>
+                        <option value="Hace una semana">Hace una semana</option>
+                        <option value="Hace mas de un mes">Hace mas de un mes</option>
+                        <option value="Nunca">Nunca</option>
+                    </select>
+                </div>
+                <div class="col-2 p-3">
+                </div>
+                <div class="col-12 ">
+                </div>
+
+                <div class="col-6 p-3">
+                    <p>¿Conforme? (*)</p>
+                </div>
+                <div class="col-1 p-3">
+                </div>
+                <div class="col-3 p-3">
+                     <select name="cboSelector4" class="form-control" required>
+                        <option ></option>
+                        <option value="SI">SI</option>
+                        <option value="NO">NO</option>                        
+                    </select>
+                </div>
+                <div class="col-2 p-3">
+                </div>
+            </div>
+            <div class="col-12 ">
+            </div>
+            <div class="col-12 p-3">
+                <label >Observación (*)</label>
+                 <textarea name="txtObservacion" class="form-control" required ></textarea>
+            </div>
+        </div>
+        <div class="card-footer">
+            <button type="submit" class="submit" style="visibility:hidden"></button>
+            <input type="hidden" name="hdEstado" class="hdEstado" value="1">
+            <button class="btn btn-primary btnCerrarEncuesta" type="button" >Cerrado</button> <button class="btn btn-secondary btnGuardarBorrador" type="button" >Pendiente</button> <a href="{{path('encuesta_index')}}" class="btn btn-danger" >Cancelar</a>
+        </div>
+    </div>
+</form>
+<script>
+
+    $(".btnCerrarEncuesta").click(function(){
+         $(".hdEstado").val(2);
+        $(".submit").trigger('click');
+    });
+
+    $(".btnGuardarBorrador").click(function(){
+        $(".hdEstado").val(1);
+        $(".submit").trigger('click');
+    });
+</script>
+{% endblock %}

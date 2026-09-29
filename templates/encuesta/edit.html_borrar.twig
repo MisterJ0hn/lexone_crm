@@ -1,0 +1,123 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contrato index{% endblock %}
+
+{% block body %}
+<div class="card">
+{{ include('encuesta/_cabecera.html.twig') }}
+</div>
+<form action="{{path('encuesta_edit',{'id':contrato.id})}}" name="frmEncuesta" method="post">
+    <div class="card">
+       
+        <div class="card-body">
+            <div class="row">
+            <input type="hidden" name="hdEncuesta" value="{{encuesta.id}}">
+            {% for pregunta in encuesta.encuestaPreguntas %}
+                <input type="hidden" name="hdIdPregunta[]" value="{{pregunta.id}}">
+                <div class="col-6 p-3">
+                    <p>{{pregunta.pregunta}} (*)</p>
+                </div>
+                <div class="col-1 p-3">
+                </div>
+                {% if pregunta.tipoPregunta == 1 %}
+                    <input type="hidden" name="hdTipoSelector[]" value="1">
+                    <div class="col-3 p-3">
+                    <select name="valor[]" class="form-control" required>
+                        <option ></option>
+                        <option value="1" {% if pregunta.nota == 1 %}
+                            selected
+                        {% endif %}>1</option>
+                        <option value="2" {% if pregunta.nota == 2 %}
+                            selected
+                        {% endif %}>2</option>
+                        <option value="3" {% if pregunta.nota == 3 %}
+                            selected
+                        {% endif %}>3</option>
+                        <option value="4" {% if pregunta.nota == 4 %}
+                            selected
+                        {% endif %}>4</option>
+                        <option value="5" {% if pregunta.nota == 5 %}
+                            selected
+                        {% endif %}>5</option>
+                        <option value="6" {% if pregunta.nota == 6 %}
+                            selected
+                        {% endif %}>6</option>
+                        <option value="7" {% if pregunta.nota == 7 %}
+                            selected
+                        {% endif %}>7</option>
+                    </select>
+                </div>
+                {% endif %}
+                {% if pregunta.tipoPregunta == 2 %}
+                  <input type="hidden" name="hdTipoSelector[]" value="2">
+                <div class="col-3 p-3">
+                     <select name="valor[]" class="form-control" required>
+                        <option ></option>
+                        <option value="No Recuerdo" {% if pregunta.nota == "No Recuerdo" %}
+                            selected
+                        {% endif %}>No Recuerdo</option>
+                        <option value="Hace 1 dia" {% if pregunta.nota == "Hace 1 dia" %}
+                            selected
+                        {% endif %}>Hace 1 dia</option>
+                        <option value="Hace una semana" {% if pregunta.nota == "Hace una semana" %}
+                            selected
+                        {% endif %}>Hace una semana</option>
+                        <option value="Hace mas de un mes" {% if pregunta.nota == "Hace mas de un mes" %}
+                            selected
+                        {% endif %}>Hace mas de un mes</option>
+                        <option value="Nunca" {% if pregunta.nota == "Nunca" %}
+                            selected
+                        {% endif %}>Nunca</option>
+                    </select>
+                </div>
+                {% endif %}
+                {% if pregunta.tipoPregunta == 4 %}
+                <input type="hidden" name="hdTipoSelector[]" value="4">
+                <div class="col-3 p-3">
+                     <select name="valor[]" class="form-control" required>
+                        <option ></option>
+                        <option value="SI" {% if pregunta.nota == "SI" %}
+                            selected
+                        {% endif %}>SI</option>
+                        <option value="NO" {% if pregunta.nota == "NO" %}
+                            selected
+                        {% endif %}>NO</option>
+                    </select>
+                </div>
+                {% endif %}
+                {% if pregunta.tipoPregunta == 3 %}
+                 <input type="hidden" name="hdTipoSelector[]" value="3">
+                <div class="col-3 p-3">
+                    <textarea name="valor[]" class="form-control" required>{{pregunta.respuestaAbierta}}</textarea>
+                </div>
+                {% endif %}
+                
+            {% endfor %}
+                
+            <div class="col-12 ">
+            </div>
+            <div class="col-12 p-3">
+                <label >Observación *</label>
+                 <textarea name="txtObservacion" class="form-control" required >{{encuesta.observacion}}</textarea>
+            </div>
+        </div>
+        <div class="card-footer">
+        <button type="submit" class="submit" style="visibility:hidden"></button>
+            <input type="hidden" name="hdEstado" class="hdEstado" value="1">
+            <button type="button" class="btn btn-primary btnCerrarEncuesta" >Cerrado</button> <button type="button" class="btn btn-secondary btnGuardarBorrador" >Pendiente</button> <a href="{{path('encuesta_index')}}" class="btn btn-danger" >Cancelar</a>
+        </div>
+    </div>
+</form>
+<script>
+    $(".btnCerrarEncuesta").click(function(){
+         $(".hdEstado").val(2);
+        $(".submit").trigger('click');
+    });
+
+    $(".btnGuardarBorrador").click(function(){
+        $(".hdEstado").val(1);
+        $(".submit").trigger('click');
+    });
+        
+</script>
+{% endblock %}

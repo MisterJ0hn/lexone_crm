@@ -1,0 +1,9 @@
+
+<option  selected value=''>Seleccione Usuario</option>
+{% for usuario in usuarios %}
+<option value="{{ usuario.id }}"
+{% if usuario_id == usuario.id %}
+    selected
+{% endif %}
+>{{ usuario.nombre }}</option>
+{% endfor %}

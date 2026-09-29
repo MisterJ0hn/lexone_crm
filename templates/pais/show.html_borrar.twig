@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Pais{% endblock %}
+
+{% block body %}
+    <h1>Pais</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ pai.id }}</td>
+            </tr>
+            <tr>
+                <th>Nombre</th>
+                <td>{{ pai.nombre }}</td>
+            </tr>
+            <tr>
+                <th>Orden</th>
+                <td>{{ pai.orden }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('pais_index') }}">back to list</a>
+
+    <a href="{{ path('pais_edit', {'id': pai.id}) }}">edit</a>
+
+    {{ include('pais/_delete_form.html.twig') }}
+{% endblock %}

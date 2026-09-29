@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Materia{% endblock %}
+
+{% block body %}
+    <div class="card">
+        <div class="card-header">
+            Crear Materia
+        </div>
+        <div class="card-body">
+
+
+            {{ include('materia/_form.html.twig') }}
+        </div>
+    </div>
+
+    
+{% endblock %}

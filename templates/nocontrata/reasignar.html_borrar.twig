@@ -1,0 +1,79 @@
+<div class="row">
+                    
+    <div class="col-sm-12 col-md-9">
+        <small class="text-muted">Observación</small>
+        <textarea name="txtObservacion" cols="10" rows="3" class="form-control"></textarea>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-9 col-md-4">
+        <small class="text-muted">Compañia</small>
+        <select name="cboCuenta" class="form-control" onchange="javascript:agendadores(this.value)" required disabled>
+            <option value=""></option>
+
+            {% for cuenta in cuentas %}
+                <option value="{{cuenta.id}}"
+                {% if cuenta.id == agenda.cuenta.id %}
+                selected
+                {% endif %}
+                >{{cuenta.nombre}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-sm-6 col-md-5" id="agendadores">
+
+
+    </div>
+    
+</div>
+<div class="col-sm-12 col-md-12">
+    <button class="btn btn-primary">Aceptar</button>
+</div>
+
+<script>
+    function agendadores(id){
+        
+            
+       
+        if(id>0){
+            $.ajax({
+                url:"/agenda/"+id+"/agendadores",
+                type: "post",
+                dataType: "html",
+                cache: false,
+                contentType: false,
+                processData: false,
+                async: true,
+                beforeSend: function(){
+                    $("#agendadores").html(' <div class="overlay"><i class="fas fa-3x fa-sync-alt fa-spin"></i></div>');
+                    
+                },
+                success:function(data){
+                    $("#agendadores").html(data);
+                }
+        
+            });
+        }else{
+            $("#agendadores").html('');
+        }
+    
+    }
+    $(document).ready(function(){
+        console.log("paso");
+         $.ajax({
+             url:"/agenda/{{agenda.cuenta.id}}/agendadores",
+             type: "get",
+             data: "agendador={{agenda.agendador.id}}",
+             dataType: "html",
+             cache: false,
+             contentType: false,
+             processData: false,
+             async: true,
+             success:function(data){
+                 $("#agendadores").html(data);
+             }
+     
+         });
+         
+    });
+</script>

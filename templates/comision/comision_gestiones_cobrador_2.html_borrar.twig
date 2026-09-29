@@ -1,0 +1,21 @@
+ <table class="table">
+    <thead>
+        <tr>
+            <th>cobrador</th>
+            <th>fecha gestion</th>
+            <th>gestion</th>
+            <th>Fecha Compromiso</th>
+        </tr>
+    </thead>
+    <tbody>
+       {% for cobranza in cobranzas %}
+        <tr>
+            <td>{{cobranza.usuarioRegistro.nombre}}</td> 
+            <td>{{cobranza.fechaHora|date('Y-m-d H:i')}}</td>
+            <td>{{cobranza.funcion.nombre}}</td>
+            <td>{{cobranza.fechaCompromiso ? cobranza.fechaCompromiso|date('Y-m-d h:i'):''}}</td>
+        </tr>
+       {% endfor %}
+    </tbody>
+</table>
+            

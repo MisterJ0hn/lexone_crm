@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Escritura{% endblock %}
+
+{% block body %}
+    <h1>Escritura</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ escritura.id }}</td>
+            </tr>
+            <tr>
+                <th>Nombre</th>
+                <td>{{ escritura.nombre }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('escritura_index') }}">back to list</a>
+
+    <a href="{{ path('escritura_edit', {'id': escritura.id}) }}">edit</a>
+
+    {{ include('escritura/_delete_form.html.twig') }}
+{% endblock %}

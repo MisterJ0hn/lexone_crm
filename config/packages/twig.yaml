@@ -1,0 +1,11 @@
+twig:
+    default_path: '%kernel.project_dir%/templates'
+
+    globals:
+        # the value is the service's id
+        sesion: '@App\Service\SesionGenerator'
+        url_root: '%url_root%'
+        url_web: '%url_web%'
+        audio_contratos: '%audio_contratos%'
+        pdf_contrato: '%pdf_contratos%'
+        img_pagos: '%img_pagos%'

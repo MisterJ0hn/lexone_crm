@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit CobranzaRespuesta{% endblock %}
+
+{% block body %}
+    <h1>Edit CobranzaRespuesta</h1>
+
+    {{ include('cobranza_respuesta/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('cobranza_respuesta_index') }}">back to list</a>
+
+    {{ include('cobranza_respuesta/_delete_form.html.twig') }}
+{% endblock %}

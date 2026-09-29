@@ -1,0 +1,43 @@
+<div class="row">
+{% set cant=0 %}
+<div class="table-responsive ">
+<table class="table table-head-fixed text-nowrap table-striped table-sm">
+ <thead>
+    <tr>
+        <th>Materia</th>
+        <th>Servicio</th>
+        <th>Causa/Rol</th>
+        <th>Caratulado</th>
+        <th>Juzgado</th>
+        <th></th>
+    </tr>
+</thead>
+<tbody>
+{% for causa in causas %}
+<tr>
+    <td>
+        {{causa.materia.nombre}}
+    </td>
+    <td>
+        {{causa.materiaEstrategia ? causa.materiaEstrategia.estrategiaJuridica : ''}}
+    </td>
+    <td>
+        {{causa.letra}}-{{causa.rol}}-{{causa.anio}}
+    </td>
+    <td>
+        {{causa.causaNombre}}
+    </td>
+    <td>
+        {{causa.juzgadoCuenta is null ? '': causa.juzgadoCuenta.juzgado.nombre}}
+   </td>
+   <td>
+       <button type="button" class="btn btn-danger btn-eliminar" onclick="javascript:eliminarCausa({{causa.id}})"><i class="fas fa-trash"></i></button>
+    </td>
+</tr>
+    {% set cant = cant + 1 %}
+{% endfor %}
+</tbody>
+</table>
+</div>
+<input type="hidden" class="hdCausas" value="{{cant}}">
+</div>

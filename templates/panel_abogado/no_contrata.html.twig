@@ -1,0 +1,12 @@
+<form action="{{path('panel_abogado_no_contrata',{'id':agenda.id})}}" method="post" id="form-nocontrata">
+    <br>
+    <small class="text-muted">Observación</small>
+    <textarea name="txtObservacion" class="form-control"></textarea>
+    <input type="hidden" name="hdNoContrata" value="{{status}}">
+    <button class="btn btn-danger">Finalizar</button>
+</form>
+<script>
+    $('#form-nocontrata').on('submit',function(){
+        $('button').attr("disabled", true);
+    });
+</script>

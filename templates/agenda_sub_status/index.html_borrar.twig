@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}AgendaSubStatus index{% endblock %}
+
+{% block body %}
+    <h1>AgendaSubStatus index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                
+                <th>Nombre</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for agenda_sub_status in agenda_sub_statuses %}
+            <tr>
+                <td>{{ agenda_sub_status.nombre }}</td>
+                <td>
+                    <a href="{{ path('agenda_sub_status_show', {'id': agenda_sub_status.id}) }}">show</a>
+                    <a href="{{ path('agenda_sub_status_edit', {'id': agenda_sub_status.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('agenda_sub_status_new') }}">Create new</a>
+{% endblock %}

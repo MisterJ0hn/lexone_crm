@@ -1,0 +1,56 @@
+        <div class="card card-outline collapsed-card">
+    <div class="card-header">
+        <!--<h1>Folio: {{contrato.folio}}</h1>-->
+        <h1 class="card-title"><strong>{{contrato.cliente.nombre}}\{{contrato.agenda.cuenta.nombre}}{% if causa is defined %}
+            \{{causa.materiaEstrategia.estrategiaJuridica}}
+        {% endif %}  </strong></h1>
+        <div class="card-tools">
+            <button type="button" class="btn btn-sm btn-primary rounded-circle" data-card-widget="collapse"><i class="fas fa-plus"></i>
+            </button>
+            
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            
+            <!--<div class="col-sm-12 col-md-4">
+                <small class="text-muted">Sucursal</small><br>
+                <label>{{contrato.sucursal?contrato.sucursal.nombre:''}}</label>
+            </div>-->
+           
+            <!--<div class="col-sm-12 col-md-4">
+                <small class="text-muted">Abogado</small><br>
+                <label>{{contrato.agenda.abogado?contrato.agenda.abogado.nombre:''}}</label>
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <small class="text-muted">Tramitador</small><br>
+                <label>{{contrato.tramitador?contrato.tramitador.nombre:''}}</label>
+            </div>-->
+            <div class="col-sm-12 col-md-4">
+                <small class="text-muted">Fecha Contrato</small><br>
+                <label>{{contrato.fechaCreacion|date('Y-m-d')}}</label>
+            </div>
+            
+            <div class="col-sm-12 col-md-4">
+                <small class="text-muted">Rut Cliente</small><br>
+                <label>{{contrato.cliente.rut}}</label>
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <small class="text-muted">Teléfono Cliente</small><br>
+                <label>{{contrato.cliente.telefono}}</label>
+            </div>
+           <!-- <div class="col-sm-12 col-md-4">
+                <small class="text-muted">Teléfono Recado Cliente</small><br>
+                <label>{{contrato.cliente.telefonoRecado}}</label>
+            </div>-->
+            <div class="col-sm-12 col-md-4">
+                <small class="text-muted">Correo Cliente</small><br>
+                <label>{{contrato.cliente.correo}}</label>
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <small class="text-muted">Dirección Cliente</small><br>
+                <label>{{contrato.cliente.direccion}}</label>
+            </div>
+        </div>
+    </div>
+</div>

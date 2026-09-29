@@ -1,0 +1,12 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}{{pagina|default('Agendadora')}}{% endblock %}
+
+{% block body %}
+	
+    {{ include('administradores/_form.html.twig', {'button_label': 'Modificar'}) }}
+
+   
+    
+{% endblock %}

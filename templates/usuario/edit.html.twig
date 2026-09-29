@@ -1,0 +1,8 @@
+
+
+{% block body %}
+	<h5 class="modal-title" id="exampleModalLabel">Editar Usuario</h5>
+    {{ include('usuario/_form.html.twig', {'button_label': 'Modificar','action_form':path('usuario_edit',{'id':usuario.id})}) }}
+
+    
+{% endblock %}

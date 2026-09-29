@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Plantillas de Contrato{% endblock %}
+
+{% block body %}
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h3 class="card-title">Plantillas de Contrato</h3>
+        <a href="{{ path('contrato_template_new') }}" class="btn btn-primary btn-sm">
+            <i class="fas fa-plus"></i> Nueva plantilla
+        </a>
+    </div>
+    <div class="card-body">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Tipo de Cliente</th>
+                    <th>Disponible</th>
+                    <th>Última modificación</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for contratoTemplate in contratoTemplates %}
+                <tr>
+                    <td>{{ contratoTemplate.nombre }}</td>
+                    <td>{{ contratoTemplate.tipoCliente }}</td>
+                    <td>
+                        {% if contratoTemplate.activo %}
+                            <span class="badge badge-success">Disponible</span>
+                        {% else %}
+                            <span class="badge badge-secondary">Inactiva</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ (contratoTemplate.fechaModificacion ?? contratoTemplate.fechaCreacion)|date('d-m-Y H:i') }}</td>
+                    <td>
+                        <a href="{{ path('contrato_template_edit', {'id': contratoTemplate.id}) }}" class="btn btn-sm btn-outline-primary"><i class="fa fa-pen"></i></a>
+                        <form method="post" action="{{ path('contrato_template_delete', {'id': contratoTemplate.id}) }}" style="display:inline" onsubmit="return confirm('¿Eliminar esta plantilla?');">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ contratoTemplate.id) }}">
+                            <button class="btn btn-sm btn-outline-danger"><i class="fa fa-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5">Aún no hay plantillas creadas.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

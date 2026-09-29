@@ -1,0 +1,41 @@
+
+<li class="nav-item dropdown">
+        <a class="nav-link" data-toggle="dropdown" href="#">
+          <i class="far fa-envelope"></i>
+          {% if recordatorioCount is defined %}
+            
+          
+          <span class="badge badge-danger navbar-badge">{{recordatorioCount.pendientes}}</span>
+          {% endif %}
+        </a>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+        {% set i=0 %}
+        {% for recordatorio in recordatorios %}
+            {% if i>0 %}
+            <div class="dropdown-divider"></div>
+            {% endif %}
+
+            <a href="{{path('recordatorio_show',{'id':recordatorio.id})}}" class="dropdown-item">
+            <!-- Message Start -->
+            <div class="media">
+              
+              <div class="media-body">
+                <h3 class="dropdown-item-title">
+                  {{recordatorio.tipo.nombre}} - {{recordatorio.contrato.cliente.nombre}}
+                  <!--<span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>-->
+                </h3>
+                <p class="text-sm">{{recordatorio.observacion}}</p>
+                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> {{recordatorio.fechaAviso|date('Y-m-d')}}</p>
+              </div>
+            </div>
+            <!-- Message End -->
+          </a>
+
+          {% set i = i +1 %}
+        {% endfor %}
+          
+          
+          <div class="dropdown-divider"></div>
+          <a href="{{path('recordatorio_index')}}" class="dropdown-item dropdown-footer">Ver todos los mensajes</a>
+        </div>
+      </li>

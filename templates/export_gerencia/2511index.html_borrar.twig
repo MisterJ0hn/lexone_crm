@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ExportGerenciaController!{% endblock %}
+
+{% block body %}
+
+    <div class="card">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-6 col-sm-6 col-md-3">
+                    <p>Concepto</p>
+                </div>
+                <div class="col-6 col-sm-6 col-md-9">
+                    <p>Descargar</p>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6 col-sm-6 col-md-3">
+                    <p>Contrato</p>
+                </div>
+                <div class="col-6 col-sm-6 col-md-9">
+             
+                         <a href="{{path('export_gerencia_contrato')}}" class="btn btn-success btn-sm"><i class="fa fa-download"></i></a>
+                  
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6 col-sm-6 col-md-3">
+                    <p>Cobranza</p>
+                </div>
+                <div class="col-6 col-sm-6 col-md-9">
+                        <a href="{{path('export_gerencia_cobranza')}}" type="submit" class="btn btn-success btn-sm"><i class="fa fa-download"></i></a>
+          
+                </div>
+            </div>
+        
+        </div>
+    </div>
+
+<script>
+$( "button" ).keyup(function(){
+    $("button").prop('disabled',false);
+});
+</script>
+{% endblock %}

@@ -1,0 +1,10 @@
+<select name="cboComuna" class="form-control"  required>
+    <option></option>
+    {% for comuna in comunas %}
+    <option value="{{comuna.id}}" 
+    {% if  comuna.id==comuna_def %}
+        selected
+    {% endif %}
+    >{{comuna.nombre}}</option>
+    {% endfor %}
+</select>

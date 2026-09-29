@@ -1,0 +1,16 @@
+{{ form_start(form) }}
+    <div class="card">
+	<div class="card-body">
+		<section>
+			<div class="row">
+				<div class="col-sm-6 col-md-6">
+					<small class="text-muted">Materia</small>
+					{{form_row(form.nombre,{'label':false,'attr':{'class':'form-control','maxlength':'50'}})}}
+				</div>
+			</div>
+		</section>
+    </div>
+    <div class="card-footer">
+    <button class="btn btn-success">{{ button_label|default('Guardar') }}</button>
+    </div>
+{{ form_end(form) }}

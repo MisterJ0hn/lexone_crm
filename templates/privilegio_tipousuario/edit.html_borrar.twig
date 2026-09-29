@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit PrivilegioTipousuario{% endblock %}
+
+{% block body %}
+    <h1>Edit PrivilegioTipousuario</h1>
+
+    {{ include('privilegio_tipousuario/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('privilegio_tipousuario_index') }}">back to list</a>
+
+    {{ include('privilegio_tipousuario/_delete_form.html.twig') }}
+{% endblock %}

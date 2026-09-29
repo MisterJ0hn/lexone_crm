@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Editar Grupo{% endblock %}
+
+{% block body %}
+
+<div class="row">
+    <div class="col-sm-12  col-md-8">
+
+        <div class="card">
+            <div class="card-header">
+                <h1>Folio: {{contrato.id}}</h1>
+            </div>
+            <div class="card-body table-responsive pad">
+                <form action="{{path('encuesta_grupo',{'id':contrato.id}) }}" method="POST">
+                    <div class="row">
+                        <div class="col-sm-6 col-md-3">
+                            <small class="text-muted">Grupo</small><br>
+                            <select name="cboGrupo" id="" class="form-control grupos">
+                                {% for grupo in grupos %}
+                                    <option value="{{grupo.id}}"
+                                    {% if grupo.id == contrato.grupo.id %}
+                                        selected
+                                    {% endif %}
+                                    >{{grupo.id}}</option>
+                                {% endfor %}
+                            </select>
+                            
+                        </div>
+                        <div class="col-sm-6 col-md-3">
+                            <small class="text-muted">Calidad</small><br>
+                            <div class="asociado"></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 col-md-3">
+                            <button class="btn btn-primary">Modificar</button>
+                            
+                        </div>
+                        </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+$.ajax({
+    url:"/encuesta/"+$('.grupos').val()+"/abogado",
+    type: "post",
+    dataType: "html",
+    cache: false,
+    contentType: false,
+    processData: false,
+    async: true,
+    beforeSend: function(){
+        //$("#status").html(' <div class="overlay"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>');
+        
+    },
+    success:function(data){
+        console.log(data);
+        data_array= JSON.parse(data);
+        console.log(data_array);
+        $(".asociado").html(data_array['nombre']);
+        //$("#contrato").html("");
+    }});
+    $(".grupos").on('change',function(){
+        $.ajax({
+            url:"/encuesta/"+$(this).val()+"/abogado",
+            type: "post",
+            dataType: "html",
+            cache: false,
+            contentType: false,
+            processData: false,
+            async: true,
+            beforeSend: function(){
+                //$("#status").html(' <div class="overlay"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>');
+                
+            },
+            success:function(data){
+                console.log(data);
+                data_array= JSON.parse(data);
+                console.log(data_array);
+                $(".asociado").html(data_array['nombre']);
+                //$("#contrato").html("");
+            }});
+        
+    })
+</script>
+{% endblock %}

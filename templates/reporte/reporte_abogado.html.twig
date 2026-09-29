@@ -1,0 +1,173 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{pagina|default('')}}{% endblock %}
+
+{% block body %}
+<section>
+
+
+    
+    <div class="card">
+        <div class="card-header">
+            Filtro
+        </div>
+        <div class="card-body">
+            
+            <form action="{{path('reporte_abogado')}}" method="get" id="bForm">
+            <div class="row">
+                <div class="col-sm-12 col-md-3">
+                    <select name="bCompania" class="form-control">
+                        <option value="0">Todos</option>
+                        {% for compania in companias %}
+                            <option value="{{compania.id}}"
+                            {% if bCompania==compania.id %}
+                                selected
+                            {% endif %}
+                            >{{compania.nombre}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <input type="text" class="form-control" name="bFiltro" placeholder="Nombre abogado" value="{{bFiltro}}">
+                </div>
+                <div class="col-sm-12 col-md-2">
+                    <select name="bTipofecha" class="form-control">
+                        <option value="1" {% if tipoFecha==1 %}
+                        selected
+                    {% endif %}>Fecha Asignado</option>
+                        <!--<option value="2" {% if tipoFecha==2 %}
+                        selected
+                    {% endif %}>Fecha Contrato</option>-->
+                       
+
+                    </select>
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <input type="text" class="form-control" name="bFecha" id="bFecha"  value="">
+                </div>
+                <div class="col-sm-12 col-md-1">
+                    <button class="btn btn-primary"><i class="fas fa-search"></i></button>
+                </div>
+           
+
+            </div>
+            </form>
+        </div>  
+        
+    </div>
+</section>
+</form>
+<section>
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Listado</h3> 
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body table-responsive p-0" style="height: 400px;">
+        
+            <table class="table table-head-fixed text-nowrap table-striped table-sm">
+                <thead>
+                    <tr >
+                        <th scope="col" align="right">Abogado</th>
+                        <th scope="col" style="text-align: right;">Total</th>
+                        <th scope="col" style="text-align: right;">Agendados</th>
+                        <!--<th scope="col" style="text-align: right;">No Califica AB</th>-->
+                        <th scope="col" style="text-align: right;">NoContrata</th>
+                        <th scope="col" style="text-align: right;">Contrata</th>
+                        <!--<th scope="col" style="text-align: right;">No Responde</th>-->
+                        <th scope="col" style="text-align: right;">Desiste</th>
+                        <th scope="col" style="text-align: right;">ConfirmaDesiste</th>
+                        <th scope="col" style="text-align: right;">Efectividad</th>
+                        <th scope="col" style="text-align: right;">Honorarios</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set suma_total=0 %}
+                    {% set suma_agendado=0 %}
+                    {% set suma_nocalifica=0 %}
+                    {% set suma_nocontrata=0 %}
+                    {% set suma_contrata=0 %}
+                    {% set suma_ratificatermino=0 %}
+
+                    {% set suma_noresponde=0 %}
+                    {% set suma_desconoceodesiste=0 %}
+                    {% set suma_efectividad = 0 %}
+                    {% set cant_efectividad =0 %}
+                    {% set suma_monto =0 %}
+                    {% set total_usuarios =0%}
+                    {% for reporte in reportes %}
+                    
+
+                    <tr>
+                        <td>{{ reporte.abogado_nombre }}</td>
+                        <td align="right">{{ reporte.total}}</td>
+                        <td align="right">{{ reporte.agendado}}</td>
+                        
+                        <!--<td  align="right">{{ reporte.nocalifica}}</td>-->
+                        <td align="right">{{ reporte.nocontrata}}</td>
+                        <td align="right">{{ reporte.contrata}}</td>
+                       
+                        <!--<td align="right">{{ reporte.noresponde}}</td>-->
+                        <td align="right">{{ reporte.desconoceodesiste}}</td>
+                         <td align="right">{{ reporte.ratificatermino}}</td>
+                        <td align="right">{{ (((reporte.contrata)*100)/((reporte.total-reporte.nocalifica)?(reporte.total-reporte.nocalifica):1))|number_format(0,",",".")}}%</td>
+                        <td align="right">${{(reporte.monto/(reporte.contrata?reporte.contrata:1))|number_format(0,",",".")}}</td>
+                    </tr>
+                    {% set suma_total = suma_total + reporte.total %}
+                    {% set suma_agendado = suma_agendado + reporte.agendado %}
+                    {% set suma_nocalifica = suma_nocalifica + reporte.nocalifica %}
+                    {% set suma_nocontrata = suma_nocontrata + reporte.nocontrata %}
+                    {% set suma_contrata = suma_contrata + reporte.contrata %}
+                    {% set suma_ratificatermino = suma_ratificatermino + reporte.ratificatermino %}
+                    {% set suma_noresponde = suma_noresponde + reporte.noresponde %}
+                    {% set suma_desconoceodesiste = suma_desconoceodesiste + reporte.desconoceodesiste %}
+                    {% set cant_efectividad  = cant_efectividad + 1 %}
+                    {% set suma_monto = suma_monto + (reporte.monto/(reporte.contrata?reporte.contrata:1)) %}
+                    {% set total_usuarios = total_usuarios +1 %}
+                    {% else %}
+                    <tr>
+                        <td colspan="10">No hay registros</td>
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+                <tfoot>
+                    <tr style="text-align: right;">
+                        <th></th>
+                        <th>{{ suma_total|number_format(0,",",".")}}</th>
+                        <th>{{ suma_agendado|number_format(0,",",".")}}</th>
+                        <!--<th>{{ suma_nocalifica|number_format(0,",",".")}}</th>-->
+                        <th>{{ suma_nocontrata|number_format(0,",",".")}}</th>
+                        <th>{{ suma_contrata|number_format(0,",",".")}}</th>
+                        
+                        <!--<th>{{ suma_noresponde|number_format(0,",",".")}}</th>-->
+                        <th>{{ suma_desconoceodesiste|number_format(0,",",".")}}</th>
+                        <th>{{ suma_ratificatermino|number_format(0,",",".")}}</th>
+                        <th>{{ (((suma_contrata)*100)/((suma_total-suma_nocalifica)?(suma_total-suma_nocalifica):1))|number_format(0,",",".")}}%</th>
+                        <th>${{ total_usuarios ? (suma_monto/total_usuarios)|number_format(0,",","."):0}}</th>
+                    </tr>
+
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</section>
+
+<script>
+    $('#bFecha').daterangepicker({
+        
+        "drops": "down",
+        "startDate":"{{dateInicio}}",
+        "endDate": "{{dateFin}}",
+        "locale": {
+            "format": "YYYY-MM-DD",
+            "applyLabel": "Apply",
+            "cancelLabel": "Cancel",
+        }
+    }, function(start, end, label) {
+    console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+    
+    });
+    
+</script>
+{% endblock %}

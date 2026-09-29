@@ -1,0 +1,629 @@
+
+<div class="row">
+    <div class="col-sm-12 col-md-12 col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                Agregar causa
+            </div>
+            <div class="card-body">
+                <section>
+                    <div class="row">
+                        <div class="col-12">
+                            <small class="text-muted">Contrato Original</small> {{contrato.folio}} 0
+                        </div>
+                        <div class="col-12">
+                            <small class="text-muted">Ultimo Anexo</small> {% if ultFolio %}
+                                {{ ultAnexo.id }}-{{ contrato.folio }} {{ ultFolio }}
+                            {% endif %}
+                        </div>
+                        <div class="col-12">
+                            <small class="text-muted">Fecha Creacion</small> {{contrato.fechaCreacion|date('Y-m-d')}}
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <div class="row">
+                        <table class="table table-sm">
+                            <tr>
+                                <th>Cuota</th>
+                                <th>Vcto.</th>
+                                <th>Debe</th>
+                                <th>Haber</th>
+                            </tr>
+                            {% set monto = 0 %}
+                            {% set pagado = 0 %}
+                            {%  for cuota in cuotas %}
+                            <tr>
+                                <td>{{cuota.numero}}</td>
+                                <td>{{cuota.fechaPago|date('Y-m-d')}}</td>
+                                <td>{{cuota.monto| number_format(0, ',', '.') }}</td>
+                                <td>{{cuota.pagado| number_format(0, ',', '.')}}</td>
+                            </tr>
+                            {% set monto = monto + cuota.monto %}
+                            {% set pagado = pagado + cuota.pagado %}
+
+                            {% endfor %}
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th>{{monto| number_format(0, ',', '.')}}</th>
+                                <th>{{pagado| number_format(0, ',', '.')}}</th>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th class="text-danger">{{(monto-pagado)| number_format(0, ',', '.')}}</th>
+                            </tr>
+                        </table>
+                    </div>
+
+                </section>
+                
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12 col-md-12 col-lg-8">
+        <div class="row">
+            <div class="col-12">
+                <h4 id="materia">Causa</h4>
+            </div>
+        </div>
+
+        
+        {{ form_start(form,{'action': path('anexo_causas',{'id':contrato.id}), 'method': 'POST','attr':{'onsubmit':'return checkEnvio();'}}) }}
+        <div class="row">
+            <div class="col-sm-12 col-md-2">
+                <select name="cboMateria" class="form-control cbomateria" onchange="cambiaMateriaCausa(this.value)">
+                    <option value="">Seleccione Materia</option>
+                    {% for materia in materias %}
+                    <option value="{{ materia.id }}">{{ materia.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-sm-12 col-md-3 submateria">
+                <select name="cboSubMateria" class="form-control cboSubMateria"  >
+                    <option>Seleccione Servicio</option>
+                </select>
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <div class="row">
+                    <div class="col-sm-12 col-md-3 ml-0 mr-0 pl-0 pr-0 letras">
+                        <input type="text" name="txtLetra" placeholder="Letra" class="form-control txtLetra" size="3" maxlength="10"> 
+                    </div>
+                    <div class="col-sm-12 col-md-1 ml-0 mr-0 pl-0 pr-0" align="center">
+                        -
+                    </div>
+                    <div class="col-sm-12 col-md-3 ml-0 mr-0 pl-0 pr-0">
+                        <input type="text" name="txtRol" placeholder="N°" class="form-control txtRol" size="6" maxlength="255">
+                    </div>
+                    <div class="col-sm-12 col-md-1 ml-0 mr-0 pl-0 pr-0" align="center">
+                        -
+                    </div>
+                    <div class="col-sm-12 col-md-3 ml-0 mr-0 pl-0 pr-0">
+                        <input type="text" name="txtAnio" placeholder="Año" class="form-control txtAnio" size="4" maxlength="4">
+                    </div>
+                </div>
+               <small class="text-muted">Formato: Letra-Rol-Año</small>
+            </div> 
+            <div class="col-sm-12 col-md-5 ">
+                <input type="text" name="txtCaratulado" placeholder="Caratulado" class="form-control txtCaratulado" size="50" maxlength="30">
+                <small class="text-muted">Caracteres max. 50</small>
+            </div> 
+            
+                        
+        </div>
+        <div class="row">
+            
+            <div class="col-sm-12 col-md-5">
+                
+                <select name="corte" class="form-control corte">
+                    <option value=""> Seleccione Corte </option>
+                    
+                </select> 
+            </div>   
+            <div class="col-sm-12 col-md-6">
+                <select name="juzgado" class="form-control juzgado">
+                    <option value=""> Seleccione Juzgado </option>
+                    {% for juzgado in juzgados %}
+                        <option value="{{juzgado.id}}">{{juzgado.nombre}}</option>
+                    {% endfor %}
+                </select> 
+            </div>  
+            <div class="col-sm-12 col-md-1">
+                <button type="button" class="btn btn-primary btn-agregar" onclick="javascript:agregarCausa()"><i class="fas fa-plus"></i></button>
+            </div>  
+        </div>
+      
+      
+
+        
+        
+        <div class="card-body" >
+            <div class="table-responsive ">
+                <table class="table table-head-fixed text-nowrap table-striped table-sm">
+                    <thead>
+                        <tr>
+                            <th>Materia</th>
+                            <th>Id Servicio</th>
+                            <th>Servicio</th>
+                            <th>Id Causa</th>
+                            <th>Caratulado</th>
+                            <th>Juzgado</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody class="causas_anteriores">
+                
+                
+                    
+                    </tbody>
+                </table>
+            </div>
+            <div id="estrategiasJuridicas">
+                <div class="table-responsive ">
+                    <table class="table table-head-fixed text-nowrap table-striped table-sm">
+                        <thead>
+                            <tr>
+                                <th>Materia</th>
+                                <th>Id Servicio</th>
+                                <th>Servicio</th>
+                                <th>Id Causa</th>
+                                <th>Caratulado</th>
+                                <th>Juzgado</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody class="detalle_causas">
+
+                        </tbody>
+                    </table>
+                </div>                    
+                    
+            </div>
+            <div class="loading"></div>
+        </div>  
+
+        <section>
+            <div class="row">
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted">Monto contrato *</small>
+                      {{form_row(form.MontoContrato,{'label':false,'attr':{'class':'form-control monto-contrato number','required':true,'autocomplete':"ÑÖcompletes"}})}}
+				
+                    <strong><label id="m-monto-contrato"></label></strong>
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <div class="row"> 
+                        <small class="text-muted isAbono">Abono *</small>
+                        <div class="col">{{form_row(form.isAbono,{'label':false,'attr':{'class':' chk-bono'}})}}</div>
+                        <small class="text-muted textTotal">Paga el total *</small>
+                        <div class="col divTotal">{{form_row(form.isTotal,{'label':false,'attr':{'class':' chk-total'}})}}</div>
+                    </div>
+                        
+                    {{form_row(form.abono,{'label':false,'attr':{'class':'form-control primera-cuota number','required':true,'autocomplete':"ÑÖcompletes"}})}}
+                        
+                                    
+                    <strong><label id="m-primera-cuota"></label></strong>
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted t-cuotas" >Cuotas *</small>
+                    {{form_row(form.nCuotas,{'label':false,'attr':{'class':'form-control cuotas number','required':true,'autocomplete':"ÑÖcompletes"}})}}
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted t-valor-cuota">Valor cuota *</small>
+                    {{form_row(form.valorCuota,{'label':false,'attr':{'class':'form-control valor-cuota','required':true,'autocomplete':"ÑÖcompletes"}})}}
+                    
+                    <strong><label id="m-valor-cuota"></label></strong>
+                </div>
+
+                <div class="col-sm-12 col-md-12">
+                    <small class="text-muted">Días de Pago</small>
+                    <br>
+                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                    
+                        {% for diasPago in diasPagos %}
+                        <label class="btn btn-success 
+                        {% if contrato.diaPago == diasPago.dias %}
+                        active
+                        {% endif %}
+                        ">
+                            <input type="radio" name="chkDiasPago" id="chkDiasPago{{diasPago.dias}}" autocomplete="off"
+                            {% if contrato.diaPago == diasPago.dias %}
+                                checked
+                            {% endif %}
+                            value="{{diasPago.dias}}">{{diasPago.nombre}}
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted  t-mes-pago">Mes Primer Pago</small>
+                    <input type="text" name="txtFechaPago" class="form-control primer-pago">    
+                </div>
+                <div class="col-sm-12 col-md-2">
+                    <small class="text-muted o">Vigencia en Meses</small>
+                    {{form_row(form.vigencia,{'label':false,'attr':{'class':'form-control vigencia'},'required':true})}}
+
+                    
+                </div>
+                <div class="col-sm-12 col-md-12">
+                    <small class="text-muted">Observación</small><br>
+                    {{form_row(form.observacion,{'label':false,'attr':{'class':'form-control'},'required':true})}}
+                    
+                </div>
+                <div class="col-sm-12 col-md-12">
+                    <button class="btn btn-primary" >Crear Anexo</button>
+                </div>
+       
+
+            {{ form_end(form) }}
+        </section>
+        
+    </div>
+</section>
+
+
+<script>
+
+    $('.cuotas').change(function(){
+        recalcula();
+    });
+    $('.monto-contrato').change(function(){
+        recalcula();
+        $("#m-monto-contrato").html($.number( $(this).val(), 0, ',', '.' ));
+    });
+    $('.primera-cuota').change(function(){
+        recalcula();
+        $("#m-primera-cuota").html($.number( $(this).val(), 0, ',', '.' ));
+    });
+    $('.nivel-deuda').change(function(){
+        recalcula();
+        $("#m-nivel-deuda").html($.number( $(this).val(), 0, ',', '.' ));
+    });
+    $('.pago-actual').change(function(){
+        recalcula();
+        $("#m-pago-actual").html($.number( $(this).val(), 0, ',', '.' ));
+    });
+    $('.interes').change(function(){
+        recalcula();
+    });
+    
+    $("#m-monto-contrato").html($.number( $('.monto-contrato').val(), 0, ',', '.' ));
+    $("#m-primera-cuota").html($.number( $('.primera-cuota').val(), 0, ',', '.' ));
+    $("#m-valor-cuota").html($.number( $('.valor-cuota').val(), 0, ',', '.' ));
+    $("#m-pago-actual").html($.number( $('.pago-actual').val(), 0, ',', '.' ));
+    $("#m-nivel-deuda").html($.number( $('.nivel-deuda').val(), 0, ',', '.' ));
+
+    $(".chk-total").show();
+    $('.textTotal').show();
+    $(".number").inputmask({
+        mask: "9",
+        repeat:20,
+    });
+    var item_causa=0;
+
+    function cambiaMateriaCausa(materiaId){
+        if(!materiaId){
+            $(".cboSubMateria").html('<option value="">Seleccione Servicio</option>');
+            return;
+        }
+        cambiaEstrategiaJuridica(materiaId);
+        letrasCausa(materiaId);
+        obtenerCortes(materiaId);
+    }
+
+    function recalcula()
+    {
+        var _montoContrato=$('.monto-contrato').val();
+        var _primeraCuota=$('.primera-cuota').val();
+        console.log(_montoContrato);
+        console.log(_primeraCuota);
+        var montoContrato=parseInt( _montoContrato)-parseInt(_primeraCuota);
+        console.log(montoContrato);
+        var cuotas=parseInt($('.cuotas').val());
+        var interes=0;
+        if(cuotas < 1){
+            var valorCuota=0;
+        }else{
+            var valorCuota=(montoContrato+(montoContrato/100*interes))/cuotas;
+        }
+        
+        $('.valor-cuota').val(Math.round(valorCuota));
+        $("#m-valor-cuota").html($.number( $('.valor-cuota').val(), 0, ',', '.' ));
+    }
+
+    $(document).ready(function(){
+        checkAbono();
+        checkTotal();
+        // Servicio/corte/letras se cargan al elegir la materia de cada causa.
+        listarCausasAnterior();
+        $('.primer-pago').daterangepicker({
+            "singleDatePicker": true,
+            "drops": "up",
+            "startDate": "{{contrato.fechaPrimerPago|date('Y-m-d')}}",
+            "minDate":"{{contrato.fechaCreacion|date('Y-m-d')}}",
+            "locale": {
+                "format": "YYYY-MM-DD",
+                "applyLabel": "Apply",
+                "cancelLabel": "Cancel",
+            }
+        }, function(start, end, label) {
+        });
+    });
+
+    function listarCausasAnterior(){
+        //console.log('paso');
+        $.ajax({
+            url:"{{ path('anexo_causas_anteriores', {'id':contrato.id}) }}",
+            type: "post",
+            dataType: "html",
+            cache: false,
+            contentType: false,
+            processData: false,
+            async: true,
+            beforeSend: function(){
+                $(".loading").html(' <div class="overlay"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>');
+            },
+            success:function(data){
+                $(".causas_anteriores").html(data);
+                
+                $(".loading").html('');
+                
+            }
+        });
+        
+    }
+    function eliminarCausaAnterior(causa){  
+        $.ajax({
+            url:"/anexo/"+causa+"/causas_anteriores_eliminar",
+            type: "post",
+            dataType: "html",
+            cache: false,
+            contentType: false,
+            processData: false,
+            async: true,
+            beforeSend: function(){
+            },
+            success:function(data){
+                listarCausasAnterior();
+            }
+        });
+    }
+    
+    function  cambiaEstrategiaJuridica(value){
+        if(!value){
+            $(".cboSubMateria").html('<option value="">Seleccione Servicio</option>');
+            return;
+        }
+        $.ajax({
+            url:"/estrategia_juridica/"+value+"/combo",
+            type: "post",
+            dataType: "html",
+            cache: false,
+            contentType: false,
+            processData: false,
+            async: true,
+            beforeSend: function(){
+                $(".loading").html(' <div class="overlay"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>');
+            },
+            success:function(data){
+                $(".cboSubMateria").html(data);
+                $(".loading").html('');
+                $("#materia").html("* Causa "+$(".cbomateria option:selected").text());
+            }
+        });
+        
+    }
+    function agregarCausa(){
+        if($('.cbomateria').val()==""){
+            alert("Debe seleccionar una materia");
+            return;
+        }
+        if($('.cboSubMateria').val()!=""){
+            $(".loading").html('');
+            var item_id=Math.floor(Math.random() * 100);
+            var fieldHTML = "<tr class='causa-"+item_id+"'>"+
+                                "<td><input type='hidden' value='"+$('.cbomateria').val()+"' name='hdMateria[]'  >"+$('.cbomateria option:selected').text()+"</td>"+
+                                "<td>"+$('.cboSubMateria').val()+"</td>"+
+                                "<td><input type='hidden' value='"+$('.cboSubMateria').val()+"' name='hdSubMateria[]'  >"+$('.cboSubMateria option:selected').text()+"</td>"+
+                                "<td><input type='hidden' value='"+$('.txtLetra').val()+"' name='hdLetraCausa[]'  >"+
+                                "<input type='hidden' value='"+$('.txtRol').val()+"' name='hdRolCausa[]'  >"+
+                                "<input type='hidden' value='"+$('.txtAnio').val()+"' name='hdAnioCausa[]'  >"
+                                +$('.txtLetra').val()+"-"+$('.txtRol').val()+"-"+$('.txtAnio').val()+"</td>"+
+                                "<td><input type='hidden' value='"+$('.txtCaratulado').val()+"' name='hdCaratulado[]'  >"+$('.txtCaratulado').val()+"</td>"+
+                                "<td><input type='hidden' value='"+$('.juzgado').val()+"' name='hdJuzgado[]'  >"+$('.juzgado option:selected').text()+"</td>"+
+                                "<td><button type='button' class='btn btn-danger' onclick='javascript:eliminarCausa("+item_id+")' ><i class='fas fa-trash'></i></button></td>"+
+                            "</tr>";
+
+            $(".detalle_causas").append(fieldHTML); 
+            $('.cboSubMateria').val('');
+            $('.txtLetra').val('');
+            $('.txtRol').val('');
+            $('.txtAnio').val('');
+            $('.txtCaratulado').val('');
+            $('.corte').val('');
+            $('.juzgado').val('');
+
+            item_causa++;
+        }else{
+            alert("Debe ingresar un servicio");
+        }
+    }
+    function eliminarCausa(causa){  
+        $('.causa-'+causa).remove();
+        item_causa--;
+    }
+
+
+    $('.chk-bono').change(function(){
+        
+        checkAbono();
+        recalcula();
+    });
+    $(".chk-total").change(function(){
+        checkTotal();
+        recalcula();
+    });
+    function checkAbono(){
+ 
+        if($('.chk-bono').prop( "checked" )){
+            $('.primera-cuota').css("visibility", "visible");
+            $('.t-cuotas').html('Cuotas restantes *');
+            $('.t-valor-cuota').html('Valor Cuotas Restantes *');
+            $('.t-pago-actual').html('Pago Actual *');
+            $('.t-mes-pago').html('Mes Segundo Pago');
+            $('.primer-pago').daterangepicker({
+                "singleDatePicker": true,
+                "drops": "up",
+                "startDate": "{{contrato.fechaPrimerPago|date('Y-m-d')}}",
+                "minDate":"{{contrato.fechaCreacion|date('Y-m-d')}}",
+                "locale": {
+                    "format": "YYYY-MM-DD",
+                    "applyLabel": "Apply",
+                    "cancelLabel": "Cancel",
+                }
+            }, function(start, end, label) {
+            });
+            
+            $('.textTotal').hide();
+            $('.divTotal').hide();
+            $('.chk-total').prop("checked", false);
+        }else{
+            $('.primera-cuota').css("visibility", "hidden");
+            $('.primera-cuota').val(0);
+            $('#m-primera-cuota').html("");
+            $('.t-cuotas').html('Cuotas *');
+            $('.t-valor-cuota').html('Valor Cuotas *');
+            $('.t-mes-pago').html('Mes Primer Pago');
+            $('.textTotal').show();
+            $('.divTotal').show();
+            $('.primer-pago').daterangepicker({
+                    "singleDatePicker": true,
+                    "drops": "up",
+                    "startDate": "{{contrato.fechaPrimerPago|date('Y-m-d')}}",
+                    "minDate":"{{contrato.fechaCreacion|date('Y-m-d')}}",
+                    "locale": {
+                        "format": "YYYY-MM-DD",
+                        "applyLabel": "Apply",
+                        "cancelLabel": "Cancel",
+                    }
+                }, function(start, end, label) {
+            });
+        }
+
+    }
+
+     
+    function checkTotal(){
+        if($(".chk-total").prop( "checked" )){
+           $('.cuotas').val(0);
+            $('.cuotas').hide();
+
+            $('.valor-cuota').val(0);
+            $('.valor-cuota').hide();
+
+            $('.primera-cuota').val($('.monto-contrato').val());
+
+            $('#m-valor-cuota').val(0);
+            $('#m-valor-cuota').hide();
+            $('.chk-bono').hide();
+            $('.isAbono').hide();
+        }else{
+            $('.cuotas').val(1);
+            $('.cuotas').show();
+
+            $('.valor-cuota').show();
+            $('.primera-cuota').val(0);
+            
+            $('#m-valor-cuota').show();
+            $('.chk-bono').show();
+            $('.isAbono').show();
+        }
+    }
+
+    $('.primer-pago').inputmask("9999-99");
+
+    function checkEnvio(){
+        if(item_causa){
+            return true;
+        }
+        $(".loading").html(' <div class="overlay"><div class="text-bold pt-2">Ingresar al menos 1 causa</div></div>');
+        alert("Debe Ingresar al menos 1 causa");
+        return false;
+    }
+    function obtenerCortes(materia){
+            if(!materia){ return; }
+            $(".corte").show();
+            $.ajax({
+                url:"/materia/"+materia+"/corte_combo",
+                type: "post",
+                dataType: "html",
+                cache: false,
+                contentType: false,
+                processData: false,
+                async: true,
+                beforeSend: function(){
+                    //$(".loading").html(' <div class="overlay"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>');
+                    
+                },
+                success:function(data){
+                    $(".corte").html(data);
+                    //$(".loading").html('');
+                    $(".juzgado").empty();
+                    $(".juzgado").append("<option>Seleccione Juzgado</option>"); 
+                }
+            });
+       
+    }
+
+    $(".corte").on("change",function(){
+        $.ajax({
+                url:"/juzgado_cuenta/"+$(this).val()+"/corte_combo",
+                type: "post",
+                dataType: "html",
+                cache: false,
+                contentType: false,
+                processData: false,
+                async: true,
+                beforeSend: function(){
+                    //$(".loading").html(' <div class="overlay"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>');
+                    
+                },
+                success:function(data){
+                    $(".juzgado").html(data);
+                    
+                }
+
+            });
+    });
+
+    function letrasCausa(materia_id){
+        if(!materia_id){ return; }
+        $.ajax({
+            url:"/materia/"+materia_id+"/causa_letras",
+            type: "get",
+            dataType: "json",
+            cache: false,
+            contentType: false,
+            processData: false,
+            async: true,
+            beforeSend: function(){
+            },
+            success:function(data){
+                console.log("data");
+                console.log(data);
+
+                var letras=data;
+                $('.letras').html('<select name="txtLetra" class="form-control txtLetra"><option value=""> Letra </option></select>');
+                $.each(letras,function(i,letra){
+                    $('.txtLetra').append('<option value="'+letra+'">'+letra+'</option>');
+                });
+
+            },error:function(error){
+                $(".letras").html('<input type="text" name="txtLetra" placeholder="Letra" class="form-control txtLetra" size="3" maxlength="10">');
+            }
+        });
+    }
+
+</script>

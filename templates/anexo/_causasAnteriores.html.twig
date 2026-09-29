@@ -1,0 +1,26 @@
+{% for causa in causas_anteriores %}
+                    <tr>
+                        <td>
+                            {{causa.materia.nombre}}
+                        </td>
+                        <td>
+                            {{causa.id}}
+                        </td>
+                        <td>
+                            {{causa.materiaEstrategia ? causa.materiaEstrategia.estrategiaJuridica : ''}}
+                        </td>
+                        <td>
+                            {{causa.idCausa}}
+                        </td>
+                        <td>
+                            {{causa.causaNombre}}
+                        </td>
+                        <td>
+                            {{causa.juzgadoCuenta is null ? '': causa.juzgadoCuenta.juzgado.nombre}}
+                        </td>
+                        <td>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="javascript:eliminarCausaAnterior({{causa.id}})"><i class="fa fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    
+{% endfor %}

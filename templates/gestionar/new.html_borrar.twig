@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Gestionar{% endblock %}
+
+{% block body %}
+    <h1>Create new Gestionar</h1>
+
+    {{ include('gestionar/_form.html.twig') }}
+
+    <a href="{{ path('gestionar_index') }}">back to list</a>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Agenda{% endblock %}
+
+{% block body %}
+    <h1>Agenda</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ agenda.id }}</td>
+            </tr>
+            <tr>
+                <th>Campania</th>
+                <td>{{ agenda.campania }}</td>
+            </tr>
+            <tr>
+                <th>Status</th>
+                <td>{{ agenda.status }}</td>
+            </tr>
+            <tr>
+                <th>NombreCliente</th>
+                <td>{{ agenda.nombreCliente }}</td>
+            </tr>
+            <tr>
+                <th>EmailCliente</th>
+                <td>{{ agenda.emailCliente }}</td>
+            </tr>
+            <tr>
+                <th>TelefonoCliente</th>
+                <td>{{ agenda.telefonoCliente }}</td>
+            </tr>
+            <tr>
+                <th>CiudadCliente</th>
+                <td>{{ agenda.ciudadCliente }}</td>
+            </tr>
+            <tr>
+                <th>FechaCarga</th>
+                <td>{{ agenda.fechaCarga ? agenda.fechaCarga|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>FechaAsignado</th>
+                <td>{{ agenda.fechaAsignado ? agenda.fechaAsignado|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('agenda_edit', {'id': agenda.id}) }}">edit</a>
+
+    {{ include('agenda/_delete_form.html.twig') }}
+{% endblock %}

@@ -1,0 +1,81 @@
+
+{{ form_start(form) }}
+    
+    <div class="row">
+        <div class="col-sm-6 col-md-4">
+            <small class="text_mute">Modulo</small> 
+            <select name="cboModulo" class="form-control modulo">
+                <option></option>
+                {% for modulo in modulos %}
+                <option value="{{modulo.id}}"
+                {% if menu.modulo.id is defined %}
+                 {% if menu.modulo.id==modulo.modulo.id %}
+                    selected
+                    {% endif %}
+                {% endif %}
+                >{{modulo.nombre}}</option>
+                {% endfor %}
+                </select>
+            
+        </div>
+        <div class="col-sm-6 col-md-4">
+            <small class="text_mute">Nombre</small> *
+            
+            {{ form_row(form.nombre,{'label':false,'attr':{'class':'form-control nombre'}})}}
+            
+        </div>
+        
+        <div class="col-sm-6 col-md-4">
+            <small class="text_mute">Icono 
+            <button type="button" class="btn btn-xs btn-success" data-toggle="popover" title="Iconos" data-content="Puedes ver mas iconos en https://fontawesome.com/icons"><i class="fas fa-question"></i></button>
+            
+            </small> 
+            
+            {{ form_row(form.icono,{'label':false,'attr':{'class':'form-control','placeholder':'fas fa-question'}})}}
+            
+        </div>
+        <div class="col-sm-6 col-md-4">
+            <small class="text_mute">Men&uacute; Padre</small> 
+            
+           
+            <select name="cboPadre" class="form-control">
+            <option></option>
+            {% for padre in padres %}
+            <option value="{{padre.id}}"
+            {% if menu.dependeDe is not null %}
+             {% if menu.dependeDe.id==padre.id %}
+                selected
+                {% endif %}
+            {% endif %}
+            >{{padre.nombre}}</option>
+            {% endfor %}
+            </select>
+        </div>
+        <div class="col-sm-6 col-md-4">
+            <small class="text_mute">Orden</small> 
+            
+            {{ form_row(form.orden,{'label':false,'attr':{'class':'form-control'}})}}
+            
+        </div>
+    </div>
+        </div>
+        <div class="card-footer">
+            <div class="row">
+    <button class="btn btn-primary">{{ button_label|default('Ingresar') }}</button>
+
+    <script>
+
+        $(function () {
+            $('[data-toggle="popover"]').popover()
+        })
+
+        $('.modulo').change(function(){
+            if($(this).val()>0){
+                $('.nombre').val($('.modulo option:selected').text());
+                $('.nombre').attr("style='visibity:hidden'");
+            }
+        });
+
+
+</script>
+{{ form_end(form) }}

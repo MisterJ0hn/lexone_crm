@@ -1,0 +1,68 @@
+<link rel="stylesheet" href="/build/adminlte/plugins/summernote/summernote-bs4.min.css">
+
+{{ form_start(form) }}
+    <div class="row">
+        <div class="col-sm-12 col-md-6">
+            <small class="text-muted">Nombre de la plantilla</small>
+            {{ form_widget(form.nombre, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        <div class="col-sm-12 col-md-4">
+            <small class="text-muted">Tipo de cliente</small>
+            {{ form_widget(form.tipoCliente, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        <div class="col-sm-12 col-md-2 d-flex align-items-end">
+            <div class="form-check mb-2">
+                {{ form_widget(form.activo, {'attr': {'class': 'form-check-input'}}) }}
+                {{ form_label(form.activo, null, {'label_attr': {'class': 'form-check-label'}}) }}
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="row">
+        <div class="col-sm-12 col-md-9">
+            <small class="text-muted">Contenido</small>
+            {{ form_widget(form.contenido, {'attr': {'class': 'contrato-template-editor'}}) }}
+        </div>
+        <div class="col-sm-12 col-md-3">
+            <small class="text-muted">Variables disponibles</small>
+            <p class="text-muted"><small>Haga clic para insertar en el punto donde esté escribiendo.</small></p>
+            <div class="list-group">
+                {% for token, descripcion in variables %}
+                    <button type="button" class="list-group-item list-group-item-action py-1 px-2 btn-variable" data-token="{{ token }}">
+                        <code>{{ token }}</code><br><small class="text-muted">{{ descripcion }}</small>
+                    </button>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <hr>
+    <button type="submit" class="btn btn-primary">Guardar</button>
+    <a href="{{ path('contrato_template_index') }}" class="btn btn-secondary">Cancelar</a>
+{{ form_end(form) }}
+
+<script src="/build/adminlte/plugins/summernote/summernote-bs4.min.js"></script>
+<script>
+    $(function () {
+        $('.contrato-template-editor').summernote({
+            height: 400,
+            toolbar: [
+                ['style', ['style']],
+                ['font', ['bold', 'italic', 'underline', 'clear']],
+                ['fontsize', ['fontsize']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['table', ['table']],
+                ['insert', ['link']],
+                ['view', ['fullscreen', 'codeview']],
+            ],
+        });
+
+        $('.btn-variable').on('click', function () {
+            $('.contrato-template-editor').summernote('editor.restoreRange');
+            $('.contrato-template-editor').summernote('editor.focus');
+            $('.contrato-template-editor').summernote('insertText', $(this).data('token'));
+        });
+    });
+</script>

@@ -1,0 +1,385 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contrato index{% endblock %}
+
+{% block body %}
+    <div class="card">
+        <div class="card-header">
+            <form action="" method="get">
+                <div class="row">
+                    <div class="col-sm-12 col-md-2">
+                        <select name="bCompania" class="form-control">
+                            <option value="0">Todos</option>
+                            {% for compania in companias %}
+                                <option value="{{compania.id}}"
+                                {% if bCompania==compania.id %}
+                                    selected
+                                {% endif %}
+                                >{{compania.nombre}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-sm-12 col-md-2">
+                        <input type="text" class="form-control bFolio" name="bFolio"  placeholder="Folio" value="{{bFolio}}">
+                    </div>
+                    <div class="col-sm-12 col-md-3">
+                        <input type="text" class="form-control bFiltro" name="bFiltro" placeholder="Nombre/Email/Telefono" value="">
+                    </div>
+                    <div class="col-sm-12 col-md-3">
+                        <input type="text" class="form-control bFecha" name="bFecha" id="bFecha"  value="">
+                    </div>
+                    <div class="col-sm-12 col-md-1">
+                        <button class="btn btn-primary"><i class="fas fa-search"></i></button>
+                    </div>
+                   
+    
+                </div>
+                </form>
+        </div>
+        <div class="card-body table-responsive p-0" style="height: 500px;">
+        
+            <table class="table table-head-fixed text-nowrap table-striped table-sm">
+                <thead>
+                    <tr>
+                        <th>{{ knp_pagination_sortable(contratos, 'Compañia', 'agenda.cuenta') }} {% if contratos.isSorted('agenda.cuenta') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th>{{ knp_pagination_sortable(contratos, 'Folio', 'folio') }} {% if contratos.isSorted('folio') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th>{{ knp_pagination_sortable(contratos, 'Cliente', 'nombre') }} {% if contratos.isSorted('nombre') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th>{{ knp_pagination_sortable(contratos, 'Agendador', 'agenda.agendador') }} {% if contratos.isSorted('agenda.agendador') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th>{{ knp_pagination_sortable(contratos, 'Abogado', 'agenda.abogado') }} {% if contratos.isSorted('agenda.abogado') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th>{{ knp_pagination_sortable(contratos, 'Tramitador', 'tramitador') }} {% if contratos.isSorted('tramitador') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th>{{ knp_pagination_sortable(contratos, 'Sucursal', 'sucursal') }} {% if contratos.isSorted('sucursal') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th>{{ knp_pagination_sortable(contratos, 'Fecha Contrato', 'fechaCreacion') }} {% if contratos.isSorted('fechaCreacion') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        
+                        <th>Acciones</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                {% for contrato in contratos %}
+                    <tr>
+                        <td>{{contrato.agenda.cuenta.nombre}}</td>
+                        <td>{{ contrato.folio }}</td>
+                        <td>{{ contrato.nombre }}</td>
+                        <td>{{ contrato.agenda.agendador.nombre }}</td>
+                        <td>{{ contrato.agenda.abogado.nombre }}</td>
+                        <td>{{ contrato.tramitador ? contrato.tramitador.nombre : '' }}</td>
+                        <td>{{ contrato.sucursal}}</td>
+                        <td>{{ contrato.fechaCreacion|date('d-m-Y H:i') }}</td>
+                        {% if sesion.getSesion.usuarioTipo.id in [1,3,4,6,8,7] %}
+                        <td>
+                        <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+                        {% if sesion.getSesion.usuarioTipo.id in [1,8,3] %}
+                                {% for audio in contrato.contratoAudios %}
+                                {% set numero=random() %}
+
+                                        <div class="grAudio{{numero}}">
+                                         
+                                            <button type="button" class="btn btn-warning btn-sm btn{{numero}} " ><i class="fas fa-play"></i></button> 
+                                            <a href="#" class="btn btn-danger btn-sm btnCerrar{{numero}} " style="display:hidden"><i class="fas fa-trash-alt"></i></a>
+                                            
+                                        </div>
+                                        <audio class="audio{{numero}}" id="audio{{numero}}">
+                                            <source src="{{audio_contratos}}{{audio.url}}"  type="audio/mp3">
+                                        </audio>
+                                        <script>
+                                            var v{{numero}} = document.getElementById("audio{{numero}}");
+                                            v{{numero}}.pause();
+                                            $('btn{{numero}}').html('<i class="fas fa-play"></i>');
+                                            sound = false;
+                                            $(".btn{{numero}}").click(function(){
+                                                console.log({{numero}});
+                                                //v{{numero}}.play();
+                                                if (!sound) {
+                                                    v{{numero}}.play();
+                                                    $(this).html('<i class="fas fa-pause"></i>');
+                                                    sound = true;
+                                                } else {
+                                                    v{{numero}}.pause();
+                                                    $(this).html('<i class="fas fa-play"></i>');
+                                                    sound = false;
+                                                } 
+                                            });
+                                            $('.btnCerrar{{numero}}').hide();
+                                            $(".grAudio{{numero}}").hover(function(){
+                                                $('.btnCerrar{{numero}}').show();
+                                            },function() {
+                                                   $('.btnCerrar{{numero}}').hide();
+                                            });
+                                            $('.btnCerrar{{numero}}').click(function(){
+                                                var respuesta=confirm("Esta seguro de eliminar este Audio?");
+                                                if(respuesta){
+                                                    window.location.href="{{path('contrato_audio_delete',{'id':contrato.id}) }}";
+                                                }
+                                            });
+
+                                            
+                                        </script>
+                                       
+                                {% else %}
+                                    <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#exampleModal" data-contrato="{{contrato.id}}"><i class="fas fa-upload"></i></button>
+        
+                                {% endfor %}
+                            <a href="{{ path('contrato_cartera', {'id': contrato.id}) }}" type="button" class="btn btn-info btn-sm" ><i class="fas fa-briefcase"></i></a>
+                     
+                            {% endif %}
+
+                            {% if contrato.pdf is null %}
+                               <button type="button" class="btn btn-secondary btn-sm"><i class="fas fa-file-pdf"></i></button>
+                            {% else %}
+
+                                <a href="{{url_web}}{{pdf_contrato}}{{contrato.pdf}}" class="btn btn-success btn-sm"><i class="fas fa-file-pdf"></i></a>
+                            {% endif %}
+                                <a href="{{ path('contrato_show', {'id': contrato.id}) }}" class="btn btn-primary btn-sm"><i class="fas fa-eye"></i></a>
+                                <a href="{{ path('contrato_edit', {'id': contrato.id}) }}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                           
+                                {% if contrato.agenda.status.id == 14 %}
+                                    <a href="#" class="btn btn-warning btn-sm"><i class="fas fa-retweet"></i></a>
+
+                                {% else %}
+                                    <a href="{{ path('contrato_terminar', {'id': contrato.id}) }}" class="btn btn-danger btn-sm"><i class="fas fa-handshake-slash"></i></a>
+                                    <!--<a href="#" class="btn btn-danger btn-sm"><i class="fas fa-handshake-slash"></i></a>-->
+                                    
+                                {% endif %}
+                                <a href="{{ path('contrato_linea_tiempo', {'id': contrato.id}) }}" class="btn  btn-sm text-white bg-dark">LT</a>
+                                <a href="{{path('anexo_index',{'id':contrato.id})}}" type="button" class="btn btn-info btn-sm buttonAnexos" ><i class="fas fa-file"></i></a>
+                                {% else %}
+                        </div>
+                        <td>
+
+                            {% if sesion.getSesion.usuarioTipo.id == 13 %}
+                                {% for audio in contrato.contratoAudios %}
+                                {% set numero=random() %}
+
+                                        <div class="grAudio{{numero}}">
+                                         
+                                            <button type="button" class="btn btn-warning btn-sm btn{{numero}} " ><i class="fas fa-play"></i></button> 
+                                            <a href="#" class="btn btn-danger btn-sm btnCerrar{{numero}} " style="display:hidden"><i class="fas fa-trash-alt"></i></a>
+                                            
+                                        </div>
+                                        <audio class="audio{{numero}}" id="audio{{numero}}">
+                                            <source src="{{audio_contratos}}{{audio.url}}"  type="audio/mp3">
+                                        </audio>
+                                        <script>
+                                            var v{{numero}} = document.getElementById("audio{{numero}}");
+                                            v{{numero}}.pause();
+                                            $('btn{{numero}}').html('<i class="fas fa-play"></i>');
+                                            sound = false;
+                                            $(".btn{{numero}}").click(function(){
+                                                console.log({{numero}});
+                                                //v{{numero}}.play();
+                                                if (!sound) {
+                                                    v{{numero}}.play();
+                                                    $(this).html('<i class="fas fa-pause"></i>');
+                                                    sound = true;
+                                                } else {
+                                                    v{{numero}}.pause();
+                                                    $(this).html('<i class="fas fa-play"></i>');
+                                                    sound = false;
+                                                } 
+                                            });
+                                            $('.btnCerrar{{numero}}').hide();
+                                            $(".grAudio{{numero}}").hover(function(){
+                                                $('.btnCerrar{{numero}}').show();
+                                            },function() {
+                                                   $('.btnCerrar{{numero}}').hide();
+                                            });
+                                            $('.btnCerrar{{numero}}').click(function(){
+                                                var respuesta=confirm("Esta seguro de eliminar este Audio?");
+                                                if(respuesta){
+                                                    window.location.href="{{path('contrato_audio_delete',{'id':contrato.id}) }}";
+                                                }
+                                            });
+
+                                            
+                                        </script>
+                                       
+                                {% else %}
+                                    <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#exampleModal" data-contrato="{{contrato.id}}"><i class="fas fa-upload"></i></button>
+        
+                                {% endfor %}
+                            {% endif %}
+                            {% if contrato.pdf is null %}
+                                <button type="button" class="btn btn-secondary btn-sm"><i class="far fa-file-pdf"></i></button>
+                            {% else %}
+
+                                <a href="{{url_web}}{{pdf_contrato}}{{contrato.pdf}}" class="btn btn-success btn-sm"><i class="fas fa-file-pdf"></i></a>
+                            {% endif %}
+                            
+                            <a href="{{ path('contrato_show', {'id': contrato.id}) }}" class="btn btn-primary btn-sm"><i class="fas fa-eye"></i></a>
+                                
+                           
+                            {% if contrato.agenda.status.id == 14 %}
+                                <a href="#" class="btn btn-warning btn-sm"><i class="fas fa-retweet"></i></a>
+
+                            {% else %}
+                                <a href="{{ path('contrato_terminar', {'id': contrato.id}) }}" class="btn btn-danger btn-sm"><i class="fas fa-handshake-slash"></i></a>
+                                <!--<a href="#" class="btn btn-danger btn-sm"><i class="fas fa-handshake-slash"></i></a>-->
+                                
+                            {% endif %}
+
+                            <a href="{{path('anexo_index',{'id':contrato.id})}}" type="button" class="btn btn-info btn-sm buttonAnexos" ><i class="fas fa-file"></i></a>
+                           
+                        </td>
+                        {% endif %}
+
+                        
+                                    
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="16">No hay contratos</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer">
+            <div class="card-footer clearfix">
+                {# display navigation #}
+           <div class="navigation">
+               {{ knp_pagination_render(contratos,'@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig',{},{
+               'position': 'centered',
+               'rounded': true,
+               }) }}
+           </div>
+       </div>
+            
+        </div>
+    </div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Cargar Audio</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+            <form action="{{path('contrato_audio_upload')}}" enctype="multipart/form-data" method="post">
+                <div class="row">
+                    <div class="col-sm-9 col-md-9">
+                        <input type="file" name="file" class="form-control" accept=".mp3,.wav,.amr,.ogg,.mp4">
+                         <small class="text-muted">Solo permite formato mp3, wav, ogg o amr</small><br>
+                        <input type="hidden" name="hdContrato" id="hdContrato">
+                    </div>
+                    <div class="col-sm-3 col-md-3">
+                        <button type="submit" class="btn btn-primary">Subir <i class="fas fa-upload"></i></button>
+                    </div>
+                </div>
+            </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+ <!-- reproducir audio -->
+<div class="modal fade" id="repAudio" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Reproducir Audio</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+           
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    <script>
+        $('#bFecha').daterangepicker({
+        
+            "drops": "down",
+            "startDate":"{{dateInicio}}",
+            "endDate": "{{dateFin}}",
+            "locale": {
+                "format": "YYYY-MM-DD",
+                "applyLabel": "Apply",
+                "cancelLabel": "Cancel",
+            }
+        }, function(start, end, label) {
+        console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+        
+        });
+        $(".bFolio").change(function(){
+            $(".bFiltro").val('');
+        });
+        $(".bFiltro").change(function(){
+            $(".bFolio").val('');
+        });
+        $(".bFecha").change(function(){
+            $(".bFolio").val('');
+        });
+
+       $('#exampleModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var contrato = button.data('contrato') // Extract info from data-* attributes
+            // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+            // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+            var modal = $(this)
+            
+            modal.find('#hdContrato').val(contrato)
+        })
+
+        $(document).ready(function(){
+            
+
+        });
+        const cargarSonido = function (fuente) {
+            const sonido = document.createElement("audio");
+            sonido.src = fuente;
+            sonido.setAttribute("preload", "auto");
+            sonido.setAttribute("controls", "none");
+            sonido.style.display = "none"; // <-- oculto
+            document.body.appendChild(sonido);
+            return sonido;
+        };
+
+        $('#modalAnexos').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var contrato = button.data('contrato') // Extract info from data-* attributes
+            // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+            // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+            var modal = $(this)
+            
+            modal.find('#hdContrato').val(contrato)
+
+            
+
+        });
+
+        function modalAnexo(contrato){
+            $.ajax({
+                url:"/contrato/"+contrato+"/anexos",
+                type: "post",
+                dataType: "html",
+                cache: false,
+                contentType: false,
+                processData: false,
+                async: true,
+                beforeSend: function(){
+                    $(".bodyAnexos").html(' <div class="overlay"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>'); 
+                },
+                success:function(data){
+                    $(".bodyAnexos").html(data);
+                }
+
+            });
+        }
+            
+
+
+    </script>
+{% endblock %}

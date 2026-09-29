@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nacionalidad{% endblock %}
+
+{% block body %}
+    <h1>Nacionalidad</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ nacionalidad.id }}</td>
+            </tr>
+            <tr>
+                <th>Nombre</th>
+                <td>{{ nacionalidad.nombre }}</td>
+            </tr>
+            <tr>
+                <th>Orden</th>
+                <td>{{ nacionalidad.orden }}</td>
+            </tr>
+            <tr>
+                <th>Estado</th>
+                <td>{{ nacionalidad.estado ? 'Yes' : 'No' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('nacionalidad_index') }}">back to list</a>
+
+    <a href="{{ path('nacionalidad_edit', {'id': nacionalidad.id}) }}">edit</a>
+
+    {{ include('nacionalidad/_delete_form.html.twig') }}
+{% endblock %}

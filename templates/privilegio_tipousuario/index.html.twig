@@ -1,0 +1,93 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}PrivilegioTipousuario index{% endblock %}
+
+{% block body %}
+
+    <div class="card">
+        <div class="card-title">
+        <p class="text-muted">Privilegios para:</p> <h1>{{usuarioTipo.nombre}}</h1>
+        </div>
+        <div class="card-body">
+            <div class="col-md-6">
+            {% if sesion.getSesion.usuarioTipo.id==8 %}
+                <form action="{{ path('privilegio_tipousuario_new',{'id':usuarioTipo.id}) }}" method="post">
+                    <div class="row">
+                        <div class="col-6">
+                            <select action="#" class="form-control" name="selModulo" required>
+                                <option></option>
+                                {% for modulo in modulos %}
+                                    <option value="{{modulo.id}}">{{modulo.nombre}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <button class="btn btn-primary" type="submit">Agregar Modulo</button>
+                        </div>
+                    </div>
+                </form>
+            {% endif %}
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Módulo</th>
+                        <th>Descripción</th>
+                        <th>Accion</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for privilegio_tipousuario in privilegio_tipousuarios %}
+                    <tr>
+                        <td>{{ privilegio_tipousuario.moduloPer.nombre }}</td>
+                        <td>{{ privilegio_tipousuario.moduloPer.descripcion }}</td>
+                        <td>
+                        
+                            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                            {% for accion in acciones %}
+                                <label class="btn bg-primary active">
+                                    <input type="radio" name="options" id="option{{privilegio_tipousuario.id}}{{accion.id}}" autocomplete="off" 
+                                    {% if accion.id == privilegio_tipousuario.accion.id %}
+                                            checked
+                                        {% endif %}
+                                    {% if sesion.getSesion.usuarioTipo.id==8 %}
+                                    onclick="javascript:checkAccion('{{accion.id}}','{{privilegio_tipousuario.id}}')"
+                                    {% endif %}
+                                    > {{accion.nombre}}
+                                </label>
+                            {% endfor %}
+                            </div>
+                        
+                            <div id="checked{{privilegio_tipousuario.id}}" class="checked{{privilegio_tipousuario.id}}"> 
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="2">Sin registros</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script>
+        function checkAccion(accion,privilegio){
+            $.ajax({
+                url:"/privilegio_tipousuario/"+privilegio+"/edit",
+                type: "post",
+                dataType: "json",
+                data:{"accion":accion},
+                success:function(data){
+                    
+                     $(".checked"+privilegio).html(data);
+                }
+
+            });
+
+        }
+    </script>
+
+    
+{% endblock %}

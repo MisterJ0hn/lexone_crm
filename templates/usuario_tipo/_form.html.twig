@@ -1,0 +1,17 @@
+{{ form_start(form) }}
+    {{ form_widget(form) }}
+    <ul>
+
+    
+    {% for status in statues %}
+        <li><input type="checkbox" name="status[]" value="{{status.id}}" 
+            {% if status.id in  usuario_tipo.statues %}
+                checked
+            {% endif %}
+            >{{status.id}}-{{status.nombre}}</li>
+    {% endfor %}    
+    </ul>
+    
+
+    <button class="btn">{{ button_label|default('Guardar') }}</button>
+{{ form_end(form) }}

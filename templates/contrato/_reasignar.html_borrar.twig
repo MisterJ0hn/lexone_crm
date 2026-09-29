@@ -1,0 +1,22 @@
+<form action="{{path('contrato_reasignar',{'id':contrato.id})}}" enctype="multipart/form-data" method="post">
+<div class="row">
+    <div class="col-sm-12 col-md-4">
+        <small class="text-muted">Folio</small>
+        <p>{{contrato.folio}}</p>
+    </div>
+    <div class="col-sm-12 col-md-6">
+        <small class="text-muted">Cerrador</small>
+        <select name="cboCerrador" id="cboCerrador" class="form-control">
+            <option value="">-- Seleccione Cerrador --</option>
+            {% for usuario in cerradores %}
+                <option value="{{usuario.id}}" {% if contrato.agenda.abogado.id == usuario.id %}selected{% endif %}>{{usuario.nombre}}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+<div class="row mt-3">
+    <div class="col-sm-12">
+        <button class="btn btn-primary" id="btnReasignarCerrador">Reasignar Cerrador</button>
+    </div>
+</div>
+</form>

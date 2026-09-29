@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ContratoArchivos{% endblock %}
+
+{% block body %}
+    <h1>ContratoArchivos</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ contrato_archivo.id }}</td>
+            </tr>
+            <tr>
+                <th>Url</th>
+                <td>{{ contrato_archivo.url }}</td>
+            </tr>
+            <tr>
+                <th>FechaSubida</th>
+                <td>{{ contrato_archivo.fechaSubida ? contrato_archivo.fechaSubida|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('contrato_archivos_index') }}">back to list</a>
+
+    <a href="{{ path('contrato_archivos_edit', {'id': contrato_archivo.id}) }}">edit</a>
+
+    {{ include('contrato_archivos/_delete_form.html.twig') }}
+{% endblock %}

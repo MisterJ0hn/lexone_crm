@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}PagoTipo index{% endblock %}
+
+{% block body %}
+    <h1>PagoTipo index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Orden</th>
+                <th>Estado</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for pago_tipo in pago_tipos %}
+            <tr>
+                <td>{{ pago_tipo.id }}</td>
+                <td>{{ pago_tipo.nombre }}</td>
+                <td>{{ pago_tipo.orden }}</td>
+                <td>{{ pago_tipo.estado ? 'Yes' : 'No' }}</td>
+                <td>
+                    <a href="{{ path('pago_tipo_show', {'id': pago_tipo.id}) }}">show</a>
+                    <a href="{{ path('pago_tipo_edit', {'id': pago_tipo.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('pago_tipo_new') }}">Create new</a>
+{% endblock %}

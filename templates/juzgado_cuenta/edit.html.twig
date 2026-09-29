@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit JuzgadoCuenta{% endblock %}
+
+{% block body %}
+    <h1>Edit JuzgadoCuenta</h1>
+
+    {{ include('juzgado_cuenta/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('juzgado_cuenta_index') }}">back to list</a>
+
+    {{ include('juzgado_cuenta/_delete_form.html.twig') }}
+{% endblock %}

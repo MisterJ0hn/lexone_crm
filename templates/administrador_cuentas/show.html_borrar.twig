@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Usuario{% endblock %}
+
+{% block body %}
+    
+
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-6 col-md-3">
+				<small class="text-muted">Empresa *</small>
+				<label></label>
+			</div>
+			<div class="col-sm-6 col-md-6">
+				<small class="text-muted">Nombre</small>
+				<label>{{usuario.nombre}}</label>
+			</div>
+			<div class="col-sm-6 col-md-3">
+				<small class="text-muted">Rut</small>
+				<label>{{usuario.rut}}</label>
+				
+			</div>
+			<div class="col-sm-6 col-md-3">
+			<small class="text-muted">Correo</small>
+				<label>{{usuario.correo}}</label>
+			</div>
+			<div class="col-sm-6 col-md-3">
+				<small class="text-muted">Telefono</small>
+				<label>{{usuario.telefono}}</label>
+				
+			</div>
+			<div class="col-sm-6 col-md-3">
+				<small class="text-muted">Whatsapp</small>
+				<label>{{usuario.whatsapp}}</label>
+				
+			</div>
+			<div class="col-sm-6 col-md-3">
+				<small class="text-muted">Dirección</small>
+				<label>{{usuario.direccion}}</label>
+				
+			</div>
+			<div class="col-sm-6 col-md-3">
+				<small class="text-muted">Sexo</small>
+				<label>{{usuario.sexo}}</label>
+				
+			</div>
+			
+            <div class="col-sm-6 col-md-3">
+				<small class="text-muted">Usuario</small>
+				<label>{{usuario.username}}</label>
+				
+			</div>
+			    
+
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

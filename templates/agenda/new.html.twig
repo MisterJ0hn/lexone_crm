@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Agenda{% endblock %}
+
+{% block body %}
+    <div class="card">
+        <div class="card-body">
+            {{ include('agenda/_form.html.twig') }}
+        </div>
+    </div>
+{% endblock %}

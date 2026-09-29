@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Pais index{% endblock %}
+
+{% block body %}
+    <h1>Pais index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Orden</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for pai in pais %}
+            <tr>
+                <td>{{ pai.id }}</td>
+                <td>{{ pai.nombre }}</td>
+                <td>{{ pai.orden }}</td>
+                <td>
+                    <a href="{{ path('pais_show', {'id': pai.id}) }}">show</a>
+                    <a href="{{ path('pais_edit', {'id': pai.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('pais_new') }}">Create new</a>
+{% endblock %}

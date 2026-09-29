@@ -1,0 +1,236 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contrato{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-sm-12 col-md-8">
+    <div class="card">
+        <div class="card-body table-responsive pad">
+           
+            <h4>Datos Cliente</h4>
+            <div class="row">
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted">Nombre</small><br>
+                    <p>{{contrato.nombre}}</p>                    
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted">Rut</small><br>
+                    <p>{{contrato.rut}}</p>   
+                    
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted">Email</small><br>
+                   
+                    <p>{{contrato.email}}</p>   
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted">Dirección</small><br>
+                    
+                    <p>{{contrato.direccion}}</p>   
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted">Nacionalidad</small><br>
+                    
+                    <p>{{contrato.pais}}</p>   
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted">Ciudad</small><br>
+                
+                    <p>{{contrato.ciudad}}</p>   
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted">Comuna</small><br>
+                   
+                    <p>{{contrato.comuna}}</p>   
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted">Teléfono</small><br>
+                   
+                    <p>{{contrato.telefono}}</p>   
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted">Teléfono Recado</small><br>
+                   
+                    <p>{{contrato.telefonoRecado}}</p>   
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted">Estado Civil</small><br>
+                  
+                    <p>{{contrato.estadoCivil}}</p>   
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted">Vivienda</small>
+                   
+                    <p>{{contrato.vivienda}}</p>   
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted">Vehiculo</small>
+                  
+                    <p>{{contrato.vehiculo}}</p>   
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted">Situación Laboral</small><br>
+                    
+                    <p>{{contrato.situacionLaboral}}</p>   
+                </div>
+               
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted">Clave única</small>
+                    <p>{{contrato.claveUnica}}</p>   
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted">Reunión</small>
+                    <p>{{contrato.reunion}}</p>   
+                </div>
+            </div>
+    
+            <h4>Datos Contrato</h4>
+            <div class="row">
+    
+                <div class="col-sm-12 col-md-4">
+                    <small class="text-muted">Estrategia Juridica</small>
+                    <p>{{contrato.estrategiaJuridica}}</p>   
+                </div>
+                <div class="col-sm-12 col-md-4">
+                    <small class="text-muted">Escritura</small>
+                    <p>{{contrato.escritura}}</p>   
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted">Sucursal</small>
+                    <p>{{contrato.sucursal.nombre}}</p>   
+                    
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted">Tramitador</small>
+                    <p>{{contrato.tramitador.nombre}}</p>   
+                    
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted">Monto nivel de deuda</small>
+                    <p>{{contrato.montoNivelDeuda}}</p>   
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted">Monto contrato</small>
+                    <p>{{contrato.MontoContrato}}</p>   
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted">Primera Cuota </small>
+                    <p>{{contrato.primeraCuota}}</p> 
+                 </div>
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted">Fecha Primera Cuota</small>
+                    <p>{{contrato.fechaPrimeraCuota|date('Y-m-d')}}</p> 
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted">Cuotas restantes</small>
+                    <p>{{contrato.cuotas}}</p>   
+                </div>
+               
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted">Valor cuota</small>
+                    <p>{{contrato.valorCuota}}</p>   
+                </div>
+                
+            
+                <div class="col-sm-12 col-md-12">
+                    <small class="text-muted">Días de Pago</small>
+                    <br>
+                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                       
+                        {% for diasPago in diasPagos %}
+                        <label class="btn btn-success 
+                        {% if contrato.diaPago == diasPago.dias %}
+                        active
+                        {% endif %}
+                        ">
+                            <input type="radio" name="chkDiasPago" id="chkDiasPago{{diasPago.dias}}" autocomplete="off"
+                            {% if contrato.diaPago == diasPago.dias %}
+                                checked
+                            {% endif %}
+                            value="{{diasPago.dias}}">{{diasPago.nombre}}
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted  t-mes-pago">Mes Primer Pago</small>
+                    <p>{{contrato.fechaPrimerPago|date('Y-m-d')}}</p> 
+                </div>
+            </div>
+            <hr>
+            <div class="card">
+                <div class="card-header">
+                    Roles
+                </div>
+                <div class="card-body" id="contratoRoles">
+            
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-12">
+                <small class="text-muted">Observación</small>
+                <p>{{contrato.observacion}}</p>   
+                
+            </div>
+            {% if metodo is defined %}
+                
+                {% if metodo == "T" %}
+                {{ include('cobranza/_terminar.html.twig', {'button_label': 'Modificar'}) }}
+                {% endif %}
+            {% endif %}
+        </div>
+
+        
+    </div>
+
+</div>
+<div class="col-sm-12 col-md-4">
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+    
+        <!-- Timelime example  -->
+            <div class="row">
+                <div class="col-md-12">
+                <!-- The time line -->
+                    <div class="timeline">
+                        <!-- timeline time label -->
+                        <div class="time-label">
+                        <span class="bg-red">{{agenda.fechaCarga|date('d-m-Y H:i')}}</span>
+                        </div>
+                        <!-- /.timeline-label -->
+                        <!-- timeline item -->
+                        {% for observacion in agenda.agendaObservacions %}
+                            
+                        
+                        <div class="time-label">
+                            <span class="bg-green">{{observacion.fechaRegistro|date('d-m-Y')}}</span>
+                        </div>
+                        <div>
+                            <i class="fas fa-envelope bg-blue"></i>
+                            <div class="timeline-item">
+                                <span class="time"><i class="fas fa-clock"></i>{{observacion.fechaRegistro|date('h:i')}}</span>
+                                <h3 class="timeline-header"><a href="#">{{observacion.status}}</a> {{observacion.usuarioRegistro}} </h3>
+
+                                <div class="timeline-body">
+                                    {{observacion.observacion}}
+                                </div>
+                               
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <div>
+                            <i class="fas fa-clock bg-gray"></i>
+                          </div>
+                    </div>
+                    
+                </div>
+                
+            </div>
+        </div>
+    </section>
+    </div>
+</div>
+    
+
+{% endblock %}

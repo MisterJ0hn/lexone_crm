@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modulos{% endblock %}
+
+{% block body %}
+    
+    <a href="{{ path('modulo_new') }}" class="btn btn-primary"><i class="fas fa-refresh"></i>Actualizar</a>
+    <div class="card">
+
+        <div class="card-body">
+        {# display navigation #}
+        <div class="navigation">
+            {{ knp_pagination_render(modulos,'@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig',{},{
+            'position': 'centered',
+            'rounded': true,
+            }) }}
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th
+                    
+                    >{{ knp_pagination_sortable(modulos, 'Id', 'id') }} {% if modulos.isSorted('id') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                    <th>{{ knp_pagination_sortable(modulos, 'Nombre', 'nombre') }}{% if modulos.isSorted('nombre') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                    <th>{{ knp_pagination_sortable(modulos, 'Descripcion', 'descripcion') }} {% if modulos.isSorted('descripcion') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                    <th>Nombre Interno</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for modulo in modulos %}
+                <tr>
+                    <td>{{ modulo.id }}</td>
+                    <td>{{ modulo.nombre }}</td>
+                    <td>{{ modulo.descripcion }}</td>
+                    <td><code>{{ modulo.modulo.nombre }}</code></td>
+                    <td>
+                        <a href="{{ path('modulo_edit', {'id': modulo.id}) }}" class="btn btn-success"><i class="fas fa-edit"></i></a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5">Sin registros</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {# display navigation #}
+        <div class="navigation">
+            {{ knp_pagination_render(modulos,'@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig',{},{
+            'position': 'centered',
+            'rounded': true,
+            }) }}
+        </div>
+        </div>
+    </div>
+    
+{% endblock %}

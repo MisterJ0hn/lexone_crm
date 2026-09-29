@@ -1,0 +1,569 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{pagina|default('agenda agendador')}}{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-sm-12 col-md-8 ">
+    <section class="sticky-top">
+        <div class="card">
+            <div class="card-body table-responsive pad">
+                {{ form_start(form,{'attr':{'onsubmit':'return validarut()'}}) }}
+                <h4>Datos prospecto</h4>
+                <div class="row">
+                   
+                    <div class="col-sm-12 col-md-4">
+                        <small class="text-muted">Cliente</small><br>
+
+                       
+                        {{ form_row(form.tipoCliente,{'label':false,'attr':{'class':'form-control','autocomplete':"ÑÖcompletes","required":'true','onchange':'javascript:cambiaTipoCliente(this.value)'}})}}
+                    
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <small class="text-muted">Canal</small><br>
+                        <label>{{agenda.campania}}</label>
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                        <small class="text-muted">Nombre Cliente</small>
+                        {{ form_row(form.nombreCliente,{'label':false,'attr':{'class':'form-control','autocomplete':"ÑÖcompletes","required":'true'}})}}
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <small class="text-muted">Rut Cliente</small>
+                        {{form_row(form.rutCliente,{'label':false,'attr':{'class':'form-control format-rut','autocomplete':"ÑÖcompletes"}})}}
+                    </div>
+                    <div class="col-sm-12 col-md-5 ">
+                        <small class="text-muted">Teléfono Cliente</small>
+                        <div class="input-group">
+                            
+                            {{ form_row(form.telefonoCliente,{'label':false,'attr':{'class':'form-control','autocomplete':"ÑÖcompletes","required":'true'}})}}
+                           
+                            <div class="input-group-append">
+                                <a href="https://api.whatsapp.com/send?phone={{ agenda.telefonoCliente|replace({'+':''}) }}&text=''" class="btn btn-outline-success"><i class="fab fa-whatsapp"></i></a>
+                            </div>
+                        </div>
+                     
+                    </div>
+                    <!--<div class="col-sm-6 col-md-3">
+                        <small class="text-muted">Telefono Recado Cliente</small>
+                        
+                        {{form_row(form.telefonoRecadoCliente,{'label':false,'attr':{'class':'form-control','autocomplete':"ÑÖcompletes"}})}}
+                        
+
+                    </div>-->
+                    <div class="col-sm-12 col-md-4">
+                        <small class="text-muted">Correo Cliente</small>
+                        {{ form_row(form.emailCliente,{'label':false,'attr':{'class':'form-control','autocomplete':"ÑÖcompletes"}})}}
+                    </div>
+                    
+                </div>
+                <br />
+                
+                {% if agenda.status.id in [1,2,11,8,4,6,10]  %}
+                {% endif %}
+                
+                
+                {% if true %}
+                    
+              
+                <h4>Gestión</h4>
+                <div class="row">
+                    <div class="col-sm-12 col-md-12">
+                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                            {% for status in statues %}
+
+                                {% if status.id == 7 %}
+                                   <label class="btn btn-success">
+                                        <input type="radio" name="chkStatus" id="chkStatus" autocomplete="off" 
+                                    
+                                        onclick="javascript:contrata(7)"
+                                    
+                                        value="7"> Contrata
+                                    
+                                    </label>
+                                {% else %}
+                                    <label class="btn btn-success 
+                                    {% if status.id==agenda.status.id %}
+                                        active
+                                    {% endif %}
+                                    ">
+                                        <input type="radio" name="chkStatus" id="chkStatus" autocomplete="off" 
+                                        {% if status.id==agenda.status.id %}
+                                        checked
+                                        {% endif %}
+                                        value="{{status.id}}" onclick="javascript:getAbogados(this.value);"> {{status.nombre}}
+                                    </label>
+                                    
+                                {% endif %}
+                                {% endfor %}
+                                    {% if sesion.getSesion.usuarioTipo.id in [3,1] %}
+                                   <!-- <label class="btn btn-success">
+                                        <input type="radio" name="chkStatus" id="chkStatus" autocomplete="off" 
+                                    
+                                        onclick="javascript:getReasignar(this.value);"
+                                    
+                                        value="2"> Reasignar
+                                    
+                                    </label>-->
+                                    {% endif %}
+                                
+                                
+                            
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-12" id="abogado">
+
+
+                    </div>
+                    <div class="col-sm-12 col-md-12" id="contrato">
+
+
+                    </div>
+                </div>
+                {% elseif sesion.getSesion.usuarioTipo.id in [3,1]  %}
+                    {% if agenda.status.id in [8,9,10]  %}
+                    <h4>Gestion</h4>
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12">
+                            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                 <!--<label class="btn btn-success">
+                                    <input type="radio" name="chkStatus" id="chkStatus" autocomplete="off" 
+                                
+                                    onclick="javascript:getReagenda(this.value);"
+                                    
+                                    value="5"> Reagendar
+
+                                </label>-->
+                               <label class="btn btn-success">
+                                    <input type="radio" name="chkStatus" id="chkStatus" autocomplete="off" 
+                                
+                                    onclick="javascript:getReasignar(this.value);"
+                                    
+                                    value="2"> Reasignar
+        
+                                </label>
+                            </div>
+                            
+                        </div>
+                        
+                        <div class="col-sm-12 col-md-12" id="abogado">
+                            
+                        </div>
+                    </div>
+            
+                    {% endif %}
+                {% endif %}
+                
+            {{ form_end(form) }}
+                
+            </div>
+
+        </div>
+    </section>
+    </div>
+    <div class="col-sm-12 col-md-4">
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+        
+        <!-- Timelime example  -->
+            <div class="row">
+                <div class="col-md-12">
+                <!-- The time line -->
+                    <div class="timeline">
+                        <!-- timeline time label -->
+                        <div class="time-label">
+                        <span class="bg-red">{{agenda.fechaCarga|date('d-m-Y H:i')}}</span>
+                        </div>
+                        <!-- /.timeline-label -->
+                        <!-- timeline item -->
+                        {% for observacion in agenda.agendaObservacions %}
+                            
+                        
+                        <div class="time-label">
+                            <span class="bg-green">{{observacion.fechaRegistro|date('d-m-Y')}}</span>
+                        </div>
+                        <div>
+                            <i class="fas fa-envelope bg-blue"></i>
+                            <div class="timeline-item">
+                                <span class="time"><i class="fas fa-clock"></i>{{observacion.fechaRegistro|date('H:i')}}</span>
+                                <h3 class="timeline-header"><a href="#">{{observacion.status}} 
+                                {% if observacion.subStatus is defined %}
+                                    {{ observacion.subStatus }}
+                                {% endif %}
+                                </a>{{observacion.usuarioRegistro}} </h3>
+
+                                <div class="timeline-body">
+                                    {{observacion.observacion}}
+                                </div>
+                               
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <div>
+                            <i class="fas fa-clock bg-gray"></i>
+                          </div>
+                    </div>
+                    
+                </div>
+                
+            </div>
+        </div>
+    </section>
+    </div>
+</div>
+    <!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Calendario</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="bodyModal">
+          
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<script>
+
+      
+        function contrata(status){
+            if(status ==7){
+                $.ajax({
+                    url:"{{path('panel_abogado_contrata',{'id':agenda.id})}}",
+                    type: "post",
+                    dataType: "html",
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    async: true,
+                    beforeSend: function(){
+                        $("#contrato").html(' <div class="overlay"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>');
+                        
+                    },
+                    success:function(data){
+                        $("#contrato").html(data);
+                        $("#abogado").html("");
+                    }
+
+                });
+            }else if(status==5){
+                $.ajax({
+                    url:"{{path('panel_agendador_abogados',{'id':agenda.id})}}",
+                    type: "get",
+                    dataType: "html",
+                    data:"chkStatus=5",
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    async: true,
+                    beforeSend: function(){
+                        $("#abogado").html(' <div class="overlay"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>');
+                        
+                    },
+                    success:function(data){
+                        $("#abogado").html(data);
+                        $("#contrato").html("");
+                    }
+        
+                });
+            }else if(status==3){
+                $.ajax({
+                    url:"{{path('panel_abogado_no_contrata',{'id':agenda.id})}}",
+                    type: "get",
+                    dataType: "html",
+                    data: "status=3",
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    async: true,
+                    beforeSend: function(){
+                            $("#contrato").html(' <div class="overlay"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>');
+                            
+                        },
+                        success:function(data){
+                            $("#contrato").html(data);
+                            $("#abogado").html("");
+                        }
+
+        
+                });
+            }else if(status==8){
+                $.ajax({
+                    url:"{{path('panel_abogado_no_contrata',{'id':agenda.id})}}",
+                    type: "get",
+                    dataType: "html",
+                    data: "status=8",
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    async: true,
+                    beforeSend: function(){
+                            $("#contrato").html(' <div class="overlay"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>');
+                            
+                        },
+                        success:function(data){
+                            $("#contrato").html(data);
+                            $("#abogado").html("");
+                        }
+
+        
+                });
+            
+            }else if(status==9){
+                $.ajax({
+                    url:"{{path('panel_abogado_no_contrata',{'id':agenda.id})}}",
+                    type: "get",
+                    dataType: "html",
+                    data: "status=9",
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    async: true,
+                    beforeSend: function(){
+                            $("#contrato").html(' <div class="overlay"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>');
+                            
+                        },
+                        success:function(data){
+                            $("#contrato").html(data);
+                            $("#abogado").html("");
+                        }
+
+        
+                });
+            
+            
+            }else{
+                $.ajax({
+                    url:"{{path('panel_abogado_contrata',{'id':agenda.id})}}",
+                    type: "get",
+                    dataType: "html",
+                    data:"status="+status,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    async: true,
+                    beforeSend: function(){
+                        $("#contrato").html(' <div class="overlay"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>');
+                        
+                    },
+                    success:function(data){
+                        $("#contrato").html(data);
+                        $("#abogado").html("");
+                    }
+
+                });
+                
+            }
+       }
+
+        function getAbogados(status){
+            
+            $("#contrato").html('');
+           
+            
+            if(status==5){
+                $.ajax({
+                    url:"{{path('panel_agendador_abogados',{'id':agenda.id})}}",
+                    type: "post",
+                    dataType: "html",
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    async: true,
+                    beforeSend: function(){
+                        $("#abogado").html(' <div class="overlay"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>');
+                        
+                    },
+                    success:function(data){
+                        $("#abogado").html(data);
+                    }
+        
+                });
+            }
+            else{
+                $.ajax({
+                    url:"{{path('panel_agendador_engestion',{'id':agenda.id})}}",
+                    type: "post",
+                    dataType: "html",
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    async: true,
+                    beforeSend: function(){
+                        $("#abogado").html(' <div class="overlay"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>');
+                        
+                    },
+                    success:function(data){
+                        $("#abogado").html(data);
+                    }
+        
+                });
+            }
+        }
+        function getReagenda(status){
+            $.ajax({
+                url:"{{path('panel_agendador_abogados',{'id':agenda.id})}}",
+                type: "post",
+                dataType: "html",
+                cache: false,
+                contentType: false,
+                processData: false,
+                async: true,
+                beforeSend: function(){
+                    $("#abogado").html(' <div class="overlay"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>');
+                    
+                },
+                success:function(data){
+                    $("#abogado").html(data);
+                }
+    
+            });
+        }
+        function getReasignar(status){
+            $.ajax({
+                url:"{{path('panel_agendador_reasignar')}}",
+                type: "get",
+                dataType: "html",
+                data: "agenda={{agenda.id}}",
+                cache: false,
+                contentType: false,
+                processData: false,
+                async: true,
+                beforeSend: function(){
+                    $("#abogado").html(' <div class="overlay"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>');
+                    
+                },
+                success:function(data){
+                    $("#abogado").html(data);
+                }
+    
+            });
+        }
+
+        function getSubStatus(status){
+            $.ajax({
+                url:"{{path('panel_agendador_sub_status')}}",
+                type: "get",
+                dataType: "html",
+                data: "status="+status,
+                cache: false,
+                contentType: false,
+                processData: false,
+                async: true,
+                beforeSend: function(){
+                    $("#abogado").html(' <div class="overlay"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>');
+                    
+                },
+                success:function(data){
+                    $("#abogado").html(data);
+                }
+    
+            });
+        }
+        $(".format-rut").rut();
+
+        // Al cambiar el tipo de cliente del prospecto se guarda de inmediato (el combo
+        // vive en este formulario, pero "Contrata" se carga aparte en #contrato con su
+        // propia petición al servidor, así que necesita el valor ya persistido para
+        // mostrar/ocultar sexo, estado civil y causas según corresponda).
+        function cambiaTipoCliente(tipoClienteId){
+            $.ajax({
+                url:"{{path('panel_agendador_tipo_cliente',{'id':agenda.id})}}",
+                type: "post",
+                data: {tipoCliente: tipoClienteId},
+                cache: false,
+                success: function(){
+                    if($("#contrato").children().length > 0){
+                        contrata(7);
+                    }
+                }
+            });
+        }
+
+        function validarut(){
+            $('button').attr("disabled", true);
+            if($(".format-rut").val()=="") return true;
+            if($.validateRut($(".format-rut").val())) {
+                return true;
+            }
+            alert("Rut no valido");
+            $(".format-rut").focus();
+            $('button').attr("disabled", false);
+            return false;
+            
+        }
+
+        function cambiaCompania(status){
+
+        cambiamateria(status);
+        cambiaAcreedores(status);
+        
+        $.ajax({
+            url:"{{path('panel_abogado_compania',{'id':agenda.id})}}",
+            type: "get",
+            dataType: "html",
+            data:"compania="+status,
+            cache: false,
+            contentType: false,
+            processData: false,
+            async: true,
+            beforeSend: function(){
+                $("#status").html(' <div class="overlay"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>');
+                
+            },
+            success:function(data){
+                $("#status").html(data);
+                //$("#contrato").html("");
+
+                
+
+                $.ajax({
+                    url:"/panel_abogado/"+status+"/sucursales",
+                    type: "post",
+                    dataType: "html",
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    async: true,
+                    beforeSend: function(){
+                        //$("#status").html(' <div class="overlay"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>');
+                        
+                    },
+                    success:function(data){
+                        $("#sucursal").find('option').remove();
+                        $("#sucursal").append(data);
+                        //$("#contrato").html("");
+                    }});
+                
+                    $.ajax({
+                        url:"/panel_abogado/"+status+"/tramitadores",
+                        type: "post",
+                        dataType: "html",
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        async: true,
+                        beforeSend: function(){
+                            //$("#status").html(' <div class="overlay"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>');
+                            
+                        },
+                        success:function(data){
+                            $("#tramitador").find('option').remove();
+                            $("#tramitador").append(data);
+                            //$("#contrato").html("");
+                        }});
+
+            }
+
+        });
+    }
+    </script>
+
+{% endblock %}

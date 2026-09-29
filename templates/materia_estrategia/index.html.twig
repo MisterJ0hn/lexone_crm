@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}MateriaEstrategia index{% endblock %}
+
+{% block body %}
+    <h1>MateriaEstrategia index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for materia_estrategium in materia_estrategias %}
+            <tr>
+                <td>{{ materia_estrategium.id }}</td>
+                <td>
+                    <a href="{{ path('materia_estrategia_show', {'id': materia_estrategium.id}) }}">show</a>
+                    <a href="{{ path('materia_estrategia_edit', {'id': materia_estrategium.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="2">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('materia_estrategia_new') }}">Create new</a>
+{% endblock %}

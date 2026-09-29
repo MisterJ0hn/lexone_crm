@@ -1,0 +1,15 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}{{pagina|default('tramitadores')}}{% endblock %}
+
+{% block body %}
+	<div class="card">
+        <div class="card-body">
+    {{ include('tramitadores/_form.html.twig', {'button_label': 'Modificar'}) }}
+
+    
+        </div>
+    </div>
+    
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nuevo Pago{% endblock %}
+
+{% block body %}
+<div class="row">
+        <div class="col-sm-12  col-md-4">
+<div class="card">
+    <div class="card-header">
+        <h1>Folio: {{contrato.id}}</h1>
+    </div>
+    {{ form_start(form) }}
+    <div class="card-body table-responsive pad">
+
+
+    {{form_row(form.monto,{'attr':{'class':'form-control monto'}})}}
+    <strong><label id="m-monto"></label></strong>          
+
+
+    </div>
+    <div class="card-footer"><button class="btn btn-primary">Modificar</button></div>
+    {{ form_end(form) }}
+</div>
+    <script>
+        $('.monto').change(function(){
+    
+            $("#m-monto").html($.number( $(this).val(), 0, ',', '.' ));
+        });
+    </script>
+    </div></div>
+    {% endblock %} 

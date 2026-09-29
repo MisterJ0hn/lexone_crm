@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}UsuarioStatus{% endblock %}
+
+{% block body %}
+    <h1>UsuarioStatus</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ usuario_status.id }}</td>
+            </tr>
+            <tr>
+                <th>Nombre</th>
+                <td>{{ usuario_status.nombre }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('usuario_status_index') }}">back to list</a>
+
+    <a href="{{ path('usuario_status_edit', {'id': usuario_status.id}) }}">edit</a>
+
+    {{ include('usuario_status/_delete_form.html.twig') }}
+{% endblock %}

@@ -1,0 +1,12 @@
+
+<small class="text-muted">Agendador</small>
+<select name="cboAgendador" class="form-control" required>
+    {% for agendador in agendadores %}
+        <option value="{{agendador.id}}"
+        
+        {% if agendador.id == agendador_id %}
+            selected
+        {% endif %}
+        >{{agendador.nombre}}</option>
+    {% endfor %}
+</select>

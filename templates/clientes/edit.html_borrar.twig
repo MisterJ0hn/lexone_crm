@@ -1,0 +1,15 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}{{pagina|default('Abogados')}}{% endblock %}
+
+{% block body %}
+	<div class="card">
+        <div class="card-body">
+    {{ include('clientes/_form.html.twig', {'button_label': 'Modificar'}) }}
+
+    
+        </div>
+    </div>
+    
+{% endblock %}

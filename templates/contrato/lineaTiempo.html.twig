@@ -1,0 +1,333 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contrato{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+        {{ include('cabezera.html.twig') }}
+        <div class="card">
+            <div class="card-body">
+                <h6>Agregar Causa</h6>
+                <div class="row agregar-causa-nueva">
+                    <div class="col-sm-12 col-md-2">
+                        <select class="form-control cbomateria-nueva" onchange="cambiaMateriaCausaNueva(this.value)">
+                            <option value="">Seleccione Materia</option>
+                            {% for materia in materias %}
+                            <option value="{{ materia.id }}">{{ materia.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-sm-12 col-md-3">
+                        <select class="form-control cboSubMateria-nueva">
+                            <option value="">Seleccione Servicio</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-12 col-md-3">
+                        <div class="row no-gutters">
+                            <div class="col-4 letras-nueva">
+                                <input type="text" class="form-control txtLetra-nueva" placeholder="Letra" size="3" maxlength="10">
+                            </div>
+                            <div class="col-1" align="center">-</div>
+                            <div class="col-3">
+                                <input type="text" class="form-control txtRol-nueva" placeholder="N°" size="6" maxlength="255">
+                            </div>
+                            <div class="col-1" align="center">-</div>
+                            <div class="col-3">
+                                <input type="text" class="form-control txtAnio-nueva" placeholder="Año" size="4" maxlength="4">
+                            </div>
+                        </div>
+                        <small class="text-muted">Formato: Letra-Rol-Año</small>
+                    </div>
+                    <div class="col-sm-12 col-md-2">
+                        <input type="text" class="form-control txtCaratulado-nueva" placeholder="Caratulado" maxlength="30">
+                    </div>
+                    <div class="col-sm-12 col-md-2">
+                        <select class="form-control juzgado-nueva">
+                            <option value="">Seleccione Juzgado</option>
+                            {% for juzgado in juzgados %}
+                                <option value="{{ juzgado.juzgado.id }}">{{ juzgado.juzgado.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-sm-12 col-md-1">
+                        <button type="button" class="btn btn-primary" onclick="agregarCausaNueva()"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body table-responsive pad">
+                <table class="table table-head-fixed text-nowrap table-striped table-sm">
+                    <thead>
+                        <tr>
+                            <!--<th>Id</th>-->
+                            
+                            <th>Caratulado</th>
+                            <th>Servicio</th>
+                            <th>Rit/Rol</th>
+                            <th>Corte</th>
+                            <th>Tribunal</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    {% for causa in contrato.agenda.causas %}
+                    {% if causa.estado == true %}
+                        <tr>
+                           <!-- <td>
+                            {{causa.id}}
+                            </td>-->
+                             <td>
+                                {{causa.causaNombre}}
+                            </td>
+                            <td>
+                                <strong>{{causa.materia.nombre}}</strong>
+                                {% if causa.materiaEstrategia %}<br><small>{{causa.materiaEstrategia.estrategiaJuridica}}</small>{% endif %}
+                            </td>
+                            
+                             <td>
+                                {{causa.letra}}-{{causa.rol}}-{{causa.anio}}
+                            </td>   
+                            
+                           
+                            <td>
+                                {{causa.corte?causa.corte.nombre:''}}
+                            </td>
+                            <td>
+                                {{causa.juzgado is null?'':causa.juzgado}}
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" 
+                                        data-whatever="@fat"
+                                        data-servicio="{{causa.materiaEstrategia.estrategiaJuridica}}"
+                                        data-idcausa="{{causa.idCausa}}"
+                                        data-letra="{{causa.letra}}"
+                                        data-rol="{{causa.rol}}"
+                                        data-anio="{{causa.anio}}"
+                                        data-nombre="{{causa.causaNombre}}"
+                                        data-juzgado="{{causa.juzgado is null?'':causa.juzgado.id}}"
+                                        data-causa="{{causa.id}}"
+                                        data-corteid="{{causa.corte is null?'':causa.corte.id}}"
+                                        data-cuenta="{{causa.agenda.cuenta.id}}"
+                                        data-materia="{{causa.materia.id}}"
+                                        ><i class="fas fa-edit"></i></button>
+                                    <a href="{{ path('contrato_linea_tiempo_detalle', {'id': causa.id}) }}" class="btn  btn-sm text-white bg-dark">LT</a>
+                                </div>                        
+                            </td>
+                        </tr>
+                    {% endif %}
+                    {% endfor %}
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+ 
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Editar</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="" method="post" id="frmEditar">
+                <div class="row">
+                    <div class="col-sm-12 col-md-3 submateria pt-2">
+                        
+                    </div>
+                    <div class="col-sm-12 col-md-3 "> 
+
+                        <div class="row">
+                            <div class="col-sm-12 col-md-3 ml-0 mr-0 pl-0 pr-0 letras">
+                                <input type="text" name="txtLetra" placeholder="Letra" class="form-control txtLetra" size="3" maxlength="10"> 
+                            </div>
+                            <div class="col-sm-12 col-md-1 ml-0 mr-0 pl-0 pr-0" align="center">
+                                -
+                            </div>
+                            <div class="col-sm-12 col-md-3 ml-0 mr-0 pl-0 pr-0">
+                                <input type="text" name="txtRol" placeholder="N°" class="form-control txtRol" size="6" maxlength="255">
+                            </div>
+                            <div class="col-sm-12 col-md-1 ml-0 mr-0 pl-0 pr-0" align="center">
+                                -
+                            </div>
+                            <div class="col-sm-12 col-md-3 ml-0 mr-0 pl-0 pr-0">
+                                <input type="text" name="txtAnio" placeholder="Año" class="form-control txtAnio" size="4" maxlength="4">
+                            </div>
+
+                        </div>
+                        
+                    </div> 
+                    
+                    <div class="col-sm-12 col-md-6 ">
+                        <input type="text" name="txtCaratulado" placeholder="Caratulado" class="form-control txtCaratulado" size="50" maxlength="30">
+                        <small class="text-muted">Caracteres max. 50</small>
+                    </div>  
+                    
+                    
+                     <div class="col-sm-12 col-md-6">
+                        
+                        <select name="corte" class="form-control corte">
+                            <option value=""> Seleccione Corte </option>
+                        </select>
+                    </div>   
+                    <div class="col-sm-12 col-md-6">
+                        
+                        <select name="juzgado" class="form-control juzgado">
+                            <option value=""> Seleccione Juzgado </option>
+                            {% for juzgado in juzgados %}
+                                
+                            {% endfor %}
+                        </select> 
+                    </div>   
+                    <div class="col-sm-12 col-md-12">
+                        <input type="hidden" class="hdCausa">
+                        <button type="submit" class="btn btn-primary btn-agregar" >Modficar</button>
+
+                    </div>  
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('#exampleModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var recipient = button.data('whatever')
+        var causa = button.data('causa')
+        var idCausa = button.data('idcausa')
+        var servicio = button.data('servicio')
+        var nombre = button.data('nombre')
+        var juzgado = button.data('juzgado')
+        var materia = button.data('materia')
+        var url=button.data('url') // Extract info from data-* attributes
+        // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+        // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+
+        $(".submateria").html(servicio)
+        $(".txtNombreCausa").val(idCausa)
+        $(".txtCaratulado").val(nombre)
+        $(".juzgado").val(juzgado)
+        $(".hdCausa").val(causa)
+        $("#frmEditar").attr("action","/contrato/"+causa+"/modificar_servicio")
+
+        // Combos dependientes de la materia de la causa editada
+        letrasCausa(materia)
+        $.ajax({
+            url:"/materia/"+materia+"/corte_combo",
+            type:"post",
+            dataType:"html",
+            cache:false,
+            success:function(data){ $(".corte").html(data); }
+        })
+    })
+
+    function cambiaMateriaCausaNueva(materiaId){
+        if(!materiaId){
+            $(".cboSubMateria-nueva").html('<option value="">Seleccione Servicio</option>');
+            return;
+        }
+        $.ajax({
+            url: "/estrategia_juridica/"+materiaId+"/combo",
+            type: "post",
+            dataType: "html",
+            cache: false,
+            contentType: false,
+            processData: false,
+            async: true,
+            success: function(data){
+                $(".cboSubMateria-nueva").html(data);
+            }
+        });
+        letrasCausaNueva(materiaId);
+    }
+
+    // Igual que letrasCausa() (modal "Editar"), pero con sus propias clases para
+    // no interferir con el modal (#exampleModal) de esta misma página.
+    function letrasCausaNueva(materia_id){
+        $.ajax({
+            url:"/materia/"+materia_id+"/causa_letras",
+            type: "get",
+            dataType: "json",
+            cache: false,
+            contentType: false,
+            processData: false,
+            async: true,
+            success:function(data){
+                var letras=data;
+                $('.letras-nueva').html('<select class="form-control txtLetra-nueva"><option value=""> Letra </option></select>');
+                $.each(letras,function(i,letra){
+                    $('.txtLetra-nueva').append('<option value="'+letra+'">'+letra+'</option>');
+                });
+            },error:function(error){
+                $(".letras-nueva").html('<input type="text" placeholder="Letra" class="form-control txtLetra-nueva" size="3" maxlength="10">');
+            }
+        });
+    }
+
+    function agregarCausaNueva(){
+        var materia = $(".cbomateria-nueva").val();
+        if(!materia){
+            alert('Debe seleccionar una materia');
+            return;
+        }
+        $.ajax({
+            url: "{{ path('causa_new', {'id': contrato.agenda.id}) }}",
+            type: 'get',
+            data: {
+                cboMateria: materia,
+                cboSubMateria: $(".cboSubMateria-nueva").val(),
+                txtLetra: $(".txtLetra-nueva").val(),
+                txtRol: $(".txtRol-nueva").val(),
+                txtAnio: $(".txtAnio-nueva").val(),
+                txtCaratulado: $(".txtCaratulado-nueva").val(),
+                juzgado: $(".juzgado-nueva").val()
+            },
+            cache: false,
+            success: function(){
+                location.reload();
+            },
+            error: function(){
+                alert('No se pudo agregar la causa');
+            }
+        });
+    }
+
+function letrasCausa(materia_id){
+    $.ajax({
+        url:"/materia/"+materia_id+"/causa_letras",
+        type: "get",
+        dataType: "json",
+        cache: false,
+        contentType: false,
+        processData: false,
+        async: true,
+        beforeSend: function(){
+        },
+        success:function(data){
+            console.log("data");
+            console.log(data);
+
+            var letras=data;
+            $('.letras').html('<select name="txtLetra" class="form-control txtLetra"><option value=""> Letra </option></select>');
+            $.each(letras,function(i,letra){
+                $('.txtLetra').append('<option value="'+letra+'">'+letra+'</option>');
+            });
+
+        },error:function(error){
+            $(".letras").html('<input type="text" name="txtLetra" placeholder="Letra" class="form-control txtLetra" size="3" maxlength="10">');
+        }
+    });
+}
+</script>
+{% endblock %}

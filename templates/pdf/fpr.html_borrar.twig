@@ -1,0 +1,208 @@
+{% extends 'pdf/base.html.twig' %}
+{% block body %}
+    <table width='100%'>
+        <tr>
+            <td>
+                <img src="http://rendicion.ulma.cl/build/img/logoUlma.jpg">
+            </td>
+            <td width="60%" align="center">
+                <h1>{{rendicion.estado}}</h1>
+            </td>
+            <td align="center">
+                <p>{{rendicion.tipo|default('Rendicion')}} </p>
+                <br>
+                <h1> {{rendicion.numero}}</h1>
+            </td>
+        </tr>
+    </table>
+        <br>
+    <table >
+        <tr>
+            <td width="150px"><small class="text-muted">Trabajador</small></td>
+            <td colspan="3">{{rendicion.usuario.nombre}}</td>
+        <tr>
+            <td><small class="text-muted">Fecha Registro</small></td>
+            <td  colspan="3">{{rendicion.fechaRegistro ? rendicion.fechaRegistro|date('Y-m-d') : ''}}</td>
+        </tr>
+        <tr>
+            <td  width="150px"><small class="text-muted">Fecha Inicio</small></td>
+            <td width="200px">{{rendicion.fechaInicio ? rendicion.fechaInicio|date('Y-m-d') : ''}}</td>
+            <td  width="150px"><small class="text-muted">Fecha Fin</small></td>
+            <td>{{rendicion.fechaFin ? rendicion.fechaInicio|date('Y-m-d') : ''}}</td>
+        </tr>
+        <tr>
+            <td  width="150px"><small class="text-muted">Monto</small></td>
+            <td colspan="3">${{rendicion.monto|number_format}}</td>
+        </tr>
+    </table>
+    <table class='table'>
+        <tr>
+            <td colspan="4">
+                <small class="text-muted">Observación</small><br>
+                <label>{{rendicion.observacion|raw}}</label>
+            </td>
+        </tr>
+            
+        <tr>
+            <td>
+                <small class="text-muted">Jefe</small><br>
+                <label>{{jefe.nombre}}</label>
+            </td>
+            <td colspan="3">
+                <small class="text-muted">Nota del Jefe</small><br>
+                <label>{{rendicion.observacionAprecJefe|raw}}</label>
+            </td>
+        </tr>
+        {% if rendicion.apruebajefe == 1 %}
+        
+            <tr>
+            <td colspan="4">
+                <small class="text-muted">Motivo Aprobacion Jefe</small><br>
+                <label>{{rendicion.observacionaprecjefe}}</label>
+            </td>
+            </tr>
+  
+        {% endif %}
+        {% if rendicion.rechazajefe == 1 %}
+        
+            <tr>
+            <td colspan="4">
+                <small class="text-muted">Motivo Rechazo Jefe <i class="fas fa-info-circle text-danger"></i></small><br>
+                <label>{{rendicion.observacionaprecjefe}}</label>
+            </td>
+            </tr>
+  
+        {% endif %}
+
+        {% if rendicion.apruebaar!= null %}
+        
+        <tr>
+            <td colspan="4">
+                <small class="text-muted">Motivo Aprobacion Administrador de Fondos</small><br>
+                <label>{{rendicion.observacionaprecar}}</label>
+            </td>
+        </tr>
+  
+        {% endif %}
+        {% if rendicion.rechazaar!= null %}
+        
+            <tr>
+            <td colspan="4">
+                <small class="text-muted">Motivo Rechazo Administrador de Fondos <i class="fas fa-info-circle text-danger"></i></small><br>
+                <label>{{rendicion.observacionaprecar}}</label>
+            </td>
+            </tr>
+  
+        {% endif %}
+    </table>
+    <div class="row">
+        
+
+
+        </div>
+        <hr />
+        <div class="row" style="margin-top: 20px">
+            <div class="col-12">
+                
+                <h3> Gastos</h3>
+            </div>
+            <div class="col-md-12 col-sm-12">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>
+                                Boleta
+                            </th>
+                            <th>
+                                Concepto
+                            </th>
+                            <th>
+                                Descripcion
+                            </th>
+                            
+                            <th>
+                                Estado
+                            </th>
+                            <th>
+                                Observación
+                            </th>
+                            <th>
+                                Monto
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% set total=0 %}
+                        {% for detalle in rendicion.rendicionDetalles %}
+                        
+                        {% if detalle.aprobado!=1 %}
+                        <tr class="bg-danger text-light">
+                        {% else %}
+                            {% set total = total + detalle.monto %}
+                        <tr>
+                        {% endif %}
+                            <td>{{detalle.boleta}}</td>
+                            <td>{{detalle.concepto}}</td>
+                            <td>{{detalle.descripcion}}</td>
+                            
+                            <td>{{detalle.aprobado? 'Aprobado' : 'Rechazado' }}</td>
+                            <td>{{detalle.observacion}}</td>
+                            <td>{{detalle.monto}}</td>
+                        </tr>
+
+
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+						<tr>
+							<td colspan="4">
+							</td>
+							<td>
+								<small>
+								Total Gastos
+								</small>
+							</td>
+							<td class="bg-success" id="neto">
+								${{total|number_format}}
+							</td>
+						</tr>
+						<tr>
+						<td colspan="4">
+							</td>
+							<td >
+								<small>
+								Total Solicitado
+								</small>
+							</td>
+							<td class="bg-success" id="solicitado">
+								${{rendicion.monto|number_format}}
+							</td>
+						</tr>
+						<tr>
+						<td colspan="4">
+							</td>
+							<td> <small id="leyenda-total">
+								{% set resta=rendicion.monto-total %}
+
+								{% if resta>=0 %}
+								Devolver
+								{% else %}
+								{% set resta=resta*-1 %}
+								Pagar
+								{% endif %}
+								</small>
+							</td>
+							<td class="bg-success" id="total">
+
+								${{resta|number_format}}
+								
+							</td>
+						</tr>
+					</tfoot>
+                </table>
+            </div>
+            
+            
+        </div>
+    </div>
+  {% endblock %}

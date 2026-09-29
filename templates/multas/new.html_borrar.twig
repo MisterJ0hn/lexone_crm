@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nuevo Pago{% endblock %}
+
+{% block body %}
+       {% if isBoucher %}
+       {{ include('multas/_form.html.twig') }}
+       {% else %}
+       {{ include('multas/_formSBoucher.html.twig') }}
+       {% endif %}
+       
+{% endblock %}

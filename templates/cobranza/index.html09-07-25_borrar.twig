@@ -1,0 +1,241 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+
+    <section>
+    <div class="row">
+        {% set total = 0 %}
+        <!--<div class="col-sm-6 col-md-3">
+            
+            <div class="info-box">
+                <span class="info-box-icon "></span>
+    
+                <div class="info-box-content">
+                <span class="info-box-text">Segmento</span>
+                <span class="info-box-number">Todos</span>
+            
+                <a href="#" class="small-box-footer" onclick="javascript:buscar('')">
+                    Ver mas <i class="fas fa-arrow-circle-right"></i>
+                </a>
+          
+                </div>
+
+                
+               
+            </div>
+            
+        </div>-->
+        {% for vencimiento in vencimientos  %}
+        <div class="col-sm-6 col-md-3">
+            
+            <div class="info-box">
+                <span class="info-box-icon {{vencimiento.color}}"><i class="{{ vencimiento.icono }}"></i></span>
+    
+                <div class="info-box-content">
+                <span class="info-box-text">{{vencimiento.nombre}}</span>
+                {% if sesion.getSesion.usuarioTipo.id == 1 %}
+                <span class="info-box-number">{{vencimiento.valMin}} -  {{vencimiento.valMax}} </span>
+                {% endif %}
+                <a href="#" class="small-box-footer" onclick="javascript:buscar({{vencimiento.id}})">
+                    Ver mas <i class="fas fa-arrow-circle-right"></i>
+                </a>
+          
+                </div>
+
+                
+                <!-- /.info-box-content -->
+            </div>
+            
+        </div>
+
+       
+       {% endfor %}
+        
+    </div>
+    {% if queryTotales != "" %}
+        <div class="alert alert-success" role="alert">
+            <h4 class="alert-heading"> {{vencimientoSeleccionado.nombre}}</h4>
+            <p class="mb-0"><strong>Total</strong> {{queryTotales[0][1]|number_format(0,",",".")}}</p>
+             {% if sesion.getSesion.usuarioTipo.id == 1 %}
+            <p class="mb-0"><strong>Monto Total</strong> {{queryTotales[0][2]|number_format(0,",",".")}}</p>
+            {% endif %}
+            
+        </div>
+        
+    {% endif %}
+    </section>
+    <form action="" method="get" class="frmBuscar">
+            <input type="hidden" name="bStatus" id="bStatus" value="{{status|default('')}}">
+                {{ include('/cuadrosBusquedas/busquedaContrato.html.twig', {'TipoFiltro':TipoFiltro}) }}
+    </form>
+    <div class="card">
+        <div class="card-header">
+            
+        </div>
+        <div class="card-body table-responsive p-0" style="height: 500px;">
+        
+            <table class="table table-head-fixed text-nowrap table-striped table-sm">
+                <thead>
+                    <tr>
+                        <th>{{ knp_pagination_sortable(cuotas, 'Folio', 'contrato.folio') }} {% if cuotas.isSorted('contrato.folio') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th>{{ knp_pagination_sortable(cuotas, 'AgendaId', 'contrato.agenda.id') }} {% if cuotas.isSorted('contrato.agenda.id') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th>{{ knp_pagination_sortable(cuotas, 'Lote', 'contrato.idLote.nombre') }} {% if cuotas.isSorted('contrato.idLote.nombre') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <!--<th>{{ knp_pagination_sortable(cuotas, 'Telefono', 'contrato.telefono') }} {% if cuotas.isSorted('contrato.telefono') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        -->
+                        <th>Cobrador</th>
+                        <th>{{ knp_pagination_sortable(cuotas, 'Cliente', 'contrato.nombre') }} {% if cuotas.isSorted('contrato.nombre') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        
+                        <!--<th>{{ knp_pagination_sortable(cuotas, 'Rut', 'contrato.rut') }} {% if cuotas.isSorted('contrato.rut') %} <i class="fas fa-sort"></i>{% endif %}</th>-->
+                        <th>{{ knp_pagination_sortable(cuotas, 'Fecha Contrato', 'contrato.fechaCreacion') }} {% if cuotas.isSorted('contrato.fechaCreacion') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th>{{ knp_pagination_sortable(cuotas, 'Vcto', 'fechaPago') }} {% if cuotas.isSorted('fechaPago') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th>D. Mora</th>
+                        
+                        <!--<th>DSG</th>-->
+                        <th>V. Cuota</th>
+                        <th>$Mora</th>
+                        <th>U. Pago</th>
+                        <th>{{ knp_pagination_sortable(cuotas, 'U. Gestión', 'contrato.fechaUltimaGestion') }} {% if cuotas.isSorted('contrato.fechaUltimaGestion') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th>{{ knp_pagination_sortable(cuotas, 'U. Rpta', 'contrato.ultimaFuncion') }} {% if cuotas.isSorted('contrato.ultimaFuncion') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th>{{ knp_pagination_sortable(cuotas, 'Compromiso', 'contrato.fechaCompromiso') }} {% if cuotas.isSorted('contrato.fechaCompromiso') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th>C. Pgda</th>
+                        <th>{{ knp_pagination_sortable(cuotas, 'Q. Gestión', 'contrato.qMov') }} {% if cuotas.isSorted('contrato.qMov') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th>{{ knp_pagination_sortable(cuotas, 'Anexo', 'contrato.isAnexo') }} {% if cuotas.isSorted('contrato.isAnexo') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        {% if finalizado is null or not finalizado %}
+
+                        <th><i class="fas fa-traffic-light"></i></th>
+                        
+                        
+                        {% endif %}
+                        
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+    
+                {% for cuota in cuotas %}
+              
+                {% set contrato = cuota.contrato %}
+                {% set enmora = cuota.monto - cuota.pagado %}
+                {% set pago = proximoPago(cuota.contrato.id) %}
+                {% set diferencia=(date('now').diff(cuota.fechaPago)) %}
+                    <tr>
+                        <td>{{ contrato.folio }}</td>
+                        <td>{{ contrato.agenda.id }}</td>
+                        <td align="center">{{ contrato.idLote.nombre|default('') }}</td>
+                        
+                       <!-- <td><a href="https://api.whatsapp.com/send?phone={{ contrato.telefono }}&text=" target="_blank">{{ contrato.telefono }}</a></td>-->
+                        <td>
+                            {% if contrato.idLote.usuarioLotes is defined %}
+                                {% for usuarioLote in contrato.idLote.usuarioLotes %}
+                                {{ usuarioLote.usuario }}
+                                {% endfor %}
+                            {% endif %}
+                        </td>
+                        <td>{{ contrato.nombre }}</td>
+                       <!-- <td align="center">{{ contrato.rut }}</td>-->
+                        <td align="center">{{ contrato.fechaCreacion|date('d-m-Y H:i') }}</td>
+                        <td align="center">
+                        {% if pago %}
+                            {{ pago|date('d-m-Y') }}
+                        {% endif %}
+                        </td>
+                        <!--<td align="center">{{ diasmora(cuota.contrato.proximoVencimiento|date('Y-m-d')) }} dias</td>-->
+                        
+                        <td align="center">
+                        {%  if pago %}
+                        {{ diasmora(pago|date('Y-m-d'))<0?0:diasmora(pago|date('Y-m-d'))}} dias
+                        {% endif %}
+                         </td>
+                        <td align="center">
+                        {% if cuota.isMulta != true %}
+
+                            ${{ cuota.monto|number_format(0,',','.') }}
+                        {% endif %}
+                        </td>
+                        <td align="right">${{ montoDeuda(contrato.id)|number_format(0, ',', '.') }}</td>
+                        
+                        <td align="center">{{ ultimoPago(contrato.id) ? ultimoPago(contrato.id) |date('d-m-Y H:i') : '' }}</td>
+                        <td align="center">{{ contrato.fechaUltimaGestion ? contrato.fechaUltimaGestion|date('Y-m-d') : '' }}</td>
+                        <td align="center">{{ contrato.ultimaFuncion ? contrato.ultimaFuncion : '' }}</td>
+                        <td align="center">{{ contrato.fechaCompromiso ? contrato.fechaCompromiso|date('d-m-Y'):''}}</td>
+                        <td align="center">{{ totalesCobranza(contrato.id) }}</td>
+                        <td align="center">{{ contrato.qMov }}</td>
+                        <td align="center">
+                            {% if contrato.isAnexo %}
+                                <i class="fas fa-check"></i>
+                            {% endif %}
+                        </td>
+                        {% if finalizado is null or not finalizado %}
+                        <td>
+                           {{semaforo(pago|date('Y-m-d'))|raw}}
+                        </td>
+                        {% endif %}  
+                        <td>
+                            <a href="{{ path('cobranza_lote', {'id': contrato.id}) }}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                            <a href="{{ path('vercobranza_view', {'id': contrato.id}) }}" class="btn btn-success btn-sm"><i class="far fa-eye"></i></a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="16">No hay contratos</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer">
+            <div class="card-footer clearfix">
+                {# display navigation #}
+           <div class="navigation">
+               {{ knp_pagination_render(cuotas,'@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig',{},{
+               'position': 'centered',
+               'rounded': true,
+               }) }}
+           </div>
+       </div>
+            
+        </div>
+    </div>
+    <script>
+        $('#bFecha').daterangepicker({
+        
+            "drops": "down",
+            "startDate":"{{dateInicio}}",
+            "endDate": "{{dateFin}}",
+            "locale": {
+                "format": "YYYY-MM-DD",
+                "applyLabel": "Apply",
+                "cancelLabel": "Cancel",
+            }
+        }, function(start, end, label) {
+        console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+        
+        });
+        $(".bFolio").change(function(){
+            $(".bFiltro").val('');
+        });
+        $(".bFiltro").change(function(){
+            $(".bFolio").val('');
+        });
+
+    $(".exportarxslx").on('click',function(){
+        $(".frmBuscar").attr('action',"{{path('cobranza_excel')}}");
+        $(".frmBuscar").submit();
+
+        $("button").prop('disabled',false);
+    });
+
+    $(".buscar").on('click',function(){
+        $(".frmBuscar").attr('action',"{{path('cobranza_index')}}");
+        $(".frmBuscar").submit();
+    });
+
+    function buscar(status){
+        $(".frmBuscar").attr('action',"{{path('cobranza_index')}}");
+        $("#bStatus").val(status);
+        $(".frmBuscar").submit();
+    }
+    </script>
+{% endblock %}

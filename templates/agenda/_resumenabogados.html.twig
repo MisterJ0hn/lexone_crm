@@ -1,0 +1,39 @@
+<div class="card card-outline card-info">
+    <div class="card-header">
+      <h3 class="card-title">Resumen por abogado 
+        {% if nombre_status != '' %}
+        <strong>en {{nombre_status}}</strong>
+        {% endif %}
+      </h3>
+
+      <div class="card-tools">
+        <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+        </button>
+        <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+      </div>
+    </div>
+    <div class="card-body">
+{% for agendador in agendadores %}
+    
+<div class="row">
+    <div class="col-2">
+
+    <p>{{agendador[0].abogado.nombre}}</p>
+    </div>
+    <div class="col-9">
+        <div class="progress mb-3">
+            <div class="progress-bar bg-success" role="progressbar" aria-valuenow="{{agendador.valor/total}}" aria-valuemin="0"
+            aria-valuemax="100" style="width: {{agendador.valor/total*100}}%">
+                <span class="sr-only">40% Complete (success)</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-1">
+        <p>{{agendador.valor}}</p>
+    </div>
+</div>
+{% endfor %}
+
+</div>
+<!-- /.card-body -->
+</div>

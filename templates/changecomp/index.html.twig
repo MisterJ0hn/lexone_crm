@@ -1,0 +1,34 @@
+
+
+    {% if sesion.getSesion.usuarioTipo.id==8  %}
+        <form action="{{path('changecomp_new')}}" method="post" id="frmChange">
+            <select  class="form-control changecomp" name="company" id="company">
+                {% for empresa in empresas %}
+                <option value="{{empresa.id}}"
+                {% if empresa.id==id_empresa %}
+                    selected
+                {% endif %}
+                >{{empresa.nombre}}</option>
+                {% endfor %}
+            </select>
+            
+        
+            <input type="hidden" name="route" value="{{route}}">
+        </form> 
+    {% else %}
+        {% for empresa in empresas %}
+                
+                {% if empresa.id==id_empresa %}
+                <a href="#" class="nav-link">
+                  {{empresa.nombre}}
+                </a>
+                {% endif %}
+               
+                {% endfor %}
+    {% endif %}
+    
+<script>
+   $("#company").change(function(){
+       $("#frmChange").submit();
+   })
+</script>

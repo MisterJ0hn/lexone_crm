@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Agenda index{% endblock %}
+
+{% block body %}
+    <h1>Agenda index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Campania</th>
+                <th>Status</th>
+                <th>NombreCliente</th>
+                <th>EmailCliente</th>
+                <th>TelefonoCliente</th>
+                <th>CiudadCliente</th>
+                <th>FechaCarga</th>
+                <th>FechaAsignado</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for agenda in agendas %}
+            <tr>
+                <td>{{ agenda.id }}</td>
+                <td>{{ agenda.campania }}</td>
+                <td>{{ agenda.status }}</td>
+                <td>{{ agenda.nombreCliente }}</td>
+                <td>{{ agenda.emailCliente }}</td>
+                <td>{{ agenda.telefonoCliente }}</td>
+                <td>{{ agenda.ciudadCliente }}</td>
+                <td>{{ agenda.fechaCarga ? agenda.fechaCarga|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ agenda.fechaAsignado ? agenda.fechaAsignado|date('Y-m-d H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('agenda_show', {'id': agenda.id}) }}">show</a>
+                    <a href="{{ path('agenda_edit', {'id': agenda.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="10">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('agenda_new') }}">Create new</a>
+{% endblock %}

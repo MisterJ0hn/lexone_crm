@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Archivos CaseTracking{% endblock %}
+
+{% block body %}
+
+
+<div class="card">
+    <div class="card-header">
+     
+        <div class="row">
+            <div>
+            <a href="{{path('contrato_linea_tiempo',{'id':contrato.id})}}" class="btn btn-success" >Volver</a>
+            </div>&nbsp;
+            
+        </div>
+    </div>
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Archivo</th>
+                    <th>FechaSubida</th>
+                    <th>Dueño Archivo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for archivo in contrato.contratoCasetrackings %}
+            
+                <tr>
+                    <td>
+                    {{archivo.nombreArchivo}}
+                    </td>
+                    <td>
+                    {{archivo.fechaSubida ? archivo.fechaSubida|date('Y-m-d H:i:s') : ''}}
+                    </td>
+                    <td>
+                    {{archivo.usuarioCarga}}
+                    </td>
+                    <td>
+                        <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+                            <a href="{{url_web}}{{casetracking_contrato}}{{archivo.nombreArchivo}}" target="_self" class="btn  btn-sm btn-success"><i class="fas fa-file"></i></a>
+                        </div>                                       
+                    </td>
+                </tr>
+            
+            {% else %}
+                <tr>
+                    <td colspan="4">No se han encontrado archivos.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+            
+    </div>
+</div>
+{% endblock %}

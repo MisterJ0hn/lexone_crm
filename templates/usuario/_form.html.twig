@@ -1,0 +1,34 @@
+{{ form_start(form,{'action':action_form}) }}
+	<section>
+		<div class="row">
+			<div class="col-sm-6">
+				{{form_row(form.nombre,{'label':false,'attr':{'class':'form_control','placeholder':'Nombre'}})}}
+			</div>
+			<div class="col-sm-6">
+				{{form_row(form.correo,{'label':false,'attr':{'class':'form_control','placeholder':'Correo'}})}}
+			</div>
+			<div class="col-sm-6">
+				<small class="text-muted">Tipo de usuario</small>
+				{{form_row(form.usuarioTipo,{'label':false,'attr':{'class':'form_control'}})}}
+			</div>
+			<div class="col-sm-6">
+				<small class="text-muted">Activar Usuario</small>
+				{{form_row(form.estado,{'label':false,'attr':{'class':'form_control','placeholder':'Activar'}})}}
+				
+			</div>
+			
+		</div>
+	</section>
+	<section>
+		<div class="row">
+			<div class="col-sm-6">
+				{{form_row(form.username,{'label':false,'attr':{'class':'form_control','placeholder':'Usuario'}})}}
+			</div>
+			<div class="col-sm-6">
+				{{form_row(form.password,{'label':false, 'attr':{'class':'form_control', 'placeholder':'******' ,'type':'password','required':false}})}}
+			</div>
+		</div>
+	</section>
+    <button class="btn btn-primary">{{ button_label|default('Agregar') }}</button>
+	
+{{ form_end(form) }}

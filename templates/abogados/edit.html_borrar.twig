@@ -1,0 +1,202 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}{{pagina|default('Abogados')}}{% endblock %}
+
+{% block body %}
+
+    {{ include('abogados/_form.html.twig', {'button_label': 'Modificar'}) }}
+
+    <section>
+		<div class="card">
+			<div class="card-header"><h1>Agregar fechas no disponibles</h1></div>
+			<div class="card-body">
+				<div class="row">
+					<div class="col-sm-4 col-md-4">
+						<small class="text-muted">Concepto</small>
+						<input type="text" class="form-control" id="txtConcepto" required>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-4 col-md-2">
+						<small class="text-muted">Fecha Inicio</small>
+						<input type="text" name="cboFechaInicio" id="cboFechaInicio" class="form-control fechaNoDisponible" required>
+					</div>
+					<div class="col-sm-4 col-md-2">
+						<small class="text-muted">Fecha Fin</small>
+						<input type="text" name="cboFechaFin"  id="cboFechaFin" class="form-control fechaNoDisponible" required>
+					</div>
+					<div class="col-sm-2  col-md-1">
+						<small class="text-muted">Años</small>
+						<select name="cboAnio" id="cboAnios" class="form-control">
+							<option value="">Todos</option>
+							{% for anio in "now"|date("Y").."now"|date("Y")+4 %}
+								<option value="{{anio}}">{{anio}}</option>
+							{% endfor %}
+						</select>
+					</div>
+					<div class="col-sm-2  col-md-1">
+						<small class="text-muted">Meses</small>
+						<select name="cboMes" id="cboMes" class="form-control">
+							<option value="">Todos</option>
+							{% for mes in 1..12 %}
+								<option value="{{mes}}">{{mes}}</option>
+							{% endfor %}
+						</select>
+					</div>
+					<div class="col-sm-2  col-md-1">
+						<small class="text-muted">Dias</small>
+						<select name="cboDias" id="cboDias" class="form-control">
+							<option value="">Todos</option>
+							{% for dia in 1..31 %}
+								<option value="{{dia}}">{{dia}}</option>
+							{% endfor %}
+						</select>
+					</div>
+					<div class="col-sm-2  col-md-2">
+
+						<small class="text-muted">Hora Inicio</small>
+			
+						<div class="hora-inicio">
+							
+							<select name="cboHoraInicio"  class="form-control horaInicio" required>
+								<option value="">Hora Inicio</option>
+								{% for hora in hora_inicio %}
+								<option value="{{hora}}"
+								
+								
+								>{{hora}}</option>
+							{% endfor %}
+							</select>
+						</div>
+						
+
+					</div>
+					<div class="col-sm-2  col-md-2">
+						<small class="text-muted">Hora Fin</small>
+						<div class="hora-fin">
+							<select name="cboHoraFin"  class="form-control horaFin" required>
+								<option value="">Hora Fin</option>
+								{% for hora in hora_inicio %}
+								<option value="{{hora}}"
+								
+								
+								>{{hora}}</option>
+							{% endfor %}
+							</select>
+						</div>
+						
+					</div>
+					<div class="col-sm-1"><button type="button" class="btn btn-primary" onclick="javascript:agregarHora()"><i class="fas fa-plus"></i></button></div>
+				</div>
+				<div id="fechas">
+
+				</div>
+			</div>
+		</div>
+        </section>
+        <script>
+            $(function () {
+            $.ajax({
+				url:"{{path('usuario_no_disponible_index',{'id':usuario.id})}}",
+				type: "get",
+				dataType: "html",
+				cache: false,
+				contentType: false,
+				processData: false,
+				async: true,
+				success:function(data){
+					$("#fechas").html(data);
+					
+				}
+			});
+			$('#cboFechaInicio').daterangepicker({
+				"singleDatePicker": true,
+				"autoUpdateInput" : false,
+				"locale": {
+					"format": "YYYY-MM-DD",
+					"applyLabel": "Apply",
+					"cancelLabel": "Cancelar",
+				}
+			});	
+	
+			$("#cboFechaInicio").on('apply.daterangepicker',function(ev,picker){
+				$(this).val(picker.startDate.format("YYYY-MM-DD"));
+			});
+			$("#cboFechaInicio").on('cancel.daterangepicker',function(ev,picker){
+				$(this).val('');
+			});
+
+			$('#cboFechaFin').daterangepicker({
+				"singleDatePicker": true,
+				"autoUpdateInput" : false,
+				"locale": {
+					"format": "YYYY-MM-DD",
+					"applyLabel": "Apply",
+					"cancelLabel": "Cancelar",
+				}
+			});	
+	
+			$("#cboFechaFin").on('apply.daterangepicker',function(ev,picker){
+				$(this).val(picker.startDate.format("YYYY-MM-DD"));
+			});
+			$("#cboFechaFin").on('cancel.daterangepicker',function(ev,picker){
+				$(this).val('');
+			});
+
+			
+		});
+
+		
+		function verHoras(fecha){
+			alert(fecha);
+			$.ajax({
+				url:"{{path('panel_agendador_horas')}}",
+				type: "get",
+				dataType: "html",
+				data:"abogado="+{{usuario.id}}+"&fecha="+fecha,
+				cache: false,
+				contentType: false,
+				processData: false,
+				async: true,
+				success:function(data){
+					$(".hora-inicio").html(data);
+					$(".hora-fin").html(data);
+				}
+			});
+		}			
+	function agregarHora(){
+		$.ajax({
+            url:"{{path('usuario_no_disponible_new',{'id':usuario.id})}}",
+            type: "get",
+            dataType: "html",
+            data:"concepto="+$('#txtConcepto').val()+"&fecha_inicio="+$('#cboFechaInicio').val()+"&fecha_fin="+$('#cboFechaFin').val()+"&horaInicio="+$('.horaInicio').val()+"&horaFin="+$('.horaFin').val()+"&anios="+$('#cboAnios').val()+"&mes="+$('#cboMes').val()+"&dias="+$('#cboDias').val(),
+            cache: false,
+            contentType: false,
+            processData: false,
+            async: true,
+            success:function(data){
+				$("#fechas").html(data);
+				
+            }
+        });
+	}
+	function eliminaHora(id){
+		$.ajax({
+            url:"/usuario_no_disponible/"+id+"/delete",
+            type: "post",
+            dataType: "html",
+           cache: false,
+            contentType: false,
+            processData: false,
+            async: true,
+            success:function(data){
+				$("#fechas").html(data);
+				
+            }
+        });
+	}
+        </script>
+    
+
+{% endblock %}

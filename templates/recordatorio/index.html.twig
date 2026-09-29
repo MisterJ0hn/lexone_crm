@@ -1,0 +1,101 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{pagina|default('')}}{% endblock %}
+
+{% block body %}
+<form action="" method="get">
+    {{ include('filtro.html.twig') }}
+    </form>
+    <div class="card">
+         
+        <div class="card-body table-responsive p-0" style="height: 500px;">
+        
+            <table class="table table-head-fixed text-nowrap table-striped table-sm">
+                <thead>
+                    <tr>
+                        <th>{{ knp_pagination_sortable(recordatorios, 'Materia', 'contrato.agenda.cuenta.nombre') }} 
+                            {% if recordatorios.isSorted('contrato.agenda.cuenta.nombre') %} 
+                                <i class="fas fa-sort"></i>
+                            {% endif %}
+                        </th>
+                        <th>{{ knp_pagination_sortable(recordatorios, 'Cliente', 'contrato.nombre') }} 
+                            {% if recordatorios.isSorted('contrato.nombre') %} 
+                                <i class="fas fa-sort"></i>
+                            {% endif %}
+                        </th>
+                        <th>{{ knp_pagination_sortable(recordatorios, 'Tipo', 'tipo') }} 
+                            {% if recordatorios.isSorted('tipo') %} 
+                                <i class="fas fa-sort"></i>
+                            {% endif %}
+                        </th>
+                        <th>{{ knp_pagination_sortable(recordatorios, 'FechaAviso', 'fechaAviso') }} 
+                            {% if recordatorios.isSorted('fechaAviso') %} 
+                                <i class="fas fa-sort"></i>
+                            {% endif %}
+                        </th>
+                        <th>{{ knp_pagination_sortable(recordatorios, 'Estado', 'leido') }} 
+                            {% if recordatorios.isSorted('leido') %} 
+                                <i class="fas fa-sort"></i>
+                            {% endif %}
+                        </th>
+                        <th>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for recordatorio in recordatorios %}
+                    <tr>
+                        <td>{{recordatorio.contrato.agenda.cuenta.nombre}}</td>
+                        <td>{{recordatorio.contrato.nombre}}</td>
+                        <td>{{recordatorio.tipo}}</td>
+                        <td>{{recordatorio.fechaAviso|date("Y-m-d")}}</td>
+                        <td>{{recordatorio.leido?'Leído':'No leído'}}</td>
+                        <td> 
+                        <a href="{{path('recordatorio_show',{'id':recordatorio.id})}}" class="btn btn-primary btn-sm"> <i class="fa fa-eye"></i></a>
+                        {% if recordatorio.leido == false  %}
+                            <a href="{{path('recordatorio_leido_list',{'id':recordatorio.id})}}" class="btn btn-success btn-sm"><i class="fa fa-check"></i></a>
+                        {% endif %}
+                        
+                    </tr>
+                {% endfor %}
+                </tbody> 
+            </table>
+        </div>
+        <div class="card-footer">
+            <div class="card-footer clearfix">
+                {# display navigation #}
+           <div class="navigation">
+               {{ knp_pagination_render(recordatorios,'@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig',{},{
+               'position': 'centered',
+               'rounded': true,
+               }) }}
+           </div>
+       </div>
+    </div>
+
+ <script>
+        $('#bFecha').daterangepicker({
+        
+            "drops": "down",
+            "startDate":"{{dateInicio}}",
+            "endDate": "{{dateFin}}",
+            "locale": {
+                "format": "YYYY-MM-DD",
+                "applyLabel": "Apply",
+                "cancelLabel": "Cancel",
+            }
+        }, function(start, end, label) {
+        console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+        
+        });
+        $(".bFolio").change(function(){
+            $(".bFiltro").val('');
+        });
+        $(".bFiltro").change(function(){
+            $(".bFolio").val('');
+        });
+        $(".bFecha").change(function(){
+            $(".bFolio").val('');
+        });
+</script>
+{% endblock %}

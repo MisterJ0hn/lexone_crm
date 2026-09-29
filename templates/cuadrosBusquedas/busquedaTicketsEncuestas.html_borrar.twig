@@ -1,0 +1,141 @@
+<div class="card">
+        <div class="card-header">
+            Filtro
+        </div>
+        <div class="card-body">
+            
+            <div class="row">
+                <div class="col-sm-12 col-md-2">
+                <label>Compañia</label>
+                    <select name="bCompania" class="form-control">
+                        <option value="0">Todos</option>
+                        {% for compania in companias %}
+                            <option value="{{compania.id}}"
+                            {% if bCompania==compania.id %}
+                                selected
+                            {% endif %}
+                            >{{compania.nombre}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-sm-12 col-md-2">
+                <label>Perfil</label>
+                {% if TipoFiltro=='Tickets' %}
+                    <select name="bPerfil" class="form-control">
+                        <option value="0">Todos</option>
+                        {% for perfil in perfiles %}
+
+                        {% if perfil.id != 9  %}
+                            {% if perfil.id != 8  %}
+                                <option value="{{perfil.id}}"
+                                {% if bPerfil==perfil.id %}
+                                    selected
+                                {% endif %}
+                                >{{perfil.nombre}}</option>
+
+                            {% endif %}
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                {% endif %}
+                {% if TipoFiltro=='Encuestas' %}
+                    <select name="bPerfil" class="form-control">            
+                            <option value="1"
+                            >Calidad</option>                       
+                    </select>
+                {% endif %} 
+                {% if TipoFiltro=='Panel_agendador' %}
+                    <select name="bAgendador" class="form-control">
+                        <option value="0">Agendador</option>
+                        {% for agendador in agendadores %}
+                            <option value="{{agendador.id}}"
+                            {% if bAgendador==agendador.id %}
+                                selected
+                            {% endif %}
+                            >{{agendador.nombre}}</option>
+                        {% endfor %}
+                    </select>
+                {% endif %}
+                 {% if TipoFiltro=='Panel_abogado' %}
+                   <select name="bAbogado" class="form-control">
+                        <option value="0">Cerrador</option>
+                        {% for abogado in abogados %}
+                            <option value="{{abogado.id}}"
+                            {% if bAbogado==abogado.id %}
+                                selected
+                            {% endif %}
+                            >{{abogado.nombre}}</option>
+                        {% endfor %}
+                    </select>
+                {% endif %}
+                </div>
+                <div class="col-sm-12 col-md-2">
+                <label>AgendaId/Folio</label>
+                        <input type="text" class="form-control bFolio" name="bFolio"  placeholder="" value="{{bFolio}}">
+                </div>
+                 <div class="col-sm-12 col-md-2">
+                 <label>Nombre/Teléfono</label>
+                        <input type="text" class="form-control bFiltro" name="bFiltro" placeholder="" value="">
+                </div>
+                <div class="col-sm-12 col-md-1">
+                <label>TipoFecha</label>
+                {% if TipoFiltro=='Tickets' %}
+                
+                    <select name="bTipofecha" class="form-control">
+                        
+                        <option value="1" {% if tipoFecha==1 %}
+                        selected
+                    {% endif %}>Pendiente</option>
+                        <option value="2" {% if tipoFecha==2 %}
+                        selected
+                    {% endif %}>Resuelto</option>
+                     <option value="3" {% if tipoFecha==3 %}
+                        selected
+                    {% endif %}>Cerrado</option>
+
+                    </select>
+                
+                {% endif %}
+                {% if TipoFiltro=='Encuestas' %}
+               
+                        <select name="bTipoFecha" class="form-control bTipoFecha" >
+                            <option value="0">Contrato</option>
+                            <option value="1" {% if tipoFecha == 1 %}
+                                selected
+                            {% endif %}>Encuesta</option>
+                            <option value="2" {% if tipoFecha == 2 %}
+                                selected
+                            {% endif %}>Gestión</option>
+                        </select>
+                
+                {% endif %}
+                {% if TipoFiltro=='Panel_agendador' or TipoFiltro=='Panel_abogado' or TipoFiltro=='Reasignar' %}
+                    <select name="bTipofecha" class="form-control">
+                        <option value="0" {% if tipoFecha==0 %}
+                            selected
+                        {% endif %}>Carga</option>
+                        <option value="1" {% if tipoFecha==1 %}
+                        selected
+                    {% endif %}>Asignado</option>
+                        <option value="2" {% if tipoFecha==2 %}
+                        selected
+                    {% endif %}>Contrato</option>
+
+                    </select>
+                {% endif %}
+                </div>
+                <div class="col-sm-12 col-md-2">
+                <label>RangoFecha</label>
+                    <input type="text" class="form-control" name="bFecha" id="bFecha"  value="">
+                </div>
+                
+                <div class="col-sm-12 col-md-1">
+                    <button class="btn btn-primary" style="margin-top: 30px;"><i class="fas fa-search"></i></button>
+                </div>
+           
+
+            </div>
+            
+        </div>  
+        
+    </div>

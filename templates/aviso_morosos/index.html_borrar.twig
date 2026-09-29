@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{pagina|default('')}}{% endblock %}
+
+{% block body %}
+<div class="card">
+    <div class="card-header">Exportar xlsx</div>
+        <div class="card-body">
+            <div class="col-sm-12 col-md-4 border-1">
+                <form method="get" class="frmBuscar">
+                <div class="row">
+                    <div class="col">
+                        <input type="text" class="form-control bFecha date" name="bFecha" id="bFecha"  value="" >
+                    </div>
+                    <div class="col">
+                        <button type="button"  class="btn btn-secondary exportarxslx"><i class="fas fa-download"></i></button>
+                    </div>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+$(function(){
+    $('.bFecha').on('apply.daterangepicker', function(ev, picker) {
+        $(this).val(picker.startDate.format('YYYY-MM-DD'));
+       
+    });
+});
+
+    $(".exportarxslx").on('click',function(){
+        $(".frmBuscar").attr('action',"{{path('aviso_morosos_excel')}}");
+        $(".frmBuscar").submit();
+
+        $("button").prop('disabled',false);
+    });
+</script>
+{% endblock %}

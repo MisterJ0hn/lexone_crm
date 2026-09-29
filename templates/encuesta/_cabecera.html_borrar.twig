@@ -1,0 +1,60 @@
+    <div class="card-header">
+        <h1>Folio: {{contrato.folio}}</h1>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-12 col-md-4">
+                <small class="text-muted">Compañia</small><br>
+                <label>{{contrato.agenda.cuenta.nombre}}</label>
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <small class="text-muted">Sucursal</small><br>
+                <label>{{contrato.sucursal.nombre}}</label>
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <small class="text-muted">Estado</small><br>
+                <label>. </label>
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <small class="text-muted">Abogado</small><br>
+                <label>{{contrato.agenda.abogado.nombre}}</label>
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <small class="text-muted">Tramitador</small><br>
+                <label>{{contrato.tramitador.nombre}}</label>
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <small class="text-muted">Fecha Contrato</small><br>
+                <label>{{contrato.fechaCreacion|date('Y-m-d')}}</label>
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <small class="text-muted">Nombre Cliente</small><br>
+                <label>{{contrato.nombre}}</label>
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <small class="text-muted">Rut Cliente</small><br>
+                <label>{{contrato.rut}}</label>
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <small class="text-muted">Teléfono Cliente</small><br>
+                <div class="input-group">
+                    <label>{{contrato.telefono}}</label>
+                    <div class="input-group-append">
+                        <a href="https://api.whatsapp.com/send?phone={{ contrato.telefono|replace({'+':''}) }}&text=" target="_blank" class="btn btn-primary"><i class="fa fa-comment"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <small class="text-muted">Teléfono Recado Cliente</small><br>
+                <label>{{contrato.telefonoRecado}}</label>
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <small class="text-muted">Correo Cliente</small><br>
+                <label>{{contrato.email}}</label>
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <small class="text-muted">Dirección Cliente</small><br>
+                <label>{{contrato.direccion}}</label>
+            </div>
+        </div>
+    </div>

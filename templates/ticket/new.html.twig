@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{pagina|default('')}}{% endblock %}
+
+{% block body %}
+<div class="card ocultar-campo">
+    <div class="card-body">
+        <form action="{{path('app_ticket_search')}}" method="POST">
+            <div class="row">
+                <div class="col-sm-6 col-md-3">
+                    <input type="text" placeholder="Folio Sac" name="txtFolio" class="form-control">
+                </div>
+                <div class="col-sm-6 col-md-3">
+                    <input type="text" placeholder="Nombre/Rut" name="txtNombreRut" class="form-control">
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <button class="btn btn-primary"><i class="fas fa-search"></i></button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+{{ include('cabezera.html.twig') }}
+<div class="card ocultar-campo">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-6 col-md-3">
+            <small class="text-muted">Folio Cto</small><br>
+                {{contrato.folio}}
+            </div>
+            <div class="col-sm-6 col-md-3">
+            <small class="text-muted">Nombre Cliente</small><br>
+                {{contrato.cliente.nombre}}
+            </div>
+            <div class="col-sm-6 col-md-3">
+            <small class="text-muted">Rut Cliente</small><br>
+                {{contrato.cliente.rut}}
+            </div>
+            <div class="col-sm-6 col-md-3">
+            <small class="text-muted">Teléfono Cliente</small><br>
+                {{contrato.cliente.telefono}}
+            </div>
+            <div class="col-sm-6 col-md-3">
+            <small class="text-muted">Teléfono recado Cliente</small><br>
+                {{contrato.cliente.telefonoRecado}}
+            </div>
+            <div class="col-sm-6 col-md-6">
+            <small class="text-muted">Correo Cliente</small><br>
+                {{contrato.cliente.correo}}
+            </div>
+            <div class="col-sm-6 col-md-3">
+            <small class="text-muted">Fecha Contrato</small><br>
+                {{contrato.fechaCreacion|date('Y-m-d')}}
+            </div>
+        </div>
+
+    </div>
+</div>
+
+    {{ include('ticket/_form.html.twig') }}
+
+   
+{% endblock %}

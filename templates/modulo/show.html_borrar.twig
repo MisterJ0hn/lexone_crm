@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modulo{% endblock %}
+
+{% block body %}
+    <h1>Modulo</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ modulo.id }}</td>
+            </tr>
+            <tr>
+                <th>Nombre</th>
+                <td>{{ modulo.nombre }}</td>
+            </tr>
+            <tr>
+                <th>Ruta</th>
+                <td>{{ modulo.ruta }}</td>
+            </tr>
+            <tr>
+                <th>NombreAlt</th>
+                <td>{{ modulo.nombreAlt }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('modulo_index') }}">back to list</a>
+
+    <a href="{{ path('modulo_edit', {'id': modulo.id}) }}">edit</a>
+
+    {{ include('modulo/_delete_form.html.twig') }}
+{% endblock %}

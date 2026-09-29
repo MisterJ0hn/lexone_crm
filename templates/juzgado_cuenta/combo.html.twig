@@ -1,0 +1,4 @@
+<option selected disabled> Seleccione Juzgado </option>
+{% for juzgadoCuenta in juzgadoCuentas %}
+<option value="{{juzgadoCuenta.juzgado.id}}">{{juzgadoCuenta.juzgado.nombre}}</option>
+{% endfor %}

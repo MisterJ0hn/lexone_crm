@@ -1,0 +1,116 @@
+{{ form_start(form,{attr:{'class':'dropzone','id':'my-awesome-dropzone'}}) }}
+    <div class="row">
+        <div class="col-sm-12  col-md-8">
+
+            <div class="card">
+                <div class="card-header">
+                    <h1>Folio: {{contrato.folio}}</h1>
+                </div>
+                <div class="card-body table-responsive pad">
+                
+            
+                    <div class="row">
+                        <div class="col-sm-12 col-md-3">
+                            <small class="text-muted">Fecha Gestión (*)</small><br>
+                            <p>{{cobranza.fechaHora|date("Y-m-d H:i")}}</p>
+                            
+                        </div>
+                        <div class="col-sm-12 col-md-3">
+                            <small class="text-muted">Función Gestión (*)</small>
+                            {{form_row(form.funcion,{'label':false,'attr':{'class':'form-control'}})}}
+                                    
+                                    
+                        </div>
+                        <div class="col-sm-12 col-md-3">
+                            <small class="text-muted">Respuesta (*)</small>
+                            {{form_row(form.respuesta,{'label':false,'attr':{'class':'form-control cbo-respuesta'}})}}
+                        
+                        </div>
+                        <div class="col-sm-12 col-md-3">
+                            <div id="compromiso">
+                                <small class="text-muted">Fecha Compromiso (*)</small>
+                                {{form_row(form.fechaCompromiso,{'label':false,'attr':{'class':'form-control datetimepicker-compromiso','autocomplete':"ÑÖcompletes"}})}}
+                            </div>
+                        </div>
+                        
+                        <div class="col-sm-12 col-md-12">
+                            <small class="text-muted">Observación</small>
+                            {{form_row(form.observacion,{'label':false,'attr':{'class':'form-control '}})}}
+                            
+                        </div>
+                    </div> 
+                </div>
+                <div class="card-footer">
+                    
+                    <button class="btn btn-primary" type="submit">{{ button_label|default('Guardar') }}</button>
+               
+                </div>
+            </div>
+            
+        </div>
+        <div class="col-sm-12  col-md-4">
+            
+            
+        </div>
+    </div>   
+    {{ form_end(form) }}
+
+<script>
+
+    $('.datetimepicker-compromiso').daterangepicker({
+        "autoUpdateInput": false,
+        "singleDatePicker": true,
+        "locale": {
+            "format": "YYYY-MM-DD",
+
+            "applyLabel": "Apply",
+            "cancelLabel": "Cancel",
+        }
+    }, function(start, end, label) {
+        console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+
+    });
+
+    $('.datetimepicker-compromiso').on('apply.daterangepicker', function(ev, picker) {
+        $(this).val(picker.startDate.format('YYYY-MM-DD'));
+    });
+  
+    $('.datetimepicker-compromiso').on('cancel.daterangepicker', function(ev, picker) {
+        $(this).val('');
+    });
+    $('.datetimepicker-ingreso').daterangepicker({
+        "timePicker": true,
+        "singleDatePicker": true,
+        "locale": {
+            "format": "YYYY-MM-DD hh:mm A",
+
+            "applyLabel": "Apply",
+            "cancelLabel": "Cancel",
+        }
+    }, function(start, end, label) {
+        console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+
+    });  
+    $("#compromiso").hide();
+    $(".datetimepicker-compromiso").prop('required',false);
+    
+    $(".cbo-respuesta").on('change',function(){
+        
+
+        $.ajax({
+            method: "POST",
+            url: "/cobranza/"+$(this).val()+"/compromiso",
+            data: { name: "John", location: "Boston" }
+          })
+            .done(function( msg ) {
+              if(msg=="true"){
+                $("#compromiso").show();
+                $(".datetimepicker-compromiso").prop('required',true);
+              }else{
+                $("#compromiso").hide();
+                $(".datetimepicker-compromiso").prop('required',false);
+                $(".datetimepicker-compromiso").val('');
+              }
+            });
+    })
+</script>

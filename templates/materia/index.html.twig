@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Materia index{% endblock %}
+
+{% block body %}
+    <div class="card">
+        <div class="card-header">
+            Listado
+        </div>
+        <div class="card-body">
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Materia</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for materium in materias %}
+                    <tr>
+                        <td>{{ materium.id }}</td>
+                        <td>{{ materium.nombre }}</td>
+                        <td>
+                            <div class="btn-group btn-group-md" role="group" aria-label="Basic example">
+                            <a href="{{ path('materia_edit', {'id': materium.id}) }}" class="btn btn-secondary" alt="Editar Materia"><spam class='fas fa-edit'></spam></a>
+                            <a href="{{ path('materia_estrategia_new', {'id': materium.id}) }}"  class="btn btn-warning" alt="Sub Materias" > <i class="fas fa-share-alt"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="3">no records found</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <a href="{{ path('materia_new') }}">Create new</a>
+{% endblock %}

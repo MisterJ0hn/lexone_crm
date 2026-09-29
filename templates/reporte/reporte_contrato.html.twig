@@ -1,0 +1,135 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{pagina|default('')}}{% endblock %}
+
+{% block body %}
+<section>
+
+
+    
+    <div class="card bg-calipso">
+       
+        <div class="card-body">
+            
+            <form action="{{path('reporte_contratos')}}" method="get" id="bForm">
+            <div class="row">
+                <div class="col-sm-12 col-md-3">
+                    <select name="bCompania" class="form-control">
+                        <option value="0">Todos</option>
+                        {% for compania in companias %}
+                            <option value="{{compania.id}}"
+                            {% if bCompania==compania.id %}
+                                selected
+                            {% endif %}
+                            >{{compania.nombre}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+               
+                <div class="col-sm-12 col-md-2">
+                    <select name="bTipofecha" class="form-control" >
+                        
+                        <option value="2" {% if tipoFecha==2 %}
+                        selected
+                    {% endif %}>Fecha Contrato</option>
+                       
+
+                    </select>
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <input type="text" class="form-control" name="bFecha" id="bFecha"  value="">
+                </div>
+                <div class="col-sm-12 col-md-1">
+                    <button class="btn btn-primary"><i class="fas fa-search"></i></button>
+                </div>
+           
+
+            </div>
+            </form>
+        </div>  
+        
+    </div>
+</section>
+</form>
+<section>
+    <div class="card">
+        
+        <!-- /.card-header -->
+        <div class="card-body table-responsive p-0" style="height: 400px;">
+        
+            <table class="table table-head-fixed text-nowrap table-striped table-sm">
+                <thead>
+                    <tr >
+                        <th scope="col" align="right">Cuenta</th>
+                        
+                        <th scope="col" style="text-align: right;">Contratos</th>
+                        <th scope="col" style="text-align: right;">Desiste</th>
+                        <!--<th scope="col" style="text-align: right;">Confirma Desiste</th>-->
+                        <th scope="col" style="text-align: right;">Total</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set suma_total=0 %}
+          
+                    {% set suma_desiste=0 %}
+                    {% set suma_contrata=0 %}
+                    {% set suma_ratificatermino=0 %}
+                    {% for reporte in reportes %}
+
+                    <tr>
+                        <td>{{ reporte.cuenta }}</td>
+                        <td align="right">{{ reporte.contrata}}</td>
+                        <td align="right">{{ reporte.desiste}}</td>
+                        <!--<td align="right">{{ reporte.ratificatermino}}</td>-->
+                        <td align="right">${{ reporte.total|number_format(0,",",".")}}</td>
+                       
+                    </tr>
+                    {% set suma_total = suma_total + reporte.total %}
+                    
+                    {% set suma_desiste = suma_desiste + reporte.desiste %}
+                    {% set suma_contrata = suma_contrata + reporte.contrata %}
+                    {% set suma_ratificatermino = suma_ratificatermino + reporte.ratificatermino %}
+                    
+                    {% else %}
+                    <tr>
+                        <td colspan="10">No hay registros</td>
+                    </tr>
+                    {% endfor %}
+
+               
+             
+                    <tr>
+                        <td></td>
+                        
+                        <td align="right"><strong>{{ suma_contrata|number_format(0,",",".")}}</strong></td>
+                        <td align="right"><strong> {{ suma_desiste|number_format(0,",",".")}}</strong></td>
+                        <!--<td align="right"><strong>{{ suma_ratificatermino|number_format(0,",",".")}}</strong></td>-->
+                        <td align="right"><strong>${{ suma_total|number_format(0,",",".")}}</strong></td>
+                        
+                    </tr>
+
+                 </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<script>
+    $('#bFecha').daterangepicker({
+        
+        "drops": "down",
+        "startDate":"{{sesion.getEmpresaActual.fechaIngreso|date('Y-m-d')}}",
+        "endDate": "{{dateFin}}",
+        "locale": {
+            "format": "YYYY-MM-DD",
+            "applyLabel": "Apply",
+            "cancelLabel": "Cancel",
+        }
+    }, function(start, end, label) {
+    console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+    
+    });
+    
+</script>
+{% endblock %}

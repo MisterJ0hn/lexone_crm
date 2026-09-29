@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Movimientos PJUD{% endblock %}
+
+{% block body %}
+
+<div class="card">
+    <div class="card-header"></div>
+    <div class="card-body">
+        {{ form_start(form) }}
+        <div class="row">
+     
+            <div class="col-sm-6 col-md-4">
+                <small class="text-muted">Archivo</small><br>
+                {{ form_row(form.archivo,{'label':false,'attr':{'accept':'.csv,.xls,.xlsx'}}) }}
+               
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <button class="btn btn-primary" style="margin-top: 20px">{{ button_label|default('Importar') }}</button>
+            </div>
+        </div>
+       
+            
+            
+        {{ form_end(form) }}
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header"></div>
+    <div class="card-body">
+        <table class="table">
+            <tr>
+                <th>{{ knp_pagination_sortable(pjuds, 'Archivo', 'archivo') }} {% if pjuds.isSorted('archivo') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                <th>{{ knp_pagination_sortable(pjuds, 'Usuario', 'usuarioRegistro') }} {% if pjuds.isSorted('usuarioRegistro') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                <th>{{ knp_pagination_sortable(pjuds, 'Carga', 'fechaCarga') }} {% if pjuds.isSorted('fechaCarga') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                <th>{{ knp_pagination_sortable(pjuds, 'Descarga', 'fechaPjud') }} {% if pjuds.isSorted('fechaPjud') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                
+            </tr>
+            {% for pjud in pjuds %}
+            
+            <tr>
+                <td>{{pjud.archivo}}</td>
+                <td>{{pjud.usuarioRegistro.nombre}}
+                <td>{{pjud.fechaCarga|date('Y-m-d H:i')}}</td>
+                <td>{{pjud.fechaPjud|date('Y-m-d')}}</td>
+                
+            </tr>
+            {% endfor %}
+
+        </table>
+    </div>
+    <div class="card-footer">
+        <div class="card-footer clearfix">
+                {# display navigation #}
+           <div class="navigation">
+               {{ knp_pagination_render(pjuds,'@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig',{},{
+               'position': 'centered',
+               'rounded': true,
+               }) }}
+           </div>
+       </div>
+</div>
+
+{% endblock %}

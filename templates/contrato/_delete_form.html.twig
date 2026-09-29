@@ -1,0 +1,5 @@
+<form method="post" action="{{ path('contrato_delete', {'id': contrato.id}) }}" onsubmit="return confirm('Estas seguro de eliminar este contrato?');">
+    <input type="hidden" name="_method" value="DELETE">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ contrato.id) }}">
+    <button class="btn btn-danger">Eliminar</button>
+</form>

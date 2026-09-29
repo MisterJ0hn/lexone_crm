@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New ContratoRol{% endblock %}
+
+{% block body %}
+    <h1>Create new ContratoRol</h1>
+
+    {{ include('contrato_rol/_form.html.twig') }}
+
+    <a href="{{ path('contrato_rol_index') }}">back to list</a>
+{% endblock %}

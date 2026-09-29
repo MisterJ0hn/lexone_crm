@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Privilegio{% endblock %}
+
+{% block body %}
+    <h1>Edit Privilegio</h1>
+
+    {{ include('privilegio/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('privilegio_index') }}">back to list</a>
+
+    {{ include('privilegio/_delete_form.html.twig') }}
+{% endblock %}

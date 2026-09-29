@@ -1,0 +1,14 @@
+    {% set item = 0 %}
+{% for causa in causas_anteriores %}
+<tr class='causa-{{item}}'>>
+
+
+    <td>{{causa.id}}</td>
+    <td><input type='hidden' value='{{causa.materiaEstrategia.id}}' name='hdSubMateria[]'  >{{causa.materiaEstrategia.estrategiaJuridica}}</td>
+    <td><input type='hidden' value='{{causa.idCausa}}' name='hdNombreCausa[]'  >{{causa.idCausa}}</td>
+    <td><input type='hidden' value='{{causa.causaNombre}}' name='hdCaratulado[]'  >{{causa.causaNombre}}</td>
+    <td><input type='hidden' value=' {{causa.juzgadoCuenta is null ? null : causa.juzgadoCuenta.id}}' name='hdJuzgado[]'  > {{causa.juzgadoCuenta is null ? '': causa.juzgadoCuenta.juzgado.nombre}}</td>
+    <td><button type='button' class='btn btn-danger' onclick='javascript:eliminarCausa({{item}})' ><i class='fas fa-trash'></i></button></td>
+</tr>   
+{% set item = item + 1 %}
+{% endfor %}

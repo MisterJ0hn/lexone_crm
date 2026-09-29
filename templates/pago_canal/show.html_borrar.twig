@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}PagoCanal{% endblock %}
+
+{% block body %}
+    <h1>PagoCanal</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ pago_canal.id }}</td>
+            </tr>
+            <tr>
+                <th>Nombre</th>
+                <td>{{ pago_canal.nombre }}</td>
+            </tr>
+            <tr>
+                <th>Estado</th>
+                <td>{{ pago_canal.estado ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Orden</th>
+                <td>{{ pago_canal.orden }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('pago_canal_index') }}">back to list</a>
+
+    <a href="{{ path('pago_canal_edit', {'id': pago_canal.id}) }}">edit</a>
+
+    {{ include('pago_canal/_delete_form.html.twig') }}
+{% endblock %}

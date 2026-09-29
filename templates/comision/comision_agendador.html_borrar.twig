@@ -1,0 +1,150 @@
+{% extends 'base.html.twig' %}
+{% block title %}Hello ComisionAgendadorController!{% endblock %}
+
+{% block body %}
+<form action="{{path('comision_agendador')}}" method="get" id="bForm">
+    <input type="hidden" name="bStatus" id="bStatus" value="{{status|default('')}}">
+<section>
+
+<div class="row">
+    {% set total = 0 %}
+    {% for resumen in resumenes %}
+        <div class="col-sm-6 col-md-3">
+            <div class="info-box">
+                <span class="info-box-icon bg-{{resumen[0].status.color}}"><i class="{{resumen[0].status.icon}}"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">{{resumen[0].status.nombre}}</span>
+                    <span class="info-box-number">{{resumen.valor}}</span>
+                    {% set total= total + resumen.valor %}
+                    {% if resumen[0].status.id not in [10] %}
+                    <a href="#" class="small-box-footer" onclick="javascript:buscar({{resumen[0].status.id}})">
+                        Ver Más <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                    {% endif %}
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+        </div>
+    {% endfor %}
+    {% if status is not null %}
+        <div class="col-sm-6 col-md-3">
+            <div class="info-box">
+                <span class="info-box-icon bg-success"><i class="far fa-flag"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Contratados</span>
+                    <span class="info-box-number">{{total}}</span>
+                </div>
+            <!-- /.info-box-content -->
+            </div>
+        </div>
+    {% endif %}
+</div>
+</section>
+
+
+{% if sesion.getSesion.usuarioTipo.id in [3,1]  %}
+    <section>
+        {% if total>0 %}
+            {{ render(controller('App\\Controller\\AgendaController::resumenagendadores', {'agendaStatus':status,'fechainicio':dateInicio,'fechafin':dateFin,'compania':bCompania,'filtro':bFiltro,'totalStatus':total,'tipoFecha':2})) }}
+        {% endif %}
+    </section>
+{% endif %}
+
+<div class="card">
+    <div class="card-header">
+            <div class="row">
+                <div class="col-sm-12 col-md-3">
+                    <select name="bCompania" class="form-control">
+                        <option value="0">Todos</option>
+                        {% for compania in companias %}
+                            <option value="{{compania.id}}"
+                            {% if bCompania==compania.id %}
+                                selected
+                            {% endif %}
+                            >{{compania.nombre}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <input type="text" class="form-control" name="bFiltro" placeholder="Cliente" value="">
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <input type="text" class="form-control" name="bFecha" id="bFecha"  value="">
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <button class="btn btn-primary"><i class="fas fa-search"></i></button>
+                </div>
+                <div class="col-sm-12 col-md-3">       
+                </div>
+            </div>
+    </div>
+</form>
+    <div class="card-body table-responsive p-0" style="height: 500px;">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>{{ knp_pagination_sortable(agendas, 'Folio cto.', 'contrato.id') }} {% if agendas.isSorted('contrato.id') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                    <th>{{ knp_pagination_sortable(agendas, 'Compañia', 'cuenta.nombre') }} {% if agendas.isSorted('cuenta.nombre') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                    <th>{{ knp_pagination_sortable(agendas, 'Canal', 'campania') }} {% if agendas.isSorted('campania') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                    <th>{{ knp_pagination_sortable(agendas, 'Agendador', 'agendador.nombre') }} {% if agendas.isSorted('agendador.nombre') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                    <th>{{ knp_pagination_sortable(agendas, 'Cliente', 'nombreCliente') }} {% if agendas.isSorted('nombreCliente') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                    <th>{{ knp_pagination_sortable(agendas, 'Fecha cto.', 'contrato.fechaCreacion') }} {% if agendas.isSorted('contrato.fechaCreacion') %} <i class="fas fa-sort"></i>{% endif %}</th>
+
+                    <th>Sucursal</th>
+                    
+                    <th>{{ knp_pagination_sortable(agendas, 'Reunión', 'contrato.reunion') }} {% if agendas.isSorted('contrato.reunion') %} <i class="fas fa-sort"></i>{% endif %}</th>
+
+                </tr>
+            </thead>
+            <tbody>
+            {% for agenda in agendas %}
+                <tr>
+                    <td>{{ agenda.id }}</td>
+                    <td>{{ agenda.contrato.id }}</td>
+                    <td>{{ agenda.cuenta }}</td>
+                    <td>{{ agenda.campania }}</td>
+                    <td>{{ agenda.agendador }}</td>
+                    <td>{{ agenda.contrato.nombre }}</td>
+                    <td>{{ agenda.contrato.fechaCreacion | date('Y-m-d') }}</td>
+                    <td>{{ agenda.contrato.sucursal }}</td>
+                    <td>{{ agenda.contrato.reunion }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <div class="card-footer clearfix">
+            {# display navigation #}
+       <div class="navigation">
+           {{ knp_pagination_render(agendas,'@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig',{},{
+           'position': 'centered',
+           'rounded': true,
+           }) }}
+       </div>
+   </div>
+
+<script>
+    $('#bFecha').daterangepicker({
+        "drops": "down",
+        "startDate":"{{dateInicio}}",
+        "endDate": "{{dateFin}}",
+        "locale": {
+            "format": "YYYY-MM-DD",
+            "applyLabel": "Apply",
+            "cancelLabel": "Cancel",
+        }
+    }, function(start, end, label) {
+    console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+    
+    });
+    function buscar(status){
+        $("#bStatus").val(status);
+        $("#bForm").submit();
+    }
+</script>
+
+{% endblock %}

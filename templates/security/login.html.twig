@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>CRM Abogados</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+  <!-- reCAPTCHA -->
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="build/adminlte/plugins/fontawesome-free/css/all.min.css">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+  <!-- icheck bootstrap -->
+  <link rel="stylesheet" href="build/adminlte/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="build/adminlte/dist/css/adminlte.min.css">
+  <!-- Google Font: Source Sans Pro -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+</head>
+<body class="hold-transition login-page">
+    <div class="login-box">
+        <div class="login-logo">
+            <a href="#"><b>CRM</b> Legal</a>
+        </div>
+
+
+        <div class="card">
+            <div class="card-body login-card-body">
+                <p class="login-box-msg">Inicia sesion</p>
+                <form method="post">
+                {% if error %}
+                    <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                {% endif %}
+                {% if app.user %}
+                    <div class="mb-3">
+                        Ya estas logeado como {{ app.user.username }}, <a href="{{ path('app_logout') }}">Salir</a>
+                    </div>
+                {% endif %}
+                    <div class="input-group mb-3">
+                        <input type="text" value="{{ last_username }}" name="username" id="inputUsername" class="form-control" placeholder="Usuario" required autofocus>
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-envelope"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-lock"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <div class="g-recaptcha" data-sitekey="{{ recaptcha_site_key }}"></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-8">
+                            <div class="icheck-primary">
+                                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                              
+                                <input type="checkbox" name="_remember_me"> 
+                                 <label for="remember">Recordar</label>
+
+                                       
+                           </div>
+                        </div>
+                          <!-- /.col -->
+                        <div class="col-4">
+                           <button class="btn btn-primary btn-block" type="submit">
+                                        Ingresar
+                                    </button>
+                               
+                        </div>
+                          <!-- /.col -->
+                    </div>
+                </form>
+                <p class="mb-1">
+                     <a href="{{path('app_forgot_password_request')}}" >Recuperar Password</a>
+                </p>
+            </div>
+            <!-- /.login-card-body -->
+        </div>
+    </div>
+               
+</body>
+</html>

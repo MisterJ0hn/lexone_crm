@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nueva empresa{% endblock %}
+
+{% block body %}
+    {% for message in app.flashes('error') %}
+    <div class="alert alert-danger">{{ message }}</div>
+{% endfor %}
+<div class="card">
+    
+    <div class="card-body">
+
+    {{ include('empresa/_form.html.twig') }}
+
+
+    </div>
+</div>
+{% endblock %}

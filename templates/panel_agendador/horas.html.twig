@@ -1,0 +1,22 @@
+<select name="cboHoras"  class="form-control horas" required>
+    <option value="">
+        {{mensaje}}
+    </option>
+    {% for hora in horarios %}
+        <option value="{{hora}}"
+        {% for agenda in agendas %}
+            {% if agenda.fechaAsignado|date("G:i") == hora %}
+                disabled
+            {% endif %}
+        {% endfor %}
+        {% for nodisponible in nodisponibles %}
+            {% if hora==nodisponible %}
+                disabled
+            {% endif %}
+        {% endfor %}
+        >{{hora}}</option>
+    {% endfor %}
+    {% if sobrecupo!="" %}
+        <option value="00:00">{{sobrecupo}}</option>
+    {% endif %}
+</select>

@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Privilegio{% endblock %}
+
+{% block body %}
+    <h1>Create new Privilegio</h1>
+
+    {{ include('privilegio/_form.html.twig') }}
+
+    <a href="{{ path('privilegio_index') }}">back to list</a>
+{% endblock %}

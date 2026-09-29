@@ -1,0 +1,10 @@
+<option value='0'>Empleado</option>
+{% for usuario in usuarios %}
+    <option value='{{usuario.id}}'
+    {% if id_usuario==usuario.id %}
+        selected
+    {% endif %}
+
+    >{{usuario.nombre}}</option>
+{% endfor %}
+

@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Gestionar{% endblock %}
+
+{% block body %}
+    <h1>Edit Gestionar</h1>
+
+    {{ include('gestionar/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('gestionar_index') }}">back to list</a>
+
+    {{ include('gestionar/_delete_form.html.twig') }}
+{% endblock %}

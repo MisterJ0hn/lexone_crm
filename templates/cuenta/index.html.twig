@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Cuenta index{% endblock %}
+
+{% block body %}
+   <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Listado</h3> 
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body table-responsive p-0" style="height: 300px;">
+            <a href="{{ path('cuenta_new') }}" class="btn btn-primary"><i class="fas fa-plus"></i></a>
+
+            <table class="table table-head-fixed text-nowrap">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Nombre</th>
+                        <th>Fecha Creacion</th>
+                        <th>Fecha ul. mod.</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for cuentum in cuentas %}
+                    <tr>
+                        <td>{{ cuentum.id }}</td>
+                        <td>{{ cuentum.nombre }}</td>
+                        <td>{{ cuentum.fechaCreacion ? cuentum.fechaCreacion|date('Y-m-d H:i:s') : '' }}</td>
+                        <td>{{ cuentum.fechaUltimamodificacion ? cuentum.fechaUltimamodificacion|date('Y-m-d H:i:s') : '' }}</td>
+                        <td>
+                            <div class="btn-group">
+                            <a href="{{ path('sucursal_index', {'id': cuentum.id}) }}" class="btn btn-primary" alt="Sucursales"><i class="fas fa-building"></i></a>
+                            <a href="{{ path('cuenta_edit', {'id': cuentum.id}) }}" class="btn btn-warning"><i class="fas fa-edit"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5">no records found</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    
+{% endblock %}

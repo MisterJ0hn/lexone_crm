@@ -1,0 +1,166 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{pagina|default('')}}{% endblock %}
+
+{% block body %}
+<section>
+    
+    <div class="card">
+        <div class="card-header">
+            Filtro
+        </div>
+        <div class="card-body">
+            
+            <form action="{{path('reporte_gestiones')}}" method="get" id="bForm">
+            <div class="row">
+                <div class="col-sm-12 col-md-3">
+                    <select name="bPerfil" class="form-control bPerfil" >
+                        <option value='0'>Todos</option>
+                        {% for perfil in perfiles %}
+                            <option value="{{perfil.id}}"
+                            {% if bPerfil==perfil.id %}
+                                selected
+                            {% endif %}
+                            >{{perfil.nombre}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <select name="bEmpleado" class="form-control bEmpleado" >
+                        
+                    </select>
+                </div>
+                
+                <div class="col-sm-12 col-md-2">
+                    <select name="bTipofecha" class="form-control">
+                        <option value="0" {% if tipoFecha==0 %}
+                            selected
+                        {% endif %}>Fecha Observación</option>
+                        
+                    </select>
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <input type="text" class="form-control" name="bFecha" id="bFecha"  value="">
+                </div>
+                <div class="col-sm-12 col-md-1">
+                    <button class="btn btn-primary"><i class="fas fa-search"></i></button>
+                </div>
+           
+
+            </div>
+            </form>
+        </div>  
+        
+    </div>
+</section>
+</form>
+<section>
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Listado</h3> 
+        </div>
+        <!-- .card-header -->
+        <div class="card-body table-responsive p-0" style="height: 400px;">
+        
+            <table class="table table-head-fixed text-nowrap table-striped table-sm">
+                <thead>
+                    <tr >
+                        <th scope="col" style="text-align: center;">Nombre</th>
+                        <th scope="col" style="text-align: center;">IdAgenda</th>
+                        <th scope="col" style="text-align: center;">Compañia</th>
+                        <th scope="col" style="text-align: center;">EstadoObservación</th>
+                        <th scope="col" style="text-align: center;">Cliente</th>
+                        <th scope="col" style="text-align: center;">FechaCarga</th>
+                        <th scope="col" style="text-align: center;">FechaAsignado</th>
+                        <th scope="col" style="text-align: center;">FechaContrato</th>
+                        <th scope="col" style="text-align: center;">FechaObservación</th>
+                        <th scope="col" style="text-align: center;">Observación</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reporte in reportes %}
+                   
+                    <tr>
+                        <td scope="col" style="text-align: left;">{{ reporte.usuarioRegistro.nombre }}</td>
+                        <td scope="col" style="text-align: center;">{{ reporte.agenda.id }}</td>
+                        <td scope="col" style="text-align: left;">{{ reporte.agenda.cuenta.nombre }}</td>
+                        <td scope="col" style="text-align: center;">{{ reporte.status.nombre }}</td>
+                        <td scope="col" style="text-align: left;">{{ reporte.agenda.nombreCliente }}</td>
+                        <td scope="col" style="text-align: center;">{{ reporte.agenda.fechaCarga?reporte.agenda.fechaCarga|date('Y-m-d H:i:s'):'' }}</td>
+                        <td scope="col" style="text-align: center;">{{ reporte.agenda.fechaAsignado?reporte.agenda.fechaAsignado|date('Y-m-d H:i:s'):'' }}</td>
+                        <td scope="col" style="text-align: center;">{{ reporte.agenda.fechaContrato?reporte.agenda.fechaContrato|date('Y-m-d H:i:s'):'' }}</td>
+                        <td scope="col" style="text-align: center;">{{ reporte.fechaRegistro|date('Y-m-d H:i:s') }}</td>
+                        <td scope="col" style="text-align: right;">
+                        <span class="d-inline-block text-truncate" style="max-width: 150px;">
+                        {{ reporte.observacion }}
+                        </span>
+                        <button type="button" class="btn btn-sm btn-success" data-toggle="popover" title="Observación Completa" data-content="{{reporte.observacion|raw}}">Ver Más</button>
+                        </td>
+                    </tr>
+                   
+                    {% else %}
+                    <tr>
+                        <td colspan="10">No hay registros</td>
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+                <tfoot>
+                    <tr style="text-align: right;">
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</section>
+
+<script>
+
+    
+    $.ajax({
+        method:"POST",
+        url:"{{path('reporte_cbo_usuarios')}}",
+        data: { id_perfil:$('.bPerfil').val(),id_usuario:{{bEmpleado|default(0)}}}
+    }).done(function(data){
+        $(".bEmpleado").html(data);
+    });
+
+    $('#bFecha').daterangepicker({
+        
+        "drops": "down",
+        "startDate":"{{dateInicio}}",
+        "endDate": "{{dateFin}}",
+        "locale": {
+            "format": "YYYY-MM-DD",
+            "applyLabel": "Apply",
+            "cancelLabel": "Cancel",
+        }
+    }, function(start, end, label) {
+    console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+    
+    });
+    $('.bPerfil').change(function(){
+            $.ajax({
+                method:"POST",
+                url:"{{path('reporte_cbo_usuarios')}}",
+                data: { id_perfil:$(this).val()}
+            }).done(function(data){
+                $(".bEmpleado").html(data);
+            });
+    });
+
+    $(function () {
+            $('[data-toggle="popover"]').popover()
+            $('.popover-dismiss').popover({
+                trigger: 'focus'
+              });
+            
+              $('[data-toggle="popover"]').popover({
+                  template: '<div class="popover" role="tooltip"><div class="arrow"></div><h3 class="popover-header"></h3><div class="popover-body"></div></div>',
+              });
+        });
+
+    
+</script>
+{% endblock %}

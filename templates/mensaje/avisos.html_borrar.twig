@@ -1,0 +1,41 @@
+
+<li class="nav-item dropdown">
+        <a class="nav-link" data-toggle="dropdown" href="#">
+          <i class="far fa-envelope"></i>
+          {% if mensajesCount is defined %}
+            
+          
+          <span class="badge badge-danger navbar-badge">{{mensajesCount.pendientes}}</span>
+          {% endif %}
+        </a>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+        {% set i=0 %}
+        {% for mensaje in mensajes %}
+            {% if i>0 %}
+            <div class="dropdown-divider"></div>
+            {% endif %}
+
+            <a href="{{path('mensaje_show',{'id':mensaje.id})}}" class="dropdown-item">
+            <!-- Message Start -->
+            <div class="media">
+              
+              <div class="media-body">
+                <h3 class="dropdown-item-title">
+                  {{mensaje.mensajeTipo.nombre}} - {{mensaje.usuarioRegistro.nombre}}
+                  <!--<span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>-->
+                </h3>
+                <p class="text-sm">{{mensaje.observacion}}</p>
+                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> {{mensaje.fechaAviso|date('Y-m-d')}}</p>
+              </div>
+            </div>
+            <!-- Message End -->
+          </a>
+
+          {% set i = i +1 %}
+        {% endfor %}
+          
+          
+          <div class="dropdown-divider"></div>
+          <a href="{{path('mensaje_index')}}" class="dropdown-item dropdown-footer">Ver todos los mensajes</a>
+        </div>
+      </li>

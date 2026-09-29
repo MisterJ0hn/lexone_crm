@@ -1,0 +1,316 @@
+
+<div class="row">
+    <div class="col-sm-12 col-md-4">
+        <div class="card">
+            <div class="card-header">
+                Renegociación
+            </div>
+            <div class="card-body">
+                <section>
+                    <div class="row">
+                        <div class="col-12">
+                            <small class="text-muted">Contrato Original</small> {{contrato.folio}} 0
+                        </div>
+                        <div class="col-12">
+                            <small class="text-muted">Ultimo Anexo</small>{% if ultFolio %}
+                                {{ ultAnexo.id }}-{{ contrato.folio }} {{ ultFolio }}
+                            {% endif %}
+                        </div>
+                        <div class="col-12">
+                            <small class="text-muted">Fecha Creacion</small> {{contrato.fechaCreacion|date('Y-m-d')}}
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <div class="row">
+                        <table class="table table-sm">
+                            <tr>
+                                <th>Cuota</th>
+                                <th>Vcto.</th>
+                                <th>Debe</th>
+                                <th>Haber</th>
+                            </tr>
+                            {% set monto = 0 %}
+                            {% set pagado = 0 %}
+                            {%  for cuota in cuotas %}
+                            <tr>
+                                <td>{{cuota.numero}}</td>
+                                <td>{{cuota.fechaPago|date('Y-m-d')}}</td>
+                                <td>{{cuota.monto| number_format(0, ',', '.') }}</td>
+                                <td>{{cuota.pagado| number_format(0, ',', '.')}}</td>
+                            </tr>
+                            {% set monto = monto + cuota.monto %}
+                            {% set pagado = pagado + cuota.pagado %}
+
+                            {% endfor %}
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th>{{monto| number_format(0, ',', '.')}}</th>
+                                <th>{{pagado| number_format(0, ',', '.')}}</th>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th class="text-danger">{{(monto-pagado)| number_format(0, ',', '.')}}</th>
+                            </tr>
+                        </table>
+                    </div>
+
+                </section>
+                
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12 col-md-8">
+        {{ form_start(form,{'action': path('anexo_renegociar',{'id':contrato.id}), 'method': 'POST'}) }}
+        <section>
+            <div class="row">
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted">Monto contrato *</small>
+                      {{form_row(form.MontoContrato,{'label':false,'attr':{'class':'form-control monto-contrato number','required':true,'autocomplete':"ÑÖcompletes"}})}}
+				
+                    <strong><label id="m-monto-contrato"></label></strong>
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <div class="row"> 
+                        <small class="text-muted isAbono">Abono *</small>
+                        <div class="col">{{form_row(form.isAbono,{'label':false,'attr':{'class':' chk-bono'}})}}</div>
+                        <small class="text-muted textTotal">Paga el total *</small>
+                        <div class="col divTotal">{{form_row(form.isTotal,{'label':false,'attr':{'class':' chk-total'}})}}</div>
+                    </div>
+                        
+                    {{form_row(form.abono,{'label':false,'attr':{'class':'form-control primera-cuota number','required':true,'autocomplete':"ÑÖcompletes"}})}}
+                        
+                                    
+                    <strong><label id="m-primera-cuota"></label></strong>
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted t-cuotas" >Cuotas *</small>
+                    {{form_row(form.nCuotas,{'label':false,'attr':{'class':'form-control cuotas number','required':true,'autocomplete':"ÑÖcompletes"}})}}
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted t-valor-cuota">Valor cuota *</small>
+                    {{form_row(form.valorCuota,{'label':false,'attr':{'class':'form-control valor-cuota','required':true,'autocomplete':"ÑÖcompletes"}})}}
+                    
+                    <strong><label id="m-valor-cuota"></label></strong>
+                </div>
+
+                <div class="col-sm-12 col-md-12">
+                    <small class="text-muted">Días de Pago</small>
+                    <br>
+                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                    
+                        {% for diasPago in diasPagos %}
+                        <label class="btn btn-success 
+                        {% if contrato.diaPago == diasPago.dias %}
+                        active
+                        {% endif %}
+                        ">
+                            <input type="radio" name="chkDiasPago" id="chkDiasPago{{diasPago.dias}}" autocomplete="off"
+                            {% if contrato.diaPago == diasPago.dias %}
+                                checked
+                            {% endif %}
+                            value="{{diasPago.dias}}">{{diasPago.nombre}}
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted  t-mes-pago">Mes Primer Pago</small>
+                    <input type="text" name="txtFechaPago" class="form-control primer-pago">    
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted o">Vigencia en Meses</small>
+                    {{form_row(form.vigencia,{'label':false,'attr':{'class':'form-control'},'required':true})}}
+
+                    
+                </div>
+                <div class="col-sm-12 col-md-12">
+                    <small class="text-muted">Observación</small><br>
+                    {{form_row(form.observacion,{'label':false,'attr':{'class':'form-control'},'required':true})}}
+                    
+                </div>
+                <div class="col-sm-12 col-md-12">
+                    <button class="btn btn-primary" >Crear Anexo</button>
+                </div>
+            </div>
+
+            
+        </section>
+        {{ form_end(form) }}
+    </div>
+</section>
+
+
+
+<script>
+
+    $('.cuotas').change(function(){
+        recalcula();
+    });
+    $('.monto-contrato').change(function(){
+        recalcula();
+        $("#m-monto-contrato").html($.number( $(this).val(), 0, ',', '.' ));
+    });
+    $('.primera-cuota').change(function(){
+        recalcula();
+        $("#m-primera-cuota").html($.number( $(this).val(), 0, ',', '.' ));
+    });
+    $('.nivel-deuda').change(function(){
+        recalcula();
+        $("#m-nivel-deuda").html($.number( $(this).val(), 0, ',', '.' ));
+    });
+    $('.pago-actual').change(function(){
+        recalcula();
+        $("#m-pago-actual").html($.number( $(this).val(), 0, ',', '.' ));
+    });
+    $('.interes').change(function(){
+        recalcula();
+    });
+
+    $("#m-monto-contrato").html($.number( $('.monto-contrato').val(), 0, ',', '.' ));
+    $("#m-primera-cuota").html($.number( $('.primera-cuota').val(), 0, ',', '.' ));
+    $("#m-valor-cuota").html($.number( $('.valor-cuota').val(), 0, ',', '.' ));
+    $("#m-pago-actual").html($.number( $('.pago-actual').val(), 0, ',', '.' ));
+    $("#m-nivel-deuda").html($.number( $('.nivel-deuda').val(), 0, ',', '.' ));
+    $(".chk-total").show();
+    $('.textTotal').show();
+
+    $(".number").inputmask({
+        mask: "9",
+        repeat:20,
+    });
+    function recalcula()
+    {
+        var _montoContrato=$('.monto-contrato').val();
+        var _primeraCuota=$('.primera-cuota').val();
+        console.log(_montoContrato);
+        console.log(_primeraCuota);
+        var montoContrato=parseInt( _montoContrato)-parseInt(_primeraCuota);
+        console.log(montoContrato);
+        var cuotas=parseInt($('.cuotas').val());
+        var interes=0;
+        if(cuotas < 1){
+            var valorCuota=0;
+        }else{
+            var valorCuota=(montoContrato+(montoContrato/100*interes))/cuotas;
+        }
+        
+        $('.valor-cuota').val(Math.round(valorCuota));
+        $("#m-valor-cuota").html($.number( $('.valor-cuota').val(), 0, ',', '.' ));
+    }
+
+    $(document).ready(function(){
+        checkAbono();
+        checkTotal();
+        cambiaEstrategiaJuridica($(".cbomateria").val());
+
+         
+
+        $('.primer-pago').daterangepicker({
+            "singleDatePicker": true,
+            "drops": "up",
+            "startDate": "{{contrato.fechaPrimerPago|date('Y-m-d')}}",
+            "minDate":"{{contrato.fechaCreacion|date('Y-m-d')}}",
+            "locale": {
+                "format": "YYYY-MM-DD",
+                "applyLabel": "Apply",
+                "cancelLabel": "Cancel",
+            }
+        }, function(start, end, label) {
+        });
+    });
+
+    
+
+    $('.chk-bono').change(function(){
+        
+        checkAbono();
+        recalcula();
+    });
+    $(".chk-total").change(function(){
+        checkTotal();
+        recalcula();
+    });
+    function checkAbono(){
+ 
+        if($('.chk-bono').prop( "checked" )){
+            $('.primera-cuota').css("visibility", "visible");
+            $('.t-cuotas').html('Cuotas restantes *');
+            $('.t-valor-cuota').html('Valor Cuotas Restantes *');
+            $('.t-pago-actual').html('Pago Actual *');
+            $('.t-mes-pago').html('Mes Segundo Pago');
+            $('.primer-pago').daterangepicker({
+                "singleDatePicker": true,
+                "drops": "up",
+                "startDate": "{{contrato.fechaPrimerPago|date('Y-m-d')}}",
+                "minDate":"{{contrato.fechaCreacion|date('Y-m-d')}}",
+                "locale": {
+                    "format": "YYYY-MM-DD",
+                    "applyLabel": "Apply",
+                    "cancelLabel": "Cancel",
+                }
+            }, function(start, end, label) {
+            });
+            
+            $('.textTotal').hide();
+            $('.divTotal').hide();
+            $('.chk-total').prop("checked", false);
+        }else{
+            $('.primera-cuota').css("visibility", "hidden");
+            $('.primera-cuota').val(0);
+            $('#m-primera-cuota').html("");
+            $('.t-cuotas').html('Cuotas *');
+            $('.t-valor-cuota').html('Valor Cuotas *');
+            $('.t-mes-pago').html('Mes Primer Pago');
+            $('.textTotal').show();
+            $('.divTotal').show();
+            $('.primer-pago').daterangepicker({
+                    "singleDatePicker": true,
+                    "drops": "up",
+                    "startDate": "{{contrato.fechaPrimerPago|date('Y-m-d')}}",
+                    "minDate":"{{contrato.fechaCreacion|date('Y-m-d')}}",
+                    "locale": {
+                        "format": "YYYY-MM-DD",
+                        "applyLabel": "Apply",
+                        "cancelLabel": "Cancel",
+                    }
+                }, function(start, end, label) {
+            });
+        }
+
+    }
+
+     
+    function checkTotal(){
+        if($(".chk-total").prop( "checked" )){
+           $('.cuotas').val(0);
+            $('.cuotas').hide();
+
+            $('.valor-cuota').val(0);
+            $('.valor-cuota').hide();
+
+            $('.primera-cuota').val($('.monto-contrato').val());
+
+            $('#m-valor-cuota').val(0);
+            $('#m-valor-cuota').hide();
+            $('.chk-bono').hide();
+            $('.isAbono').hide();
+        }else{
+            $('.cuotas').val(1);
+            $('.cuotas').show();
+
+            $('.valor-cuota').show();
+            $('.primera-cuota').val(0);
+            
+            $('#m-valor-cuota').show();
+            $('.chk-bono').show();
+            $('.isAbono').show();
+        }
+    }
+
+    $('.primer-pago').inputmask("9999-99");
+</script>

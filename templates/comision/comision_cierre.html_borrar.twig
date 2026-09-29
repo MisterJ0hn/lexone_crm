@@ -1,0 +1,182 @@
+{% extends 'base.html.twig' %}
+{% block title %}Hello ComisionAgendadorController!{% endblock %}
+{% set total=10 %}
+{% block body %}
+<form action="{{path('comision_cierre')}}" method="get" id="bForm">
+    <input type="hidden" name="bStatus" id="bStatus" value="{{status|default('0')}}">
+<div class="row">
+    {% set total = 0 %}
+    {% if resumen is defined  %}
+        <div class="col-sm-6 col-md-3">
+            <div class="info-box">
+                <span class="info-box-icon bg-success"><i class=""></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Comision</span>
+                    <span class="info-box-number">{{resumen['monto_pagado']}}</span>
+                    <a href="#" class="small-box-footer" onclick="javascript:buscar(1)">
+                    Ver Más <i class="fas fa-arrow-circle-right"></i></a>
+                    {% set total= total + resumen['monto_pagado'] %}
+                    
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <div class="info-box">
+                <span class="info-box-icon bg-success"><i class=""></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Gestiones</span>
+                    <span class="info-box-number">{{resumen['cantidad']}}</span>
+                    <a href="#" class="small-box-footer" onclick="javascript:buscar(2)">
+                    Ver Más <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <div class="info-box">
+                <span class="info-box-icon bg-success"><i class=""></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Max tiempo gestión</span>
+                    <span class="info-box-number">30</span>
+                   
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+        </div>
+    {% endif %}
+    
+</div>
+
+{% if sesion.getSesion.usuarioTipo.id in [3,1]  %}
+    <section>
+        
+            {{ render(controller('App\\Controller\\AgendaController::resumencierre', {'montoTotal':total,'fechaInicio':dateInicio,'fechaFin':dateFin,'status':status})) }}
+      
+    </section>
+{% endif %}
+
+<div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-sm-12 col-md-3">
+                <select name="bCompania" class="form-control">
+                    <option value="0">Todos</option>
+                    {% for compania in companias %}
+                        <option value="{{compania.id}}"
+                        {% if bCompania==compania.id %}
+                            selected
+                        {% endif %}
+                        >{{compania.nombre}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-sm-12 col-md-3">
+                <input type="text" class="form-control" name="bFolio" placeholder="Folio" value="{{bFolio}}">
+            </div>
+            <div class="col-sm-12 col-md-3">
+                <input type="text" class="form-control" name="bFecha" id="bFecha"  value="">
+            </div>
+            <div class="col-sm-12 col-md-3">
+                <button type="button" class="btn btn-primary bBuscar" ><i class="fas fa-search"></i></button>
+                <input type="hidden" name="bNueva" class="bNueva" value="0">
+                <button type="button" class="btn btn-primary bXls" ><i class="fas fa-file"></i></button>
+            </div>
+            <div class="col-sm-12 col-md-3">       
+            </div>
+        </div>
+    </div>
+
+</form>
+    <div class="card-body table-responsive p-0" style="height: 500px;">
+        <table class="table table-sm">
+            <thead>
+                <tr class="sticky-top bg-white ">
+                    
+                    <th>{{ knp_pagination_sortable(contratos, 'Cerrador', 'a.abogado.nombre') }} {% if contratos.isSorted('a.abogado.nombre') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                    <th>{{ knp_pagination_sortable(contratos, 'Cliente', 'c.cliente.nombre') }} {% if contratos.isSorted('contrato[0].cliente.nombre') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                    <th>Tipo</th>
+                    
+                    <th>{{ knp_pagination_sortable(contratos, 'Folio', 'c.folio') }} {% if contratos.isSorted('c.folio') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                    <th>{{ knp_pagination_sortable(contratos, 'Fecha Creación', 'c.fechaCreacion') }} {% if contratos.isSorted('c.fechaCreacion') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                    <th>{{ knp_pagination_sortable(contratos, 'Monto Contrato', 'c.montoContrato') }} {% if contratos.isSorted('c.montoContrato') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                    <th>{{ knp_pagination_sortable(contratos, 'Número Cuota', 'cuota_numero') }} {% if contratos.isSorted('cuota_numero') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                    <th>Fecha Vencimiento</th>
+                    <th>Monto Cuota</th>
+                    <th>Monto Pago</th>
+                    <th>Fecha Pago</th>
+                    <th>{{ knp_pagination_sortable(contratos, 'VctoComisión', 'dia_vencimiento') }} {% if contratos.isSorted('dia_vencimiento') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                    <th>q_dias</th>                     
+                </tr>
+            </thead>
+            <tbody>
+            {% for contrato in contratos %}
+                <tr>
+                
+                    <td>{{ contrato[0].agenda.abogado.nombre}}</td>
+                    <td>{{ contrato[0].nombre}}</td>
+                    <td>{{ isAnexo(contrato[0].id)}}</td>
+                    <td>{{ contrato[0].folio }}</td>
+                    <td>{{ contrato[0].fechaCreacion|date('Y-m-d') }}</td>
+                    <td>{{ contrato[0].montoContrato|number_format(0, ',', '.')}}</td>
+                    <td>{{ contrato['cuota_numero']}}</td>
+                    <td>{{ contrato['fecha_vencimiento']|date('Y-m-d') }}</td>
+                    <td>{{ contrato['monto_cuota']}}</td>
+                    <td>{{ contrato['monto_pagado']}}</td>
+                    <td>{{ contrato['fecha_pago']|date('Y-m-d') }}</td>
+                    <td>{{ contrato['dia_vencimiento'] }}</td>
+                    <td>{{ contrato['q_dias'] }}</td>
+                  
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="7">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <div class="card-footer clearfix">
+            {# display navigation #}
+       <div class="navigation">
+           {{ knp_pagination_render(contratos,'@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig',{},{
+           'position': 'centered',
+           'rounded': true,
+           }) }}
+       </div>
+   </div>
+
+<script>
+    $('#bFecha').daterangepicker({
+        "drops": "down",
+        "startDate":"{{dateInicio}}",
+        "endDate": "{{dateFin}}",
+        "locale": {
+            "format": "YYYY-MM-DD",
+            "applyLabel": "Apply",
+            "cancelLabel": "Cancel",
+        }
+    }, function(start, end, label) {
+    console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+    
+    });
+    function buscar(status){
+        $("#bStatus").val(status);
+        $("#bForm").submit();
+    }
+    $('.bBuscar').on('click',function(){
+        $(".bNueva").val("1");
+        $("#bForm").attr('action',"{{path('comision_cierre')}}");
+        $("#bForm").submit();
+    });
+    $('.bXls').on('click',function(){
+        $(".bNueva").val("1");
+        $("#bForm").attr('action',"{{path('comision_cierre_xls')}}");
+
+
+        $("#bForm").submit();
+        $("button").prop('disabled',false);
+    });
+
+</script>
+
+{% endblock %}

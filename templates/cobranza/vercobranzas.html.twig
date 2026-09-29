@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Cobranza{% endblock %}
+
+{% block body %}
+<div class="card">
+    <div class="card-header">
+        <h1>Folio: {{contrato.folio}}</h1>
+    </div>
+    <div class="card-body table-responsive p-0" >
+            
+        <table class="table table-head-fixed text-nowrap table-striped table-sm">
+            <thead>
+                <tr>
+                    <th  align="center">Lote</th>
+                    <th> Cobrador</th>
+                    <th align="center">Fecha Gestión</th>
+                    <th align="center">Función Cobranza</th>
+                    <th  align="center">Respuesta</th>
+                    <th align="center">Fecha Compromiso</th>
+                    <th align="center">Observación</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for cobranza in cobranzas %}
+                <tr
+                {% if cobranza.isNulo %}
+                    class="table-danger"
+                {% endif %}
+                >
+                
+                    <td align="left">{{cobranza.contrato.idLote.nombre|default('')}}</td>
+                    <td align="left">{{cobranza.usuarioRegistro.nombre}}</td>
+                    <td align="left">{{cobranza.fechaHora|date('Y-m-d H:i')}}</td>
+                    <td align="left">{{cobranza.funcion}}</td>
+                    <td align="left">{{cobranza.respuesta}}</td>
+                    <td>{{cobranza.fechaCompromiso ? cobranza.fechaCompromiso|date('Y-m-d'):''}}</td>
+                    <td>
+                        <span class="d-inline-block text-truncate" style="max-width: 150px;">
+                            {{cobranza.observacion}}
+                        </span>
+                        <button type="button" class="btn btn-sm btn-success" data-toggle="popover" title="Observación Completa" data-content="{{cobranza.observacion|raw}}">Ver Más</button>
+                    </td>
+                </tr>
+
+            {% endfor %}
+
+        </tbody>
+        </table>
+        </div>
+        <div class="card-footer">
+           
+                <a href="{{path('cobranza_new',{'id':contrato.id})}}" class="btn btn-primary" >Agregar gestión</a>
+
+        </div>
+    </div>
+    
+    <script>
+        $(function () {
+            $('[data-toggle="popover"]').popover()
+            $('.popover-dismiss').popover({
+                trigger: 'focus'
+              });
+            
+              $('[data-toggle="popover"]').popover({
+                  template: '<div class="popover" role="tooltip"><div class="arrow"><</div><h3 class="popover-header"></h3><div class="popover-body"></div></div>',
+              });
+        });
+    </script>
+{% endblock %}

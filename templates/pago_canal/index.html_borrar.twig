@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}PagoCanal index{% endblock %}
+
+{% block body %}
+    <h1>PagoCanal index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Estado</th>
+                <th>Orden</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for pago_canal in pago_canals %}
+            <tr>
+                <td>{{ pago_canal.id }}</td>
+                <td>{{ pago_canal.nombre }}</td>
+                <td>{{ pago_canal.estado ? 'Yes' : 'No' }}</td>
+                <td>{{ pago_canal.orden }}</td>
+                <td>
+                    <a href="{{ path('pago_canal_show', {'id': pago_canal.id}) }}">show</a>
+                    <a href="{{ path('pago_canal_edit', {'id': pago_canal.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('pago_canal_new') }}">Create new</a>
+{% endblock %}

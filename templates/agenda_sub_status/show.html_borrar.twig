@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}AgendaSubStatus{% endblock %}
+
+{% block body %}
+    <h1>AgendaSubStatus</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ agenda_sub_status.id }}</td>
+            </tr>
+            <tr>
+                <th>Nombre</th>
+                <td>{{ agenda_sub_status.nombre }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('agenda_sub_status_index') }}">back to list</a>
+
+    <a href="{{ path('agenda_sub_status_edit', {'id': agenda_sub_status.id}) }}">edit</a>
+
+    {{ include('agenda_sub_status/_delete_form.html.twig') }}
+{% endblock %}

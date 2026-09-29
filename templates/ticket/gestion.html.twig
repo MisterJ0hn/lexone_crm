@@ -1,0 +1,143 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{pagina|default('')}}{% endblock %}
+
+{% block body %}
+{{ include('cabezera.html.twig') }}
+<div class="row">
+    <div class="col-sm-12 col-md-8 ">
+        <section class="sticky-top">
+            <div class="card">
+                <div class="card-body">
+                    
+                    
+                    
+                    {% if ticket.estado.id == 4 %}
+                        
+                            {{ include('ticket/_cerrado.html.twig') }}
+                            
+                    {% endif %}
+
+                    {% if sesion.getSesion.usuarioTipo.id in [1,8,13,3] %}
+                        
+                        {% if ticket.estado.id == 2 %}
+                        
+                            {{ include('ticket/_respuesta.html.twig') }}
+                        
+                        {% endif %}
+                        {% if ticket.estado.id == 1 %}
+                        
+                            {{ include('ticket/_asignar.html.twig') }}
+
+                        {% endif %}
+                        {% if ticket.estado.id == 3 %}
+                    
+                        {{ include('ticket/_cerrar.html.twig') }}
+                        
+                        {% endif %}
+                    {% else %}
+                        {% if ticket.estado.id == 2 %}
+                            {% if  sesion.getSesion.id == ticket.encargado.id %}
+                                {{ include('ticket/_respuesta.html.twig') }}
+                            {% endif %}
+                            
+                            
+                        {% endif %}
+                    {% endif %}
+                    
+                </div>
+            </div>
+            </section>
+    </div>
+    <div class="col-sm-12 col-md-4">
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+        
+        <!-- Timelime example  -->
+            <div class="row">
+                <div class="col-md-12">
+                <!-- The time line -->
+                    <div class="timeline">
+                        <!-- timeline time label -->
+                        <div class="time-label">
+                        <span class="bg-red">{{ticket.fechaNuevo|date('d-m-Y H:i')}}</span>
+                        </div>
+                        <!-- /.timeline-label -->
+                        <!-- timeline item -->
+                        {% for ticketHistoria in ticket.ticketHistorials %}
+                            
+                        
+                        <div class="time-label">
+                            <span class="bg-green">{{ticketHistoria.fecha ? ticketHistoria.fecha|date('d-m-Y'): ''}}</span>
+                        </div>
+                        <div>
+                            <i class="fas fa-envelope bg-blue"></i>
+                            <div class="timeline-item">
+                                <span class="time"><i class="fas fa-clock"></i>{{ticketHistoria.fecha ? ticketHistoria.fecha|date('H:i'):''}}</span>
+                                <h3 class="timeline-header"><a href="#">{{ticketHistoria.estado}}</a> {{ticketHistoria.usuarioRegistro}} </h3>
+
+                                <div class="timeline-body">
+                                    {{ticketHistoria.observacion}}
+                                </div>
+                               
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <div>
+                            <i class="fas fa-clock bg-gray"></i>
+                          </div>
+                    </div>
+                    
+                </div>
+                
+            </div>
+        </div>
+    </section>
+    </div>
+    </div>
+
+
+<script>
+    $.ajax({
+        url:"/usuario/3/combo",
+        type: "post",
+        dataType: "html",
+        cache: false,
+        contentType: false,
+        processData: false,
+        async: true,
+        beforeSend: function(){
+            $(".loading").html(' <div class="overlay"><i class="fas fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>');
+            
+        },
+        success:function(data){
+            $(".encargado").html(data);
+            $(".loading").html('');
+        }
+
+    });
+    $('.destino').on('change',function(){
+        $.ajax({
+            url:"/usuario/"+$(this).val()+"/combo",
+            type: "post",
+            dataType: "html",
+            cache: false,
+            contentType: false,
+            processData: false,
+            async: true,
+            beforeSend: function(){
+                $(".loading").html(' <div class="overlay"><i class="fas fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>');
+                
+            },
+            success:function(data){
+                $(".encargado").html(data);
+                $(".loading").html('');
+            }
+
+        });
+    });
+
+</script>
+   
+{% endblock %}

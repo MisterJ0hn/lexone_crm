@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Importacion{% endblock %}
+
+{% block body %}
+    <h1>Importacion</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ importacion.id }}</td>
+            </tr>
+            <tr>
+                <th>Nombre</th>
+                <td>{{ importacion.nombre }}</td>
+            </tr>
+            <tr>
+                <th>FechaCarga</th>
+                <td>{{ importacion.fechaCarga ? importacion.fechaCarga|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('importacion_index') }}">back to list</a>
+
+    <a href="{{ path('importacion_edit', {'id': importacion.id}) }}">edit</a>
+
+    {{ include('importacion/_delete_form.html.twig') }}
+{% endblock %}

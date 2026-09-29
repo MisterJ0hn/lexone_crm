@@ -1,0 +1,1128 @@
+
+{{ form_start(form,{'attr':{'id':'formContrato','onsubmit':'return !!(validarut() && validarCelular())'}})  }}
+<hr class="card-outline card-info">
+<h4>Plantilla de Contrato</h4>
+<div class="row">
+    <div class="col-sm-12 col-md-6">
+        <small class="text-muted">Plantilla a usar para generar el PDF de este contrato</small>
+        {{form_row(form.contratoTemplate,{'label':false,'attr':{'class':'form-control'}})}}
+    </div>
+</div>
+<hr class="card-outline card-info">
+<h4>Datos nuevo cliente</h4>
+<div class="row">
+    <div class="col-sm-12 col-md-3">
+        <small class="text-muted">Nombre</small>
+		{{form_row(form.nombre,{'label':false,'attr':{'class':'form-control','autocomplete':"ÑÖcompletes"}})}}
+    </div>
+    <div class="col-sm-12 col-md-3">
+        <small class="text-muted">Rut *</small>
+		{{form_row(form.rut,{'label':false,'attr':{'class':'form-control format-rut','autocomplete':"ÑÖcompletes",'required':true}})}}
+    </div>
+    <div class="col-sm-12 col-md-3">
+        <small class="text-muted">Email *</small>
+		{{form_row(form.email,{'label':false,'attr':{'class':'form-control emailCliente','autocomplete':"ÑÖcompletes",'required':true}})}}
+    </div>
+    {% if agenda.tipoCliente is null or agenda.tipoCliente.nombre == 'Persona' %}
+    <div class="col-sm-12 col-md-3">
+        <small class="text-muted">Sexo *</small>
+		<select name="cboSexo" required class="form-control">
+            <option></option>
+            <option value="Masculino">Masculino</option>
+            <option value="Femenino">Femenino</option>
+        </select>
+    </div>
+    {% endif %}
+    <div class="col-sm-12 col-md-3">
+        <small class="text-muted">Nacionalidad *</small>
+		{{form_row(form.pais,{'label':false,'attr':{'class':'form-control','required':true,'autocomplete':"ÑÖcompletes"}})}}
+    </div>
+    
+    <div class="col-sm-12 col-md-3">
+        <small class="text-muted">Region *</small>
+        <select name="cboRegion" class="form-control" onchange="javascript:getCiudades(this.value)">
+        <option></option>
+        {% for region in regiones %}
+        <option value="{{region.id}}" >{{region.nombre}}</option>
+        {% endfor %}
+		</select>
+    </div>
+    <div class="col-sm-12 col-md-3">
+        <small class="text-muted">Ciudad *</small>
+		<div id="cciudad"></div>
+    </div>
+    <div class="col-sm-12 col-md-3">
+        <small class="text-muted">Comuna *</small>
+		<div id="ccomuna"></div>
+    </div>
+    <div class="col-sm-12 col-md-6">
+        <small class="text-muted">Dirección *</small>
+		{{form_row(form.direccion,{'label':false,'attr':{'class':'form-control','autocomplete':"ÑÖcompletes"}})}}
+    </div>
+    
+    <div class="col-sm-12 col-md-3">
+        <small class="text-muted">Telefono *</small>
+		{{form_row(form.telefono,{'label':false,'attr':{'class':'form-control telefonoCliente','autocomplete':"ÑÖcompletes",'required':true}})}}
+    </div>
+    <div class="col-sm-12 col-md-3 ocultar-campo">
+        <small class="text-muted">Telefono recado</small>
+		{{form_row(form.telefonoRecado,{'label':false,'attr':{'class':'form-control','autocomplete':"ÑÖcompletes"}})}}
+    </div>
+    {% if agenda.tipoCliente is null or agenda.tipoCliente.nombre == 'Persona' %}
+    <div class="col-sm-12 col-md-3">
+        <small class="text-muted">Estado Civil *</small>
+		{{form_row(form.estadoCivil,{'label':false,'attr':{'class':'form-control','required':true}})}}
+    </div>
+    {% endif %}
+    <div class="col-sm-12 col-md-3 ocultar-campo">
+        <small class="text-muted">Vivienda</small>
+		{{form_row(form.vivienda,{'label':false,'attr':{'class':'form-control'}})}}
+    </div>
+    <div class="col-sm-12 col-md-3 ocultar-campo">
+        <small class="text-muted">Vehiculo</small>
+		{{form_row(form.vehiculo,{'label':false,'attr':{'class':'form-control'}})}}
+    </div>
+    <div class="col-sm-12 col-md-3 ocultar-campo">
+        <small class="text-muted">Situación Laboral *</small>
+		{{form_row(form.situacionLaboral,{'label':false,'attr':{'class':'form-control'}})}}
+    </div>
+    <div class="col-sm-12 col-md-3">
+        <small class="text-muted">Reunión *</small>
+		{{form_row(form.reunion,{'label':false,'attr':{'class':'form-control','required':'required'}})}}
+    </div>
+    <div class="col-sm-12 col-md-3">
+        <small class="text-muted">Clave única</small>
+		{{form_row(form.claveUnica,{'label':false,'attr':{'class':'form-control','autocomplete':"ÑÖcompletes"}})}}
+    </div>
+    
+</div>
+<hr class="card-outline card-info">
+<h4>Honorarios</h4>
+<div class="row">
+
+    
+    
+    <div class="col-sm-12 col-md-3 ocultar-campo">
+        <small class="text-muted">Sucursal *</small>
+        <select name="cboSucursal" id="sucursal" class="form-control">
+            <option value=""></option>
+            {% for sucursal in sucursales %}
+                <option value="{{sucursal.id}}">{{sucursal.nombre}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <!--<div class="col-sm-12 col-md-3">
+        <small class="text-muted">Tramitador *</small>
+        <select name="cboTramitador" id="tramitador" required class="form-control">
+            <option value=""></option>
+            {% for tramitador in tramitadores %}
+                <option value="{{tramitador.id}}">{{tramitador.nombre}}</option>
+            {% endfor %}
+        </select>
+    </div>-->
+    <div class="col-sm-12 col-md-3 ocultar-campo">
+        <small class="text-muted">Monto Deuda</small>
+		{{form_row(form.montoNivelDeuda,{'label':false,'attr':{'class':'form-control nivel-deuda','autocomplete':"ÑÖcompletes"}})}}
+    </div>
+    <div class="col-sm-12 col-md-3 ocultar-campo">
+        <small class="text-muted t-pago-actual " >Pago Mensual Deuda</small>
+        {{form_row(form.pagoActual,{'label':false,'attr':{'class':'form-control pago-actual number','autocomplete':"ÑÖcompletes"}})}}
+        <strong><label id="m-pago-actual"></label></strong>
+    </div>
+    <div class="col-sm-12 col-md-3">
+        <small class="text-muted">Monto contrato *</small>
+        {{form_row(form.MontoContrato,{'label':false,'attr':{'class':'form-control monto-contrato number','required':true,'autocomplete':"ÑÖcompletes"}})}}
+        <strong><label id="m-monto-contrato"></label></strong>
+    </div>
+    
+    <div class="col-sm-12 col-md-5">
+        <div class="row">
+            <small class="text-muted isAbono">Abono *</small>
+            <div class="col">{{form_row(form.isAbono,{'label':false,'attr':{'class':' chk-bono'}})}}</div>
+            <small class="text-muted textTotal">Paga el total *</small>
+            <div class="col divTotal">{{form_row(form.isTotal,{'label':false,'attr':{'class':' chk-total'}})}}</div>
+            <small class="text-muted isIncorporacion">Incorporación *</small>
+            <div class="col">{{form_row(form.isIncorporacion,{'label':false,'attr':{'class':' chk-incorporacion'}})}}</div>
+        </div>
+        <div class="row">
+            <div class="col">
+                {{form_row(form.primeraCuota,{'label':false,'attr':{'class':'form-control primera-cuota number','required':true,'autocomplete':"ÑÖcompletes"}})}}
+        
+                <strong><label id="m-primera-cuota"></label></strong>
+            </div>
+            <div class="col">
+                <input type="text" class="fecha-incorporacion form-control" name="txtFechaIncorporacion" required>
+                  
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-sm-12 col-md-2">
+        <small class="text-muted t-cuotas" >Cuotas *</small>
+		{{form_row(form.cuotas,{'label':false,'attr':{'class':'form-control cuotas number','required':true,'autocomplete':"ÑÖcompletes"}})}}
+    </div>
+    
+    <div class="col-sm-12 col-md-2">
+        <small class="text-muted t-valor-cuota">Valor cuota *</small>
+        {{form_row(form.valorCuota,{'label':false,'attr':{'class':'form-control valor-cuota','required':true,'autocomplete':"ÑÖcompletes"}})}}
+        <strong><label id="m-valor-cuota"></label></strong>
+    </div>
+    
+
+    <div class="col-sm-12 col-md-12 diasPago" >
+        <small class="text-muted">Dias de Pago *</small>
+        <br>
+        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+            {% for diasPago in diasPagos %}
+            <label class="btn btn-success 
+            {% if contrato.diaPago == diasPago.dias %}
+            active
+            {% endif %}">
+                <input type="radio" name="chkDiasPago" class="chkDiasPago" id="chkDiasPago{{diasPago.dias}}" autocomplete="off" 
+                {% if contrato.diaPago == diasPago.dias %}
+                            checked
+                {% endif %}
+                 value="{{diasPago.dias}}" required>{{diasPago.nombre}}
+            </label>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-sm-12 col-md-3 mesPrimerPago">
+        <small class="text-muted t-mes-pago">Mes Primer Pago</small>
+        <input type="text" name="txtFechaPago" class="form-control primer-pago">    
+    </div>
+    <div class="col-sm-12 col-md-3 vigenciaMeses align-middle">
+        <small class="text-muted  ">Vigencia en Meses</small>
+        <p>{{contrato.vigencia}}</p>
+        {{form_row(form.vigencia,{'label':false,'attr':{'class':'form-control','style':'visibility:hidden'}})}}
+
+        
+    </div>
+    
+</div>
+
+{% if agenda.tipoCliente is null or agenda.tipoCliente.nombre == 'Persona' %}
+<hr class="card-outline card-info">
+
+    <h4 id="materia">Causa</h4>
+
+        <div class="row">
+            <div class="col-sm-12 col-md-2">
+                <select name="cboMateria" class="form-control cbomateria" onchange="cambiaMateriaCausa(this.value)">
+                    <option value="">Seleccione Materia</option>
+                    {% for materia in materias %}
+                    <option value="{{ materia.id }}">{{ materia.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-sm-12 col-md-3 submateria">
+                <select name="cboSubMateria" class="form-control cboSubMateria"  >
+                    <option>Seleccione Servicio</option>
+                </select>
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <div class="row">
+                    <div class="col-sm-12 col-md-3 ml-0 mr-0 pl-0 pr-0 letras">
+                        <input type="text" name="txtLetra" placeholder="Letra" class="form-control txtLetra" size="3" maxlength="10"> 
+                        
+                    </div>
+                    <div class="col-sm-12 col-md-1 ml-0 mr-0 pl-0 pr-0" align="center">
+                        -
+                    </div>
+                    <div class="col-sm-12 col-md-3 ml-0 mr-0 pl-0 pr-0">
+                        <input type="text" name="txtRol" placeholder="N°" class="form-control txtRol" size="6" maxlength="255">
+                    </div>
+                    <div class="col-sm-12 col-md-1 ml-0 mr-0 pl-0 pr-0" align="center">
+                        -
+                    </div>
+                    <div class="col-sm-12 col-md-3 ml-0 mr-0 pl-0 pr-0">
+                        <input type="text" name="txtAnio" placeholder="Año" class="form-control txtAnio" size="4" maxlength="4">
+                    </div>
+                </div>
+               <small class="text-muted">Formato: Letra-Rol-Año</small>
+            </div> 
+            <div class="col-sm-12 col-md-2 ">
+                <input type="text" name="txtCaratulado" placeholder="Caratulado" class="form-control txtCaratulado" size="30" maxlength="30">
+                <small class="text-muted">Caracteres max. 30</small>
+            </div> 
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-md-5">
+                
+                <select name="corte" class="form-control corte">
+                    <option value=""> Seleccione Corte </option>
+                    
+                </select> 
+            </div>   
+            <div class="col-sm-12 col-md-6">
+                <select name="juzgado" class="form-control juzgado">
+                    <option value=""> Seleccione Juzgado </option>
+                    {% for juzgado in juzgados %}
+                        <option value="{{juzgado.id}}">{{juzgado.nombre}}</option>
+                    {% endfor %}
+                </select> 
+            </div>  
+      
+            <div class="col-sm-12 col-md-1">
+                <button type="button" class="btn btn-primary btn-agregar" onclick="javascript:agregarCausa()"><i class="fas fa-plus"></i></button>
+
+            </div>  
+           
+            
+            
+    
+        </div>
+        <div class="card-body" >
+
+            <div id="estrategiasJuridicas">
+                <div class="table-responsive ">
+                    <table class="table table-head-fixed text-nowrap table-striped table-sm">
+                        <thead>
+                            <tr>
+                                <th>Materia</th>
+                                <th>Id Servicio</th>
+                                <th>Servicio</th>
+                                <th>Causa/Rol</th>
+                                <th>Caratulado</th>
+                                <th>Juzgado</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody class="detalle_causas">
+
+                        </tbody>
+                    </table>
+                </div>                    
+                    
+            </div>
+            <div class="loading"></div>
+        </div>
+{% endif %}
+
+<!--
+<input type="hidden" id="Institucion" value="1">
+-->
+
+    <div class="col-sm-12 col-md-12">
+        <small class="text-muted">Observación al contrato</small><br>
+        
+        {{form_row(form.observacion,{'label':false,'attr':{'class':'form-control','required':true}})}}
+    </div>
+
+{{form_row(form.fechaPrimeraCuota,{'label':false,'attr':{'class':'form-control','style':'visibility:hidden'}})}}
+{% if contrato.id is null %}
+<button type="button" class="btn btn-primary" onclick="mostrarResumenCuotas()">Preparar Contrato</button>
+{% endif %}
+
+<div class="modal fade" id="modalResumenCuotas" tabindex="-1" role="dialog" aria-labelledby="modalResumenCuotasLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalResumenCuotasLabel">Detalle de cuotas</h5>
+        <button type="button" class="close" onclick="cerrarResumenCuotas()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row mb-3">
+            <div class="col-sm-6"><strong>Monto contrato:</strong> <span id="resumenMontoContrato"></span></div>
+            <div class="col-sm-6"><strong>Cantidad de cuotas:</strong> <span id="resumenCantidadCuotas"></span></div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-sm table-striped">
+                <thead>
+                    <tr>
+                        <th>N° Cuota</th>
+                        <th>Fecha de pago</th>
+                        <th>Monto</th>
+                    </tr>
+                </thead>
+                <tbody id="resumenCuotasBody">
+                </tbody>
+            </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" onclick="cancelarContrato()">Cancelar</button>
+        <button type="button" class="btn btn-secondary" onclick="cerrarResumenCuotas()">Cerrar</button>
+        <button type="button" class="btn btn-primary" onclick="confirmarContratar()">Contratar</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+
+    $(".ocultar-campo").hide();
+
+
+    $(function () {
+        //Initialize Select2 Elements
+        $('.select2').select2();
+        
+        cambiaAcreedores({{agenda.cuenta.id}});
+        
+
+        obtenerCortes({{agenda.cuenta.id}});
+        //$('.textTotal').hide();
+        //$('.divTotal').hide();
+        $('.fecha-incorporacion').hide();
+        $('.fecha-incorporacion').prop('required',false);
+    
+        
+    });
+    $('.primera-cuota').css("visibility", "hidden");
+    $('.cuotas').change(function(){
+        recalcula();
+    });
+    $('.monto-contrato').change(function(){
+        recalcula();
+        $("#m-monto-contrato").html($.number( $(this).val(), 0, ',', '.' ));
+    });
+    $('.primera-cuota').change(function(){
+        recalcula();
+        $("#m-primera-cuota").html($.number( $(this).val(), 0, ',', '.' ));
+    });
+    $('.interes').change(function(){
+        recalcula();
+    });
+    function recalcula()
+    {
+        var _montoContrato=$('.monto-contrato').val();
+        var _primeraCuota=$('.primera-cuota').val();
+        console.log(_montoContrato);
+        console.log(_primeraCuota);
+        var montoContrato=parseInt( _montoContrato)-parseInt(_primeraCuota);
+        console.log(montoContrato);
+        var cuotas=parseInt($('.cuotas').val());
+        var interes=0;
+        if(cuotas < 1){
+            var valorCuota=0;
+        }else{
+            var valorCuota=(montoContrato+(montoContrato/100*interes))/cuotas;
+        }
+        $('.valor-cuota').val(Math.round(valorCuota));
+        $("#m-valor-cuota").html($.number( $('.valor-cuota').val(), 0, ',', '.' ));
+    }
+    $(document).ready(function(){
+        const $escritos = $(".cboescritos");
+
+       // cambiaEstrategiaJuridica($(".cbomateria").val());
+
+
+        $('.monto-contrato').val('0');
+        $('.cuotas').val('1');
+        $('.primera-cuota').val(0);
+        $(".fecha-primera-cuota").val(moment().format('YYYY-MM-DD'));
+        //$(".format-rut").rut();
+        $(".number").inputmask({
+            mask: "9",
+            repeat:20,
+        });
+
+        //$('.monto-contrato').inputmask("999.999.999",{ placeholder:" ",numericInput: true, clearMaskOnLostFocus: true ,showMaskOnFocus: true});
+        
+       
+        $('.primer-pago').daterangepicker({
+            "singleDatePicker": true,
+            "drops": "up",
+            "defaultDate": "{{contrato.fechaCreacion|date('Y-m-d')}}",
+            "minDate":"{{contrato.fechaCreacion|date('Y-m-d')}}",
+            "locale": {
+                "format": "YYYY-MM-DD",
+                "applyLabel": "Apply",
+                "cancelLabel": "Cancel",
+            }
+        }, function(start, end, label) {
+        });
+
+        $('.fecha-incorporacion').daterangepicker({
+            "singleDatePicker": true,
+            "drops": "up",
+            "autoUpdateInput": false,
+            "maxDate": "{{contrato.fechaCreacion|date_modify('+30 day')|date('Y-m-d')}}",
+            "minDate":"{{contrato.fechaCreacion|date('Y-m-d')}}",
+            "locale": {
+                "format": "YYYY-MM-DD",
+                "applyLabel": "Apply",
+                "cancelLabel": "Cancel",
+            }
+        }, function(start, end, label) {
+        });
+
+        $('.fecha-incorporacion').on('apply.daterangepicker', function(ev, picker) {
+            $(this).val(picker.startDate.format('YYYY-MM-DD'));
+        });
+
+        $('.fecha-incorporacion').on('cancel.daterangepicker', function(ev, picker) {
+            $(this).val('');
+        });
+
+
+        
+
+    
+    });
+
+    var mee_val;
+    var x=0;
+    function cambiaEscritos(valor){
+        mee_val=valor;
+       
+    }
+    function  cambiaEstrategiaJuridica(value){
+            $.ajax({
+                url:"/estrategia_juridica/"+value+"/combo",
+                type: "post",
+                dataType: "html",
+                cache: false,
+                contentType: false,
+                processData: false,
+                async: true,
+                beforeSend: function(){
+                    $(".loading").html(' <div class="overlay"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>');
+                    
+                },
+                success:function(data){
+                    $(".cboSubMateria").html(data);
+                    $(".loading").html('');
+                    $("#materia").html("Ingreso de causa "+$(".cbomateria option:selected").text());
+                }
+
+            });
+             letrasCausa(value);
+        }
+      
+
+
+    function borrarItem(x){
+     
+        $('.div'+x).remove(); //Remove field html
+        
+    }
+     
+    
+    
+    
+    function listarCausas(){
+        $.ajax({
+            url:"{{path('causa_list',{'id':agenda.id})}}",
+            type: "get",
+            data:"txtNombreCausa="+$('.txtNombreCausa').val()+"&txtCaratulado="+$('.txtCaratulado').val()+"&juzgado="+$('.juzgado').val()+"&cboSubMateria="+$('.cboSubMateria').val(),
+            dataType: "html",
+            cache: false,
+            contentType: false,
+            processData: false,
+            async: true,
+            beforeSend: function(){
+                
+            },
+            success:function(data2){
+                $("#estrategiasJuridicas").html('');
+                $("#estrategiasJuridicas").append(data2);
+            }
+            });
+
+    }
+
+    function letrasCausa(materia_id){
+        $.ajax({
+            url:"/materia/"+materia_id+"/causa_letras",
+            type: "get",
+            dataType: "json",
+            cache: false,
+            contentType: false,
+            processData: false,
+            async: true,
+            beforeSend: function(){
+            },
+            success:function(data){
+                console.log("data");
+                console.log(data);
+
+                var letras=data;
+                $('.letras').html('<select name="txtLetra" class="form-control txtLetra"><option value=""> Letra </option></select>');
+                $.each(letras,function(i,letra){
+                    $('.txtLetra').append('<option value="'+letra+'">'+letra+'</option>');
+                });
+
+            },error:function(error){
+                $(".letras").html('<input type="text" name="txtLetra" placeholder="Letra" class="form-control txtLetra" size="3" maxlength="10">');
+            }
+        });
+    }
+    function cambiaMateriaCausa(materiaId){
+        if(!materiaId){
+            $(".cboSubMateria").html('<option value="">Seleccione Servicio</option>');
+            return;
+        }
+        cambiaEstrategiaJuridica(materiaId);
+        obtenerCortes(materiaId);
+    }
+    item_causa=0;
+    function agregarCausa(){
+        console.log("inicia agregar causa");
+        if($('.cbomateria').val()==""){
+            alert("Debe seleccionar una materia");
+            return;
+        }
+        if($('.cboSubMateria').val()!=""){
+               console.log("valida campos");
+            if($('.txtLetra').val()!="" || $('.txtRol').val()!="" || $('.txtAnio').val()!=""){
+                if(!/^\d+$/.test($('.txtAnio').val())){
+                    alert("El año debe contener solo números");
+                    return;
+                }
+                if(!/^\d+$/.test($('.txtRol').val())){
+                    alert("El rol debe contener solo números");
+                    return;
+                }
+                if($('.txtLetra').val()=="" || $('.txtRol').val()=="" || $('.txtAnio').val()==""){
+                    alert("Debe ingresar letra, rol y año completos");
+                    return;
+                }
+            }
+            $(".loading").html('');
+            console.log("agregar causas");
+            var item_id=Math.floor(Math.random() * 100);
+            var fieldHTML = "<tr class='causa-"+item_id+"'>"+
+                                "<td><input type='hidden' value='"+$('.cbomateria').val()+"' name='hdMateria[]'  >"+$('.cbomateria option:selected').text()+"</td>"+
+                                "<td>"+$('.cboSubMateria').val()+"</td>"+
+                                "<td><input type='hidden' value='"+$('.cboSubMateria').val()+"' name='hdSubMateria[]'  >"+$('.cboSubMateria option:selected').text()+"</td>"+
+                                "<td><input type='hidden' value='"+$('.txtLetra').val()+"' name='hdLetraCausa[]'  >"+
+                                "<input type='hidden' value='"+$('.txtRol').val()+"' name='hdRolCausa[]'  >"+
+                                "<input type='hidden' value='"+$('.txtAnio').val()+"' name='hdAnioCausa[]'  >"
+                                +$('.txtLetra').val()+"-"+$('.txtRol').val()+"-"+$('.txtAnio').val()+"</td>"+
+                                "<td><input type='hidden' value='"+$('.txtCaratulado').val()+"' name='hdCaratulado[]'  >"+$('.txtCaratulado').val()+"</td>"+
+                                "<td><input type='hidden' value='"+$('.juzgado').val()+"' name='hdJuzgado[]'  >"+$('.juzgado option:selected').text()+"</td>"+
+                                "<td><button type='button' class='btn btn-danger' onclick='javascript:eliminarCausa("+item_id+")' ><i class='fas fa-trash'></i></button></td>"+
+                            "</tr>";
+
+            $(".detalle_causas").append(fieldHTML); 
+             item_causa++;
+        }else{
+            alert("Debe ingresar un servicio");
+            console.log("sin servicios");
+        }
+    }
+    function eliminarCausa(causa){  
+        $('.causa-'+causa).remove();
+        item_causa--;
+    }
+
+    
+    var esClientePersona = {{ (agenda.tipoCliente is null or agenda.tipoCliente.nombre == 'Persona') ? 'true' : 'false' }};
+
+    function validarut(){
+        $('button').attr("disabled", true);
+
+
+        if(esClientePersona && $('.hdCausas').val()==0){
+            alert("Debe ingresar al menos una Causa");
+            $(".cboSubMateria").focus();
+            $('button').attr("disabled", false);
+            return false;
+
+        }
+        if($(".monto-contrato").val()<=0){
+            alert("Debe ingresar un monto");
+            $(".monto-contrato").focus();
+            $('button').attr("disabled", false);
+            return false;
+        }
+        if($.validateRut($(".format-rut").val())) {
+            return true;
+        }
+        alert("Rut no valido");
+
+        $(".format-rut").focus();
+        $('button').attr("disabled", false);
+
+
+        return false;
+    }
+
+    // Genera la previsualización de cuotas mostrada en el popup de "Preparar
+    // Contrato". Replica de forma simplificada la lógica de generación de
+    // cuotas de PanelAbogadoController::contrata()/ContratoController::finalizar()
+    // (abono/incorporación + cuotas mensuales según día de pago), solo para
+    // fines de previsualización: el detalle real se recalcula en el servidor.
+    function calcularCuotas(){
+        var cuotas = [];
+        var countCuotas = parseInt($('.cuotas').val()) || 0;
+        var diaPago = parseInt($('input[name="chkDiasPago"]:checked').val()) || 1;
+        var isAbono = $('.chk-bono').prop('checked');
+        var isTotal = $('.chk-total').prop('checked');
+        var isIncorporacion = $('.chk-incorporacion').prop('checked');
+        var primeraCuotaMonto = parseInt($('.primera-cuota').val()) || 0;
+        var valorCuota = parseInt($('.valor-cuota').val()) || 0;
+        var numeroCuota = 1;
+        var hoy = new Date();
+
+        if(isAbono || isTotal){
+            cuotas.push({numero: numeroCuota, fecha: hoy, monto: primeraCuotaMonto});
+            numeroCuota++;
+        }
+
+        var fechaPrimeraCuota = hoy;
+        if(isIncorporacion){
+            var fInc = $('.fecha-incorporacion').val();
+            fechaPrimeraCuota = fInc ? moment(fInc, 'YYYY-MM-DD').toDate() : hoy;
+            cuotas.push({numero: numeroCuota, fecha: fechaPrimeraCuota, monto: primeraCuotaMonto});
+            numeroCuota++;
+        }
+
+        function diaValido(mesIndexCero, dia){
+            // Febrero (mes índice 1) no tiene día 30: se ajusta a 28, igual que en el backend.
+            if(mesIndexCero === 1 && dia === 30){
+                return 28;
+            }
+            return dia;
+        }
+
+        var txtFechaPago = $('.primer-pago').val();
+        var partes = (txtFechaPago || '').split('-');
+        var anioBase = partes[0] ? parseInt(partes[0]) : hoy.getFullYear();
+        var mesBase = partes[1] ? (parseInt(partes[1]) - 1) : hoy.getMonth();
+
+        var primerPagoFecha = new Date(anioBase, mesBase, diaValido(mesBase, diaPago));
+
+        var sumaMeses = 0;
+        if(hoy >= primerPagoFecha){
+            sumaMeses = 1;
+        }else if(isIncorporacion && fechaPrimeraCuota.getMonth() === hoy.getMonth() && fechaPrimeraCuota.getFullYear() === hoy.getFullYear()){
+            sumaMeses = 1;
+        }
+
+        if(valorCuota !== 0){
+            for(var i=0; i<countCuotas; i++){
+                var mesIndex = mesBase + sumaMeses + i;
+                var anio = anioBase + Math.floor(mesIndex/12);
+                var mesNormalizado = ((mesIndex % 12) + 12) % 12;
+                var dia = diaValido(mesNormalizado, diaPago);
+                cuotas.push({numero: numeroCuota, fecha: new Date(anio, mesNormalizado, dia), monto: valorCuota});
+                numeroCuota++;
+            }
+        }
+        return cuotas;
+    }
+
+    function mostrarResumenCuotas(){
+        if(!validarut()){
+            return;
+        }
+        if(!validarCelular()){
+            return;
+        }
+        // validarut() deja los botones deshabilitados cuando la validación es
+        // exitosa (piensa que el formulario se enviará de inmediato); acá solo
+        // mostramos una previsualización, así que los reactivamos.
+        $('button').attr("disabled", false);
+
+        var cuotas = calcularCuotas();
+        var montoContrato = parseInt($('.monto-contrato').val()) || 0;
+
+        $('#resumenMontoContrato').text('$' + $.number(montoContrato, 0, ',', '.'));
+        $('#resumenCantidadCuotas').text(cuotas.length);
+
+        var body = $('#resumenCuotasBody');
+        body.empty();
+        cuotas.forEach(function(cuota){
+            body.append(
+                '<tr><td>' + cuota.numero + '</td><td>' + moment(cuota.fecha).format('DD-MM-YYYY') +
+                '</td><td>$' + $.number(cuota.monto, 0, ',', '.') + '</td></tr>'
+            );
+        });
+
+        // El popup vive dentro de #contrato, anidado en un <section class="sticky-top">
+        // (panel_agendador/new.html.twig). Ese ancestro crea su propio stacking
+        // context con z-index menor al del backdrop del modal (que Bootstrap agrega
+        // como hijo directo de <body>), así que el backdrop terminaba pintándose
+        // por encima de todo el subárbol, incluido el propio modal. Se lo saca de
+        // ahí moviéndolo a <body> justo antes de mostrarlo.
+        if(!$('#modalResumenCuotas').parent().is('body')){
+            $('#modalResumenCuotas').appendTo('body');
+        }
+        $('#modalResumenCuotas').modal('show');
+    }
+
+    function cerrarResumenCuotas(){
+        $('#modalResumenCuotas').modal('hide');
+    }
+
+    function confirmarContratar(){
+        $('#modalResumenCuotas').modal('hide');
+        // Se usa el submit nativo (no jQuery) para no volver a disparar el
+        // onsubmit del formulario: ya se validó al abrir el popup.
+        document.getElementById('formContrato').submit();
+    }
+
+    function cancelarContrato(){
+        if(confirm('¿Está seguro que desea cancelar? Se perderán todos los datos ingresados.')){
+            $('#modalResumenCuotas').modal('hide');
+            location.reload();
+        }
+    }
+
+    $('.datepicker').daterangepicker({
+        "singleDatePicker": true,
+        "drops": "up",
+        "minDate": moment().format("YYYY-MM-DD"),
+        "locale": {
+            "format": "YYYY-MM-DD",
+        
+            "applyLabel": "Apply",
+            "cancelLabel": "Cancel",
+        }
+    }, function(start, end, label) {
+        
+    });
+    
+    $(".chk-bono").change(function(){
+        if($(this).prop( "checked" )){
+            $('.primera-cuota').css("visibility", "visible");
+            $('.t-cuotas').html('Cuotas restantes *');
+            $('.t-valor-cuota').html('Valor Cuotas Restantes *');
+            $('.t-mes-pago').html('Mes Segundo Pago');
+            $('.primer-pago').daterangepicker({
+                "singleDatePicker": true,
+                "drops": "up",
+                "minDate": "{{contrato.fechaCreacion|date('Y-m-d')}}",
+                "locale": {
+                    "format": "YYYY-MM-DD",
+                    "applyLabel": "Apply",
+                    "cancelLabel": "Cancel",
+                }
+            }, function(start, end, label) {
+            });
+            //$('.textTotal').show();
+           // $('.divTotal').show();
+            $(".chk-total").prop('checked',false);
+            $(".chk-total").hide();
+            $('.textTotal').hide();
+            $('.cuotas').show();
+            $('.cuotas').val(1);
+            $('.valor-cuota').show();
+            $('#m-valor-cuota').show();
+
+            $('.isIncorporacion').hide();
+            $('.fecha-incorporacion').prop('required',false);
+            $('.fecha-incorporacion').hide();
+            $('.chk-incorporacion').hide();
+        }else{
+            $('.primera-cuota').css("visibility", "hidden");
+            $('.primera-cuota').val(0);
+            $('#m-primera-cuota').html("");
+            $('.t-cuotas').html('Cuotas *');
+            $('.t-valor-cuota').html('Valor Cuotas *');
+            $('.t-mes-pago').html('Mes Primer Pago');
+            $(".chk-total").show();
+            $('.textTotal').show();
+            //$('.textTotal').hide();
+            //$('.divTotal').hide();
+            //$('.chk-total').prop("checked", false);
+            $('.primer-pago').daterangepicker({
+                "singleDatePicker": true,
+                "drops": "up",
+                "defaultDate": "{{contrato.fechaCreacion|date('Y-m-d')}}",
+                "minDate": "{{contrato.fechaCreacion|date('Y-m-d')}}",
+                "locale": {
+                    "format": "YYYY-MM-DD",
+                    "applyLabel": "Apply",
+                    "cancelLabel": "Cancel",
+                }
+            }, function(start, end, label) {
+            });
+
+            $('.isIncorporacion').show();
+            $('.chk-incorporacion').show();
+        }
+        recalcula();
+    });
+
+    $(".chk-total").change(function(){
+        if($(this).prop( "checked" )){
+            $('.cuotas').val(0);
+            $('.cuotas').hide();
+
+            $('.valor-cuota').val(0);
+            $('.valor-cuota').hide();
+
+            $('.primera-cuota').val($('.monto-contrato').val());
+
+            $('#m-valor-cuota').val(0);
+
+            $('#m-valor-cuota').hide();
+            //$('.chk-bono').hide();
+            //$('.isAbono').hide();
+            $('.primera-cuota').css("visibility", "hidden");
+            $(".chk-bono").prop('checked',false);
+            $(".chk-bono").hide();
+            $('.isAbono').hide();
+            $('.t-cuotas').hide();
+            $('.t-valor-cuota').hide();
+            $('.diasPago').hide();
+            $('.mesPrimerPago').hide();
+            $('.vigenciaMeses').hide();
+            $('.chkDiasPago').prop('required',false);
+
+            $('.isIncorporacion').hide();
+            $('.fecha-incorporacion').hide();
+            $('.fecha-incorporacion').prop('required',false);
+            $('.chk-incorporacion').hide();
+        }else{
+            
+            $('.chkDiasPago').prop('required',true);
+            $('.cuotas').val(1);
+            $('.cuotas').show();
+
+            $('.valor-cuota').show();
+            $('.primera-cuota').val(0);
+            
+            $('#m-valor-cuota').show();
+            //$('.chk-bono').show();
+            //$('.isAbono').show();
+            $('.primera-cuota').css("visibility", "visible");
+            $(".chk-bono").show();
+            $('.isAbono').show();
+            $('.t-cuotas').show();
+            $('.t-valor-cuota').show();
+            $('.diasPago').show();
+            $('.mesPrimerPago').show();
+            $('.vigenciaMeses').show();
+
+            $('.isIncorporacion').show();
+            $('.fecha-incorporacion').show();
+            $('.chk-incorporacion').show();
+        }
+    });
+    $(".chk-incorporacion").change(function(){
+        if($(this).prop( "checked" )){
+            $('.primera-cuota').css("visibility", "visible");
+            $('.fecha-incorporacion').prop('required',true);
+            $(".chk-bono").prop('checked',false);
+            $(".chk-bono").hide();
+            //$('.isAbono').hide();
+
+            //cambiamos texto en abono para que quede como cuota incorporacion..
+            $('.isAbono').html("Cuota Incorporación *");
+            $('.isIncorporacion').html("Fecha Incorporación");
+
+            $(".chk-total").prop('checked',false);
+            $(".chk-total").hide();
+            $('.textTotal').hide();
+            $('.cuotas').show();
+            $('.cuotas').val(1);
+            $('.fecha-incorporacion').show();
+            $('.t-cuotas').html('Cuotas restantes *');
+            $('.t-valor-cuota').html('Valor Cuotas Restantes *');
+            $('.t-mes-pago').html('Mes Segundo Pago');
+           
+        }else{
+            $('.primera-cuota').css("visibility", "hidden");
+             $('.fecha-incorporacion').prop('required',true);
+            $(".chk-bono").show();
+            $('.isAbono').show();
+            //cambiamos texto en abono para que quede como cuota incorporacion..
+            $('.isAbono').html("Abono *");
+            $('.isIncorporacion').html("Incorporación");
+
+
+            $(".chk-total").show();
+            $('.textTotal').show();
+            $('#m-primera-cuota').html("");
+            $('.t-cuotas').html('Cuotas *');
+            $('.t-valor-cuota').html('Valor Cuotas *');
+            $('.t-mes-pago').html('Mes Primer Pago');
+            $('.fecha-incorporacion').hide();
+        }
+    });
+    $('.primer-pago').inputmask("9999-99");
+
+    function getCiudades(region){
+            $.ajax({
+                url:"/contrato/"+region+"/ciudad",
+                type: "post",
+                dataType: "html",
+                cache: false,
+                contentType: false,
+                processData: false,
+                async: true,
+                beforeSend: function(){
+                    $("#cciudad").html(' <div class="overlay"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>');
+                    
+                },
+                success:function(data){
+                    $("#cciudad").html(data);
+                }
+    
+            });
+        }
+    function getComunas(comuna){
+        $.ajax({
+            url:"/contrato/"+comuna+"/comuna",
+            type: "post",
+            dataType: "html",
+            cache: false,
+            contentType: false,
+            processData: false,
+            async: true,
+            beforeSend: function(){
+                $("#ccomuna").html(' <div class="overlay"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>');
+                
+            },
+            success:function(data){
+                $("#ccomuna").html(data);
+            }
+
+        });
+    }
+
+  function cambiamateria(valor){
+        
+        $.ajax({
+            url:"/materia/"+valor+"/combo",
+            type: "post",
+            dataType: "html",
+            cache: false,
+            contentType: false,
+            processData: false,
+            async: true,
+            beforeSend: function(){
+                $(".loading").html(' <div class="overlay"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>');
+                
+            },
+            success:function(data){
+                $(".cbomateria").empty()
+                $(".cbomateria").append(data);
+                $(".loading").html('');
+                // El servicio, corte y letras se cargan al elegir la materia de cada
+                // causa (cambiaMateriaCausa); ya no hay una única materia por contrato.
+                $(".cboSubMateria").empty();
+                $(".cboSubMateria").append("<option value=''>Seleccione Servicio</option>");
+                $(".cboescritos").empty();
+                $("#estrategiasJuridicas").empty();
+            }
+        });
+    }
+    function obtenerCortes(cuenta){
+        
+        $(".corte").show();
+        $.ajax({
+            url:"/materia/"+cuenta+"/corte_combo",
+            type: "post",
+            dataType: "html",
+            cache: false,
+            contentType: false,
+            processData: false,
+            async: true,
+            beforeSend: function(){
+                //$(".loading").html(' <div class="overlay"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>');
+                    
+            },
+            success:function(data){
+                $(".corte").html(data);
+                //$(".loading").html('');
+                $(".juzgado").empty();
+                $(".juzgado").append("<option>Seleccione Juzgado</option>"); 
+            }
+        });
+        
+    }
+    function cambiaAcreedores(cuenta){
+
+        if(cuenta == 7){
+            $("#acreedorVacio").html('<input type="hidden" id="Institucion" value="1">');
+        }else{
+             $("#acreedorVacio").html('');
+        }
+        $.ajax({
+                url:"/juzgado_cuenta/"+cuenta+"/combo",
+                type: "post",
+                dataType: "html",
+                cache: false,
+                contentType: false,
+                processData: false,
+                async: true,
+                beforeSend: function(){
+                    //$(".loading").html(' <div class="overlay"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>');
+                    
+                },
+                success:function(data){
+                    $(".juzgado").html(data);
+                    //$(".loading").html('');
+                }
+
+            });
+
+    }
+     $(".corte").on("change",function(){
+        $.ajax({
+                url:"/juzgado_cuenta/"+$(this).val()+"/corte_combo",
+                type: "post",
+                dataType: "html",
+                cache: false,
+                contentType: false,
+                processData: false,
+                async: true,
+                beforeSend: function(){
+                    //$(".loading").html(' <div class="overlay"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>');
+                    
+                },
+                success:function(data){
+                    $(".juzgado").html(data);
+                    
+                }
+
+            });
+    });
+
+    $('.emailCliente').inputmask({
+        mask: "*{1,100}[.*{1,100}][.*{1,100}][.*{1,100}]@*{1,50}[.*{2,50}][.*{1,3}]",
+        greedy: false,
+        onBeforePaste: function (pastedValue, opts) {
+        pastedValue = pastedValue.toLowerCase();
+        return pastedValue.replace("mailto:", "");
+        },
+        definitions: {
+        '*': {
+            validator: "[0-9A-Za-z!#$%&'*+/=?^_`{|}~\-]",
+            casing: "lower"
+        }
+        }
+    });
+    $(".format-rut").inputmask({
+        mask:"9{1,2}.9{3}.9{3}-(9|k|K)",
+        casing: 'upper',
+        clearIncomplete: false,
+        numericInput: true,
+        positionCaretOnClick: 'none'
+    });
+
+    $('.telefonoCliente').inputmask({
+        mask:'+56999999999',
+    });
+    function validarCelular(){
+        var cadena=$(".telefonoCliente").val();
+
+        if(cadena.indexOf("+569")){
+            return true;
+            console.log("tel: +569");
+        }
+        if(cadena.indexOf("+568")){
+            return true;
+            console.log("tel: +568");
+        }
+        if(cadena.indexOf("+567")){
+            return true;
+            console.log("tel: +567");
+        }
+        alert("Debe ingresar un celular");
+        console.log("tel: Error");
+        $(".telefonoCliente").focus();
+        return false;
+        
+
+    }
+
+</script>
+{{ form_end(form) }}

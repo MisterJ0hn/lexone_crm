@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contrato{% endblock %}
+
+{% block body %}
+
+{{ include('cabezera.html.twig') }}
+
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-12 col-md-6">
+                <small class="text-muted">Tipo</small>
+                <p>{{recordatorio.tipo}}</p>
+            </div>
+            <div class="col-sm-12 col-md-6 ">
+                <small class="text-muted">Fecha</small>
+               <p>{{recordatorio.fechaAviso|date('Y-m-d')}}</p>
+            </div>
+            <div class="col-sm-12 col-md-12">
+                <small class="text-muted">Observación</small>
+                <p>{{recordatorio.observacion}}</p>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer justify-content-between">
+        <a href="{{path('recordatorio_leido',{'id':recordatorio.id})}}" class='btn btn-success' >Leido</a>
+        <a href="{{path('recordatorio_agenda',{'id':recordatorio.contrato.id})}}" class='btn btn-primary' >Ver Agenda</a>
+    </div>
+
+</div>
+
+
+{% endblock %}
+

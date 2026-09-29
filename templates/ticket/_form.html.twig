@@ -1,0 +1,18 @@
+
+<div class="card">
+    <div class="card-body">
+        
+        {{ form_start(form) }}
+        <div class="row">
+            <div class="col-sm-6 col-md-9">
+                 <small class="text-muted t-cuotas" >Comentario *</small>
+                {{form_row(form.motivo,{'label':false,'attr':{'class':'form-control cuotas number','required':true,'autocomplete':"ÑÖcompletes"}})}}
+            </div>
+            <div class="col-sm-6 col-md-3 p-4">
+                <button class="btn btn-primary">{{ button_label|default('Ingresar Ticket') }}</button>
+            </div>
+        </div>
+        {{ form_end(form) }}
+        
+    </div>
+</div>

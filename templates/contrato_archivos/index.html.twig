@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ContratoArchivos index{% endblock %}
+
+{% block body %}
+
+{{ include('cabezera.html.twig') }}
+
+<div class="card">
+    <div class="card-header">
+    <div class="row">
+        <div>
+        <a href="{{path('contrato_archivos_new',{'id':contrato.id})}}" class="btn btn-primary" id="btn-agregar"><i class="fas fa-plus"></i></a>
+        </div>&nbsp;
+        <div >
+        <p class="mt-2 text-primary">Adjuntar archivos en formato PDF</p> 
+        </div>
+
+</div>
+    </div>
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Archivo</th>
+                    <th>FechaSubida</th>
+                    <th>Dueño Archivo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for contrato_archivo in contrato_archivos %}
+                <tr>
+            
+                    <td>{{ contrato_archivo.url }}</td>
+                    <td>{{ contrato_archivo.fechaSubida ? contrato_archivo.fechaSubida|date('Y-m-d H:i:s') : '' }}</td>
+                    <td>{{ contrato_archivo.usuarioRegistro }}</td>
+                    <td>
+                        <div class="btn-group">
+                            <a href="{{url_web}}/build/contratos/archivos/{{contrato_archivo.url}}" class="btn btn-sm btn-success"><i class="fa fa-file"></i></a>
+                            {{ include('contrato_archivos/_delete_form.html.twig',{'contrato_archivo_id':contrato_archivo.id}) }}
+                        </div>
+                        
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4">No hay Archivos</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

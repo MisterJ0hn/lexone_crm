@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Pago{% endblock %}
+
+{% block body %}
+ {{ include('cabezera.html.twig') }}
+<div class="row">
+    <div class="col-sm-12  col-md-8">
+
+        <div class="card">
+           
+            <div class="card-body table-responsive pad">
+            
+        
+                <div class="row">
+                    <div class="col-sm-12 col-md-4">
+                        <small class="text-muted">Monto Pagado (*)</small>
+                        <br>
+                        {{pago.monto|number_format(0,",",".")}}
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                        <small class="text-muted">Fecha Comprobante (*)</small>
+                        <br>
+                        {{pago.fechaPago|date('Y-m-d H:i')}}
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                        <small class="text-muted">Fecha Ingreso Comprobante</small>
+                        <br>
+                        {{pago.fechaRegistro|date('Y-m-d H:i')}}
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                        <small class="text-muted">N° Comprobante</small>
+                        <br>
+                        {{pago.ncomprobante}}
+                        
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                        <small class="text-muted">N° Boleta</small>
+                        <br>
+                        {{pago.boleta}}
+                    
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                        <small class="text-muted">Tipo Deposito (*)</small>
+                        <br>
+                        {{pago.pagoTipo}}
+                        
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                        <small class="text-muted">Cta. Cte. (*)</small>
+                        <br>
+                        {{pago.cuentaCorriente}}
+                        
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                        <small class="text-muted">Canal (*)</small>
+                        <br>
+                        {{pago.pagoCanal}}
+                       
+                    </div>
+                    <div class="col-sm-12 col-md-12">
+                        <small class="text-muted">Observación</small>
+                        {{pago.observacion}}
+                       
+                        
+                    </div>
+                </div> 
+            </div>
+            
+        </div>
+        
+    </div>
+    
+</div>   
+{% endblock %}

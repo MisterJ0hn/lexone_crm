@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contrato index{% endblock %}
+
+{% block body %}
+<div class="card">
+{{ include('encuesta/_cabecera.html.twig') }}
+</div>
+<form action="{{path('encuesta_edit',{'id':contrato.id})}}" name="frmEncuesta" method="post">
+    <div class="card">
+       
+        <div class="card-body">
+            <div class="row">
+            <input type="hidden" name="hdEncuesta" value="{{encuesta.id}}">
+            {% for pregunta in encuesta.encuestaPreguntas %}
+                <input type="hidden" name="hdIdPregunta[]" value="{{pregunta.id}}">
+                <div class="col-6 p-3">
+                    <p>{{pregunta.pregunta}}</p>
+                </div>
+                <div class="col-1 p-3">
+                </div>
+                {% if pregunta.tipoPregunta == 1 %}
+                    
+                    <div class="col-3 p-3">
+                    <p>{{pregunta.nota}}</p>
+                           
+                    </div>
+                {% endif %}
+                {% if pregunta.tipoPregunta == 2 %}
+                
+                <div class="col-3 p-3">
+                   <p> {{ pregunta.nota }}</p>
+                </div>
+                {% endif %}
+                {% if pregunta.tipoPregunta == 3 %}
+                <input type="hidden" name="hdTipoSelector[]" value="3">
+                <div class="col-3 p-3">
+                   <p>{{pregunta.respuestaAbierta}}</p>
+                </div>
+                {% endif %}
+                {% if pregunta.tipoPregunta == 4 %}
+                <input type="hidden" name="hdTipoSelector[]" value="4">
+                <div class="col-3 p-3">
+                   <p>{{pregunta.nota}}</p>
+                </div>
+                {% endif %}
+                <div class="col-2 p-3">
+                </div>
+
+            {% endfor %}
+                
+            <div class="col-12 ">
+            </div>
+            <div class="col-12 p-3">
+                <label >Observación</label>
+                <p>{{encuesta.observacion}}</p>
+            </div>
+        </div>
+        
+    </div>
+</form>
+
+{% endblock %}

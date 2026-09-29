@@ -1,0 +1,21 @@
+{{ form_start(form) }}
+    
+    <div class="card">
+	<div class="card-body">
+
+		<section>	
+			<div class="row">
+                <div class="col-sm-6 col-md-6">
+                    <small class="text-muted">Sub Materia</small>
+					{{form_row(form.escritura,{'label':false,'attr':{'class':'form-control','maxlength':'50'}})}}
+                </div>
+                <div class="col-sm-6 col-md-6">
+                    <button class="btn btn-success">{{ button_label|default('agregar') }}</button>
+                </div>
+            </div>
+
+        </section>
+    </div>
+    
+    
+{{ form_end(form) }}

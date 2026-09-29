@@ -1,0 +1,109 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Pagos{% endblock %}
+
+{% block body %}
+    <section>
+        <div class="alert alert-warning">
+            <h1>Total Cobranzas: <strong>{{total|number_format(0,',','.')}}</strong></h1>
+        </div>
+    </section>
+    <div class="card bg-calipso">
+        <div class="card-header">
+            <form action="" method="get">
+                <div class="row">
+                    <div class="col-sm-12 col-md-3">
+                        <select name="bCompania" class="form-control">
+                            <option value="0">Todos</option>
+                            {% for compania in companias %}
+                                <option value="{{compania.id}}"
+                                {% if bCompania==compania.id %}
+                                    selected
+                                {% endif %}
+                                >{{compania.nombre}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-sm-12 col-md-3">
+                        <input type="text" class="form-control" name="bFecha" id="bFecha"  value="">
+                    </div>
+                    <div class="col-sm-12 col-md-2">
+                        <button class="btn btn-primary"><i class="fas fa-search"></i></button>
+                    </div>
+                   
+                </div>
+                </form>
+        </div>
+    </div>
+    <div class="card">
+      
+        <div class="card-body table-responsive p-0" style="height: 500px;">
+            <div class="col-md-6 col-sm-12">
+            <table class="table table-head-fixed text-nowrap table-striped table-sm">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Colaborador</th>
+                        <th>Fecha Gestión</th>
+                        <th>Q. Ges.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% set total=0 %}
+                {% set num=1 %}
+                {% for cobranza in cobranzas %}
+                    <tr>
+                        <td>{{ num }}</td>
+                        <td>{{cobranza[0].usuarioRegistro.nombre}}</td>
+                        <td>{{ cobranza[0].fecha|date("Y-m-d")}}</td>
+                        <td align="right">{{ cobranza[1] }}</td>
+                        {% set total = total +  cobranza[1] %}
+                        {% set num = num + 1 %}
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5">No hay cobranzas</td>
+                    </tr>
+                {% endfor %}
+                
+                    <tr>
+                    <td colspan="3" align="right">Total:</td>
+                    <td  align="right">
+                         <strong>{{ total|number_format(0,",",".") }}</strong>
+                    </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        </div>
+        <div class="card-footer">
+            <div class="card-footer clearfix">
+                {# display navigation #}
+           <div class="navigation">
+               {{ knp_pagination_render(cobranzas,'@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig',{},{
+               'position': 'centered',
+               'rounded': true,
+               }) }}
+           </div>
+       </div>
+            
+        </div>
+    </div>
+    <script>
+        $('#bFecha').daterangepicker({
+        
+            "drops": "down",
+            "startDate":"{{dateInicio}}",
+            "endDate": "{{dateFin}}",
+            "locale": {
+                "format": "YYYY-MM-DD",
+                "applyLabel": "Apply",
+                "cancelLabel": "Cancel",
+            }
+        }, function(start, end, label) {
+        console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+        
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,239 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{pagina|default('agenda agendador')}}{% endblock %}
+
+{% block body %}
+<form action="{{path('panel_agendador_index')}}" method="get" id="bForm">
+    <input type="hidden" name="bStatus" id="bStatus" value="{{status|default('')}}">
+<section>
+    
+    <div class="row">
+        {% set total = 0 %}
+        {% for resumen in resumenes %}
+       
+        <div class="col-sm-6 col-md-3">
+            
+            <div class="info-box">
+                <span class="info-box-icon bg-{{resumen[0].status.color}}"><i class="{{resumen[0].status.icon}}"></i></span>
+    
+                <div class="info-box-content">
+                <span class="info-box-text">{{resumen[0].status.nombre}}</span>
+                <span class="info-box-number">{{resumen.valor}}</span>
+                {% set total= total + resumen.valor %}
+                 
+                
+                {% if resumen[0].status.vermas %}
+                    <a href="#" class="small-box-footer" onclick="javascript:buscar({{resumen[0].status.id}})">
+                        Ver Más <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                {% endif %}
+                
+          
+                </div>
+
+                
+                <!-- /.info-box-content -->
+            </div>
+      
+        </div>
+        {% endfor %}
+        {% if status is null %}
+        <div class="col-sm-6 col-md-3">
+            <div class="info-box">
+                <span class="info-box-icon bg-success"><i class="far fa-flag"></i></span>
+    
+                <div class="info-box-content">
+                <span class="info-box-text">Total</span>
+                <span class="info-box-number">{{total}}</span>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+        </div>
+        {% endif %}
+        
+    </div>
+    
+</section>
+<section class="{% if status is null %}
+    
+    {% endif %}">
+
+    {{ include('filtro.html.twig') }}
+</section>
+</form>
+{% if sesion.getSesion.usuarioTipo.id in [3,1] %}
+
+{% if false %}
+    
+
+<section>
+    {% if total>0 %}
+        
+    
+        {{ render(controller('App\\Controller\\AgendaController::resumenagendadores', {'agendaStatus':statuesGroup,'fechainicio':dateInicio,'fechafin':dateFin,'compania':bCompania,'filtro':bFiltro,'totalStatus':total,'tipoFecha':tipoFecha,'agendador':bAgendador})) }}
+        {% endif %}
+</section>
+{% endif %}
+{% endif %}
+
+<section>
+<div class="card card-outline card-info collapsed-card">
+    <div class="card-header">
+      <h3 class="card-title">Cargar nuevo prospecto
+        </h3>
+
+      <div class="card-tools">
+        <button type="button" class="btn btn-sm btn-primary rounded-circle" data-card-widget="collapse"><i class="fas fa-plus"></i>
+        </button>
+        
+      </div>
+    </div> 
+    <div class="card-body">
+    {{ form_start(form,{'attr':{'onsubmit':'return validarut()'}}) }}
+    
+
+    <div class="row">
+        <div class="col-sm-6 col-md-3">
+            <small class="text-muted">Tipo Cliente</small>
+            {{form_row(form.tipoCliente,{'label':false,'attr':{'class':'form-control','required':true}})}}
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <small class="text-muted">Nombre</small>
+            {{form_row(form.nombreCliente,{'label':false,'attr':{'class':'form-control','required':true}})}}
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <small class="text-muted">Rut</small>
+            {{form_row(form.rutCliente,{'label':false,'attr':{'class':'form-control format-rut'}})}}
+        </div>
+       
+        <div class="col-sm-6 col-md-3">
+            <small class="text-muted">Email</small>
+            {{form_row(form.emailCliente,{'label':false,'attr':{'class':'form-control'}})}}
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <small class="text-muted">Teléfono Móvil</small>
+            {{form_row(form.telefonoCliente,{'label':false,'attr':{'class':'form-control','required':true}})}}
+        </div>
+        <div class="col-sm-6 col-md-3 telefono-recado">
+            <small class="text-muted">Teléfono Recado</small>
+            {{form_row(form.telefonoRecadoCliente,{'label':false,'attr':{'class':'form-control','style':'visibility:hidden'}})}}
+        </div>
+        <div class="col-sm-6 col-md-3 cidudad-cliente" >
+            <small class="text-muted">Ciudad</small>
+            {{form_row(form.ciudadCliente,{'label':false,'attr':{'class':'form-control'}})}}
+        </div>
+        <div class="col-sm-6 col-md-3" >
+            <small class="text-muted">Canal</small>
+            {{form_row(form.canal,{'label':false,'attr':{'class':'form-control canal' }})}}
+        </div>
+        
+    
+       
+    </div>
+    <button class="btn btn-primary">{{ button_label|default('Cargar') }}</button>
+{{ form_end(form) }}
+</div>
+</div>
+</section>
+<section>
+    <div class="card 
+    {% if status is null %}
+   
+    {% endif %}
+    ">
+        
+        <!-- /.card-header -->
+        <div class="card-body table-responsive p-0 " style="height: 300px;">
+        
+        <table class="table table-head-fixed text-nowrap table-striped table-sm">
+        <thead>
+            <tr>               
+                <th>{{ knp_pagination_sortable(agendas, 'Cliente', 'tipoClienteNombre') }} {% if agendas.isSorted('tipoClienteNombre') %} <i class="fas fa-sort"></i>{% endif %}</th>
+               <th>{{ knp_pagination_sortable(agendas, 'Nombre', 'nombreCliente') }} {% if agendas.isSorted('nombreCliente') %} <i class="fas fa-sort"></i>{% endif %}</th>              
+                <th>{{ knp_pagination_sortable(agendas, 'Fecha Carga', 'fechaCarga') }} {% if agendas.isSorted('fechaCarga') %} <i class="fas fa-sort"></i>{% endif %}</th>                
+                <th style="text-align: center;">Gestión</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for agenda in agendas %}
+            <tr>                
+                <td>{{ agenda.tipoClienteNombre|default('') }}</td>
+                <td>{{ agenda.nombreCliente }}</td>
+              
+                  <td>{{ agenda.fechaCarga ? agenda.fechaCarga|date('d-m-Y H:i') : '' }}</td>
+                 
+                <td align="center"><a href="{{path('panel_agendador_new',{'id':agenda.id})}}" class="btn btn-sm"><i class="far fa-edit"></i></a></td>
+   
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="10">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+        <div class="card-footer clearfix">
+             {# display navigation #}
+        <div class="navigation">
+            {{ knp_pagination_render(agendas,'@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig',{},{
+            'position': 'centered',
+            'rounded': true,
+            'page_range': 4
+            }) }}
+        </div>
+    </div>
+    </div>
+</section>
+<script>
+
+     $(".cidudad-cliente").hide();
+    $(".agendadores").hide();
+    $(".telefono-recado").hide();
+    $(".bAgendador").hide();
+    $(".tipoFecha").hide();
+    $('.canal').append($('<option>', {
+        value: 0,
+        text: 'Seleccione'
+    }));
+    $('.canal').val('0').change();
+
+
+    $(".format-rut").rut();
+    
+    $('#bFecha').daterangepicker({
+        
+        "drops": "down",
+        "startDate":"{{dateInicio}}",
+        "endDate": "{{dateFin}}",
+        "locale": {
+            "format": "YYYY-MM-DD",
+            "applyLabel": "Apply",
+            "cancelLabel": "Cancel",
+        }
+    }, function(start, end, label) {
+    console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+    
+    });
+    function buscar(status){
+        $("#bStatus").val(status);
+        $("#bForm").submit();
+    }
+
+    function validarut(){
+
+        if($(".format-rut").val()=="") return true;
+        if($.validateRut($(".format-rut").val())) {
+            return true;
+        }
+        alert("Rut no valido");
+        $(".format-rut").focus();
+        $("button").prop('disabled',false);
+        return false;
+    }
+
+    $("input").on("keyup",function(){
+        $("button").prop('disabled',false);
+    });
+</script>
+{% endblock %}

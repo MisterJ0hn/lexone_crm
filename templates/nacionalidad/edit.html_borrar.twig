@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Nacionalidad{% endblock %}
+
+{% block body %}
+    <h1>Edit Nacionalidad</h1>
+
+    {{ include('nacionalidad/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('nacionalidad_index') }}">back to list</a>
+
+    {{ include('nacionalidad/_delete_form.html.twig') }}
+{% endblock %}

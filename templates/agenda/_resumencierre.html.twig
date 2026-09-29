@@ -1,0 +1,56 @@
+<div class="card card-outline card-info">
+    <div class="card-header">
+      <h3 class="card-title">Resumen por cerrador 
+          
+        </h3>
+
+      <div class="card-tools">
+        <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+        </button>
+        <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+      </div>
+    </div>
+    <div class="card-body">
+ 
+        {% for informe in informes %}
+            
+            <div class="row">
+                <div class="col-2">
+
+                <p>{{informe[0].agenda.abogado.nombre}}</p>
+                </div>
+                {% if status in [1,0]  %}
+                <div class="col-9">
+                    <div class="progress mb-3">
+                    <div class="progress-bar bg-success" role="progressbar" aria-valuenow="{{informe['monto_pagado']/total}}" aria-valuemin="0"
+                        aria-valuemax="100" style="width: {{informe['monto_pagado']/total*100}}%">
+                            <span class="sr-only">40% Complete (success)</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-1">
+                    <p>{{informe['monto_pagado']|number_format(0, ',', '.')}}</p>
+                </div>
+                        
+                    {% else %}
+                        <div class="col-9">
+                    <div class="progress mb-3">
+                    <div class="progress-bar bg-success" role="progressbar" aria-valuenow="{{informe['cantidad']/total}}" aria-valuemin="0"
+                        aria-valuemax="100" style="width: {{informe['cantidad']/total*100}}%">
+                            <span class="sr-only">40% Complete (success)</span>
+                        </div>
+                    </div>
+                </div>
+                        <div class="col-1">
+                    <p>{{informe['cantidad']|number_format(0, ',', '.')}}</p>
+                </div>
+                    {% endif %}
+                        
+                
+            </div>
+            
+        
+    
+        {% endfor %}
+</div>
+</div>

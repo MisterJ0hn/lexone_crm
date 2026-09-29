@@ -1,0 +1,104 @@
+<style>
+    body{
+        font-size:13px;
+    }
+</style>
+<div align="right">Nro Folio {{contrato.id}}</div>
+
+<div align="center"><h4>CONTRATO PRESTACI&Oacute;N DE SERVICIOS PROFESIONALES</h4></div>
+
+<div align="center"><h4>I.-DESCRIPCI&Oacute;N DE LA SITUACI&Oacute;N</h4></div>
+<p align="justify" >En Santiago de Chile a {{contrato.fechaCreacion|date("d-m-Y")}}, conforme nos inform&oacute; verbalmente don 
+(&ntilde;a) <strong>{{contrato.nombre|title|special_chars|raw}}</strong>, C&eacute;dula de identidad N&deg; {{contrato.rut}}, Tel&eacute;fono: {{contrato.telefono}}, 
+Domicilio: {{contrato.direccion|special_chars|raw}}, Comuna: {{contrato.ccomuna.nombre|special_chars|raw}}, Ciudad: {{contrato.cciudad.nombre|special_chars|raw}}, 
+Correo electr&oacute;nico: {{contrato.email|special_chars|raw}} en adelante el "Cliente", requiere los servicios profesionales de un Abogado, en atenci&oacute;n a 
+solucionar la situaci&oacute;n jur&iacute;dica.</p>
+
+<strong>Causas:</strong>
+<br>
+<table border="1"  cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th width="300px">Servicio</th>
+            <th width="100px">Id Causa</th>
+            <th>Caratulado</th>
+        </tr>
+    </thead>
+    {% for causa in contrato.agenda.causas %}
+    {% if causa.estado == true %}
+        <tr>
+            <td width="300px">
+                {{causa.materiaEstrategia.estrategiaJuridica}}
+            </td>
+            <td width="100px">
+                {{causa.idCausa}}
+            </td>
+            <td>
+                {{causa.causaNombre}}
+            </td>
+        </tr>
+    {% endif %}
+    {% endfor %}
+</table>
+
+<div align="center"><h4><strong>II.-SERVICIO PROFESIONAL PROPUESTO</strong></h4></div>
+<p align="justify" >Atendiendo lo anterior, la gesti&oacute;n profesional consistir&aacute; en procurar al Cliente la asesor&iacute;a jur&iacute;dica, a fin de utilizar 
+todos los recursos legales que sean necesarios para la adecuada acci&acute;n y defensa de sus derechos y bienes. Se deja constancia que el cliente se compromete a aportar 
+oportunamente toda documentaci&oacute;n que le sea solicitada.</p>
+
+<div align="center"><strong><h4>III.-HONORARIOS</strong></h4></div>
+<p align="justify" >Considerando la importancia de la materia involucrada, la distancia, las horas que se deber&aacute;n invertir, la naturaleza de la asesor&iacute;a y las 
+distintas etapas de las acciones legales, los honorarios del Abogado por el trabajo propuesto estar&aacute;n constituidos de la siguiente forma:</p>
+
+<p align="justify">Una suma de ${{contrato.montoContrato|number_format(0,",",".")}}, a todo evento por la gesti&oacute;n indicada, los cuales se pactan en conformidad de 
+ambas partes, de la siguiente manera:</p> 
+
+      <table border="1"  cellspacing="0" width="50%">
+            {% for cuota in contrato.detalleCuotas %}
+            {% if cuota.anular!=1 %}
+            <tr>
+                <td align="right">{{cuota.numero}}</td>
+                <td align="center">{{cuota.fechaPago|date('Y-m-d')}}</td>
+                <td align="right">${{cuota.monto|number_format(0,",",".")}}</td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+      </table>
+
+<p align="justify">Todas las cuotas se pagar&aacute;n, en efectivo o v&iacute;a transferencia a la siguiente cuenta:.</p>
+
+<ul style="list-style:none;">
+<li><strong>EMPRESA:</strong> </li>
+<li><strong>Rut:</strong> </li>
+<li><strong>Banco:</strong> </li>
+<li><strong>Cuenta corriente</strong> </li>
+<li><strong>N&deg; de cuenta:</strong> </li>
+<li><strong>Correo:</strong> <a href="mailto:pagos@pagos.cl">pagos@pagos.cl</a></li>
+<li><strong>Comentarios: {{contrato.nombre|title|special_chars|raw}} </strong></li>
+</ul>
+
+<div align="center"><h4><strong>IV.-SUPERVISI&Oacute;N</strong></h4></div>
+<p align="justify" >El servicio profesional propuesto ser&aacute; supervisado y ejecutado directa y exclusivamente por el Abogado y por su Staff de Abogados.</p>
+
+<div align="center"><h4><strong>V.-CARTA COMPROMISO</strong></h4></div>
+<p align="justify" >El contrato de prestaci&oacute;n de servicios profesionales podr&aacute; se terminado de mutuo acuerdo y por voluntad de sus comparecientes, 
+previa suscripci&oacute;n contrato que d&eacute; cuenta de dicho t&eacute;rmino, informando esa decisi&oacute;n con dos meses de anticipaci&oacute;n a lo menos. 
+En ese tiempo, se liquidar&aacute;n los gastos incurridos hasta el momento de recepci&oacute;n de la notificaci$oacute;n y los remitir&aacute;n para su pago 
+inmediato al domicilio del Cliente. Todo sin perjuicio de la exigibilidad de lo indicado en el ac&aacute;pite tercero de este contrato.</p>
+
+
+
+</div>
+<div class="page">
+
+<p align="justify">El presente contrato se otorga para ambas partes, con id&eacute;ntico tenor y validez, quedando una copia en poder de cada una de las partes.</p>
+
+<table width="100%">
+    <tr>
+        <td><p align="center"><strong>ABOGADO</strong></p>
+        <p align="center"><strong>R.U.T.:</strong></p>            </td>
+        <td><p align="center"><strong>{{contrato.nombre|special_chars|raw}}</strong></p>
+        <p align="center"><strong>RUT: {{contrato.rut}}</strong></p>
+        </td>
+    </tr>
+</table>

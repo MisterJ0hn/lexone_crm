@@ -1,0 +1,166 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contrato{% endblock %}
+
+{% block body %}
+
+<div class="row">
+    <div class="col-sm-12 col-md-12 ">
+        {{ include('cabezera.html.twig') }}
+        
+
+        <div class="row">
+            <div class="col-sm-12 col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Observaciones</h4>
+                        <div class="card-tools">
+
+                            <a class="btn  btn-sm btn-primary rounded-circle" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"><i class="fa fa-plus bg-blue"></i></a>
+                        </div>
+                    </div>
+                    <div class="card-body table-responsive">
+                        <!-- The time line -->
+                    
+                        
+                        <div >
+                            <form  id="frmObservacion" class="frmObservacion" method="post" action="{{path('contrato_observacion',{'id':causa.id}) }}" onsubmit="return confirm('Estas seguro de ingresar esta observación?');" required>
+                             
+                                <textarea class="form-control" name="txtObservacion"></textarea>
+                                <button class="btn btn-primary p-1 m-2" >Guardar Observación</button>
+                            </form>
+
+                        </div>
+                        
+                        <div class="collapse" id="collapseExample">
+                            <div class="timeline">
+                            <!-- timeline time label -->
+                               
+                            {% for observacion in observaciones %}
+                                <div>
+                                    <i class="fa fa-comments bg-blue"></i>
+                                    <div class="timeline-item">
+                                        <span class="time"><i class="fas fa-clock"></i>{{ observacion.fechaRegistro | date('Y-m-d H:i') }}</span>
+                                        <h3 class="timeline-header"><a href="#">{{ observacion.usuarioRegistro.nombre }}</a> <!-- usuario --> </h3>
+
+                                        <div class="timeline-body">
+                                            {{ observacion.observacion | raw }}
+                                        </div>
+                                    
+                                    </div>
+                                </div>
+                            {% endfor %}
+                                 <div>
+                                    <i class="fa fa-comments bg-blue"></i>
+                                    <div class="timeline-item">
+                                        <span class="time"><i class="fas fa-clock"></i>{{ contrato.fechaCreacion | date('Y-m-d H:i') }}</span>
+                                        <h3 class="timeline-header"><a href="#">{{ contrato.agenda.abogado?contrato.agenda.abogado.nombre:''}}</a> <!-- usuario --> </h3>
+
+                                        <div class="timeline-body">
+                                            {{ contrato.observacion | raw }}
+                                        </div>
+                                    
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="row">
+            <div class="col-sm-12 col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h3>Estado Procesal</h3>
+                        <div class="row">
+                        <table class="table table-sm" style="width:600px !important">
+                        {% if causa.materiaEstrategia and causa.materiaEstrategia.estrategiaJuridica.lineaTiempo is not null %}
+                        {% set utilizado = 0 %}
+                            {% for etapa in causa.materiaEstrategia.estrategiaJuridica.lineaTiempo.lineaTiempoEtapas %}
+                                {% set pendiente = 1 %}
+                                <tr>
+                                    <td style="padding-right: 15px;padding-bottom: 15px;">
+                                    {% for terminado in terminados %}
+                                        {% if terminado.lineaTiempoEtapas.id == etapa.id %}
+                                            {% set pendiente=0 %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if pendiente==0  %}
+                                        <a href="" class="btn btn-sm btn-success"><i class="fas fa-check-circle"></i></a>
+                                        
+                                    {% else %}
+                                    <form  id="frmObservacion{{etapa.id}}" method="post" action="{{path('contrato_linea_tiempo_observacion',{'id':causa.id}) }}" >
+                                        <button type="button"  class="btn btn-sm btn-danger" onclick="javascript:finalizarEtapa({{etapa.id}});"><i class="fas fa-times"></i></button>
+                                        <input type="hidden" value="1" name="hdEstado" class="hdEstado">
+                                        <input type="hidden" value="{{etapa.id}}" name="hdEtapa">
+                                        <input type="hidden" value=" " name="txtObservacion">
+                                    </form> 
+                                    {% endif %}
+                                    
+                                </td>
+                                <td>
+                               
+                                    {{etapa.nombre}}
+                                </td>
+                                </tr>
+                                
+                                
+                                
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="2"><h1 class="display-4 text-warning">El servicio no tiene Linea de tiempo asignada</h1></td></tr>
+                        {% endif %}
+                        </table>   
+                        </div>
+                        
+                        
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    
+</div>
+<div  style="visibility:hidden">            
+                            <form  id="frmObservacion" method="post" action="{{path('contrato_linea_tiempo_observacion',{'id':causa.id}) }}" onsubmit="return confirm('Estas seguro de ingresar este estado a la Causa?');">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <textarea name="txtObservacion" col="10" class="form-control" required></textarea>
+                                    </div>
+                                    <div class="col-6">
+                                        <button type="button" class="btn btn-danger btnPendiente">Pendiente</button>
+                                    </div>
+                                    <div class="col-6">
+                                        <button type="button" class="btn btn-success btnFinalizado">Finalizado</button>
+                                    </div>
+                                </div>  
+                                <input type="hidden" value="" name="hdEstado" class="hdEstado">  
+                            </form>               
+                        </div>
+<script>
+    $(".btnPendiente").click(function(){
+        //$('.hdEstado').val(0);
+        $("#frmObservacion").submit();
+    });
+    $(".btnFinalizado").click(function(){
+        //$('.hdEstado').val(1);
+        $("#frmObservacion").submit();
+    });
+    function finalizarEtapa(form){
+        if(confirm('Confirma Actualización?')){
+            $("#frmObservacion"+form).submit();
+        }else{
+           
+            location.reload();
+            
+        }
+    }
+
+</script>
+{% endblock %}

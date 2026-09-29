@@ -1,0 +1,5 @@
+<form method="post" action="{{ path('jefe_abogados_delete', {'id': id_usuario}) }}" onsubmit="return confirm('Estas seguro de eliminar este Jefe de Abogados?');">
+    <input type="hidden" name="_method" value="DELETE">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ usuario.id) }}">
+    <button class="btn btn-danger"><span class="fas fa-trash"></span></button>
+</form>

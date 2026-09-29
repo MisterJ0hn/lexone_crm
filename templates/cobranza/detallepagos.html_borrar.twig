@@ -1,0 +1,31 @@
+<div class="card-body table-responsive p-0" >
+    <table class="table table-head-fixed text-nowrap table-striped table-sm">
+    <thead>
+        <tr>
+            <th></th>
+            <th>N° Comprobante</th>
+            <th>Boleta</th>
+            <th>Fecha Comprobante</th>
+            <th>Fecha Ingreso</th>
+            <th>Monto Boleta</th> 
+            <th>Monto Cuota Pagada</th>            
+        </tr>
+    </thead>
+    <tbody>
+        {% set num=1 %}
+        {% for pagoCuota in pagocuotas %}
+            <tr>
+                <td>{{ num }}</td>
+                <td>{{ pagoCuota.pago.ncomprobante}}</td>
+                <td>{{ pagoCuota.pago.boleta}}</td>
+                <td>{{ pagoCuota.pago.fechaPago|date("Y-m-d H:i")}}</td>
+                <td>{{ pagoCuota.pago.fechaRegistro|date("Y-m-d H:i") }}</td>
+                <td align="right">${{ pagoCuota.pago.monto|number_format(0, ',', '.') }}</td>
+                <td>{{ pagoCuota.monto|number_format(0,',','.')}}</td>
+                {% set num = num + 1 %}
+            </tr>
+        {% endfor %}
+        
+    </tbody>
+</table>
+</div>

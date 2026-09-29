@@ -1,0 +1,110 @@
+<style>
+    body{
+        font-size:13px;
+    }
+</style>
+<div class="page">
+    <div align="right">Nro Folio {{anexo.id}}-{{anexo.contrato.folio}} {{anexo.folio}}</div>
+  
+  <div align="center"><h4>Anexo de contrato de {{tipoAnexo}} </h4></div>
+  <p align="justify">En Santiago de Chile a {{anexo.fechaCreacion|date("d-m-Y")}}, conforme nos inform&oacute; verbalmente 
+  don/do&ntilde;a <strong>{{anexo.contrato.cliente.nombre|title|special_chars|raw}}</strong>, C&eacute;dula de identidad N&uacute;mero {{anexo.contrato.cliente.rut}}, 
+  han celebrado con fecha de hoy, de manera libre y espont&aacute;nea, un anexo de contrato, desglosando su contenido en lo siguiente.</p>
+  
+  <p align="justify"><strong>PRIMERO:</strong> El cliente contrat&oacute; {{anexo.contrato.agenda.reunion?anexo.contrato.agenda.reunion|special_chars|raw:''}} los Servicios Profesionales con el 
+  Abogado, el d&iacute;a {{anexo.contrato.fechaCreacion|date("d-m-Y")}}, para que &eacute;ste en su representaci&oacute;n, otorgue Asistencia Jur&iacute;dica respecto de las 
+  siguientes causas.</p>
+  
+  {% if anexo.tipoAnexo==1 %}
+    
+<strong>Causas:</strong>
+<br>
+<table border="1"  cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th width="300px">Servicio</th>
+            <th width="100px">Id Causa</th>
+            <th>Caratulado</th>
+        </tr>
+    </thead>
+    {% for causa in anexo.contrato.agenda.causas %}
+        {% if causa.estado==1 %}
+        <tr>
+            
+            <td width="300px">
+                {{causa.materiaEstrategia.estrategiaJuridica}}
+            </td>
+            <td width="100px">
+                 {{causa.letra}}-{{causa.rol}}-{{causa.anio}}
+            </td>
+            <td>
+                {{causa.causaNombre}}
+            </td>
+        </tr>
+        {% endif %}
+    {% endfor %}
+
+</table>
+  {% endif %}
+  
+  <p align="justify"><strong>SEGUNDO:</strong> Por este acto las partes vienen en celebrar un anexo referido a {{tipoAnexo}}.</p>
+  
+  <p align="justify"><strong>TERCERO:</strong> Los honorarios de los servicios profesionales son a todo evento y ascienden a la suma de ${{anexo.montoContrato|number_format(0,",",".")}}.- 
+  Estos valores consideran el costo de la evaluaci&oacute;n, estudio y otros tr&aacute;mites que hayan sido practicados por el Abogado, los cuales se pactan en conformidad 
+  de ambas partes, de la siguiente manera:</p>
+  
+    <table border="1"  cellspacing="0" width="50%">
+        {% for cuota in anexo.cuotas %}
+        <tr>
+            <td align="right">{{cuota.numero}}</td>
+            <td align="center">{{cuota.fechaPago|date('Y-m-d')}}</td>
+            <td align="right">${{cuota.monto|number_format(0,",",".")}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+  </div>
+  <div class="page">
+
+  <p align="justify">Las partes acuerdan que el presente anexo de contrato de prestaci&oacute;n de servicios tiene como efecto la finalizaci&oacute;n y la renuncia mutua a la cl&aacute;usula 
+  del precio estipulada en el contrato principal. Por lo que quedan rescindidas y sin efecto alguno.</p>
+
+  <p align="justify">El &uacute;nico precio v&aacute;lido es el especificado en este anexo de contrato. Las partes acuerdan que este precio es integral y cubre de manera completa y 
+  satisfactoria los servicios acordados entre ambas partes.</p> 
+  
+  <p align="justify">El Calendario de pago precedentemente señalado no est&aacute; condicionado a gesti&oacute;n alguna por parte del Abogado, raz&oacute;n por la cual 
+  se debe dar estricto cumplimiento a &eacute;ste en las fechas pactadas para tener vigente el servicio legal. En este sentido la modalidad de cuotas es un beneficio entregado exclusivamente 
+  al cliente que no puede pagar el honorario del servicio legal en un s&oacute;lo pago como es normal. Se entiende como el inicio del encargo y por lo tanto el derecho a percibir los 
+  honorarios el de la fecha de la firma o aceptaci&oacute;n del contrato. En caso de t&eacute;rmino del servicio por parte nuestra, desistimiento o t&eacute;rmino unilateral del contrato 
+  por parte del cliente, y habiendo el Abogado realizado alguna gesti&oacute;n en el servicio encomendado, sin necesidad de haberlo terminado aun, se establece una cl&aacute;usula de aceleraci&oacute;n 
+  de las cuotas pendientes, las cuales se acumularan  en un s&oacute;lo pago  que se har&aacute; exigible inmediatamente en la eventualidad de que los honorarios no hubieran sido pagados en 
+  su totalidad a dicha fecha.</p>
+
+  <p align="justify"><strong>CUARTO:</strong> El Abogado se compromete a otorgar al cliente el servicio contratado y especificado en la cl&aacute;usula primera, cumpliendo todos los 
+  tr&aacute;mites legales que indica la ley en primera instancia, sin perjuicio, de las facultades privativas del respectivo tribunal de establecer plazos acordes con el funcionamiento del mismo 
+  seg&uacute;n corresponda. La obligación del Abogado es una obligaci&oacute;n de medios, vale decir, se compromete a actuar diligentemente en todas las gestiones y tr&aacute;mites 
+  necesarios del proceso judicial. <strong>El presente contrato tiene un plazo y vigencia de {{anexo.vigencia}} meses contado desde la aceptaci&oacute;n, que es el tiempo en que 
+  durar&aacute;n los servicios contratados.</strong></p>
+
+  <p align="justify"><strong>QUINTO:</strong> Las partes declaran que en todo lo no modificado rige el contrato principal folio {{anexo.contrato.folio}}.</p>
+
+  <p align="justify"><strong>SEXTO:</strong> Todas las cuotas se pagar&aacute;n, en efectivo o v&iacute;a transferencia electr&oacute;nica. El comprobante de pago se debe enviar por correo electr&oacute;nico  
+  y escribir en asunto <strong> {{anexo.contrato.cliente.nombre|title|special_chars|raw}} </strong></p>
+
+  <p><strong>*Al realizar dep&oacute;sito o transferencia, debe ponerse en contacto con nuestra oficina e informar los datos del dep&oacute;sito o transferencia.</strong></p>
+
+  <p align="justify">El presente anexo de contrato se otorga para ambas partes, con id&eacute;ntico tenor y validez, quedando una copia en poder de cada una de las partes.</p>
+
+</div>
+<div class="page">
+
+<table width="100%">
+    <tr>
+        <td><p align="center"><strong>Abogado:</strong></p>
+          <p align="center"><strong>R.U.N.:</strong></p>            
+        </td>
+        <td><p align="center"><strong>Cliente: {{anexo.contrato.cliente.nombre|title|special_chars|raw}}</strong></p>
+          <p align="center"><strong>R.U.N.: {{anexo.contrato.cliente.rut}}</strong></p>
+        </td>
+    </tr>
+</table>
+</div>

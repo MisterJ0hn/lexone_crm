@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Pago{% endblock %}
+
+{% block body %}
+<div class="card">
+    <div class="card-header">
+        <h1>Folio: {{contrato.id}}</h1>
+    </div>
+    <div class="card-body table-responsive p-0" >
+            
+        <table class="table table-head-fixed text-nowrap table-striped table-sm">
+            <thead>
+                <tr>
+                    <th  align="center">Monto Pagado</th>
+                    <th align="center">Fecha Comprobante</th>
+                    <th align="center">Fecha Ingreso</th>
+                    <th  align="center">N° Comprobante</th>
+                    <th align="center">N° Boleta</th>
+                    <th align="center">Tipo Deposito</th>
+                    <th align="center">Cta. Cte.</th>
+                    <th align="center">Canal</th>
+                    <th align="center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for pago in pagos %}
+                <tr>
+                    <td align="right">${{pago.monto|number_format(0,',','.')}}</td>
+                    <td align="center">{{pago.fechaPago|date('Y-m-d')}} {{pago.horaPago|date('H:i')}}</td>
+                    <td align="center">{{pago.fechaRegistro|date('Y-m-d H:i')}}</td>
+                    <td align="right">{{pago.ncomprobante}}</td>
+                    <td align="right">{{pago.boleta}}</td>
+                    <td>{{pago.pagotipo.nombre}}</td>
+                    <td>{{pago.cuentaCorriente.nombre}}</td>
+                    <td>{{pago.pagoCanal.nombre}}</td>
+                    <td>
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                            <a href="{{path('pago_show',{'id':pago.id})}}" class="btn btn-success"><i class="fas fa-eye"></i></a>
+                            <a href="{{url_web}}{{img_pagos}}{{pago.comprobante}}" class="btn btn-primary"><i class="far fa-file-image"></i></a>
+                            {% if loop.last %}
+                            {% if contrato.isFinalizado is null or not contrato.isFinalizado %}
+                                <a href="{{ path('pago_edit', {'id': pago.id}) }}" class="btn btn-warning"><i class="fas fa-edit"></i></a>
+                                <form method="post" action="{{ path('pago_delete', {'id': pago.id}) }}" onsubmit="return confirm('Estas seguro de eliminar este comprobante?');">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ pago.id) }}">
+                                    <button class="btn btn-danger"><i class="fas fa-trash"></i></button>
+                                </form>
+                            {% endif %}
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+
+            {% endfor %}
+            {% if cuota is not null %}
+                <td align="right">${{cuota.monto|number_format(0,',','.')}}</td>
+                <td align="center"></td>
+                <td align="center">{{cuota.fechaPago|date('Y-m-d H:i')}}</td>
+                <td align="right"></td>
+                <td align="right"></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>
+                    <a href="{{path('multa_new',{'id':cuota.id})}}" class="btn btn-success"><i class="fas fa-dollar-sign"></i></a>
+                    <a href="{{path('multa_edit',{'id':cuota.id})}}" class="btn btn-success"><i class="fas fa-edit"></i></a>
+                </td>
+            {% endif %}
+        </tbody>
+        </table>
+        </div>
+        <div class="card-footer">
+           
+        </div>
+    </div>
+    
+{% endblock %}

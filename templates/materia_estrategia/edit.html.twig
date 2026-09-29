@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit MateriaEstrategia{% endblock %}
+
+{% block body %}
+    <h1>Edit MateriaEstrategia</h1>
+
+    {{ include('materia_estrategia/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('materia_estrategia_index') }}">back to list</a>
+
+    {{ include('materia_estrategia/_delete_form.html.twig') }}
+{% endblock %}

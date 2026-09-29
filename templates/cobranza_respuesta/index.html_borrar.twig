@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}CobranzaRespuesta index{% endblock %}
+
+{% block body %}
+    <h1>CobranzaRespuesta index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for cobranza_respuestum in cobranza_respuestas %}
+            <tr>
+                <td>{{ cobranza_respuestum.id }}</td>
+                <td>{{ cobranza_respuestum.nombre }}</td>
+                <td>
+                    <a href="{{ path('cobranza_respuesta_show', {'id': cobranza_respuestum.id}) }}">show</a>
+                    <a href="{{ path('cobranza_respuesta_edit', {'id': cobranza_respuestum.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('cobranza_respuesta_new') }}">Create new</a>
+{% endblock %}

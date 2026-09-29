@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}UsuarioTipo index{% endblock %}
+
+{% block body %}
+    <div class="card">
+
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Nombre</th>
+                        <th>Fijar</th>
+                        <th>actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for usuario_tipo in usuario_tipos %}
+                    <tr>
+                        <td>{{ usuario_tipo.id }}</td>
+                        <td>{{ usuario_tipo.nombre }}</td>
+                        <td>{{ usuario_tipo.fijar }}</td>
+                        <td>
+                            {% if sesion.getSesion.usuarioTipo.id==8 or  usuario_tipo.fijar == 0 %}
+                            <a href="{{ path('usuario_tipo_edit', {'id': usuario_tipo.id}) }}" class="btn btn-success"><i class="fas fa-edit"></i></a>
+                            {% endif %}
+
+                            <a href="{{path('privilegio_tipousuario_index',{'id':usuario_tipo.id})}}" class="btn btn-warning" > <i class="fas fa-share-alt"></i></a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="4">Sin registros</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <a href="{{ path('usuario_tipo_new') }}">Create new</a>
+{% endblock %}

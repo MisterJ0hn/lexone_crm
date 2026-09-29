@@ -1,0 +1,21 @@
+<div class="row">
+            <div class="col-sm-6 col-md-3">
+                <small class="text-muted">Destino</small><br>
+                {{ ticket.destino.nombre }}
+            </div>
+            <div class="col-sm-6 col-md-1 ">
+                <div class="loading"></div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <small class="text-muted">Encargado</small><br>
+                {{ ticket.encargado.nombre }}
+            </div>
+            <!--<div class="col-sm-6 col-md-2">
+                <small class="text-muted">Fecha Resuelto</small><br>
+                {{ ticket.fechaRespuesta ? ticket.fechaRespuesta|date('Y-m-d H:i'):''}}
+            </div>-->
+            <div class="col-sm-6 col-md-3">
+                <small class="text-muted">Fecha Finalizado</small><br>
+                {{ ticket.fechaCierre ? ticket.fechaCierre|date('Y-m-d H:i'):''}}
+            </div>
+        </div>
