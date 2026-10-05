@@ -12,3 +12,6 @@
 /bkp/
 ###< symfony/framework-bundle ###
 /node_modules/
+/1.- entregables/
+/recursos/
+*.md
