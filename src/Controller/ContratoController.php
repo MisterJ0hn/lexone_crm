@@ -10,18 +10,14 @@ use App\Entity\Usuario;
 use App\Entity\Cuota;
 use App\Entity\Region;
 use App\Entity\Ciudad;
-use App\Entity\Comuna;
 use App\Form\ContratoType;
-use App\Entity\AgendaObservacion;
 use App\Entity\Causa;
 use App\Entity\CausaObservacion;
 use App\Entity\Cliente;
 use App\Entity\ClienteHistorial;
 use App\Entity\ContratoAudios;
-use App\Entity\ContratoObservacion;
-use App\Entity\LineaTiempoObservacion;
-use App\Entity\LineaTiempoTerminada;
-use App\Form\ContratoRolType;
+use App\Entity\EstadoProcesal;
+use App\Entity\ContratoNota;
 use App\Form\ClienteConvenioType;
 use App\Repository\ContratoRepository;
 use App\Repository\ContratoRolRepository;
@@ -30,13 +26,11 @@ use App\Repository\SucursalRepository;
 use App\Repository\CuentaRepository;
 use App\Repository\DiasPagoRepository;
 use App\Repository\UsuarioRepository;
-use App\Repository\UsuarioTipoRepository;
 use App\Repository\AgendaStatusRepository;
 use App\Repository\CausaObservacionRepository;
 use App\Repository\ModuloPerRepository;
 use App\Repository\CuotaRepository;
 use App\Repository\ConfiguracionRepository;
-use App\Repository\LotesRepository;
 use App\Repository\RegionRepository;
 use App\Repository\CiudadRepository;
 use App\Repository\ClienteHistorialRepository;
@@ -46,11 +40,7 @@ use App\Repository\ContratoAudiosRepository;
 use App\Repository\ContratoObservacionRepository;
 use App\Repository\CorteRepository;
 use App\Repository\JuzgadoCuentaRepository;
-use App\Repository\LineaTiempoTerminadaRepository;
-
-use App\Repository\LineaTiempoEtapasRepository;
-use App\Repository\LineaTiempoObservacionRepository;
-use App\Repository\MateriaEstrategiaRepository;
+use App\Repository\ServicioRepository;
 use App\Repository\MateriaRepository;
 use App\Repository\PaisRepository;
 use App\Repository\ContratoTemplateRepository;
@@ -60,27 +50,26 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Knp\Bundle\SnappyBundle\Snappy\Response\PdfResponse;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Dompdf\Dompdf;
 use Dompdf\Options;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Service\ContratoFunciones;
 use App\Service\Toku;
 use DateTime;
 use Exception;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
 #[Route("/contrato")]
 class ContratoController extends AbstractController
 {
 
-    public function __construct(private readonly EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+        #[\Symfony\Component\DependencyInjection\Attribute\Autowire('%kernel.project_dir%/var/contrato_notas')] private readonly string $directorioNotas,
+    ) {
     }
     #[Route("/", name: "contrato_index", methods: ["GET","POST"])]
     public function index(ContratoRepository $contratoRepository,PaginatorInterface $paginator,ModuloPerRepository $moduloPerRepository,Request $request,CuentaRepository $cuentaRepository): Response
@@ -134,21 +123,7 @@ class ContratoController extends AbstractController
             case 7:
                 $query=$contratoRepository->findByPers(null,$user->getEmpresaActual(),$compania,$filtro,null,$fecha);
                 $companias=$cuentaRepository->findByPers($user->getId(),1);
-                break;
-            case 12://Cobradores
-                $lotes;
-                foreach($user->getUsuarioLotes() as $usuarioLote){
-                    $lotes[]=$usuarioLote->getLote()->getId();
-                }
-                if(count($lotes)>0){
-                    $fecha.=" and c.idLote in (".implode(",",$lotes).") ";
-                }else{
-                    $fecha.=" and c.idLote is null ";
-                }
-                //$fecha.=" and c.idLote in (".implode(",",$lotes).") ";
-                $query=$contratoRepository->findByPers(null,$user->getEmpresaActual(),$compania,$filtro,null,$fecha);
-                $companias=$cuentaRepository->findByPers($user->getId(),1);
-                break;
+                break;            
             default:
                 $query=$contratoRepository->findByPers($user->getId(),null,$compania,$filtro,null,$fecha);
                 $companias=$cuentaRepository->findByPers($user->getId());
@@ -330,7 +305,6 @@ class ContratoController extends AbstractController
         $form->add('fechaPrimeraCuota',DateType::class,array('widget'=>'single_text','html5'=>false));
         $form->add('vigencia');
         $form->add('pagoActual');
-        $form->add('isIncorporacion');
         $form->add('cuotas', ChoiceType::class,[
             'choices'=>[
                 0,
@@ -562,14 +536,9 @@ class ContratoController extends AbstractController
                             JuzgadoRepository $juzgadoRepository,
                             SucursalRepository $sucursalRepository,
                             DiasPagoRepository $diasPagoRepository,
-                            UsuarioRepository $usuarioRepository,
-                            UserPasswordHasherInterface $encoder,
-                            UsuarioTipoRepository $usuarioTipoRepository,
+                            UsuarioRepository $usuarioRepository,                           
                             ConfiguracionRepository $configuracionRepository,
-                            ContratoRepository $contratoRepository,
-                            ContratoFunciones $contratoFunciones,
                             CuentaRepository $cuentaRepository,
-                            LotesRepository $lotesRepository,
                             RegionRepository $regionRepository,
                             ComunaRepository $comunaRepository,
                             CiudadRepository $ciudadRepository,
@@ -587,7 +556,6 @@ class ContratoController extends AbstractController
         $form->add('vigencia');
         $form->add('pagoActual');
 
-        $form->add('isIncorporacion');
         $form->add('cuotas', ChoiceType::class,[
             'choices'=>[
                 0,
@@ -632,32 +600,10 @@ class ContratoController extends AbstractController
             $contrato->setCcomuna($comunaRepository->find($request->request->get('cboComuna')));
             
 
-            //configuramos el Lote al cual caera::
-            //$ult_contrato=$contratoRepository->findLoteMax($user->getEmpresaActual());
-            /*$lote=$lotesRepository->findPrimerDisponible();
-            if(null == $lote){
-                //si no hay lotes para utilizar, se setean en false todos para poder utilizar...
-                $lotes=$lotesRepository->findBy(['empresa'=>$user->getEmpresaActual()]);
-                foreach($lotes as $lote){
-                    $lote->setIsUtilizado(false);
-                    $entityManager->persist($lote);
-                    $entityManager->flush();
-                }
-                $lote=$lotesRepository->findPrimerDisponible();
-
-            }else{
-                $lote->setIsUtilizado(true);
-                $entityManager->persist($lote);
-                $entityManager->flush();
-            }
-*/
-
             $contrato->setDiaPago($request->request->get('chkDiasPago'));
             $contrato->setFechaCreacion(new \DateTime(date("Y-m-d H:i:s")));
             $contrato->setSucursal($sucursalRepository->find($request->request->get('cboSucursal')));
-           // $contrato->setTramitador($usuarioRepository->find($request->request->get('cboTramitador')));
-            //$contrato->setIdLote($lote);
-            
+
             $agenda=$contrato->getAgenda();
 
             // Convenio/Empresa: el contrato no lleva un único cliente (los clientes
@@ -1006,8 +952,8 @@ class ContratoController extends AbstractController
 
         if(null !== $request->query->get('status')){
             $error_toast=$contratoFunciones->terminarContrato($contrato,$request->query->get('status'),$request->request->get('txtObservacion'));
-           
-            return $this->redirectToRoute('desconoce_index',['error_toast'=>$error_toast]);
+            $this->addFlash('success',$error_toast);
+            return $this->redirectToRoute('desconoce_index');
 
         }
         
@@ -1121,22 +1067,7 @@ class ContratoController extends AbstractController
             foreach ($paisRepository->findBy([], ['orden' => 'ASC']) as $pais) {
                 $paisChoices[$pais->getNombre()] = $pais->getNombre();
             }
-            $formNuevoCliente->add('nacionalidad', ChoiceType::class, [
-                'choices' => $paisChoices,
-                'required' => false,
-            ]);
-            if ($tipoCliente === 'Convenio') {
-                // El sexo y el estado civil solo aplican a Convenio, no a Empresa
-                // (ver diseño en nuevoClienteConvenio()).
-                $formNuevoCliente->add('sexo', ChoiceType::class, [
-                    'choices' => [
-                        'Masculino' => 'Masculino',
-                        'Femenino' => 'Femenino',
-                    ],
-                    'required' => false,
-                ]);
-                $formNuevoCliente->add('estadoCivil', null, ['required' => false]);
-            }
+            $this->agregarCamposObligatoriosDeCreacion($formNuevoCliente, $paisChoices, $tipoCliente);
 
             return $this->render('contrato/lineaTiempoConvenio.html.twig', [
                 'contrato' => $contrato,
@@ -1147,6 +1078,7 @@ class ContratoController extends AbstractController
                 'formNuevoCliente' => $formNuevoCliente->createView(),
                 // Materia es un catálogo global: mismo listado para todas las empresas.
                 'materias' => $materiaRepository->findBy([], ['nombre' => 'ASC']),
+                'notas' => $this->notasDelContrato($contrato),
             ]);
         }
 
@@ -1155,7 +1087,119 @@ class ContratoController extends AbstractController
             'pagina'=>$pagina->getNombre(),
             'juzgados' => $cuenta->getJuzgadoCuentas(),
             'materias' => $materiaRepository->findBy([], ['nombre' => 'ASC']),
+            'notas' => $this->notasDelContrato($contrato),
         ]);
+    }
+
+    private const NOTA_EXTENSIONES = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'jpg', 'jpeg', 'png', 'gif', 'zip'];
+    private const NOTA_TAMANO_MAX = 10 * 1024 * 1024;
+
+    /** @return ContratoNota[] historial del contrato, lo más reciente primero. */
+    private function notasDelContrato(Contrato $contrato): array
+    {
+        return $this->entityManager->getRepository(ContratoNota::class)->findBy(['contrato' => $contrato], ['fechaRegistro' => 'DESC', 'id' => 'DESC']);
+    }
+
+    /**
+     * Campos de la ficha del cliente hijo que no son del tipo Cliente base y que al CREAR son obligatorios:
+     * nacionalidad y, solo en Convenio, sexo y estado civil (no aplican a Empresa).
+     *
+     * @param array<string,string> $paisChoices
+     */
+    private function agregarCamposObligatoriosDeCreacion(\Symfony\Component\Form\FormInterface $form, array $paisChoices, ?string $tipoCliente): void
+    {
+        $form->add('nacionalidad', ChoiceType::class, [
+            'choices' => $paisChoices,
+            'required' => true,
+            'placeholder' => '',
+            'constraints' => [new \Symfony\Component\Validator\Constraints\NotBlank(message: 'Debe seleccionar la nacionalidad.')],
+        ]);
+        if ($tipoCliente === 'Convenio') {
+            $form->add('sexo', ChoiceType::class, [
+                'choices' => ['Masculino' => 'Masculino', 'Femenino' => 'Femenino'],
+                'required' => true,
+                'placeholder' => '',
+                'constraints' => [new \Symfony\Component\Validator\Constraints\NotBlank(message: 'Debe seleccionar el sexo.')],
+            ]);
+            $form->add('estadoCivil', null, [
+                'required' => true,
+                'placeholder' => '',
+                'constraints' => [new \Symfony\Component\Validator\Constraints\NotNull(message: 'Debe seleccionar el estado civil.')],
+            ]);
+        }
+    }
+    /** Primer mensaje de error de un formulario (campo o general), para mostrarlo en un aviso. */
+    private function primerErrorDelFormulario(\Symfony\Component\Form\FormInterface $form): string
+    {
+        foreach ($form->getErrors(true) as $error) {
+            return $error->getMessage();
+        }
+
+        return 'revise los datos ingresados.';
+    }
+    /** El contrato debe pertenecer a la empresa del usuario (evita acceder a contratos ajenos por id). */
+    private function verificarContratoDeEmpresa(Contrato $contrato): void
+    {
+        $empresa = $contrato->getAgenda()?->getEmpresa();
+        if ($empresa === null || $empresa->getId() !== $this->getUser()->getEmpresaActual()) {
+            throw $this->createNotFoundException('Contrato no encontrado.');
+        }
+    }
+
+    /** Agrega una observación (con archivo opcional) al historial del contrato. Solo se agrega: no se edita ni se borra. */
+    #[Route("/{id}/nota/agregar", name: "contrato_nota_agregar", requirements: ['id' => '\d+'], methods: ["POST"])]
+    function notaAgregar(Contrato $contrato, Request $request): Response
+    {
+        $this->denyAccessUnlessGranted('create','linea_tiempo');
+        $this->verificarContratoDeEmpresa($contrato);
+        $volver = $this->redirectToRoute('contrato_linea_tiempo', ['id' => $contrato->getId()]);
+
+        if (!$this->isCsrfTokenValid('contrato_nota'.$contrato->getId(), (string) $request->request->get('_token'))) {
+            $this->addFlash('error', 'Token inválido, intente nuevamente.');
+            return $volver;
+        }
+        $observacion = trim((string) $request->request->get('txtNota'));
+        if ($observacion === '') {
+            $this->addFlash('error', 'Debe ingresar la observación.');
+            return $volver;
+        }
+
+        $nota = (new ContratoNota())->setContrato($contrato)->setObservacion($observacion)->setUsuario($this->getUser());
+
+        $archivo = $request->files->get('fileNota');
+        if ($archivo !== null) {
+            $extension = strtolower((string) $archivo->getClientOriginalExtension());
+            if (!$archivo->isValid() || $archivo->getSize() > self::NOTA_TAMANO_MAX || !in_array($extension, self::NOTA_EXTENSIONES, true)) {
+                $this->addFlash('error', 'El archivo no es válido: máximo 10 MB y formatos ' . implode(', ', self::NOTA_EXTENSIONES) . '.');
+                return $volver;
+            }
+            $nombreGuardado = bin2hex(random_bytes(16)) . '.' . $extension;
+            $archivo->move($this->directorioNotas, $nombreGuardado);
+            $nota->setArchivo($nombreGuardado)->setArchivoNombre(mb_substr(basename((string) $archivo->getClientOriginalName()), 0, 255));
+        }
+
+        $this->entityManager->persist($nota);
+        $this->entityManager->flush();
+        $this->addFlash('success', 'Observación agregada al historial.');
+
+        return $volver;
+    }
+
+    /** Descarga el archivo adjunto de una observación del historial. */
+    #[Route("/nota/{id}/descargar", name: "contrato_nota_descargar", requirements: ['id' => '\d+'], methods: ["GET"])]
+    function notaDescargar(ContratoNota $nota): Response
+    {
+        $this->denyAccessUnlessGranted('create','linea_tiempo');
+        $this->verificarContratoDeEmpresa($nota->getContrato());
+        $ruta = $this->directorioNotas . '/' . $nota->getArchivo();
+        if (!$nota->getArchivo() || !is_file($ruta)) {
+            throw $this->createNotFoundException('Archivo no encontrado.');
+        }
+
+        $respuesta = new \Symfony\Component\HttpFoundation\BinaryFileResponse($ruta);
+        $respuesta->setContentDisposition(\Symfony\Component\HttpFoundation\ResponseHeaderBag::DISPOSITION_ATTACHMENT, $nota->getArchivoNombre() ?: basename($ruta));
+        $respuesta->headers->set('X-Content-Type-Options', 'nosniff');
+        return $respuesta;
     }
 
     #[Route("/{id}/convenio/cliente", name: "contrato_convenio_nuevo_cliente", methods: ["GET","POST"])]
@@ -1163,8 +1207,9 @@ class ContratoController extends AbstractController
                                 Request $request,
                                 ClienteRepository $clienteRepository,
                                 MateriaRepository $materiaRepository,
-                                MateriaEstrategiaRepository $materiaEstrategiaRepository,
+                                ServicioRepository $servicioRepository,
                                 JuzgadoRepository $juzgadoRepository,
+                                CorteRepository $corteRepository,
                                 PaisRepository $paisRepository): Response
     {
         $this->denyAccessUnlessGranted('create','linea_tiempo');
@@ -1180,24 +1225,8 @@ class ContratoController extends AbstractController
         foreach ($paisRepository->findBy([], ['orden' => 'ASC']) as $pais) {
             $paisChoices[$pais->getNombre()] = $pais->getNombre();
         }
-        $form->add('nacionalidad', ChoiceType::class, [
-            'choices' => $paisChoices,
-            'required' => false,
-        ]);
-
-        // El sexo y el estado civil solo aplican a clientes de tipo Convenio (no a
-        // Empresa), igual que ya se agrega dinámicamente el sexo de Usuario en
-        // AdministradorCuentasController/AdministradoresController.
-        if ($tipoCliente === 'Convenio') {
-            $form->add('sexo', ChoiceType::class, [
-                'choices' => [
-                    'Masculino' => 'Masculino',
-                    'Femenino' => 'Femenino',
-                ],
-                'required' => false,
-            ]);
-            $form->add('estadoCivil', null, ['required' => false]);
-        }
+        // El sexo y el estado civil solo aplican a clientes de tipo Convenio (no a Empresa).
+        $this->agregarCamposObligatoriosDeCreacion($form, $paisChoices, $tipoCliente);
 
         $form->handleRequest($request);
 
@@ -1205,17 +1234,17 @@ class ContratoController extends AbstractController
             // La causa es obligatoria al crear el cliente: sin una materia válida no
             // se crea ni el cliente ni la causa (mismos campos que ya usa
             // CausaController::agregar()).
-            $materiaEstrategia = null;
+            $servicio = null;
             if ($request->request->get('cboSubMateria')) {
-                $materiaEstrategia = $materiaEstrategiaRepository->find($request->request->get('cboSubMateria'));
+                $servicio = $servicioRepository->find($request->request->get('cboSubMateria'));
             }
 
             $materia = null;
             if ($request->request->get('cboMateria')) {
                 $materia = $materiaRepository->find($request->request->get('cboMateria'));
             }
-            if ($materia === null && $materiaEstrategia !== null) {
-                $materia = $materiaEstrategia->getMateria();
+            if ($materia === null && $servicio !== null) {
+                $materia = $servicio->getMateria();
             }
 
             if ($materia === null) {
@@ -1258,8 +1287,8 @@ class ContratoController extends AbstractController
             $causa->setCliente($cliente);
             $causa->setMateria($materia);
 
-            if ($materiaEstrategia !== null && $materiaEstrategia->getMateria()->getId() === $materia->getId()) {
-                $causa->setMateriaEstrategia($materiaEstrategia);
+            if ($servicio !== null && $servicio->getMateria()->getId() === $materia->getId()) {
+                $causa->setServicio($servicio);
             }
             if ($request->request->get('txtLetra')) {
                 $causa->setLetra($request->request->get('txtLetra'));
@@ -1273,8 +1302,16 @@ class ContratoController extends AbstractController
             // causaNombre no admite null en la base de datos: igual que en
             // CausaController::agregar(), se setea aunque venga vacío.
             $causa->setCausaNombre((string) $request->request->get('txtCaratulado'));
+            // La corte elegida en el formulario manda; si no viene, se toma la del juzgado (como en contrata).
+            if ($request->request->get('corte')) {
+                $causa->setCorte($corteRepository->find($request->request->get('corte')));
+            }
             if ($request->request->get('juzgado')) {
-                $causa->setJuzgado($juzgadoRepository->find( $request->request->get('juzgado')));
+                $juzgado = $juzgadoRepository->find($request->request->get('juzgado'));
+                $causa->setJuzgado($juzgado);
+                if ($juzgado && $causa->getCorte() === null && $juzgado->getCorte() !== null) {
+                    $causa->setCorte($juzgado->getCorte());
+                }
             }
 
             $entityManager->persist($causa);
@@ -1287,15 +1324,84 @@ class ContratoController extends AbstractController
         // (ver lineaTiempo()); ante un GET directo o una validación fallida, volvemos
         // ahí en vez de mantener una plantilla aparte solo para mostrar errores.
         if ($form->isSubmitted()) {
-            $this->addFlash('error', 'No se pudo crear el cliente: revise los datos ingresados.');
+            $this->addFlash('error', 'No se pudo crear el cliente: ' . $this->primerErrorDelFormulario($form));
         }
 
         return $this->redirectToRoute('contrato_linea_tiempo', ['id' => $contrato->getId()]);
     }
 
+    /**
+     * Edita los datos de un cliente propio de Convenio/Empresa desde la línea de
+     * tiempo. GET devuelve el formulario (parcial que se carga dentro del modal de
+     * edición); POST guarda y vuelve a la línea de tiempo.
+     */
+    #[Route("/{id}/convenio/cliente/{cliente}/editar", name: "contrato_convenio_editar_cliente", methods: ["GET","POST"])]
+    function editarClienteConvenio(Contrato $contrato,
+                                Cliente $cliente,
+                                Request $request,
+                                ClienteRepository $clienteRepository,
+                                PaisRepository $paisRepository): Response
+    {
+        $this->denyAccessUnlessGranted('create','linea_tiempo');
+        $agenda = $contrato->getAgenda();
+        $tipoCliente = $agenda->getTipoClienteNombre();
+
+        // Solo se pueden editar clientes que pertenecen a este contrato (tienen causas
+        // en su agenda): evita editar clientes de otra agenda/empresa cambiando el id.
+        $pertenece = $contrato->getCliente() !== null && $contrato->getCliente()->getId() === $cliente->getId();
+        foreach ($agenda->getCausas() as $causa) {
+            if ($causa->getCliente() !== null && $causa->getCliente()->getId() === $cliente->getId()) {
+                $pertenece = true;
+                break;
+            }
+        }
+        if (!$pertenece || ($tipoCliente !== 'Convenio' && $tipoCliente !== 'Empresa')) {
+            throw $this->createNotFoundException();
+        }
+
+        $form = $this->createForm(ClienteConvenioType::class, $cliente, [
+            'obligatorios' => false,
+            'action' => $this->generateUrl('contrato_convenio_editar_cliente', ['id' => $contrato->getId(), 'cliente' => $cliente->getId()]),
+            'method' => 'POST',
+        ]);
+        $paisChoices = [];
+        foreach ($paisRepository->findBy([], ['orden' => 'ASC']) as $pais) {
+            $paisChoices[$pais->getNombre()] = $pais->getNombre();
+        }
+        $form->add('nacionalidad', ChoiceType::class, ['choices' => $paisChoices, 'required' => false]);
+        if ($tipoCliente === 'Convenio') {
+            $form->add('sexo', ChoiceType::class, [
+                'choices' => ['Masculino' => 'Masculino', 'Femenino' => 'Femenino'],
+                'required' => false,
+            ]);
+            $form->add('estadoCivil', null, ['required' => false]);
+        }
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                $otro = $clienteRepository->findOneByRut($cliente->getRut());
+                if ($otro !== null && $otro->getId() !== $cliente->getId()) {
+                    $this->addFlash('error', 'Ya existe otro cliente con ese RUT.');
+                } else {
+                    $this->entityManager->flush();
+                    $this->addFlash('success', 'Datos del cliente actualizados.');
+                }
+            } else {
+                $this->addFlash('error', 'No se pudo modificar el cliente: ' . $this->primerErrorDelFormulario($form));
+            }
+            return $this->redirectToRoute('contrato_linea_tiempo', ['id' => $contrato->getId()]);
+        }
+
+        return $this->render('contrato/_form_cliente_editar.html.twig', [
+            'form' => $form->createView(),
+            'contrato' => $contrato,
+        ]);
+    }
+
     #[Route("/{id}/linea_tiempo_detalle", name: "contrato_linea_tiempo_detalle", methods: ["GET","POST"])]
     function lineaTiempoDetalle(Causa $causa, 
-    LineaTiempoTerminadaRepository $lineaTiempoTerminadaRepository,
     ModuloPerRepository $moduloPerRepository,
     CausaObservacionRepository $causaObservacionRepository): Response
     {
@@ -1311,13 +1417,10 @@ class ContratoController extends AbstractController
         $em->flush();
 
         $contrato=$causa->getAgenda()->getContrato();
-        $terminados=$lineaTiempoTerminadaRepository->findBy(['causa'=>$causa->getId(),'estado'=>1]);
-        $LineaTiempoTerminados=$lineaTiempoTerminadaRepository->findBy(['causa'=>$causa->getId()]);
         return $this->render('contrato/lineaTiempoDetalle.html.twig', [
             'causa' => $causa,
             'contrato'=>$contrato,
-            'terminados'=>$terminados,
-            'lineaTiempoTerminados'=>$LineaTiempoTerminados,
+            'estadosProcesales'=>$causa->getEstadosProcesales(),
             'pagina'=>$pagina->getNombre(),
             'observaciones'=>$causaObservacionRepository->findBy(['contrato'=>$contrato,'causa'=>$causa],['fechaRegistro'=>'Desc']),
             'fechaUltimoIngreso'=>$fechaUltimoIngreso
@@ -1326,67 +1429,90 @@ class ContratoController extends AbstractController
         ]);
     }
 
-    #[Route("/{id}/linea_tiempo_observacion", name: "contrato_linea_tiempo_observacion", methods: ["GET","POST"])]
-    function lineaTiempoObservacion(Causa $causa, 
-                                    LineaTiempoEtapasRepository $lineaTiempoEtapaRepository, 
-                                    LineaTiempoTerminadaRepository $lineaTiempoTerminadaRepository ,
-                                    Request $request): Response
+    /** Agrega un ítem manual al estado procesal de la causa (queda pendiente/rojo). */
+    #[Route("/{id}/estado_procesal/agregar", name: "contrato_estado_procesal_agregar", methods: ["POST"])]
+    function estadoProcesalAgregar(Causa $causa, Request $request): Response
     {
-        //$this->denyAccessUnlessGranted('create','terminos');
-        $user=$this->getUser();
-        $contrato=$causa->getAgenda()->getContrato();
-        
-        $terminada=$lineaTiempoTerminadaRepository->findOneBy(['causa'=>$causa->getId(),'estado'=>1],array('id'=>'desc'));
-
-        if($request->request->get('hdEtapa')!=null){
-            $etapa1=$lineaTiempoEtapaRepository->find($request->request->get('hdEtapa'));
-            
+        $this->denyAccessUnlessGranted('create','linea_tiempo');
+        $this->verificarCausaDeEmpresa($causa);
+        if (!$this->isCsrfTokenValid('estado_procesal'.$causa->getId(), (string) $request->request->get('_token'))) {
+            $this->addFlash('error', 'Token inválido, intente nuevamente.');
+            return $this->redirectToRoute('contrato_linea_tiempo_detalle', ['id' => $causa->getId()]);
         }
 
-        $terminada!=null?$etapaInicio=$terminada->getLineaTiempoEtapas()->getId():$etapaInicio=0;
-
-        // La causa necesita un servicio (materiaEstrategia) con línea de tiempo para
-        // avanzar etapas.
-        $materiaEstrategia=$causa->getMateriaEstrategia();
-        $lineaTiempo=$materiaEstrategia ? $materiaEstrategia->getEstrategiaJuridica()->getLineaTiempo() : null;
-        if($lineaTiempo===null){
-            $this->addFlash('error','La causa no tiene un servicio con línea de tiempo asignada.');
-            return $this->redirectToRoute('contrato_linea_tiempo_detalle',['id'=>$causa->getId()]);
+        $nombre = trim((string) $request->request->get('txtNombre'));
+        if ($nombre === '') {
+            $this->addFlash('error', 'Debe ingresar el nombre del estado procesal.');
+            return $this->redirectToRoute('contrato_linea_tiempo_detalle', ['id' => $causa->getId()]);
         }
 
-        $etapas=$lineaTiempoEtapaRepository->findByRango($etapaInicio,$etapa1->getId(), $lineaTiempo->getId());
-        
+        $estado = (new EstadoProcesal())
+            ->setEmpresa($causa->getAgenda()->getEmpresa())
+            ->setCausa($causa)
+            ->setNombre(mb_substr($nombre, 0, 255))
+            ->setObservacion(trim((string) $request->request->get('txtObservacion')) ?: null)
+            ->setUsuarioRegistro($this->getUser())
+            ->setCompletado(false);
+        $this->entityManager->persist($estado);
+        $this->entityManager->flush();
 
-        foreach ($etapas as $etapa) {
-            $terminado=new LineaTiempoTerminada();
-            $terminado->setLineaTiempoEtapas($etapa);
-            $terminado->setFecha(new \DateTime(date('Y-m-d H:i:s')));
-            $terminado->setUsuarioRegistro($user);
-            $terminado->setCausa($causa);
+        return $this->redirectToRoute('contrato_linea_tiempo_detalle', ['id' => $causa->getId()]);
+    }
 
-            if($request->request->get('txtObservacion')!=null){
-                $terminado->setObservacion($request->request->get('txtObservacion'));
+    /** Marca un ítem pendiente como completado (verde), con una observación opcional. */
+    #[Route("/estado_procesal/{id}/completar", name: "contrato_estado_procesal_completar", requirements: ['id' => '\d+'], methods: ["POST"])]
+    function estadoProcesalCompletar(EstadoProcesal $estado, Request $request): Response
+    {
+        $this->denyAccessUnlessGranted('create','linea_tiempo');
+        $causa = $estado->getCausa();
+        $this->verificarCausaDeEmpresa($causa);
+        if ($this->isCsrfTokenValid('estado_procesal'.$causa->getId(), (string) $request->request->get('_token')) && !$estado->isCompletado()) {
+            $observacion = trim((string) $request->request->get('txtObservacion'));
+            if ($observacion !== '') {
+                $estado->setObservacion($observacion);
             }
-            if($request->request->get('hdEstado')!=null){
-                $terminado->setEstado($request->request->get('hdEstado'));
-            }
-            
-            
-            $em=$this->entityManager;
-            $em->persist($terminado);
-            $em->flush();
+            $estado->setCompletado(true)->setUsuarioRegistro($this->getUser());
+            $this->entityManager->flush();
         }
 
-            
-        
-        
-        return $this->redirectToRoute('contrato_linea_tiempo_detalle',['id'=>$causa->getId()]);
+        return $this->redirectToRoute('contrato_linea_tiempo_detalle', ['id' => $causa->getId()]);
+    }
+
+    /** Finaliza la causa (baja, estado = 0) y deja un ítem final completado en su estado procesal. */
+    #[Route("/{id}/estado_procesal/finalizar", name: "contrato_estado_procesal_finalizar", methods: ["POST"])]
+    function estadoProcesalFinalizar(Causa $causa, Request $request): Response
+    {
+        $this->denyAccessUnlessGranted('create','linea_tiempo');
+        $this->verificarCausaDeEmpresa($causa);
+        if ($this->isCsrfTokenValid('estado_procesal'.$causa->getId(), (string) $request->request->get('_token')) && $causa->getEstado()) {
+            $final = (new EstadoProcesal())
+                ->setEmpresa($causa->getAgenda()->getEmpresa())
+                ->setCausa($causa)
+                ->setNombre('Finalizada')
+                ->setObservacion(trim((string) $request->request->get('txtObservacion')) ?: null)
+                ->setUsuarioRegistro($this->getUser())
+                ->setCompletado(true);
+            $causa->setEstado(false);
+            $this->entityManager->persist($final);
+            $this->entityManager->flush();
+            $this->addFlash('success', 'Causa finalizada.');
+            return $this->redirectToRoute('contrato_linea_tiempo', ['id' => $causa->getAgenda()->getContrato()->getId()]);
+        }
+
+        return $this->redirectToRoute('contrato_linea_tiempo_detalle', ['id' => $causa->getId()]);
+    }
+
+    /** La causa debe pertenecer a la empresa del usuario (evita acceder a causas ajenas por id). */
+    private function verificarCausaDeEmpresa(Causa $causa): void
+    {
+        $empresa = $causa->getAgenda()?->getEmpresa();
+        if ($empresa === null || $empresa->getId() !== $this->getUser()->getEmpresaActual()) {
+            throw $this->createNotFoundException('Causa no encontrada.');
+        }
     }
 
     #[Route("/{id}/observacion", name: "contrato_observacion", methods: ["GET","POST"])]
     function observacion(Causa $causa, 
-                        LineaTiempoEtapasRepository $lineaTiempoEtapaRepository, 
-                        LineaTiempoTerminadaRepository $lineaTiempoTerminadaRepository ,
                         Request $request): Response
     {
         //$this->denyAccessUnlessGranted('create','terminos');
@@ -1533,7 +1659,7 @@ class ContratoController extends AbstractController
 
     #[Route("/{id}/modificar_servicio", name: "contrato_modificar_servicio", methods: ["GET","POST"])]
     function modificarServicio(Causa $causa,Request $request,
-                                MateriaEstrategiaRepository $materiaEstrategiaRepository,
+                                ServicioRepository $servicioRepository,
                                 JuzgadoRepository $juzgadoRepository,
                                 CorteRepository $corteRepository,
                                 JuzgadoCuentaRepository $juzgadoCuentaRepository)

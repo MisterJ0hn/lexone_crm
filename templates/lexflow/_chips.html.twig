@@ -1,0 +1,11 @@
+{% set ruta = app.request.attributes.get('_route') %}
+{% if chips|length %}
+<div class="mb-3">
+    {% for c in chips %}
+        <a href="{{ path(ruta, c.query) }}" class="badge badge-info p-2 mr-1" title="Quitar filtro">
+            {{ c.etiqueta }}: {{ c.valor }} &times;
+        </a>
+    {% endfor %}
+    <a href="{{ path(ruta, app.request.query.all|filter((v, k) => k in ['tab', 'estado', 'materia', 'incluir_pasadas'])) }}" class="small ml-2">Limpiar filtros</a>
+</div>
+{% endif %}

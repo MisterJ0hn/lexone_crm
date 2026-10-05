@@ -21,7 +21,7 @@
         <div class="row">
             
             <div class="col-sm-12 col-md-3">
-                <small class="text-muted">Nombre</small><br>
+                <small class="text-muted">{{ (agenda.tipoCliente is not null and agenda.tipoCliente.nombre == 'Empresa') ? 'Razón social' : 'Nombre' }}</small><br>
                 {{form_row(form.nombre,{'label':false,'attr':{'class':'form-control'}})}}
                 
             </div>
@@ -32,7 +32,7 @@
             </div>
             <div class="col-sm-12 col-md-3">
                 <small class="text-muted">Email *</small><br>
-                {{form_row(form.email,{'label':false,'attr':{'class':'form-control emailCliente','required':true,'autocomplete':"ÑÖcompletes"},"type":'email'})}}
+                {{form_row(form.email,{'label':false,'attr':{'class':'form-control emailCliente','required':true,'autocomplete':"ÑÖcompletes",'data-validar-correo':''},"type":'email'})}}
                 
             </div>
             <div class="col-sm-12 col-md-3">
@@ -266,8 +266,6 @@
                     <div class="col">{{form_row(form.isAbono,{'label':false,'attr':{'class':' chk-bono'}})}}</div>
                     <small class="text-muted textTotal">Paga el total *</small>
                     <div class="col divTotal">{{form_row(form.isTotal,{'label':false,'attr':{'class':' chk-total'}})}}</div>
-                     <small class="text-muted isIncorporacion">Incorporación *</small>
-                    <div class="col">{{form_row(form.isIncorporacion,{'label':false,'attr':{'class':' chk-incorporacion'}})}}</div>
         
                 </div>
                 <div class="row"> 
@@ -275,10 +273,6 @@
                         {{form_row(form.primeraCuota,{'label':false,'attr':{'class':'form-control primera-cuota number','required':true,'autocomplete':"ÑÖcompletes"}})}}
                         
                         <strong><label id="m-primera-cuota"></label></strong>
-                    </div>
-                    <div class="col">
-                        <input type="text" class="fecha-incorporacion form-control" name="txtFechaIncorporacion" required>
-                       
                     </div>
                 </div>
             </div>
@@ -346,9 +340,12 @@
                 </select>
             </div>
             <div class="col-sm-12 col-md-3 submateria">
-                <select name="cboSubMateria" class="form-control cboSubMateria"  >
-                    <option>Seleccione Servicio</option>
-                </select>
+                <div class="input-group">
+                    <select name="cboSubMateria" class="form-control cboSubMateria"  >
+                        <option>Seleccione Servicio</option>
+                    </select>
+                    <div class="input-group-append"><button type="button" class="btn btn-outline-primary" data-servicio-nuevo title="Agregar nuevo servicio"><i class="fas fa-plus"></i></button></div>
+                </div>
             </div>
             <div class="col-sm-12 col-md-3">
                 <div class="row no-gutters">
@@ -509,10 +506,6 @@
         {% endif %}
         {% if contrato.isTotal == true %}
             checkTotal();
-        {% endif %}
-        {% if contrato.isIncorporacion == true %}
-           
-            checkIncorporacion();
         {% endif %}
 
 
@@ -694,7 +687,7 @@
             return;
         }
         $.ajax({
-            url:"/estrategia_juridica/"+value+"/combo",
+            url:"/servicio/"+value+"/combo",
             type: "post",
             dataType: "html",
             cache: false,

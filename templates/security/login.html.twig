@@ -11,84 +11,153 @@
   <!-- reCAPTCHA -->
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="build/adminlte/plugins/fontawesome-free/css/all.min.css">
-  <!-- Ionicons -->
-  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
-  <!-- icheck bootstrap -->
-  <link rel="stylesheet" href="build/adminlte/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
-  <!-- Theme style -->
-  <link rel="stylesheet" href="build/adminlte/dist/css/adminlte.min.css">
-  <!-- Google Font: Source Sans Pro -->
-  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+  <link rel="stylesheet" href="/build/adminlte/plugins/fontawesome-free/css/all.min.css">
+  <style>.fondo-login {
+    position: relative;
+    overflow: hidden;
+    background: none !important;
+}
+
+/* Imagen de fondo */
+.fondo-login::before {
+    content: "";
+    position: fixed;
+    top: -20px;
+    left: -20px;
+    right: -20px;
+    bottom: -20px;
+
+    background-image: url('build/img/fondo.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+   /* filter: blur(8px);*/
+
+    transform: scale(1.05);
+    z-index: -2;
+}
+
+/* Capa oscura opcional */
+.fondo-login::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+
+    /*background: rgba(0, 0, 0, 0.20);*/
+
+    z-index: -1;
+}
+
+/* Mantener el login sobre el fondo */
+.fondo-login .login-box {
+    position: relative;
+    z-index: 1;
+}
+.fondo-login .login-logo, .fondo-login .login-logo a { color: #ffffff; text-shadow: 0 1px 8px rgb(0 0 0 / .45); }
+</style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/app.css?v={{ 'now'|date('YmdH') }}">
 </head>
-<body class="hold-transition login-page">
+<body class="hold-transition login-page fondo-login">
+
     <div class="login-box">
         <div class="login-logo">
-            <a href="#"><b>CRM</b> Legal</a>
+            <a href="#"><b>Lex</b>ONE</a>
         </div>
-
 
         <div class="card">
             <div class="card-body login-card-body">
                 <p class="login-box-msg">Inicia sesion</p>
+
                 <form method="post">
-                {% if error %}
-                    <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-                {% endif %}
-                {% if app.user %}
-                    <div class="mb-3">
-                        Ya estas logeado como {{ app.user.username }}, <a href="{{ path('app_logout') }}">Salir</a>
-                    </div>
-                {% endif %}
+
+                    {% if error %}
+                        <div class="alert alert-danger">
+                            {{ error.messageKey|trans(error.messageData, 'security') }}
+                        </div>
+                    {% endif %}
+
+                    {% if app.user %}
+                        <div class="mb-3">
+                            Ya estas logeado como {{ app.user.username }},
+                            <a href="{{ path('app_logout') }}">Salir</a>
+                        </div>
+                    {% endif %}
+
                     <div class="input-group mb-3">
-                        <input type="text" value="{{ last_username }}" name="username" id="inputUsername" class="form-control" placeholder="Usuario" required autofocus>
+                        <input type="text"
+                               value="{{ last_username }}"
+                               name="username"
+                               id="inputUsername"
+                               class="form-control"
+                               placeholder="Usuario"
+                               required
+                               autofocus>
+
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-envelope"></span>
                             </div>
                         </div>
                     </div>
+
                     <div class="input-group mb-3">
-                        <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
+                        <input type="password"
+                               name="password"
+                               id="inputPassword"
+                               class="form-control"
+                               placeholder="Password"
+                               required>
+
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-lock"></span>
                             </div>
                         </div>
                     </div>
+
                     <div class="row mb-3">
                         <div class="col-12">
-                            <div class="g-recaptcha" data-sitekey="{{ recaptcha_site_key }}"></div>
+                            <div class="g-recaptcha"
+                                 data-sitekey="{{ recaptcha_site_key }}">
+                            </div>
                         </div>
                     </div>
+
                     <div class="row">
                         <div class="col-8">
                             <div class="icheck-primary">
-                                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-                              
-                                <input type="checkbox" name="_remember_me"> 
-                                 <label for="remember">Recordar</label>
+                                <input type="hidden"
+                                       name="_csrf_token"
+                                       value="{{ csrf_token('authenticate') }}">
 
-                                       
-                           </div>
+                                <input type="checkbox"
+                                       name="_remember_me">
+
+                                <label for="remember">Recordar</label>
+                            </div>
                         </div>
-                          <!-- /.col -->
+
                         <div class="col-4">
-                           <button class="btn btn-primary btn-block" type="submit">
-                                        Ingresar
-                                    </button>
-                               
+                            <button class="btn btn-primary btn-block" type="submit">
+                                Ingresar
+                            </button>
                         </div>
-                          <!-- /.col -->
                     </div>
+
                 </form>
+
                 <p class="mb-1">
-                     <a href="{{path('app_forgot_password_request')}}" >Recuperar Password</a>
+                    <a href="{{ path('app_forgot_password_request') }}">
+                        Recuperar Password
+                    </a>
                 </p>
+
             </div>
-            <!-- /.login-card-body -->
         </div>
     </div>
-               
+
 </body>
 </html>

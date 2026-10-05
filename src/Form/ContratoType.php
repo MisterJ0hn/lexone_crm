@@ -24,6 +24,7 @@ class ContratoType extends AbstractType
             ->add('email', TextType::class, [
                 'mapped' => false,
                 'data' => $cliente ? $cliente->getCorreo() : null,
+                'constraints' => CorreoClienteConstraints::restricciones(),
             ])
             ->add('telefono', TextType::class, [
                 'mapped' => false,

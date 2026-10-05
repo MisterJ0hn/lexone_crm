@@ -1,0 +1,12 @@
+{% set ruta = app.request.attributes.get('_route') %}
+{% set actual = datos.page|default(1) %}
+{% set paginas = datos.total_pages|default(1) %}
+{% if paginas > 1 %}
+<div class="d-flex justify-content-between align-items-center mt-3">
+    <span class="text-muted small">Página {{ actual }} de {{ paginas }} ({{ datos.total }} registros)</span>
+    <div>
+        <a class="btn btn-sm btn-secondary {{ actual <= 1 ? 'disabled' }}" href="{{ path(ruta, app.request.query.all|merge({page: actual - 1})) }}">Anterior</a>
+        <a class="btn btn-sm btn-secondary {{ actual >= paginas ? 'disabled' }}" href="{{ path(ruta, app.request.query.all|merge({page: actual + 1})) }}">Siguiente</a>
+    </div>
+</div>
+{% endif %}

@@ -6,6 +6,7 @@
 <div class="row">
     <div class="col-sm-12 col-md-12">
         {{ include('cabezera.html.twig') }}
+        {{ include('contrato/_notas.html.twig') }}
 
         <div class="card">
             <div class="card-body">
@@ -20,6 +21,7 @@
                 </button>
             </div>
         </div>
+
 
         {% for grupo in clientes %}
         <div class="card">
@@ -41,7 +43,26 @@
                         </div>
                     </div>
                     <div class="card-body">
+                        <div class="mb-2">
+                            <button type="button" class="btn btn-sm btn-primary"
+                                onclick="abrirEditarCliente('{{ path('contrato_convenio_editar_cliente', {'id': contrato.id, 'cliente': grupo.cliente.id}) }}')">
+                                <i class="fas fa-edit"></i> Modificar datos
+                            </button>
+                        </div>
                         <div class="row">
+                            <div class="col-sm-12 col-md-3">
+                                <small class="text-muted">Rut</small><br>
+                                <label>{{ grupo.cliente.rut }}</label>
+                            </div>
+                            <div class="col-sm-12 col-md-3">
+                                <small class="text-muted">Clave única</small><br>
+                                <div class="input-group input-group-sm">
+                                    <input type="password" class="form-control" readonly value="{{ grupo.cliente.claveUnica }}" autocomplete="off">
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-outline-secondary" onclick="toggleClaveUnica(this)" title="Mostrar/ocultar"><i class="fas fa-eye"></i></button>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="col-sm-12 col-md-3">
                                 <small class="text-muted">Correo</small><br>
                                 <label>{{ grupo.cliente.correo }}</label>
@@ -90,9 +111,12 @@
                                 </select>
                             </div>
                             <div class="col-sm-12 col-md-2">
-                                <select class="form-control cboSubMateria-cliente">
-                                    <option value="">Seleccione Servicio</option>
-                                </select>
+                                <div class="input-group">
+                                    <select class="form-control cboSubMateria-cliente">
+                                        <option value="">Seleccione Servicio</option>
+                                    </select>
+                                    <div class="input-group-append"><button type="button" class="btn btn-outline-primary" data-servicio-nuevo title="Agregar nuevo servicio"><i class="fas fa-plus"></i></button></div>
+                                </div>
                             </div>
                             <div class="col-sm-12 col-md-3">
                                 <div class="row no-gutters">
@@ -151,7 +175,7 @@
                             <td><strong>{{ causa.materia.nombre }}</strong></td>
                             <td>{{ causa.causaNombre }}</td>
                             <td>                                
-                                {% if causa.materiaEstrategia %}{{ causa.materiaEstrategia.estrategiaJuridica }}{% endif %}
+                                {% if causa.servicio %}{{ causa.servicio }}{% endif %}
                             </td>
                             <td>{{ causa.letra }}-{{ causa.rol }}-{{ causa.anio }}</td>
                             <td>{{ causa.corte ? causa.corte.nombre : '' }}</td>
@@ -160,7 +184,7 @@
                                 <div class="btn-group btn-group-sm" role="group">
                                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal"
                                         data-whatever="@fat"
-                                        data-servicio="{{ causa.materiaEstrategia.estrategiaJuridica }}"
+                                        data-servicio="{{ causa.servicio }}"
                                         data-idcausa="{{ causa.idCausa }}"
                                         data-letra="{{ causa.letra }}"
                                         data-rol="{{ causa.rol }}"
@@ -197,7 +221,7 @@
         <div class="modal-content">
             {{ form_start(formNuevoCliente, {'action': path('contrato_convenio_nuevo_cliente', {'id': contrato.id}), 'method': 'post'}) }}
             <div class="modal-header">
-                <h5 class="modal-title">Nuevo Cliente</h5>
+                <h5 class="modal-title">{{ tipoCliente == 'Convenio' ? 'Datos nuevo convenio' : 'Datos nueva empresa' }}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -205,60 +229,65 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-sm-12 col-md-4">
-                        <small class="text-muted">Nombre</small>
+                        <small class="text-muted">{{ (tipoCliente == 'Empresa') ? 'Razón social' : 'Nombre' }} *</small>
                         {{ form_widget(formNuevoCliente.nombre, {'attr': {'class': 'form-control'}}) }}
                     </div>
                     <div class="col-sm-12 col-md-4">
-                        <small class="text-muted">Rut</small>
+                        <small class="text-muted">Rut *</small>
                         {{ form_widget(formNuevoCliente.rut, {'attr': {'class': 'form-control format-rut'}}) }}
                     </div>
                     <div class="col-sm-12 col-md-4">
-                        <small class="text-muted">Correo</small>
-                        {{ form_widget(formNuevoCliente.correo, {'attr': {'class': 'form-control mail-format'}}) }}
+                        <small class="text-muted">Correo *</small>
+                        {{ form_widget(formNuevoCliente.correo, {'attr': {'class': 'form-control mail-format', 'data-validar-correo': ''}}) }}
                     </div>
                     <div class="col-sm-12 col-md-4">
-                        <small class="text-muted">Teléfono</small>
+                        <small class="text-muted">Teléfono *</small>
                         {{ form_widget(formNuevoCliente.telefono, {'attr': {'class': 'form-control telefonoCliente'}}) }}
                     </div>
                     {% if formNuevoCliente.sexo is defined %}
                     <div class="col-sm-12 col-md-4">
-                        <small class="text-muted">Sexo</small>
+                        <small class="text-muted">Sexo *</small>
                         {{ form_widget(formNuevoCliente.sexo, {'attr': {'class': 'form-control'}}) }}
                     </div>
                     {% endif %}
                     <div class="col-sm-12 col-md-4">
-                        <small class="text-muted">Nacionalidad</small>
+                        <small class="text-muted">Nacionalidad *</small>
                         {{ form_widget(formNuevoCliente.nacionalidad, {'attr': {'class': 'form-control'}}) }}
                     </div>
                     <div class="col-sm-12 col-md-4">
-                        <small class="text-muted">Región</small>
+                        <small class="text-muted">Región *</small>
                         {{ form_widget(formNuevoCliente.region, {'attr': {'class': 'form-control region-cliente', 'onchange': 'cambiaRegionCliente(this)'}}) }}
                     </div>
                     <div class="col-sm-12 col-md-4">
-                        <small class="text-muted">Ciudad</small>
+                        <small class="text-muted">Ciudad *</small>
                         {{ form_widget(formNuevoCliente.ciudad, {'attr': {'class': 'form-control ciudad-cliente', 'onchange': 'cambiaCiudadCliente(this)'}}) }}
                     </div>
                     <div class="col-sm-12 col-md-4">
-                        <small class="text-muted">Comuna</small>
+                        <small class="text-muted">Comuna *</small>
                         {{ form_widget(formNuevoCliente.comuna, {'attr': {'class': 'form-control comuna-cliente'}}) }}
                     </div>
                     <div class="col-sm-12 col-md-6">
-                        <small class="text-muted">Dirección</small>
+                        <small class="text-muted">Dirección *</small>
                         {{ form_widget(formNuevoCliente.direccion, {'attr': {'class': 'form-control'}}) }}
                     </div>
                     {% if formNuevoCliente.estadoCivil is defined %}
                     <div class="col-sm-12 col-md-4">
-                        <small class="text-muted">Estado Civil</small>
+                        <small class="text-muted">Estado Civil *</small>
                         {{ form_widget(formNuevoCliente.estadoCivil, {'attr': {'class': 'form-control'}}) }}
                     </div>
                     {% endif %}
                     <div class="col-sm-12 col-md-4">
-                        <small class="text-muted">Reunión</small>
+                        <small class="text-muted">Reunión *</small>
                         {{ form_widget(formNuevoCliente.reunion, {'attr': {'class': 'form-control'}}) }}
                     </div>
                     <div class="col-sm-12 col-md-4">
                         <small class="text-muted">Clave única</small>
-                        {{ form_widget(formNuevoCliente.claveUnica, {'attr': {'class': 'form-control'}}) }}
+                        <div class="input-group">
+                            {{ form_widget(formNuevoCliente.claveUnica, {'type': 'password', 'attr': {'class': 'form-control', 'autocomplete': 'new-password'}}) }}
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-outline-secondary" onclick="toggleClaveUnica(this)" title="Mostrar/ocultar"><i class="fas fa-eye"></i></button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -275,9 +304,12 @@
                         </select>
                     </div>
                     <div class="col-sm-12 col-md-3 submateria-convenio">
-                        <select name="cboSubMateria" class="form-control cboSubMateria-convenio" required>
-                            <option value="">Seleccione Servicio</option>
-                        </select>
+                        <div class="input-group">
+                            <select name="cboSubMateria" class="form-control cboSubMateria-convenio" required>
+                                <option value="">Seleccione Servicio</option>
+                            </select>
+                            <div class="input-group-append"><button type="button" class="btn btn-outline-primary" data-servicio-nuevo title="Agregar nuevo servicio"><i class="fas fa-plus"></i></button></div>
+                        </div>
                     </div>
                     <div class="col-sm-12 col-md-4">
                         <div class="row no-gutters">
@@ -315,6 +347,21 @@
                 <button type="submit" class="btn btn-primary">Guardar</button>
             </div>
             {{ form_end(formNuevoCliente) }}
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Modificar datos del cliente (el formulario se carga por AJAX) -->
+<div class="modal fade" id="modalEditarCliente" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modificar datos</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="contenidoEditarCliente"></div>
         </div>
     </div>
 </div>
@@ -394,6 +441,47 @@
 <script>
     $(".format-rut").rut();
 
+    // Muestra/oculta la clave única (input hermano dentro del input-group).
+    function toggleClaveUnica(btn){
+        var $input = $(btn).closest('.input-group').find('input');
+        var visible = $input.attr('type') === 'text';
+        $input.attr('type', visible ? 'password' : 'text');
+        $(btn).find('i').toggleClass('fa-eye', visible).toggleClass('fa-eye-slash', !visible);
+    }
+
+    // Modal de edición del cliente: carga el formulario por AJAX.
+    function abrirEditarCliente(url){
+        $("#contenidoEditarCliente").html('<div class="modal-body">Cargando...</div>');
+        $("#modalEditarCliente").modal('show');
+        $.get(url, function(html){
+            $("#contenidoEditarCliente").html(html);
+            $("#contenidoEditarCliente .format-rut-edit").rut();
+        }).fail(function(){
+            $("#contenidoEditarCliente").html('<div class="modal-body text-danger">No se pudo cargar el formulario.</div>');
+        });
+    }
+
+    function cambiaRegionEditar(select){
+        var $f = $(select).closest('form');
+        var $ciudad = $f.find('select[name$="[ciudad]"]');
+        var $comuna = $f.find('select[name$="[comuna]"]');
+        $comuna.html('<option value="">Seleccione Comuna</option>');
+        if(!$(select).val()){
+            $ciudad.html('<option value="">Seleccione Ciudad</option>');
+            return;
+        }
+        $.get("/contrato/"+$(select).val()+"/ciudad_combo", function(data){ $ciudad.html(data); });
+    }
+
+    function cambiaCiudadEditar(select){
+        var $comuna = $(select).closest('form').find('select[name$="[comuna]"]');
+        if(!$(select).val()){
+            $comuna.html('<option value="">Seleccione Comuna</option>');
+            return;
+        }
+        $.get("/contrato/"+$(select).val()+"/comuna_combo", function(data){ $comuna.html(data); });
+    }
+
     // Cascada Región -> Ciudad -> Comuna del cliente propio (modal "Nuevo Cliente").
     function cambiaRegionCliente(select){
         var regionId = $(select).val();
@@ -441,7 +529,7 @@
             return;
         }
         $.ajax({
-            url:"/estrategia_juridica/"+materiaId+"/combo",
+            url:"/servicio/"+materiaId+"/combo",
             type: "post",
             dataType: "html",
             cache: false,
@@ -523,7 +611,7 @@
             return;
         }
         $.ajax({
-            url: "/estrategia_juridica/"+materiaId+"/combo",
+            url: "/servicio/"+materiaId+"/combo",
             type: "post",
             dataType: "html",
             cache: false,

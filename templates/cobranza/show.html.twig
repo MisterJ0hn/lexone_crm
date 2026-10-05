@@ -90,7 +90,7 @@
     
                 <div class="col-sm-12 col-md-4">
                     <small class="text-muted">Estrategia Juridica</small>
-                    <p>{{contrato.estrategiaJuridica}}</p>   
+                    <p>{% for c in contrato.agenda.causas %}{{ c.servicio }}{% if not loop.last %}, {% endif %}{% endfor %}</p>   
                 </div>
                 <div class="col-sm-12 col-md-4">
                     <small class="text-muted">Escritura</small>

@@ -1,0 +1,25 @@
+/* Ajustes de plugins de terceros (Select2, daterangepicker, FullCalendar, SweetAlert2) para que
+   convivan con el estilo sobrio de la app. Sin capas, para ganar a las hojas de cada plugin. */
+.select2-container { width: 100% !important; }
+.select2-container--bootstrap4 .select2-selection,
+.select2-container--default .select2-selection--single,
+.select2-container--default .select2-selection--multiple {
+  min-height: 2.125rem; border: 1px solid var(--color-slate-300); border-radius: .5rem; background: #fff; font-size: .8125rem;
+}
+.select2-container--bootstrap4.select2-container--focus .select2-selection,
+.select2-container--default.select2-container--focus .select2-selection--multiple {
+  border-color: var(--color-primary-500); box-shadow: 0 0 0 3px rgb(66 104 159 / .2);
+}
+.select2-container--bootstrap4 .select2-selection--single .select2-selection__rendered { line-height: 2rem; color: var(--color-slate-800); }
+.select2-container--bootstrap4 .select2-results__option--highlighted[aria-selected] { background: var(--color-primary-700); }
+.select2-dropdown { border-color: var(--color-slate-200); border-radius: .5rem; box-shadow: 0 8px 24px rgb(15 23 42 / .12); }
+.daterangepicker { font-family: inherit; font-size: .8125rem; border: 1px solid var(--color-slate-200); border-radius: .75rem; box-shadow: 0 8px 24px rgb(15 23 42 / .12); }
+.daterangepicker td.active, .daterangepicker td.active:hover { background-color: var(--color-primary-700); }
+.daterangepicker .btn-primary, .daterangepicker .applyBtn { background: var(--color-primary-700); border-color: var(--color-primary-700); color: #fff; }
+.fc { font-size: .8125rem; }
+.fc .fc-toolbar-title { font-size: 1.125rem; font-weight: 600; color: var(--color-slate-900); }
+.fc .fc-button-primary { background: var(--color-primary-700); border-color: var(--color-primary-700); }
+.fc .fc-button-primary:hover { background: var(--color-primary-800); border-color: var(--color-primary-800); }
+.swal2-popup { font-family: inherit; border-radius: .75rem; }
+.swal2-styled.swal2-confirm { background: var(--color-primary-700) !important; border-radius: .5rem; }
+.dz-message, .dropzone { border-radius: .75rem; border: 1.5px dashed var(--color-slate-300); background: var(--color-slate-50); }

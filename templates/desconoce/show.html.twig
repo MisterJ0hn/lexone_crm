@@ -4,14 +4,14 @@
 
 {% block body %}
 <div class="row">
-    <div class="col-sm-12 col-md-8">
+    <div class="col-sm-12 col-md-9">
     <div class="card">
         <div class="card-body table-responsive pad">
            
             <h4>Datos Cliente</h4>
             <div class="row">
                 <div class="col-sm-12 col-md-3">
-                    <small class="text-muted">Nombre</small><br>
+                    <small class="text-muted">{{ (contrato.agenda.tipoCliente is not null and contrato.agenda.tipoCliente.nombre == 'Empresa') ? 'Razón social' : 'Nombre' }}</small><br>
                     <p>{{contrato.cliente.nombre}}</p>                    
                 </div>
                 <div class="col-sm-12 col-md-3">
@@ -90,7 +90,7 @@
     
                 <div class="col-sm-12 col-md-4">
                     <small class="text-muted">Estrategia Juridica</small>
-                    <p>{{contrato.estrategiaJuridica}}</p>   
+                    <p>{% for c in contrato.agenda.causas %}{{ c.servicio }}{% if not loop.last %}, {% endif %}{% endfor %}</p>   
                 </div>
                 <div class="col-sm-12 col-md-4">
                     <small class="text-muted">Escritura</small>
@@ -184,51 +184,19 @@
     </div>
 
 </div>
-<div class="col-sm-12 col-md-4">
+<div class="col-sm-12 col-md-3">
     <!-- Main content -->
-    <section class="content">
-        <div class="container-fluid">
-    
-        <!-- Timelime example  -->
-            <div class="row">
-                <div class="col-md-12">
-                <!-- The time line -->
-                    <div class="timeline">
-                        <!-- timeline time label -->
-                        <div class="time-label">
-                        <span class="bg-red">{{agenda.fechaCarga|date('d-m-Y H:i')}}</span>
-                        </div>
-                        <!-- /.timeline-label -->
-                        <!-- timeline item -->
-                        {% for observacion in agenda.agendaObservacions %}
-                            
-                        
-                        <div class="time-label">
-                            <span class="bg-green">{{observacion.fechaRegistro|date('d-m-Y')}}</span>
-                        </div>
-                        <div>
-                            <i class="fas fa-envelope bg-blue"></i>
-                            <div class="timeline-item">
-                                <span class="time"><i class="fas fa-clock"></i>{{observacion.fechaRegistro|date('h:i')}}</span>
-                                <h3 class="timeline-header"><a href="#">{{observacion.status}}</a> {{observacion.usuarioRegistro}} </h3>
+    {% set itemsHistorial = [] %}
+{% for o in agenda.agendaObservacions %}
+    {% set itemsHistorial = itemsHistorial|merge([{
+        fecha: o.fechaRegistro,
+        titulo: ('' ~ o.status) ~ (o.subStatus is defined and o.subStatus ? ' ' ~ o.subStatus : ''),
+        usuario: '' ~ o.usuarioRegistro,
+        texto: o.observacion
+    }]) %}
+{% endfor %}
+{{ include('components/_historial_panel.html.twig', {items: itemsHistorial, origen: {fecha: agenda.fechaCarga, etiqueta: 'Carga de la agenda'}, titulo: 'Histórico', id: 'historial'}) }}
 
-                                <div class="timeline-body">
-                                    {{observacion.observacion}}
-                                </div>
-                               
-                            </div>
-                        </div>
-                        {% endfor %}
-                        <div>
-                            <i class="fas fa-clock bg-gray"></i>
-                          </div>
-                    </div>
-                    
-                </div>
-                
-            </div>
-        </div>
-    </section>
     </div>
 </div>
     <script>

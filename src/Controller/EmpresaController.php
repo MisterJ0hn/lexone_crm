@@ -80,6 +80,12 @@ class EmpresaController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Password de api-pjud: no se muestra en el formulario; vacío = conservar la actual.
+            $pjudPassword = (string) $form->get('pjudPassword')->getData();
+            if ($pjudPassword !== '') {
+                $empresa->setPjudPassword($pjudPassword);
+            }
+
             /** @var Logo $logoFile */
             $logoFile = $form['logo']->getData();
             
@@ -179,7 +185,12 @@ class EmpresaController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-           
+            // Password de api-pjud: no se muestra en el formulario; vacío = conservar la actual.
+            $pjudPassword = (string) $form->get('pjudPassword')->getData();
+            if ($pjudPassword !== '') {
+                $empresa->setPjudPassword($pjudPassword);
+            }
+
             $logoFile = $form['logo']->getData();
 
             if ($logoFile) {
@@ -311,8 +322,11 @@ class EmpresaController extends AbstractController
             
             
            
-            foreach ($empresa->getEstrategiaJuridicas() as $estrategiaJuridica) {
-                $entityManager->remove($estrategiaJuridica);
+            // Datos propios de la empresa que referencian empresa_id (FK obligatoria).
+            foreach ([\App\Entity\EstadoProcesal::class, \App\Entity\Servicio::class, \App\Entity\CorreoBienvenida::class] as $clase) {
+                foreach ($entityManager->getRepository($clase)->findBy(['empresa' => $empresa]) as $registro) {
+                    $entityManager->remove($registro);
+                }
                 $entityManager->flush();
             }
             foreach ($empresa->getEscrituras() as $escritura) {

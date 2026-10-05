@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Servicios{% endblock %}
+
+{% block body %}
+<div class="card">
+    <div class="card-header">Materia</div>
+    <div class="card-body">
+        <strong>{{ materia.nombre }}</strong>
+    </div>
+</div>
+
+{{ form_start(form) }}
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-12 col-md-6">
+                <small class="text-muted">Servicio</small>
+                {{ form_widget(form.nombre, {'attr': {'class': 'form-control', 'maxlength': '255'}}) }}
+                {{ form_errors(form.nombre) }}
+            </div>
+            <div class="col-sm-12 col-md-3">
+                <small class="text-muted">Precio</small>
+                {{ form_widget(form.precio, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <div class="col-sm-12 col-md-3 d-flex align-items-end">
+                <button class="btn btn-success">Agregar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{{ form_end(form) }}
+
+<div class="card">
+    <div class="card-header">Servicios de {{ materia.nombre }}</div>
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr><th>Id</th><th>Servicio</th><th>Precio</th><th>Acciones</th></tr>
+            </thead>
+            <tbody>
+            {% for servicio in servicios %}
+                <tr>
+                    <td>{{ servicio.id }}</td>
+                    <td>{{ servicio.nombre }}</td>
+                    <td>{{ servicio.precio is not null ? servicio.precio|number_format(0, ',', '.') : '' }}</td>
+                    <td>
+                        <a href="{{ path('servicio_edit', {'id': servicio.id}) }}" class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></a>
+                        <form method="post" action="{{ path('servicio_delete', {'id': servicio.id}) }}" class="d-inline" onsubmit="return confirm('¿Eliminar este servicio?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ servicio.id) }}">
+                            <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="4">No hay servicios para esta materia.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

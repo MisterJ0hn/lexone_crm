@@ -1,0 +1,48 @@
+services:
+  php:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    volumes:
+      - .:/var/www/html
+    environment:
+      APP_ENV: prod
+      APP_DEBUG: "1"
+      # La base de datos vive en la maquina local (host), no en un contenedor.
+      # host.docker.internal resuelve al host desde dentro del contenedor.
+      DATABASE_URL: "mysql://ejamtest:quL9Vd6gYoShtIIN@host.docker.internal:3306/codi_ejamtest_php8?serverVersion=5.7&charset=utf8mb4"
+      WKHTMLTOPDF_PATH: /usr/bin/wkhtmltopdf
+      WKHTMLTOIMAGE_PATH: /usr/bin/wkhtmltoimage
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - lexone
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "9096:80"
+    volumes:
+      - .:/var/www/html:ro
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    # Evita "pwrite() /run/nginx.pid failed: Operation not permitted" en hosts
+    # con kernels viejos (p.ej. CentOS 7): /run y las rutas de cache de nginx
+    # quedan como tmpfs propio del contenedor en vez de depender del kernel host.
+    tmpfs:
+      - /run
+      - /var/cache/nginx
+      - /var/run
+    # El kernel 3.10 (CentOS 7) no soporta una syscall que el perfil seccomp
+    # por defecto de Docker bloquea con EPERM en vez de dejarla pasar. Sin esto,
+    # nginx muere al arrancar con "pwrite() /run/nginx.pid failed" aunque /run
+    # ya sea tmpfs propio.
+    security_opt:
+      - seccomp:unconfined
+    depends_on:
+      - php
+    networks:
+      - lexone
+
+networks:
+  lexone:
+    driver: bridge

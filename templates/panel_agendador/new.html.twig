@@ -4,7 +4,7 @@
 
 {% block body %}
 <div class="row">
-    <div class="col-sm-12 col-md-8 ">
+    <div class="col-sm-12 col-md-9 ">
     <section class="sticky-top">
         <div class="card">
             <div class="card-body table-responsive pad">
@@ -160,55 +160,19 @@
         </div>
     </section>
     </div>
-    <div class="col-sm-12 col-md-4">
+    <div class="col-sm-12 col-md-3">
     <!-- Main content -->
-    <section class="content">
-        <div class="container-fluid">
-        
-        <!-- Timelime example  -->
-            <div class="row">
-                <div class="col-md-12">
-                <!-- The time line -->
-                    <div class="timeline">
-                        <!-- timeline time label -->
-                        <div class="time-label">
-                        <span class="bg-red">{{agenda.fechaCarga|date('d-m-Y H:i')}}</span>
-                        </div>
-                        <!-- /.timeline-label -->
-                        <!-- timeline item -->
-                        {% for observacion in agenda.agendaObservacions %}
-                            
-                        
-                        <div class="time-label">
-                            <span class="bg-green">{{observacion.fechaRegistro|date('d-m-Y')}}</span>
-                        </div>
-                        <div>
-                            <i class="fas fa-envelope bg-blue"></i>
-                            <div class="timeline-item">
-                                <span class="time"><i class="fas fa-clock"></i>{{observacion.fechaRegistro|date('H:i')}}</span>
-                                <h3 class="timeline-header"><a href="#">{{observacion.status}} 
-                                {% if observacion.subStatus is defined %}
-                                    {{ observacion.subStatus }}
-                                {% endif %}
-                                </a>{{observacion.usuarioRegistro}} </h3>
+    {% set itemsHistorial = [] %}
+{% for o in agenda.agendaObservacions %}
+    {% set itemsHistorial = itemsHistorial|merge([{
+        fecha: o.fechaRegistro,
+        titulo: ('' ~ o.status) ~ (o.subStatus is defined and o.subStatus ? ' ' ~ o.subStatus : ''),
+        usuario: '' ~ o.usuarioRegistro,
+        texto: o.observacion
+    }]) %}
+{% endfor %}
+{{ include('components/_historial_panel.html.twig', {items: itemsHistorial, origen: {fecha: agenda.fechaCarga, etiqueta: 'Carga de la agenda'}, titulo: 'Histórico', id: 'historial'}) }}
 
-                                <div class="timeline-body">
-                                    {{observacion.observacion}}
-                                </div>
-                               
-                            </div>
-                        </div>
-                        {% endfor %}
-                        <div>
-                            <i class="fas fa-clock bg-gray"></i>
-                          </div>
-                    </div>
-                    
-                </div>
-                
-            </div>
-        </div>
-    </section>
     </div>
 </div>
     <!-- Modal -->

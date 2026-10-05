@@ -76,91 +76,60 @@
                 <div class="card">
                     <div class="card-body">
                         <h3>Estado Procesal</h3>
-                        <div class="row">
-                        <table class="table table-sm" style="width:600px !important">
-                        {% if causa.materiaEstrategia and causa.materiaEstrategia.estrategiaJuridica.lineaTiempo is not null %}
-                        {% set utilizado = 0 %}
-                            {% for etapa in causa.materiaEstrategia.estrategiaJuridica.lineaTiempo.lineaTiempoEtapas %}
-                                {% set pendiente = 1 %}
-                                <tr>
-                                    <td style="padding-right: 15px;padding-bottom: 15px;">
-                                    {% for terminado in terminados %}
-                                        {% if terminado.lineaTiempoEtapas.id == etapa.id %}
-                                            {% set pendiente=0 %}
-                                        {% endif %}
-                                    {% endfor %}
-                                    {% if pendiente==0  %}
-                                        <a href="" class="btn btn-sm btn-success"><i class="fas fa-check-circle"></i></a>
-                                        
+                        <table class="table table-sm" style="max-width:800px">
+                        {% for estado in estadosProcesales %}
+                            <tr>
+                                <td style="width:60px; padding-bottom:12px;">
+                                    {% if estado.completado %}
+                                        <span class="btn btn-sm btn-success" title="Completado"><i class="fas fa-check-circle"></i></span>
                                     {% else %}
-                                    <form  id="frmObservacion{{etapa.id}}" method="post" action="{{path('contrato_linea_tiempo_observacion',{'id':causa.id}) }}" >
-                                        <button type="button"  class="btn btn-sm btn-danger" onclick="javascript:finalizarEtapa({{etapa.id}});"><i class="fas fa-times"></i></button>
-                                        <input type="hidden" value="1" name="hdEstado" class="hdEstado">
-                                        <input type="hidden" value="{{etapa.id}}" name="hdEtapa">
-                                        <input type="hidden" value=" " name="txtObservacion">
-                                    </form> 
+                                        <form method="post" action="{{ path('contrato_estado_procesal_completar', {'id': estado.id}) }}" onsubmit="return confirm('¿Marcar este estado como completado?');">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('estado_procesal' ~ causa.id) }}">
+                                            <button type="submit" class="btn btn-sm btn-danger" title="Pendiente: clic para completar"><i class="fas fa-times"></i></button>
+                                        </form>
                                     {% endif %}
-                                    
                                 </td>
                                 <td>
-                               
-                                    {{etapa.nombre}}
+                                    <strong>{{ estado.nombre }}</strong>
+                                    {% if estado.observacion %}<br><small class="text-muted">{{ estado.observacion }}</small>{% endif %}
                                 </td>
-                                </tr>
-                                
-                                
-                                
-                            {% endfor %}
-                        {% else %}
-                            <tr>
-                                <td colspan="2"><h1 class="display-4 text-warning">El servicio no tiene Linea de tiempo asignada</h1></td></tr>
-                        {% endif %}
-                        </table>   
+                                <td class="text-muted text-nowrap"><small>{{ (estado.fechaCompletado ?: estado.fecha)|date('d-m-Y H:i') }}</small></td>
+                            </tr>
+                        {% endfor %}
+                        </table>
+
+                        {% if causa.estado %}
+                        <div class="mt-2">
+                            <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#nuevoEstadoProcesal" title="Agregar estado procesal"><i class="fas fa-plus"></i></button>
+                            <form method="post" action="{{ path('contrato_estado_procesal_finalizar', {'id': causa.id}) }}" class="d-inline" onsubmit="return confirm('¿Finalizar esta causa?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('estado_procesal' ~ causa.id) }}">
+                                <button type="submit" class="btn btn-success">Finalizar</button>
+                            </form>
                         </div>
-                        
-                        
+                        <div class="collapse mt-3" id="nuevoEstadoProcesal">
+                            <form method="post" action="{{ path('contrato_estado_procesal_agregar', {'id': causa.id}) }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token('estado_procesal' ~ causa.id) }}">
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-4">
+                                        <input type="text" name="txtNombre" class="form-control" placeholder="Nombre del estado procesal" maxlength="255" required>
+                                    </div>
+                                    <div class="col-sm-12 col-md-6">
+                                        <input type="text" name="txtObservacion" class="form-control" placeholder="Observación (opcional)">
+                                    </div>
+                                    <div class="col-sm-12 col-md-2">
+                                        <button type="submit" class="btn btn-primary">Agregar</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        {% else %}
+                        <span class="badge badge-secondary mt-2">Causa finalizada</span>
+                        {% endif %}
                     </div>
                 </div>
             </div>
-            
         </div>
     </div>
     
 </div>
-<div  style="visibility:hidden">            
-                            <form  id="frmObservacion" method="post" action="{{path('contrato_linea_tiempo_observacion',{'id':causa.id}) }}" onsubmit="return confirm('Estas seguro de ingresar este estado a la Causa?');">
-                                <div class="row">
-                                    <div class="col-12">
-                                        <textarea name="txtObservacion" col="10" class="form-control" required></textarea>
-                                    </div>
-                                    <div class="col-6">
-                                        <button type="button" class="btn btn-danger btnPendiente">Pendiente</button>
-                                    </div>
-                                    <div class="col-6">
-                                        <button type="button" class="btn btn-success btnFinalizado">Finalizado</button>
-                                    </div>
-                                </div>  
-                                <input type="hidden" value="" name="hdEstado" class="hdEstado">  
-                            </form>               
-                        </div>
-<script>
-    $(".btnPendiente").click(function(){
-        //$('.hdEstado').val(0);
-        $("#frmObservacion").submit();
-    });
-    $(".btnFinalizado").click(function(){
-        //$('.hdEstado').val(1);
-        $("#frmObservacion").submit();
-    });
-    function finalizarEtapa(form){
-        if(confirm('Confirma Actualización?')){
-            $("#frmObservacion"+form).submit();
-        }else{
-           
-            location.reload();
-            
-        }
-    }
-
-</script>
 {% endblock %}

@@ -97,6 +97,21 @@ class Cliente
     #[ORM\ManyToOne(targetEntity: Reunion::class)]
     private $reunion;
 
+    /**
+     * Representante legal (solo Convenio/Empresa).
+     */
+    #[ORM\Column(type: "encrypted_string", length: 255, nullable: true)]
+    private $repLegalRut;
+
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private $repLegalNombre;
+
+    #[ORM\ManyToOne(targetEntity: EstadoCivil::class)]
+    private $repLegalEstadoCivil;
+
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private $repLegalProfesion;
+
 
     public function __construct()
     {
@@ -339,6 +354,54 @@ class Cliente
     public function setEstadoCivil(?EstadoCivil $estadoCivil): self
     {
         $this->estadoCivil = $estadoCivil;
+
+        return $this;
+    }
+
+    public function getRepLegalRut(): ?string
+    {
+        return $this->repLegalRut;
+    }
+
+    public function setRepLegalRut(?string $repLegalRut): self
+    {
+        $this->repLegalRut = $repLegalRut;
+
+        return $this;
+    }
+
+    public function getRepLegalNombre(): ?string
+    {
+        return $this->repLegalNombre;
+    }
+
+    public function setRepLegalNombre(?string $repLegalNombre): self
+    {
+        $this->repLegalNombre = $repLegalNombre;
+
+        return $this;
+    }
+
+    public function getRepLegalEstadoCivil(): ?EstadoCivil
+    {
+        return $this->repLegalEstadoCivil;
+    }
+
+    public function setRepLegalEstadoCivil(?EstadoCivil $repLegalEstadoCivil): self
+    {
+        $this->repLegalEstadoCivil = $repLegalEstadoCivil;
+
+        return $this;
+    }
+
+    public function getRepLegalProfesion(): ?string
+    {
+        return $this->repLegalProfesion;
+    }
+
+    public function setRepLegalProfesion(?string $repLegalProfesion): self
+    {
+        $this->repLegalProfesion = $repLegalProfesion;
 
         return $this;
     }

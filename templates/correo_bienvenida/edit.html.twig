@@ -1,0 +1,158 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Correo de Bienvenida{% endblock %}
+
+{% block body %}
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Correo de Bienvenida - {{ tipo }}</h3>
+    </div>
+    <div class="card-body">
+        {{ form_start(form) }}
+        <div class="row">
+            <div class="col-md-4">{{ form_row(form.remitenteNombre, {'attr': {'class': 'form-control'}}) }}</div>
+            <div class="col-md-4">{{ form_row(form.remitenteCorreo, {'attr': {'class': 'form-control'}}) }}</div>
+            <div class="col-md-4">{{ form_row(form.asunto, {'attr': {'class': 'form-control'}}) }}</div>
+            <div class="col-md-12">
+                {{ form_row(form.archivo, {'attr': {'accept': '.html,.htm'}}) }}
+                <small class="text-muted">Si sube un archivo, su contenido reemplaza al del cuadro de texto al guardar.</small>
+            </div>
+            <div class="col-md-12">
+                {{ form_row(form.imagenArchivo, {'attr': {'accept': 'image/png,image/jpeg,image/gif'}}) }}
+                <small class="text-muted">PNG, JPG o GIF, máx. 2 MB. Se incrusta en el correo; úsela en el HTML así: <code>&lt;img src="{{ '{{imagen}}' }}" alt="Logo"&gt;</code></small>
+                {% if correo.imagen %}
+                    <div class="mt-1">Imagen actual: <code>{{ correo.imagen }}</code> {{ form_widget(form.quitarImagen) }} {{ form_label(form.quitarImagen) }}</div>
+                {% else %}
+                    {% do form.quitarImagen.setRendered %}
+                {% endif %}
+            </div>
+            <div class="col-md-8 mt-2">{{ form_row(form.contenido, {'attr': {'class': 'form-control', 'rows': 18, 'style': 'font-family: monospace;'}}) }}</div>
+            <div class="col-md-4 mt-2">
+                <strong>Variables disponibles</strong>
+                <ul class="small pl-3">
+                    {% for token, descripcion in variables %}
+                        <li><code>{{ token }}</code> {{ descripcion }}</li>
+                    {% endfor %}
+                </ul>
+                <small class="text-muted">Las variables también funcionan en el asunto.</small>
+            </div>
+            <div class="col-md-12 mt-2">{{ form_row(form.activo) }}</div>
+        </div>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <button type="button" class="btn btn-outline-primary" id="btnVistaPrevia" data-side-panel-open="vistaPreviaRaiz"><i class="fas fa-eye"></i> Vista previa</button>
+        <a href="{{ path('correo_bienvenida_index') }}" class="btn btn-secondary">Volver</a>
+        {{ form_end(form) }}
+    </div>
+</div>
+
+{# Vista previa: se arma en el navegador con lo que hay en el formulario (aunque no esté guardado), con datos de ejemplo.
+   El HTML va en un iframe aislado (sandbox sin scripts) para que un template no pueda ejecutar código en la aplicación. #}
+<div id="vistaPreviaRaiz" hidden>
+    <div class="side-panel-fondo" data-side-panel-close aria-hidden="true"></div>
+    <aside class="side-panel" tabindex="-1" role="dialog" aria-modal="true" aria-label="Vista previa del correo">
+        <header>
+            <h2>Vista previa del correo</h2>
+            <button type="button" class="side-panel-cerrar" data-side-panel-close aria-label="Cerrar el panel">&times;</button>
+        </header>
+        <div class="side-panel-cuerpo" style="display:flex; flex-direction:column;">
+            <div class="mb-3 text-[13px]">
+                <div><span class="text-muted">De:</span> <strong id="vpDe"></strong></div>
+                <div><span class="text-muted">Asunto:</span> <strong id="vpAsunto"></strong></div>
+            </div>
+            <iframe id="vpMarco" title="Vista previa" sandbox="" style="flex:1; min-height:60vh; width:100%; border:1px solid #e2e8f0; border-radius:.5rem; background:#fff;"></iframe>
+            <small class="text-muted mt-2">Datos de ejemplo. Así se verá el correo; el cliente real verá sus propios datos.</small>
+
+            <div class="side-panel-nueva mt-3 mb-0">
+                <label for="vpDestino">Enviar prueba a</label>
+                <div class="input-group">
+                    <input type="email" id="vpDestino" class="form-control" placeholder="correo@ejemplo.cl" autocomplete="off">
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-primary" id="vpEnviar"><i class="fas fa-paper-plane"></i> Enviar prueba</button>
+                    </div>
+                </div>
+                <small class="text-muted d-block mt-1">Se envía con los datos de ejemplo y el contenido de esta pantalla (no hace falta guardar). El asunto lleva el prefijo [PRUEBA].</small>
+                <div id="vpEstado" class="small mt-2" role="status"></div>
+            </div>
+        </div>
+    </aside>
+</div>
+
+<script>
+(function () {
+    var ejemplo = {{ ejemplo|json_encode|raw }};
+    var imagenGuardada = {{ imagenDatos|json_encode|raw }};
+    var $ = jQuery;
+
+    function reemplazar(texto, imagen) {
+        var valores = $.extend({}, ejemplo, { '{{ '{{imagen}}' }}': imagen || '' });
+        Object.keys(valores).forEach(function (k) { texto = texto.split(k).join(valores[k]); });
+        return texto;
+    }
+    function leer(archivo, comoTexto) {
+        return new Promise(function (ok) {
+            var r = new FileReader();
+            r.onload = function () { ok(r.result); };
+            r.onerror = function () { ok(null); };
+            comoTexto ? r.readAsText(archivo) : r.readAsDataURL(archivo);
+        });
+    }
+
+    $('#btnVistaPrevia').on('click', async function () {
+        var nombre = $('[name$="[remitenteNombre]"]').val() || '';
+        var correo = $('[name$="[remitenteCorreo]"]').val() || '';
+        var asunto = $('[name$="[asunto]"]').val() || '';
+        var contenido = $('[name$="[contenido]"]').val() || '';
+
+        // Si hay un archivo HTML elegido, manda sobre el cuadro de texto (igual que al guardar).
+        var archivoHtml = $('[name$="[archivo]"]')[0].files[0];
+        if (archivoHtml) { contenido = (await leer(archivoHtml, true)) || contenido; }
+
+        var imagen = imagenGuardada;
+        var archivoImg = $('[name$="[imagenArchivo]"]')[0].files[0];
+        if (archivoImg) { imagen = (await leer(archivoImg, false)) || imagen; }
+        else if ($('[name$="[quitarImagen]"]').is(':checked')) { imagen = null; }
+
+        $('#vpDe').text((nombre ? nombre + ' ' : '') + '<' + correo + '>');
+        // El asunto es texto plano: los valores de ejemplo (ya escapados) se desescapan para mostrarlos tal cual.
+        var asuntoVista = $('<div>').html(reemplazar($('<div>').text(asunto).html(), null)).text();
+        $('#vpAsunto').text(asuntoVista);
+        $('#vpMarco').attr('srcdoc', contenido.trim()
+            ? reemplazar(contenido, imagen)
+            : '<p style="font-family:sans-serif;color:#64748b">El correo todavía no tiene contenido.</p>');
+    });
+
+    // Envío de prueba: manda al servidor lo que hay en el formulario (asunto, remitente, HTML e imagen).
+    $('#vpEnviar').on('click', async function () {
+        var $estado = $('#vpEstado').removeClass('text-success text-danger').text('');
+        var destino = $.trim($('#vpDestino').val());
+        if (!destino) { $estado.addClass('text-danger').text('Ingrese el correo de destino.'); return; }
+
+        var contenido = $('[name$="[contenido]"]').val() || '';
+        var archivoHtml = $('[name$="[archivo]"]')[0].files[0];
+        if (archivoHtml) { contenido = (await leer(archivoHtml, true)) || contenido; }
+
+        var datos = new FormData();
+        datos.append('destino', destino);
+        datos.append('remitenteNombre', $('[name$="[remitenteNombre]"]').val() || '');
+        datos.append('remitenteCorreo', $('[name$="[remitenteCorreo]"]').val() || '');
+        datos.append('asunto', $('[name$="[asunto]"]').val() || '');
+        datos.append('contenido', contenido);
+        var archivoImg = $('[name$="[imagenArchivo]"]')[0].files[0];
+        if (archivoImg) { datos.append('imagenArchivo', archivoImg); }
+        if ($('[name$="[quitarImagen]"]').is(':checked')) { datos.append('quitarImagen', '1'); }
+
+        var $boton = $(this).prop('disabled', true);
+        $estado.text('Enviando…');
+        $.ajax({
+            url: '{{ path('correo_bienvenida_prueba', {id: tipo.id}) }}',
+            type: 'post', data: datos, processData: false, contentType: false, dataType: 'json',
+            headers: { 'X-CSRF-Token': '{{ csrf_token('correo_bienvenida_prueba') }}' }
+        }).done(function (r) {
+            $estado.addClass('text-success').text('Prueba enviada a ' + r.destino + '. Revise la bandeja (y el spam).');
+        }).fail(function (xhr) {
+            $estado.addClass('text-danger').text((xhr.responseJSON && xhr.responseJSON.detail) || 'No se pudo enviar la prueba.');
+        }).always(function () { $boton.prop('disabled', false); });
+    });
+})();
+</script>
+{% endblock %}

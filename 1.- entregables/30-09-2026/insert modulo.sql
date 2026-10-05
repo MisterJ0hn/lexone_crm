@@ -1,0 +1,1 @@
+INSERT INTO `modulo` (`id`, `nombre`, `ruta`, `nombre_alt`, `descripcion`) VALUES (NULL, 'ed_movimientos', 'ed_movimientos_index', 'Movimientos LexFlow', 'Movimientos'), (NULL, 'ed_audiencias', 'ed_audiencias_index', 'Audiencias LexFlow', 'Audiencias');,(NULL, 'ed_estado_diario', 'ed_estado_diario_index', 'Estados Diarios LexFlow', 'Estados Diarios')

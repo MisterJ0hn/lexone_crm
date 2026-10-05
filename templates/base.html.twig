@@ -1,10 +1,5 @@
 <!DOCTYPE html>
-<!--
-This is a starter template page. Use this page to start your new project from
-scratch. This page gets rid of all links and provides the needed markup only.
--->
-
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,49 +7,39 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
   <title>CRM Legal</title>
 
-  <!-- Font Awesome Icons -->
+  <!-- Tipografía -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Iconos -->
   <link rel="stylesheet" href="/build/adminlte/plugins/fontawesome-free/css/all.min.css">
-  <!-- Theme style -->
-  <link rel="stylesheet" href="/build/adminlte/dist/css/adminlte.css">
 
-  
-  <!-- daterange picker -->
+  <!-- Plugins de terceros (estilos propios; se ajustan en assets/css/plugins.css) -->
   <link rel="stylesheet" href="/build/adminlte/plugins/daterangepicker/daterangepicker.css">
-
-  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
-  <!-- Google Font: Source Sans Pro -->
-  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
-
- <!-- iCheck for checkboxes and radio inputs -->
-  <link rel="stylesheet" href="/build/adminlte/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
-  <!-- Bootstrap Color Picker -->
   <link rel="stylesheet" href="/build/adminlte/plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.min.css">
-<!-- SweetAlert2 -->
-<link rel="stylesheet" href="/build/adminlte/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
-
-  <!-- Toastr -->
+  <link rel="stylesheet" href="/build/adminlte/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
   <link rel="stylesheet" href="/build/adminlte/plugins/toastr/toastr.min.css">
-<!-- Select2 -->
   <link rel="stylesheet" href="/build/adminlte/plugins/select2/css/select2.min.css">
   <link rel="stylesheet" href="/build/adminlte/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
- <!-- fullCalendar -->
- <link rel="stylesheet" href="/build/adminlte/plugins/fullcalendar/main.min.css">
- <link rel="stylesheet" href="/build/adminlte/plugins/fullcalendar-daygrid/main.min.css">
- <link rel="stylesheet" href="/build/adminlte/plugins/fullcalendar-timegrid/main.min.css">
- <link rel="stylesheet" href="/build/adminlte/plugins/fullcalendar-bootstrap/main.min.css">
- <link rel="stylesheet" href="/build/css/dropzone.css">
- <link rel="stylesheet" href="/build/adminlte/custom.css">
+  <link rel="stylesheet" href="/build/adminlte/plugins/fullcalendar/main.min.css">
+  <link rel="stylesheet" href="/build/adminlte/plugins/fullcalendar-daygrid/main.min.css">
+  <link rel="stylesheet" href="/build/adminlte/plugins/fullcalendar-timegrid/main.min.css">
+  <link rel="stylesheet" href="/build/adminlte/plugins/fullcalendar-bootstrap/main.min.css">
+  <link rel="stylesheet" href="/build/css/dropzone.css">
+  <link rel="stylesheet" href="/build/adminlte/custom.css">
 
+  <!-- Estilos de la app (Tailwind CSS compilado: npm run css:build). Va al final para ganar a los plugins. -->
+  <link rel="stylesheet" href="/assets/app.css?v={{ 'now'|date('YmdH') }}">
 
   <!-- REQUIRED SCRIPTS -->
 
   <!-- jQuery -->
   <script src="/build/adminlte/plugins/jquery/jquery.min.js"></script>
-  <!-- Bootstrap 4 -->
+  <!-- Bootstrap 4: solo su JS (modales, colapsables, popovers); el aspecto lo da Tailwind -->
   <script src="/build/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <!-- AdminLTE App -->
-  <script src="/build/adminlte/dist/js/adminlte.min.js"></script>
-  <script src="/build/adminlte/dist/js/demo.js"></script>
+  <!-- Shell de la app: menú lateral, submenús y tarjetas plegables (reemplaza a AdminLTE) -->
+  <script src="/assets/app.js?v={{ 'now'|date('YmdH') }}" defer></script>
   <!-- InputMask -->
 <script src="/build/adminlte/plugins/moment/moment.min.js"></script>
 <script src="/build/adminlte/plugins/inputmask/min/jquery.inputmask.bundle.min.js"></script>
@@ -95,93 +80,58 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script src="/build/adminlte/plugins/fullcalendar/locales/es.js"></script>
 
 
-<!-- Site wrapper -->
-<div class="overlay-wrapper">
-    <!--<div class="overlay loader"><i class="fas fa-3x fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>-->
-  <!-- Navbar -->
-  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
-    <!-- Left navbar links -->
-    <ul class="navbar-nav">
-      <li class="nav-item">
-        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
-      </li>
-      <li class="nav-item d-none d-sm-inline-block">
-        <a href="{{path('dashboard')}}" class="nav-link">Inicio</a>
-      </li>
-      <li class="nav-item d-none d-sm-inline-block">
-       
-        {{ render(controller('App\\Controller\\ChangecompController::index', {'route_name': app.request.attributes.get('_route')|default('/')})) }}
-        
-    </li>
-    </ul>
-    <!-- Right navbar links -->
-    <!-- Right navbar links -->
-    <ul class="navbar-nav ml-auto">
-      <!-- Messages Dropdown Menu -->
-      {{ render(controller('App\\Controller\\RecordatorioController::avisos')) }}
- 
-    </ul>
-  </nav>
-  <!-- /.navbar -->
+<!-- Contenedor principal: menú lateral fijo + zona de contenido -->
+<div id="appShell" class="min-h-screen">
+  <div id="appSidebarFondo" class="fixed inset-0 z-30 hidden bg-slate-900/40 lg:hidden"></div>
 
-  <!-- Main Sidebar Container -->
-  <aside class="main-sidebar sidebar-dark-primary elevation-4">
-    <!-- Brand Logo -->
- 
-    <a href="" class="brand-link">
-      <img src="/build/img/empresas/{{sesion.getEmpresaActual.logo}}"
-           alt="{{sesion.getEmpresaActual.nombre}}"
-           class="brand-image img-circle elevation-3"
-           style="opacity: .8">
-      <span class="brand-text font-weight-light"><!-- Change Company -->
-     {{sesion.getEmpresaActual.nombre}}
-</span>
+  <!-- Menú lateral -->
+  <aside id="appSidebar" class="fixed inset-y-0 left-0 z-40 flex w-64 -translate-x-full flex-col border-r border-slate-200 bg-white transition-transform lg:translate-x-0">
+    <a href="{{ path('dashboard') }}" class="flex h-16 shrink-0 items-center gap-3 border-b border-slate-100 px-5 no-underline hover:no-underline">
+      <img src="/build/img/empresas/{{ sesion.getEmpresaActual.logo }}" alt="{{ sesion.getEmpresaActual.nombre }}" class="h-9 w-9 rounded-lg object-contain">
+      <span class="truncate text-sm font-semibold text-slate-900"><br></span>
     </a>
-
-    {{ render(controller('App\\Controller\\MenuController::mainMenu', {'route_name': app.request.attributes.get('_route')|default('/')})) }}
+    <div class="min-h-0 flex-1 overflow-y-auto">
+      {{ render(controller('App\\Controller\\MenuController::mainMenu', {'route_name': app.request.attributes.get('_route')|default('/')})) }}
+    </div>
   </aside>
 
-  <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <div class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1 class="m-0 text-primary">{{pagina|default('')|upper}}</h1>
-          </div><!-- /.col -->
-          <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item active">
-              {% if fechaUltimoIngreso is defined %}
-                <p> {{fechaUltimoIngreso?'Último Ingreso: ' ~ fechaUltimoIngreso|date('Y-m-d h:i'):''}}</p>
-              {% endif %}
-              </li>
-            </ol>
-          </div><!-- /.col -->
-        </div><!-- /.row -->
-      </div><!-- /.container-fluid -->
-    </div>
-    <!-- /.content-header -->
+  <div class="flex min-h-screen min-w-0 flex-col lg:pl-64">
+    <!-- Barra superior -->
+    <header class="sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-slate-200 bg-white/90 px-4 backdrop-blur sm:px-6">
+      <button type="button" data-sidebar-toggle class="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 lg:hidden" aria-label="Abrir el menú">
+        <i class="fas fa-bars"></i>
+      </button>
+      <a href="{{ path('dashboard') }}" class="text-[13px] font-medium text-slate-600 no-underline hover:text-slate-900 hover:no-underline">Inicio</a>
+      <div class="ml-auto flex min-w-0 items-center gap-4 text-[13px] text-slate-600">
+        {{ render(controller('App\\Controller\\ChangecompController::index', {'route_name': app.request.attributes.get('_route')|default('/')})) }}
+        <span class="hidden items-center gap-2 sm:inline-flex"><i class="far fa-user-circle text-slate-400"></i>{{ sesion.getSesion.nombre }}</span>
+      </div>
+    </header>
 
-    <!-- Main content -->
-    <div class="content">
-      <div class="container-fluid">
-        {% if error is defined %}
-            {{error|raw}}
+    <!-- Contenido -->
+    <main class="min-w-0 flex-1 overflow-x-auto px-4 py-6 sm:px-6">
+      <div class="mb-5 flex flex-wrap items-end justify-between gap-2">
+        <h1 class="m-0 text-lg font-semibold uppercase tracking-wide text-primary-900">{{ pagina|default('') }}</h1>
+        {% if fechaUltimoIngreso is defined and fechaUltimoIngreso %}
+          <span class="text-xs text-slate-500">Último ingreso: {{ fechaUltimoIngreso|date('d-m-Y H:i') }}</span>
         {% endif %}
-        {% for message in app.flashes('error') %}
-          <div class="alert alert-danger alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert">&times;</button>
-            <i class="fas fa-exclamation-triangle"></i> {{ message|raw }}
-          </div>
-        {% endfor %}
+      </div>
 
-        {% for message in app.flashes('success') %}
-          <div class="alert alert-success">
-            <i class="fas fa-check-circle"></i> {{ message|raw }}
-          </div>
-        {% endfor %}
+      {% if error is defined %}
+        {{ error|raw }}
+      {% endif %}
+      {% for message in app.flashes('error') %}
+        <div class="alert alert-danger alert-dismissible">
+          <button type="button" class="close" data-dismiss="alert">&times;</button>
+          <i class="fas fa-exclamation-triangle mt-0.5"></i> <span>{{ message|raw }}</span>
+        </div>
+      {% endfor %}
+      {% for message in app.flashes('success') %}
+        <div class="alert alert-success alert-dismissible">
+          <button type="button" class="close" data-dismiss="alert">&times;</button>
+          <i class="fas fa-check-circle mt-0.5"></i> <span>{{ message|raw }}</span>
+        </div>
+      {% endfor %}
         {% block body %}
         
         {% endblock %}
@@ -220,24 +170,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 
         {% endif %}
-        <!-- /.row -->
-      </div><!-- /.container-fluid -->
-    </div>
-    <!-- /.content -->
-  </div>
-  <!-- /.content-wrapper -->
+    </main>
+  </div><!-- /columna principal -->
+</div><!-- /#appShell -->
 
-  <!-- Control Sidebar -->
-  <aside class="control-sidebar control-sidebar-dark">
-    <!-- Control sidebar content goes here -->
-    <div class="p-3">
-      <h5>Titulo</h5>
-      <p>Sidebar content</p>
-    </div>
-  </aside>
-
-        
-    	</div>
         {% block javascripts %}
    
 
@@ -581,22 +517,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 {% endif %}
             </script>
         {% endblock %}
-   <!-- Control Sidebar -->
-
-  <!-- /.control-sidebar -->
-
-  <!-- Main Footer -->
-  <footer class="main-footer">
-    <!-- To the right -->
-    <div class="float-right d-none d-sm-inline">
-    
-    </div>
-    <!-- Default to the left -->
-    
-  </footer>
-</div>
-<!-- ./wrapper -->
-
+        {# Popup global "Detalle PJUD" (fuera del block para que ningún módulo lo pise). #}
+        {% include 'pjud/_popup.html.twig' %}
+        {# Modal global "Nuevo servicio" (botón + junto a los combos de servicio de las causas). #}
+        {% include 'servicio/_nuevo_modal.html.twig' %}
 
 </body>
 </html>

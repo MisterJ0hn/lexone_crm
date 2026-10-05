@@ -98,8 +98,8 @@ class ContratoTemplateRenderer
     {
         $rol = trim(sprintf('%s-%s-%s', $causa->getLetra(), $causa->getRol(), $causa->getAnio()), '-');
 
-        $materia = $causa->getMateriaEstrategia()
-            ? (string) $causa->getMateriaEstrategia()->getEstrategiaJuridica()
+        $materia = $causa->getServicio()
+            ? (string) $causa->getServicio()
             : ($causa->getMateria() ? (string) $causa->getMateria()->getNombre() : '');
 
         $juzgado = $causa->getJuzgado()

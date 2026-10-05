@@ -1,0 +1,89 @@
+{#
+  Popup global "Detalle PJUD". Se incluye una sola vez en base.html.twig; cualquier módulo lo abre
+  con un botón data-pjud-causa="<id de Causa>" (ver pjud/_boton.html.twig). La lógica está en
+  /build/js/pjud-popup.js.
+#}
+{% if app.user %}
+<style>
+    body.pjud-abierto { overflow: hidden; }
+    #pjud-popup .pjud-overlay, #pjud-popup .pjud-sub-overlay {
+        display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, .5);
+        align-items: flex-start; justify-content: center; overflow-y: auto; padding: 24px 12px;
+    }
+    #pjud-popup .pjud-overlay { z-index: 2000; }
+    #pjud-popup .pjud-sub-overlay { z-index: 2100; }
+    #pjud-popup .pjud-modal { background: #fff; border-radius: 8px; width: 100%; max-width: 1280px; box-shadow: 0 10px 40px rgba(0, 0, 0, .3); }
+    #pjud-popup .pjud-modal-sm { max-width: 760px; }
+    #pjud-popup .pjud-header { display: flex; justify-content: space-between; align-items: flex-start; padding: 14px 20px; border-bottom: 1px solid #e5e7eb; }
+    #pjud-popup .pjud-titulo, #pjud-popup .pjud-sub-titulo { margin: 0; font-size: 1.15rem; font-weight: 600; color: #1d4ed8; }
+    #pjud-popup .pjud-subtitulo { margin: 0; font-size: .85rem; color: #6b7280; }
+    #pjud-popup .pjud-x { background: none; border: 0; font-size: 1.6rem; line-height: 1; color: #9ca3af; cursor: pointer; }
+    #pjud-popup .pjud-x:hover { color: #4b5563; }
+    #pjud-popup .pjud-cuerpo, #pjud-popup .pjud-sub-cuerpo { padding: 16px 20px; }
+    #pjud-popup .pjud-centro { display: flex; justify-content: center; padding: 60px 0; color: #1d4ed8; }
+    #pjud-popup .pjud-spin { animation: pjud-giro 1s linear infinite; }
+    @keyframes pjud-giro { to { transform: rotate(360deg); } }
+    #pjud-popup .pjud-chip { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; padding: 3px 10px; border-radius: 6px; background: #dbeafe; color: #1e40af; font-weight: 500; }
+    #pjud-popup .pjud-error { background: #dc2626; color: #fff; border-radius: 8px; padding: 12px 16px; margin-bottom: 1rem; }
+    #pjud-popup .pjud-panel { border: 1px solid #e5e7eb; background: #f9fafb; border-radius: 8px; margin-bottom: 1rem; }
+    #pjud-popup .pjud-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px 24px; padding: 12px 16px; font-size: .9rem; }
+    #pjud-popup .pjud-grid p { margin: 0; }
+    #pjud-popup .pjud-der { text-align: right; font-weight: 500; }
+    #pjud-popup .pjud-ancho { grid-column: span 3; }
+    #pjud-popup .pjud-k { font-weight: 600; color: #6b7280; }
+    #pjud-popup .pjud-docs { display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: center; border-top: 1px solid #e5e7eb; padding: 10px 16px; font-size: .9rem; }
+    #pjud-popup .pjud-doc { display: inline-flex; align-items: center; gap: 6px; }
+    #pjud-popup .pjud-desplegable { border-top: 1px solid #e5e7eb; padding: 8px 16px; }
+    #pjud-popup .pjud-controles { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px 32px; margin-bottom: 1rem; }
+    #pjud-popup .pjud-link { background: none; border: 0; padding: 0; color: #f59e0b; display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
+    #pjud-popup .pjud-link:hover { color: #d97706; }
+    #pjud-popup .pjud-geo { color: #0ea5e9; }
+    #pjud-popup .pjud-n { font-size: .75rem; font-weight: 600; color: #6b7280; }
+    #pjud-popup .pjud-pdfs { display: inline-flex; gap: 8px; justify-content: center; }
+    #pjud-popup .pjud-pdf { display: inline-flex; color: #dc2626; }
+    #pjud-popup .pjud-pdf.pjud-pdf-cert { color: #3b82f6; }
+    #pjud-popup .pjud-pdf:hover { opacity: .6; }
+    #pjud-popup .pjud-tabla-wrap { overflow-x: auto; border: 1px solid #e5e7eb; border-radius: 8px; }
+    #pjud-popup .pjud-table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+    #pjud-popup .pjud-table th { background: #f3f4f6; text-align: left; padding: 7px 10px; border: 1px solid #e5e7eb; font-weight: 600; white-space: nowrap; }
+    #pjud-popup .pjud-table td { padding: 6px 10px; border: 1px solid #e5e7eb; vertical-align: top; }
+    #pjud-popup .pjud-table tbody tr:nth-child(even) { background: #f9fafb; }
+    #pjud-popup .pjud-table .c { text-align: center; }
+    #pjud-popup .pjud-contador { font-weight: 600; }
+    #pjud-popup .pjud-mapa iframe { width: 100%; height: 320px; border: 0; }
+    #pjud-popup .pjud-imgs { display: flex; flex-wrap: wrap; gap: 8px; }
+    #pjud-popup .pjud-imgs img { max-height: 240px; border: 1px solid #e5e7eb; border-radius: 6px; }
+    #pjud-popup .pjud-sub-footer { text-align: right; padding: 10px 20px; border-top: 1px solid #e5e7eb; }
+    @media (max-width: 767px) { #pjud-popup .pjud-grid { grid-template-columns: 1fr; } #pjud-popup .pjud-ancho { grid-column: auto; } #pjud-popup .pjud-der { text-align: left; } }
+</style>
+
+<div id="pjud-popup"
+     data-url-detalle="{{ path('pjud_causa_detalle', {id: 0})|replace({'/0': '/__ID__'}) }}"
+     data-url-documento="{{ path('pjud_documento') }}"
+     data-url-perfil="{{ path('mis_datos_index') }}"
+     data-csrf="{{ csrf_token('pjud') }}">
+    <div class="pjud-overlay">
+        <div class="pjud-modal">
+            <div class="pjud-header">
+                <div>
+                    <h3 class="pjud-titulo">Detalle PJUD</h3>
+                    <p class="pjud-subtitulo"></p>
+                </div>
+                <button type="button" class="pjud-x" data-pjud-cerrar aria-label="Cerrar">&times;</button>
+            </div>
+            <div class="pjud-cuerpo"></div>
+        </div>
+    </div>
+    <div class="pjud-sub-overlay">
+        <div class="pjud-modal pjud-modal-sm">
+            <div class="pjud-header">
+                <h3 class="pjud-sub-titulo"></h3>
+                <button type="button" class="pjud-x" data-pjud-cerrar-sub aria-label="Cerrar">&times;</button>
+            </div>
+            <div class="pjud-sub-cuerpo"></div>
+            <div class="pjud-sub-footer"><button type="button" class="btn btn-primary btn-sm" data-pjud-cerrar-sub>Cerrar</button></div>
+        </div>
+    </div>
+</div>
+<script src="/build/js/pjud-popup.js?v=2"></script>
+{% endif %}

@@ -12,10 +12,8 @@ use App\Entity\AgendaObservacion;
 use App\Entity\Causa;
 use App\Entity\Cliente;
 use App\Entity\Contrato;
-
 use App\Entity\Cuenta;
 use App\Entity\Empresa;
-use App\Entity\Nacionalidad;
 use App\Entity\Pais;
 use App\Form\ContratoType;
 use App\Repository\AgendaRepository;
@@ -29,14 +27,10 @@ use App\Repository\CiudadRepository;
 use App\Repository\ComunaRepository;
 use App\Repository\SucursalRepository;
 use App\Repository\CuentaRepository;
-use App\Repository\ModuloRepository;
 use App\Repository\ModuloPerRepository;
 use App\Repository\DiasPagoRepository;
-use App\Repository\EmpresaRepository;
-use App\Repository\LotesRepository;
-use App\Repository\MateriaEstrategiaRepository;
+use App\Repository\ServicioRepository;
 use App\Repository\MateriaRepository;
-
 use App\Repository\ReunionRepository;
 use App\Repository\RegionRepository;
 use App\Entity\ContratoTemplate;
@@ -47,12 +41,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Knp\Component\Pager\PaginatorInterface;
-use PDOException;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -330,22 +321,18 @@ class PanelAbogadoController extends AbstractController
     }
     #[Route("/{id}/contrata", name: "panel_abogado_contrata", methods: ["GET","POST"])]
     public function contrata(Agenda $agenda,Request $request,
+                            \App\Service\CorreoBienvenidaService $correoBienvenida,
                             AgendaStatusRepository  $agendaStatusRepository,
                             JuzgadoRepository $juzgadoRepository,
-                            ContratoRolRepository $contratoRolRepository,
-                           
                             SucursalRepository $sucursalRepository,
                             DiasPagoRepository $diasPagoRepository,
                             UsuarioRepository $usuarioRepository,
-                            UserPasswordHasherInterface $encoder,
-                            usuarioTipoRepository $usuarioTipoRepository,
                             ContratoRepository $contratoRepository,
                             RegionRepository $regionRepository,
                             ComunaRepository $comunaRepository,
                             CiudadRepository $ciudadRepository,
                             ReunionRepository $reunionRepository,
-                            MateriaEstrategiaRepository $materiaEstrategiaRepository,
-                            LotesRepository $lotesRepository,
+                            ServicioRepository $servicioRepository,
                             MateriaRepository $materiaRepository,
                             ContratoTemplateRepository $contratoTemplateRepository,
                             TipoClienteRepository $tipoClienteRepository
@@ -417,10 +404,19 @@ class PanelAbogadoController extends AbstractController
         $form->add('fechaPrimeraCuota',DateType::class,array('widget'=>'single_text','html5'=>false));
         $form->add('vigencia');
         $form->add('pagoActual');
-        $form->add('isIncorporacion');
         if($agenda->getTipoCliente()->getId()==1){
             $form->add('estadoCivil');
-            
+
+        } else {
+            // Convenio/Empresa: datos del representante legal (se guardan en el Cliente).
+            $form->add('repLegalRut', \Symfony\Component\Form\Extension\Core\Type\TextType::class, ['mapped' => false, 'required' => false]);
+            $form->add('repLegalNombre', \Symfony\Component\Form\Extension\Core\Type\TextType::class, ['mapped' => false, 'required' => false]);
+            $form->add('repLegalEstadoCivil', EntityType::class, [
+                'class' => \App\Entity\EstadoCivil::class,
+                'mapped' => false,
+                'required' => false,
+            ]);
+            $form->add('repLegalProfesion', \Symfony\Component\Form\Extension\Core\Type\TextType::class, ['mapped' => false, 'required' => false]);
         }
         // Pais es un catálogo global (mismo listado para todas las empresas), sin
         // filtrar por tenant.
@@ -495,6 +491,11 @@ class PanelAbogadoController extends AbstractController
             $cliente->setTelefonoRecado($form->get('telefonoRecado')->getData());
             if ($esClientePersona) {
                 $cliente->setSexo($request->request->get('cboSexo'));
+            } else {
+                $cliente->setRepLegalRut($form->get('repLegalRut')->getData());
+                $cliente->setRepLegalNombre($form->get('repLegalNombre')->getData());
+                $cliente->setRepLegalEstadoCivil($form->get('repLegalEstadoCivil')->getData());
+                $cliente->setRepLegalProfesion($form->get('repLegalProfesion')->getData());
             }
             $contrato->setCliente($cliente);
             $entityManager->persist($cliente);
@@ -515,11 +516,6 @@ class PanelAbogadoController extends AbstractController
             
 
             
-            if($contrato->getIsIncorporacion()){
-                $contrato->setFechaPrimeraCuota(new \DateTime($request->request->get('txtFechaIncorporacion')));
-                //$contrato->setFechaPrimerPago(new \DateTime(date("Y-m-d",strtotime($request->request->get('txtFechaPago')."-1 00:00:00 +1 month"))));
-           
-            }
 
             
             $contrato->setCregion($regionRepository->find($request->request->get('cboRegion')));
@@ -562,28 +558,6 @@ class PanelAbogadoController extends AbstractController
             }
             $contrato->setFolio($nuevoFolio);
 
-            $lote=$lotesRepository->findPrimerDisponible();
-
-            if(null == $lote){
-                //si no hay lotes para utilizar, se setean en false todos para poder utilizar...
-                $lotes=$lotesRepository->findBy(['empresa'=>$user->getEmpresaActual(),'estado'=>true]);
-                foreach($lotes as $lote){
-                    $lote->setIsUtilizado(false);
-                    $entityManager->persist($lote);
-                    $entityManager->flush();
-                }
-                $lote=$lotesRepository->findPrimerDisponible();
-
-                $lote->setIsUtilizado(true);
-                $entityManager->persist($lote);
-                $entityManager->flush();
-            }else{
-                $lote->setIsUtilizado(true);
-                $entityManager->persist($lote);
-                $entityManager->flush();
-            }
-            $contrato->setIdLote($lote);
-
             // Materia es un catálogo global (mismo listado para todas las empresas):
             // cada causa debe pertenecer a una de ellas.
             $materiasHabilitadas=[];
@@ -595,13 +569,13 @@ class PanelAbogadoController extends AbstractController
             // siquiera muestra la sección "Causa"): sus causas se agregan después,
             // por cliente, desde la línea de tiempo del contrato.
             if ($esClientePersona) {
-            $materiasCausa=$request->request->get('hdMateria');
-            $submaterias=$request->request->get('hdSubMateria');
-            $letra = $request->request->get('hdLetraCausa');
-            $rol = $request->request->get('hdRolCausa');
-            $anio = $request->request->get('hdAnioCausa');
-            $caratulados=$request->request->get('hdCaratulado');
-            $hdjuzgados=$request->request->get('hdJuzgado');
+            $materiasCausa=$request->request->all('hdMateria');
+            $submaterias=$request->request->all('hdSubMateria');
+            $letra = $request->request->all('hdLetraCausa');
+            $rol = $request->request->all('hdRolCausa');
+            $anio = $request->request->all('hdAnioCausa');
+            $caratulados=$request->request->all('hdCaratulado');
+            $hdjuzgados=$request->request->all('hdJuzgado');
             $countCausa=count($submaterias);
             for ($i=0; $i < $countCausa ; $i++) {
 
@@ -610,16 +584,16 @@ class PanelAbogadoController extends AbstractController
                 $causa->setAgenda($contrato->getAgenda());
 
                 // Materia de la causa (obligatoria). Se toma de hdMateria[]; si viene
-                // vacía se deriva de la materiaEstrategia (servicio) elegida.
+                // vacía se deriva de la servicio elegido.
                 $materia=null;
                 if(isset($materiasCausa[$i]) && $materiasCausa[$i]!=="" && isset($materiasHabilitadas[(int)$materiasCausa[$i]])){
                     $materia=$materiaRepository->find($materiasCausa[$i]);
                 }
-                $materiaEstrategia=null;
+                $servicio=null;
                 if(null !== $submaterias[$i] && $submaterias[$i]!==""){
-                    $materiaEstrategia=$materiaEstrategiaRepository->find($submaterias[$i]);
-                    if($materia===null && $materiaEstrategia!==null){
-                        $materia=$materiaEstrategia->getMateria();
+                    $servicio=$servicioRepository->find($submaterias[$i]);
+                    if($materia===null && $servicio!==null){
+                        $materia=$servicio->getMateria();
                     }
                 }
                 if($materia===null){
@@ -641,8 +615,8 @@ class PanelAbogadoController extends AbstractController
                 if(null !== $caratulados[$i]){
                     $causa->setCausaNombre($caratulados[$i]);
                 }
-                if($materiaEstrategia!==null && $materiaEstrategia->getMateria()->getId()===$materia->getId()){
-                    $causa->setMateriaEstrategia($materiaEstrategia);
+                if($servicio!==null && $servicio->getMateria()->getId()===$materia->getId()){
+                    $causa->setServicio($servicio);
                 }
                 if(null !== $hdjuzgados[$i]){
                     $juzgado=$juzgadoRepository->find($hdjuzgados[$i]);
@@ -657,7 +631,6 @@ class PanelAbogadoController extends AbstractController
 
                 $entityManager->persist($causa);
                 $entityManager->flush();
-                //$etapa_pendiente = $lineaTiempoEtapasRepository->obtenerEtapaPendiente($causa->getId(),$causa->getMateriaEstrategia()->getEstrategiaJuridica()->getLineaTiempo()->getId());
                 //if($etapa_pendiente){
                 //    $causa->setEtapaPendiente($etapa_pendiente->getNombre());
                 //}
@@ -674,6 +647,14 @@ class PanelAbogadoController extends AbstractController
             
            
            
+
+            // Correo de bienvenida (template HTML de la empresa); un fallo no corta la creación.
+            $motivoCorreo = $correoBienvenida->enviar($contrato);
+            if ($motivoCorreo === null) {
+                $this->addFlash('success', 'Se envió el correo de bienvenida al cliente.');
+            } else {
+                $this->addFlash('error', 'No se envió el correo de bienvenida: ' . $motivoCorreo);
+            }
 
             return $this->redirectToRoute('contrato_pdf',['id'=>$contrato->getId()]);
         }

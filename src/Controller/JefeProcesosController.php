@@ -4,13 +4,10 @@ namespace App\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Usuario;
-use App\Entity\UsuarioCategoria;
 use App\Entity\Empresa;
 use App\Entity\UsuarioCuenta;
 use App\Entity\Cuenta;
-use App\Entity\UsuarioStatus;
 use App\Entity\Privilegio;
-use App\Entity\PrivilegioTipousuario;
 use App\Form\UsuarioType;
 use App\Repository\UsuarioRepository;
 use App\Repository\UsuarioTipoRepository;
@@ -18,6 +15,7 @@ use App\Repository\ModuloPerRepository;
 use App\Repository\UsuarioTipoDocumentoRepository;
 use App\Repository\PrivilegioTipousuarioRepository;
 use App\Repository\PrivilegioRepository;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -76,12 +74,9 @@ class JefeProcesosController extends AbstractController
         $pagina=$moduloPerRepository->findOneByName('jefe_procesos',1);
         $usuario = new Usuario();
         $usuario->setEstado(1);
-        $empresa=$this->entityManager->getRepository(Empresa::class)->find(1);
+        $empresa=$this->entityManager->getRepository(Empresa::class)->find($user->getEmpresaActual());
        
         $cuentas=$empresa->getCuentas();
-        $choices= array();
-        
-       
         
         $usuario->setUsuarioTipo($usuarioTipoRepository->find(3));
         $usuario->setFechaActivacion(new \DateTime(date('Y-m-d H:i:s')));
@@ -110,56 +105,58 @@ class JefeProcesosController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->entityManager;
-            $password=$usuario->getPassword();
-            $encoded=$encoder->hashPassword($usuario,$password);
-            $usuario->setPassword($encoded);
-            $usuario->setUsername($usuario->getUsername().$user->getEmpresaActual());
-        
-            $usuarioCuenta=new UsuarioCuenta();
-    
-            $usuario->setTipoDocumento($tipoDocumento->find($request->request->get('cboTipoDocumento')));
 
-            $usuario->setFechaNacimiento(new \DateTime(date('Y-m-d H:i',strtotime($request->request->get('fecha_nacimiento')))));
-            $usuario->setFechaActivacion(new \DateTime(date('Y-m-d H:i',strtotime($request->request->get('fecha_ingreso')))));
-           
-            $entityManager->persist($usuario);
-            $entityManager->flush();
-
-            $getcuentas=$_POST['cboEmpresa'];
-         
-            foreach($getcuentas as $getcuenta){
-                $cuenta=$this->entityManager->getRepository(Cuenta::class)->find($getcuenta);
-                
+            try{
+                $password=$usuario->getPassword();
+                $encoded=$encoder->hashPassword($usuario,$password);
+                $usuario->setPassword($encoded);
+                $usuario->setUsername($usuario->getUsername().$user->getEmpresaActual());
+            
                 $usuarioCuenta=new UsuarioCuenta();
+        
+                $usuario->setTipoDocumento($tipoDocumento->find($request->request->get('cboTipoDocumento')));
 
+                $usuario->setFechaNacimiento(new \DateTime(date('Y-m-d H:i',strtotime($request->request->get('fecha_nacimiento')))));
+                $usuario->setFechaActivacion(new \DateTime(date('Y-m-d H:i',strtotime($request->request->get('fecha_ingreso')))));
+            
+                $entityManager->persist($usuario);
+                $entityManager->flush();
+
+                $getcuenta=$_POST['cboEmpresa'];
+            
+                $cuenta=$this->entityManager->getRepository(Cuenta::class)->find($getcuenta);
+                $usuarioCuenta=new UsuarioCuenta();
                 $usuarioCuenta->setCuenta($cuenta);
                 $usuarioCuenta->setUsuario($usuario);
-
                 $entityManager->persist($usuarioCuenta);
                 $entityManager->flush();
                 $usuario->setEmpresa($cuenta->getEmpresa());
                 $usuario->setEmpresaActual($user->getEmpresaActual());
                 $entityManager->persist($usuario);
                 $entityManager->flush();
-            }
+            
 
-            $privilegioTipousuarios=$privilegioTipousuarioRepository->findBy(['tipousuario'=>$usuario->getUsuarioTipo()->getId()]);
-            foreach($privilegioTipousuarios as $privilegioTipousuario){
-                $privilegio=$privilegioRepository->findBy(["moduloPer"=>$privilegioTipousuario->getModuloPer()->getId(),"usuario"=>$usuario->getId()]);
-                if(!$privilegio){
-    
-                    $privilegioNew=new Privilegio();
-                    $privilegioNew->setUsuario($usuario);
-                    $privilegioNew->setModuloPer($privilegioTipousuario->getModuloPer());
-                    $privilegioNew->setAccion($privilegioTipousuario->getAccion());
-    
-                    $entityManager = $this->entityManager;
-                    $entityManager->persist($privilegioNew);
-                    $entityManager->flush();
-    
+                $privilegioTipousuarios=$privilegioTipousuarioRepository->findBy(['tipousuario'=>$usuario->getUsuarioTipo()->getId()]);
+                foreach($privilegioTipousuarios as $privilegioTipousuario){
+                    $privilegio=$privilegioRepository->findBy(["moduloPer"=>$privilegioTipousuario->getModuloPer()->getId(),"usuario"=>$usuario->getId()]);
+                    if(!$privilegio){
+        
+                        $privilegioNew=new Privilegio();
+                        $privilegioNew->setUsuario($usuario);
+                        $privilegioNew->setModuloPer($privilegioTipousuario->getModuloPer());
+                        $privilegioNew->setAccion($privilegioTipousuario->getAccion());
+        
+                        $entityManager = $this->entityManager;
+                        $entityManager->persist($privilegioNew);
+                        $entityManager->flush();
+        
+                    }
                 }
+                
+                $this->addFlash('success','Usuario creado con éxito');
+            }catch(Exception $e){
+                $this->addFlash('error','ha ocurrido un error al crear el usuario: '.$e->getMessage());
             }
-
             return $this->redirectToRoute('jefe_procesos_index');
         }
 

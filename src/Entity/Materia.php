@@ -22,9 +22,6 @@ class Materia
     #[ORM\JoinColumn(nullable: false)]
     private $empresa;
 
-    #[ORM\OneToMany(targetEntity: MateriaEstrategia::class, mappedBy: "materia")]
-    private $materiaEstrategias;
-
     #[ORM\OneToMany(targetEntity: CausaLetra::class, mappedBy: "materia")]
     private $causaLetras;
 
@@ -33,7 +30,6 @@ class Materia
 
     public function __construct()
     {
-        $this->materiaEstrategias = new ArrayCollection();
         $this->causaLetras = new ArrayCollection();
         $this->causas = new ArrayCollection();
     }
@@ -65,40 +61,6 @@ class Materia
         $this->empresa = $empresa;
 
         return $this;
-    }
-
-    /**
-     * @return Collection|MateriaEstrategia[]
-     */
-    public function getMateriaEstrategias(): Collection
-    {
-        return $this->materiaEstrategias;
-    }
-
-    public function addMateriaEstrategia(MateriaEstrategia $materiaEstrategia): self
-    {
-        if (!$this->materiaEstrategias->contains($materiaEstrategia)) {
-            $this->materiaEstrategias[] = $materiaEstrategia;
-            $materiaEstrategia->setMateria($this);
-        }
-
-        return $this;
-    }
-
-    public function removeMateriaEstrategia(MateriaEstrategia $materiaEstrategia): self
-    {
-        if ($this->materiaEstrategias->removeElement($materiaEstrategia)) {
-            // set the owning side to null (unless already changed)
-            if ($materiaEstrategia->getMateria() === $this) {
-                $materiaEstrategia->setMateria(null);
-            }
-        }
-
-        return $this;
-    }
-    public function __toString()
-    {
-        return $this->getNombre();
     }
 
     /**

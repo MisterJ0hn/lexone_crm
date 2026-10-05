@@ -1,0 +1,71 @@
+{#
+  Modal global "Nuevo servicio" (se incluye una vez en base.html.twig). Cualquier combo de servicios
+  puede llevar un botón <button type="button" data-servicio-nuevo> dentro de un .input-group junto al <select>;
+  la materia se toma del <select> cuya clase contiene "cbomateria" dentro de la misma fila (.row).
+  Al guardar, el servicio queda agregado y seleccionado en ese combo.
+#}
+<div class="modal fade" id="modalServicioNuevo" tabindex="-1" role="dialog" aria-hidden="true"
+     data-url="{{ path('servicio_rapido', {id: 0})|replace({'/0/': '/__ID__/'}) }}"
+     data-csrf="{{ csrf_token('servicio_rapido') }}">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Nuevo servicio</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <small class="text-muted">Materia: <strong id="servicioNuevoMateria"></strong></small>
+                <input type="text" id="servicioNuevoNombre" class="form-control mt-2" maxlength="255" placeholder="Nombre del servicio">
+                <div id="servicioNuevoError" class="text-danger small mt-1"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="servicioNuevoGuardar">Agregar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+(function () {
+    var $modal = $('#modalServicioNuevo'), $select = null, $materia = null;
+
+    $(document).on('click', '[data-servicio-nuevo]', function () {
+        $select = $(this).closest('.input-group').find('select').first();
+        $materia = $(this).closest('.row').find('select[class*="cbomateria"]').first();
+        $('#servicioNuevoError').text('');
+        if (!$materia.length || !$materia.val()) {
+            $('#servicioNuevoError').text('');
+            alert('Primero seleccione la materia.');
+            return;
+        }
+        $('#servicioNuevoMateria').text($materia.find('option:selected').text());
+        $('#servicioNuevoNombre').val('');
+        $modal.modal('show');
+    });
+    $modal.on('shown.bs.modal', function () { $('#servicioNuevoNombre').trigger('focus'); });
+    // Si se abrió desde otro modal (p. ej. "Nuevo cliente"), al cerrar este el otro debe seguir desplazable.
+    $modal.on('hidden.bs.modal', function () { if ($('.modal.show').length) { $('body').addClass('modal-open'); } });
+    $('#servicioNuevoNombre').on('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); $('#servicioNuevoGuardar').click(); } });
+
+    $('#servicioNuevoGuardar').on('click', function () {
+        var nombre = $.trim($('#servicioNuevoNombre').val());
+        if (!nombre) { $('#servicioNuevoError').text('Ingrese el nombre del servicio.'); return; }
+        var $btn = $(this).prop('disabled', true);
+        $.ajax({
+            url: $modal.data('url').replace('__ID__', $materia.val()),
+            type: 'post',
+            data: { nombre: nombre },
+            headers: { 'X-CSRF-Token': $modal.data('csrf') },
+            dataType: 'json'
+        }).done(function (r) {
+            if (!$select.find('option[value="' + r.id + '"]').length) {
+                $select.append($('<option>').val(r.id).text(r.nombre));
+            }
+            $select.val(String(r.id)).trigger('change');
+            $modal.modal('hide');
+        }).fail(function (xhr) {
+            $('#servicioNuevoError').text((xhr.responseJSON && xhr.responseJSON.detail) || 'No se pudo agregar el servicio.');
+        }).always(function () { $btn.prop('disabled', false); });
+    });
+})();
+</script>

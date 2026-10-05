@@ -1,0 +1,12 @@
+{#
+  Botón "Detalle PJUD" (martillo del Poder Judicial) que abre el popup global.
+  Uso:  {% import 'pjud/_boton.html.twig' as pjud %}  {{ pjud.boton(causa.id) }}
+  Solo se pinta si hay id de Causa del CRM (si no, no hay nada que consultar).
+#}
+{% macro boton(causaId) %}
+    {% if causaId %}
+        <button type="button" class="btn btn-outline-primary btn-sm px-2" data-pjud-causa="{{ causaId }}" title="Detalle PJUD" aria-label="Ver detalle de la causa en el Poder Judicial">
+            <img src="/build/img/martillo_pjud.png" alt="" width="16" height="16">
+        </button>
+    {% endif %}
+{% endmacro %}

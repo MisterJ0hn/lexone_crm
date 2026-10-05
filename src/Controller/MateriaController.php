@@ -124,7 +124,7 @@ class MateriaController extends AbstractController
     }
 
     #[Route("/{id}", name: "materia_delete", methods: ["DELETE"])]
-    public function delete(Request $request, Materia $materium, CausaRepository $causaRepository, MateriaCorteRepository $materiaCorteRepository): Response
+    public function delete(Request $request, Materia $materium, CausaRepository $causaRepository, MateriaCorteRepository $materiaCorteRepository, \App\Repository\ServicioRepository $servicioRepository): Response
     {
         if ($this->isCsrfTokenValid('delete'.$materium->getId(), $request->request->get('_token'))) {
             $entityManager = $this->entityManager;
@@ -136,8 +136,8 @@ class MateriaController extends AbstractController
                 return $this->redirectToRoute('materia_index');
             }
 
-            foreach ($materium->getMateriaEstrategias() as $materia_estrategia) {
-                $entityManager->remove($materia_estrategia);
+            foreach ($servicioRepository->findBy(['materia' => $materium]) as $servicio) {
+                $entityManager->remove($servicio);
             }
             foreach ($materium->getCausaLetras() as $causaLetra) {
                 $entityManager->remove($causaLetra);

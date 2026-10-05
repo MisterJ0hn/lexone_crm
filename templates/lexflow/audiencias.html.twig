@@ -1,0 +1,136 @@
+{% extends 'base.html.twig' %}
+{% import 'lexflow/_macros.html.twig' as m %}
+
+{% block title %}Próximas audiencias{% endblock %}
+
+{% block body %}
+{% set dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'] %}
+{% set meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'] %}
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Próximas audiencias</h3>
+        <div class="card-tools">
+            <span class="text-muted mr-2">{{ pasadas ? 'Todas las audiencias' : 'Audiencias fijadas de hoy en adelante' }} — {{ datos.total|default(0) }}</span>
+            <a class="btn btn-sm btn-secondary" href="{{ path('ed_audiencias_index', app.request.query.all|merge({incluir_pasadas: pasadas ? '' : '1', page: 1})) }}">
+                {{ pasadas ? 'Ver solo próximas' : 'Incluir pasadas' }}
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
+
+        <ul class="nav nav-tabs mb-3">
+            <li class="nav-item">
+                <a class="nav-link {{ not materia ? 'active' }}" href="{{ path('ed_audiencias_index', app.request.query.all|merge({materia: '', page: 1})) }}">
+                    Todas <span class="badge badge-light">{{ resumen.total }}</span>
+                </a>
+            </li>
+            {% for c in resumen.por_materia %}
+                <li class="nav-item">
+                    <a class="nav-link {{ materia == c.materia ? 'active' }}" href="{{ path('ed_audiencias_index', app.request.query.all|merge({materia: c.materia, page: 1})) }}">
+                        {{ c.materia ?: 'Sin materia' }} <span class="badge badge-light">{{ c.total }}</span>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <form method="get" class="form-row mb-3">
+            {% if materia %}<input type="hidden" name="materia" value="{{ materia }}">{% endif %}
+            {% if pasadas %}<input type="hidden" name="incluir_pasadas" value="1">{% endif %}
+            <div class="col-md-3 mb-2">
+                <label class="small mb-0">Búsqueda</label>
+                <input type="text" name="busqueda" class="form-control form-control-sm" placeholder="Carátula, RIT o RUC" value="{{ filtros.busqueda|default('') }}">
+            </div>
+            <div class="col-md-2 mb-2">
+                <label class="small mb-0">Tipo de audiencia</label>
+                <select name="tipo_audiencia" class="form-control form-control-sm">
+                    <option value="">Todos</option>
+                    {% for t in resumen.tipos_audiencia %}
+                        <option value="{{ t }}" {{ filtros.tipo_audiencia|default('') == t ? 'selected' }}>{{ t }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2 mb-2">
+                <label class="small mb-0">Tribunal</label>
+                <input type="text" name="tribunal" class="form-control form-control-sm" placeholder="Coincidencia parcial" value="{{ filtros.tribunal|default('') }}">
+            </div>
+            <div class="col-md-2 mb-2">
+                <label class="small mb-0">Desde</label>
+                <input type="date" name="desde" class="form-control form-control-sm" value="{{ filtros.desde|default('') }}">
+            </div>
+            <div class="col-md-2 mb-2">
+                <label class="small mb-0">Hasta</label>
+                <input type="date" name="hasta" class="form-control form-control-sm" value="{{ filtros.hasta|default('') }}">
+            </div>
+            <div class="col-md-1 mb-2 d-flex align-items-end">
+                <button class="btn btn-primary btn-sm"><i class="fas fa-search"></i></button>
+            </div>
+        </form>
+        {% include 'lexflow/_chips.html.twig' %}
+
+        {% for fecha, lista in grupos %}
+            {% set f = fecha|date('U') %}
+            <div class="card card-outline card-secondary mb-3">
+                <div class="card-header py-2">
+                    <strong>{{ dias[fecha|date('w')] }} {{ fecha|date('j') }} de {{ meses[fecha|date('n') - 1] }} de {{ fecha|date('Y') }}</strong>
+                    {% if fecha == hoy %}<span class="badge badge-info ml-2">Hoy</span>{% endif %}
+                    <span class="float-right text-muted small">{{ lista|length }} {{ lista|length == 1 ? 'audiencia' : 'audiencias' }}</span>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm mb-0">
+                        <thead>
+                            <tr>
+                                <th style="width:30px"></th><th>Hora</th>
+                                {% if not materia %}<th>Materia</th>{% endif %}
+                                <th>Tipo de audiencia</th><th>Carátula</th><th>RIT / RUC</th>
+                                <th>Tribunal</th><th>Sala</th><th class="text-center">Asistencia</th>
+                                <th class="text-center" title="Publicada en Google Calendar">GCal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for a in lista %}
+                            <tr style="cursor:pointer" data-toggle="collapse" data-target="#aud-{{ a.id }}">
+                                <td class="text-muted"><i class="fas fa-chevron-right"></i></td>
+                                <td class="font-weight-bold">{{ a.hora ? a.hora|slice(0, 5) : 'Sin hora' }}</td>
+                                {% if not materia %}
+                                    <td>{% if a.materia %}<span class="badge badge-secondary">{{ a.materia }}</span>{% else %}-{% endif %}</td>
+                                {% endif %}
+                                <td>{{ m.dato(a.tipo_audiencia) }}</td>
+                                <td>{{ m.dato(a.caratulado) }}</td>
+                                <td class="text-nowrap">{{ a.rol ?: (a.ruc ?: '-') }}</td>
+                                <td>{{ m.dato(a.tribunal) }}</td>
+                                <td class="text-nowrap">{{ m.dato(a.sala) }}</td>
+                                <td class="text-center">{% if a.asistio %}<span class="badge badge-success"><i class="fas fa-check"></i> Asistí</span>{% else %}<span class="text-muted">-</span>{% endif %}</td>
+                                <td class="text-center">{% if a.en_google_calendar %}<span class="text-success">&#10003;</span>{% else %}<span class="text-muted" title="{{ a.google_sync_error ?: 'Todavía no publicada en Google Calendar' }}">&ndash;</span>{% endif %}</td>
+                            </tr>
+                            <tr class="collapse bg-light" id="aud-{{ a.id }}">
+                                <td colspan="{{ materia ? 9 : 10 }}">
+                                    <div class="row small py-1">
+                                        {% for etiqueta, valor in {
+                                            'Materia': a.materia, 'RIT': a.rol, 'RUC': a.ruc, 'Juez': a.juez, 'Estado': a.estado,
+                                            'Tribunal': a.tribunal, 'Sala': a.sala, 'RUT': a.rut, 'Archivo': a.nombre_archivo
+                                        } %}
+                                            {% if valor %}
+                                                <div class="col-md-3 mb-2"><div class="text-muted text-uppercase">{{ etiqueta }}</div>{{ valor }}</div>
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if a.google_sync_error %}
+                                            <div class="col-12 text-danger">Google Calendar: {{ a.google_sync_error }}</div>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% else %}
+            <p class="text-center text-muted py-5">
+                {{ pasadas ? 'No se encontraron audiencias con esos filtros' : 'No hay audiencias próximas.' }}
+            </p>
+        {% endfor %}
+        {% include 'lexflow/_paginacion.html.twig' %}
+    </div>
+</div>
+{% endblock %}

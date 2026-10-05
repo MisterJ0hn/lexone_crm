@@ -1,0 +1,19 @@
+/*
+ * Estilos de LexOne CRM (Tailwind CSS v4). Compilar con:  npm run css:build
+ * La salida (public/assets/app.css) se versiona: el VPS no necesita Node.
+ *
+ * El orden importa: grilla y componentes de compatibilidad (Bootstrap/AdminLTE) primero,
+ * y las utilidades de Tailwind al final para poder usarse en plantillas nuevas.
+ */
+@import 'tailwindcss';
+
+@source '../../templates';
+@source '../../src';
+
+@import './theme.css';
+@import './base.css';
+@import './grid.css';
+@import './components.css';
+@import './adminlte-compat.css';
+@import './layout.css';
+@import './plugins.css';

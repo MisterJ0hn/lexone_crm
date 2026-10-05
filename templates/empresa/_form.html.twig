@@ -33,10 +33,48 @@
                     
                 </div>
                 <div class="col-sm-6 col-md-4">
-                    <small class="text_mute"> - </small>
-                    
+                    <small class="text_mute">API Key Estado Diario (Lexflow)</small>
+                    {{ form_row(form.edapiKey,{'label':false,'attr':{'class':'form-control','placeholder':'ed_xxxxxxxx','autocomplete':'off'}})}}
+                </div>
+                <div class="col-sm-6 col-md-4">
+                    <small class="text_mute">Cliente GUID Estado Diario (opcional)</small>
+                    {{ form_row(form.edapiClienteGuid,{'label':false,'attr':{'class':'form-control'}})}}
+                </div>
+                <div class="col-sm-6 col-md-4">
+                    <small class="text_mute">Habilitar Lexflow</small>
+                    <div class="custom-control custom-switch mt-2">
+                        {{ form_widget(form.lexflowHabilitado,{'attr':{'class':'custom-control-input'}})}}
+                        <label class="custom-control-label" for="{{ form.lexflowHabilitado.vars.id }}">Activo</label>
+                    </div>
+
                
          
+                </div>
+                <div class="col-sm-6 col-md-4">
+                    <small class="text_mute">Lexflow: solo causas del CRM</small>
+                    <div class="custom-control custom-switch mt-2">
+                        {{ form_widget(form.lexflowSoloCrm,{'attr':{'class':'custom-control-input'}})}}
+                        <label class="custom-control-label" for="{{ form.lexflowSoloCrm.vars.id }}">Activo</label>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-4">
+                    <small class="text_mute">API PJUD: x-client-key</small>
+                    {{ form_row(form.pjudClientKey,{'label':false,'attr':{'class':'form-control','autocomplete':'off'}})}}
+                </div>
+                <div class="col-sm-6 col-md-4">
+                    <small class="text_mute">API PJUD: email</small>
+                    {{ form_row(form.pjudEmail,{'label':false,'attr':{'class':'form-control','autocomplete':'off'}})}}
+                </div>
+                <div class="col-sm-6 col-md-4">
+                    <small class="text_mute">API PJUD: password{% if empresa is defined and empresa.pjudPassword %} <span class="text-success">(ya registrada; deje vacío para conservarla)</span>{% endif %}</small>
+                    {{ form_row(form.pjudPassword,{'label':false,'attr':{'class':'form-control','autocomplete':'new-password'}})}}
+                </div>
+                <div class="col-sm-6 col-md-4">
+                    <small class="text_mute">Habilitar botón Detalle PJUD</small>
+                    <div class="custom-control custom-switch mt-2">
+                        {{ form_widget(form.pjudHabilitado,{'attr':{'class':'custom-control-input'}})}}
+                        <label class="custom-control-label" for="{{ form.pjudHabilitado.vars.id }}">Activo</label>
+                    </div>
                 </div>
             </div>
             <button class="btn btn-primary">{{ button_label|default('Guardar') }}</button>

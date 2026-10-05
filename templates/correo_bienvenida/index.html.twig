@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Correo de Bienvenida{% endblock %}
+
+{% block body %}
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Correo de Bienvenida</h3>
+    </div>
+    <div class="card-body">
+        <p class="text-muted">Se envía al correo del cliente al crear un contrato, usando el template HTML configurado para su tipo de cliente.</p>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Tipo de Cliente</th>
+                    <th>Asunto</th>
+                    <th>Remitente</th>
+                    <th>Estado</th>
+                    <th>Última modificación</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for fila in filas %}
+                <tr>
+                    <td>{{ fila.tipo }}</td>
+                    <td>{{ fila.correo ? fila.correo.asunto : '-' }}</td>
+                    <td>{{ fila.correo ? fila.correo.remitenteCorreo : '-' }}</td>
+                    <td>
+                        {% if fila.correo and fila.correo.activo %}
+                            <span class="badge badge-success">Activo</span>
+                        {% else %}
+                            <span class="badge badge-secondary">No se envía</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ fila.correo and fila.correo.fechaModificacion ? fila.correo.fechaModificacion|date('d-m-Y H:i') : '' }}</td>
+                    <td>
+                        <a href="{{ path('correo_bienvenida_edit', {'id': fila.tipo.id}) }}" class="btn btn-sm btn-primary"><i class="fas fa-edit"></i> Configurar</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

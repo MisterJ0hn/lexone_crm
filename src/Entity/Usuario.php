@@ -137,6 +137,17 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Contrato::class, mappedBy: "tramitador")]
     private $contratos;
 
+    /** Credenciales de la persona en la Oficina Judicial Virtual (para sincronizar causas vía api-pjud). */
+    #[ORM\Column(type: "string", length: 20, nullable: true)]
+    private ?string $pjudRut = null;
+
+    #[ORM\Column(type: "encrypted_string", length: 255, nullable: true)]
+    private ?string $pjudClave = null;
+
+    /** 1 = Clave del Poder Judicial, 2 = ClaveÚnica */
+    #[ORM\Column(type: "smallint", options: ["default" => 1])]
+    private int $pjudMetodoLogin = 1;
+
     #[ORM\Column(type: "boolean", nullable: true)]
     private $lunes;
 
@@ -561,6 +572,39 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->fechaNoDisponible = $fechaNoDisponible;
 
+        return $this;
+    }
+
+    public function getPjudRut(): ?string
+    {
+        return $this->pjudRut;
+    }
+
+    public function setPjudRut(?string $pjudRut): self
+    {
+        $this->pjudRut = $pjudRut;
+        return $this;
+    }
+
+    public function getPjudClave(): ?string
+    {
+        return $this->pjudClave;
+    }
+
+    public function setPjudClave(?string $pjudClave): self
+    {
+        $this->pjudClave = $pjudClave;
+        return $this;
+    }
+
+    public function getPjudMetodoLogin(): int
+    {
+        return $this->pjudMetodoLogin;
+    }
+
+    public function setPjudMetodoLogin(int $pjudMetodoLogin): self
+    {
+        $this->pjudMetodoLogin = $pjudMetodoLogin;
         return $this;
     }
 

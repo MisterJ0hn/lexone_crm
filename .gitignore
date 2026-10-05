@@ -11,3 +11,4 @@
 /old/
 /bkp/
 ###< symfony/framework-bundle ###
+/node_modules/

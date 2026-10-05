@@ -1,17 +1,7 @@
-<!-- Sidebar -->
-    <div class="sidebar">
-      <!-- Sidebar user (optional) -->
-      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-        
-        <div class="info">
-          <a href="#" class="d-block">{{sesion.getSesion.nombre}}</a>
-        </div>
-      </div>
-      <!-- Sidebar Menu -->
-      <nav class="mt-2">
-        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-          <!-- Add icons to the links using the .nav-icon class
-               with font-awesome or any other icon font library -->
+{# Menú lateral: se arma desde la base de datos (MenuController::mainMenu). Los estilos están en assets/css/layout.css. #}
+    <div class="px-3 py-4">
+      <nav>
+        <ul class="nav nav-sidebar flex-column" role="menu">
       {% if items is defined %}
         {% for item in items %}
 

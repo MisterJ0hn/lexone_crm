@@ -2,7 +2,7 @@
 
     {% if sesion.getSesion.usuarioTipo.id==8  %}
         <form action="{{path('changecomp_new')}}" method="post" id="frmChange">
-            <select  class="form-control changecomp" name="company" id="company">
+            <select  class="form-control form-control-sm changecomp !w-36 sm:!w-56" name="company" id="company">
                 {% for empresa in empresas %}
                 <option value="{{empresa.id}}"
                 {% if empresa.id==id_empresa %}

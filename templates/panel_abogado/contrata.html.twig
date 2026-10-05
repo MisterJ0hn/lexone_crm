@@ -9,10 +9,14 @@
     </div>
 </div>
 <hr class="card-outline card-info">
-<h4>Datos nuevo cliente</h4>
+<h4>
+    {% if agenda.tipoCliente is null or agenda.tipoCliente.nombre == 'Persona' %}Datos nuevo cliente
+    {% elseif agenda.tipoCliente.nombre == 'Convenio' %}Datos nuevo convenio
+    {% else %}Datos nueva empresa{% endif %}
+</h4>
 <div class="row">
     <div class="col-sm-12 col-md-3">
-        <small class="text-muted">Nombre</small>
+        <small class="text-muted">{{ (agenda.tipoCliente is not null and agenda.tipoCliente.nombre == 'Empresa') ? 'Razón social' : 'Nombre' }}</small>
 		{{form_row(form.nombre,{'label':false,'attr':{'class':'form-control','autocomplete':"ÑÖcompletes"}})}}
     </div>
     <div class="col-sm-12 col-md-3">
@@ -21,7 +25,7 @@
     </div>
     <div class="col-sm-12 col-md-3">
         <small class="text-muted">Email *</small>
-		{{form_row(form.email,{'label':false,'attr':{'class':'form-control emailCliente','autocomplete':"ÑÖcompletes",'required':true}})}}
+		{{form_row(form.email,{'label':false,'attr':{'class':'form-control emailCliente','autocomplete':"ÑÖcompletes",'required':true,'data-validar-correo':''}})}}
     </div>
     {% if agenda.tipoCliente is null or agenda.tipoCliente.nombre == 'Persona' %}
     <div class="col-sm-12 col-md-3">
@@ -94,8 +98,30 @@
         <small class="text-muted">Clave única</small>
 		{{form_row(form.claveUnica,{'label':false,'attr':{'class':'form-control','autocomplete':"ÑÖcompletes"}})}}
     </div>
-    
+
 </div>
+{% if agenda.tipoCliente is not null and agenda.tipoCliente.nombre != 'Persona' %}
+<hr class="card-outline card-info">
+<h4>Datos representante legal</h4>
+<div class="row">
+    <div class="col-sm-12 col-md-3">
+        <small class="text-muted">Rut</small>
+        {{form_row(form.repLegalRut,{'label':false,'attr':{'class':'form-control format-rut-rep','autocomplete':"ÑÖcompletes"}})}}
+    </div>
+    <div class="col-sm-12 col-md-3">
+        <small class="text-muted">Nombre</small>
+        {{form_row(form.repLegalNombre,{'label':false,'attr':{'class':'form-control','autocomplete':"ÑÖcompletes"}})}}
+    </div>
+    <div class="col-sm-12 col-md-3">
+        <small class="text-muted">Estado civil</small>
+        {{form_row(form.repLegalEstadoCivil,{'label':false,'attr':{'class':'form-control'}})}}
+    </div>
+    <div class="col-sm-12 col-md-3">
+        <small class="text-muted">Profesión u oficio</small>
+        {{form_row(form.repLegalProfesion,{'label':false,'attr':{'class':'form-control','autocomplete':"ÑÖcompletes"}})}}
+    </div>
+</div>
+{% endif %}
 <hr class="card-outline card-info">
 <h4>Honorarios</h4>
 <div class="row">
@@ -141,18 +167,12 @@
             <div class="col">{{form_row(form.isAbono,{'label':false,'attr':{'class':' chk-bono'}})}}</div>
             <small class="text-muted textTotal">Paga el total *</small>
             <div class="col divTotal">{{form_row(form.isTotal,{'label':false,'attr':{'class':' chk-total'}})}}</div>
-            <small class="text-muted isIncorporacion">Incorporación *</small>
-            <div class="col">{{form_row(form.isIncorporacion,{'label':false,'attr':{'class':' chk-incorporacion'}})}}</div>
         </div>
         <div class="row">
             <div class="col">
                 {{form_row(form.primeraCuota,{'label':false,'attr':{'class':'form-control primera-cuota number','required':true,'autocomplete':"ÑÖcompletes"}})}}
         
                 <strong><label id="m-primera-cuota"></label></strong>
-            </div>
-            <div class="col">
-                <input type="text" class="fecha-incorporacion form-control" name="txtFechaIncorporacion" required>
-                  
             </div>
         </div>
     </div>
@@ -216,9 +236,12 @@
                 </select>
             </div>
             <div class="col-sm-12 col-md-3 submateria">
-                <select name="cboSubMateria" class="form-control cboSubMateria"  >
-                    <option>Seleccione Servicio</option>
-                </select>
+                <div class="input-group">
+                    <select name="cboSubMateria" class="form-control cboSubMateria"  >
+                        <option>Seleccione Servicio</option>
+                    </select>
+                    <div class="input-group-append"><button type="button" class="btn btn-outline-primary" data-servicio-nuevo title="Agregar nuevo servicio"><i class="fas fa-plus"></i></button></div>
+                </div>
             </div>
             <div class="col-sm-12 col-md-4">
                 <div class="row">
@@ -343,8 +366,8 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-danger" onclick="cancelarContrato()">Cancelar</button>
-        <button type="button" class="btn btn-secondary" onclick="cerrarResumenCuotas()">Cerrar</button>
+        <button type="button" class="btn btn-danger" onclick="cancelarContrato()">Borrar</button>
+        <button type="button" class="btn btn-secondary" onclick="cerrarResumenCuotas()">Modificar</button>
         <button type="button" class="btn btn-primary" onclick="confirmarContratar()">Contratar</button>
       </div>
     </div>
@@ -471,7 +494,7 @@
     }
     function  cambiaEstrategiaJuridica(value){
             $.ajax({
-                url:"/estrategia_juridica/"+value+"/combo",
+                url:"/servicio/"+value+"/combo",
                 type: "post",
                 dataType: "html",
                 cache: false,
@@ -1090,7 +1113,7 @@
         }
         }
     });
-    $(".format-rut").inputmask({
+    $(".format-rut, .format-rut-rep").inputmask({
         mask:"9{1,2}.9{3}.9{3}-(9|k|K)",
         casing: 'upper',
         clearIncomplete: false,

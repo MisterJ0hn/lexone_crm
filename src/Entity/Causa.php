@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CausaRepository::class)]
+#[ORM\HasLifecycleCallbacks()]
 class Causa
 {
     #[ORM\Id]
@@ -26,20 +27,15 @@ class Causa
     private $materia;
 
     /**
-     * Servicio/estrategia jurídica concreta dentro de la materia. Opcional: se
-     * puede elegir después de crear la causa. Si está seteada, su materia debe
-     * coincidir con $materia.
+     * Servicio concreto dentro de la materia. Opcional: se puede elegir después
+     * de crear la causa. Si está seteado, su materia debe coincidir con $materia.
      */
-    #[ORM\ManyToOne(targetEntity: MateriaEstrategia::class)]
+    #[ORM\ManyToOne(targetEntity: Servicio::class)]
     #[ORM\JoinColumn(nullable: true)]
-    private $materiaEstrategia;
+    private $servicio;
 
-    #[ORM\ManyToOne(targetEntity: JuzgadoCuenta::class)]
-    #[ORM\JoinColumn(nullable: true)]
-    private $juzgadoCuenta;
-
-    #[ORM\Column(type: "string", length: 255, nullable: true)]
-    private $id_causa;
+    #[ORM\Column(type: "string", length: 255)]
+    private $idCausa;
 
     #[ORM\Column(type: "string", length: 255)]
     private $causaNombre;
@@ -48,8 +44,12 @@ class Causa
     #[ORM\JoinColumn(nullable: false)]
     private $agenda;
 
-    #[ORM\OneToMany(targetEntity: LineaTiempoTerminada::class, mappedBy: "causa")]
-    private $lineaTiempoTerminadas;
+    /**
+     * Estado procesal de la causa (ver EstadoProcesal). Parte con "Bienvenida".
+     */
+    #[ORM\OneToMany(targetEntity: EstadoProcesal::class, mappedBy: "causa", cascade: ["persist"])]
+    #[ORM\OrderBy(["id" => "ASC"])]
+    private $estadosProcesales;
 
     #[ORM\Column(type: "boolean", nullable: true)]
     private $estado;
@@ -71,8 +71,6 @@ class Causa
     #[ORM\OneToMany(targetEntity: DetalleCuaderno::class, mappedBy: "causa", orphanRemoval: true)]
     private $detalleCuadernos;
 
-    #[ORM\OneToMany(targetEntity: EstrategiaJuridicaReporteArchivos::class, mappedBy: "causa")]
-    private $estrategiaJuridicaReporteArchivos;
 
     #[ORM\Column(type: "string", length: 10, nullable: true)]
     private $letra;
@@ -90,9 +88,6 @@ class Causa
     private $juzgado;
 
 
-    #[ORM\Column(type: "string", length: 255, nullable: true)]
-    private $etapaPendiente;
-
     /**
      * Cliente propio de esta causa, para Agendas de tipo Convenio/Empresa (donde el
      * Contrato agrupa varios clientes, cada uno con sus propias causas). Para
@@ -105,10 +100,9 @@ class Causa
 
     public function __construct()
     {
-        $this->lineaTiempoTerminadas = new ArrayCollection();
+        $this->estadosProcesales = new ArrayCollection();
         $this->causaObservacions = new ArrayCollection();
         $this->detalleCuadernos = new ArrayCollection();
-        $this->estrategiaJuridicaReporteArchivos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -128,42 +122,30 @@ class Causa
         return $this;
     }
 
-    public function getMateriaEstrategia(): ?MateriaEstrategia
+    public function getServicio(): ?Servicio
     {
-        return $this->materiaEstrategia;
+        return $this->servicio;
     }
 
-    public function setMateriaEstrategia(?MateriaEstrategia $materiaEstrategia): self
+    public function setServicio(?Servicio $servicio): self
     {
-        $this->materiaEstrategia = $materiaEstrategia;
-
-        return $this;
-    }
-
-    public function getJuzgadoCuenta(): ?JuzgadoCuenta
-    {
-        return $this->juzgadoCuenta;
-    }
-
-    public function setJuzgadoCuenta(?JuzgadoCuenta $juzgadoCuenta): self
-    {
-        $this->juzgadoCuenta = $juzgadoCuenta;
+        $this->servicio = $servicio;
 
         return $this;
     }
 
     public function getIdCausa(): ?string
     {
-        return $this->id_causa;
+        return $this->idCausa;
     }
 
-    public function setIdCausa(?string $id_causa): self
+    public function setIdCausa(string $idCausa): self
     {
-        $this->id_causa = $id_causa;
+        $this->idCausa = $idCausa;
 
         return $this;
     }
-
+   
     public function getCausaNombre(): ?string
     {
         return $this->causaNombre;
@@ -189,33 +171,38 @@ class Causa
     }
 
     /**
-     * @return Collection<int, LineaTiempoTerminada>
+     * @return Collection<int, EstadoProcesal>
      */
-    public function getLineaTiempoTerminadas(): Collection
+    public function getEstadosProcesales(): Collection
     {
-        return $this->lineaTiempoTerminadas;
+        return $this->estadosProcesales;
     }
 
-    public function addLineaTiempoTerminada(LineaTiempoTerminada $lineaTiempoTerminada): self
+    public function addEstadoProcesal(EstadoProcesal $estadoProcesal): self
     {
-        if (!$this->lineaTiempoTerminadas->contains($lineaTiempoTerminada)) {
-            $this->lineaTiempoTerminadas[] = $lineaTiempoTerminada;
-            $lineaTiempoTerminada->setCausa($this);
+        if (!$this->estadosProcesales->contains($estadoProcesal)) {
+            $this->estadosProcesales[] = $estadoProcesal;
+            $estadoProcesal->setCausa($this);
         }
 
         return $this;
     }
 
-    public function removeLineaTiempoTerminada(LineaTiempoTerminada $lineaTiempoTerminada): self
+    /**
+     * Toda causa nueva nace con el ítem "Bienvenida" ya completado (verde).
+     */
+    #[ORM\PrePersist()]
+    public function crearEstadoBienvenida(): void
     {
-        if ($this->lineaTiempoTerminadas->removeElement($lineaTiempoTerminada)) {
-            // set the owning side to null (unless already changed)
-            if ($lineaTiempoTerminada->getCausa() === $this) {
-                $lineaTiempoTerminada->setCausa(null);
-            }
+        $empresa = $this->agenda?->getEmpresa();
+        if ($empresa === null || !$this->estadosProcesales->isEmpty()) {
+            return;
         }
-
-        return $this;
+        $bienvenida = (new EstadoProcesal())
+            ->setEmpresa($empresa)
+            ->setNombre(EstadoProcesal::BIENVENIDA)
+            ->setCompletado(true);
+        $this->addEstadoProcesal($bienvenida);
     }
 
     public function getEstado(): ?bool
@@ -339,36 +326,6 @@ class Causa
         return $this;
     }
 
-    /**
-     * @return Collection<int, EstrategiaJuridicaReporteArchivos>
-     */
-    public function getEstrategiaJuridicaReporteArchivos(): Collection
-    {
-        return $this->estrategiaJuridicaReporteArchivos;
-    }
-
-    public function addEstrategiaJuridicaReporteArchivo(EstrategiaJuridicaReporteArchivos $estrategiaJuridicaReporteArchivo): self
-    {
-        if (!$this->estrategiaJuridicaReporteArchivos->contains($estrategiaJuridicaReporteArchivo)) {
-            $this->estrategiaJuridicaReporteArchivos[] = $estrategiaJuridicaReporteArchivo;
-            $estrategiaJuridicaReporteArchivo->setCausa($this);
-        }
-
-        return $this;
-    }
-
-    public function removeEstrategiaJuridicaReporteArchivo(EstrategiaJuridicaReporteArchivos $estrategiaJuridicaReporteArchivo): self
-    {
-        if ($this->estrategiaJuridicaReporteArchivos->removeElement($estrategiaJuridicaReporteArchivo)) {
-            // set the owning side to null (unless already changed)
-            if ($estrategiaJuridicaReporteArchivo->getCausa() === $this) {
-                $estrategiaJuridicaReporteArchivo->setCausa(null);
-            }
-        }
-
-        return $this;
-    }
-
     public function getLetra(): ?string
     {
         return $this->letra;
@@ -430,18 +387,6 @@ class Causa
     }
 
    
-
-    public function getEtapaPendiente(): ?string
-    {
-        return $this->etapaPendiente;
-    }
-
-    public function setEtapaPendiente(?string $etapaPendiente): self
-    {
-        $this->etapaPendiente = $etapaPendiente;
-
-        return $this;
-    }
 
     public function getCliente(): ?Cliente
     {

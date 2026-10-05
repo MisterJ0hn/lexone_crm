@@ -1,0 +1,147 @@
+{% extends 'base.html.twig' %}
+{% import 'lexflow/_macros.html.twig' as m %}
+{% import 'pjud/_boton.html.twig' as pjud %}
+
+{% block title %}Estado Diario{% endblock %}
+
+{% block body %}
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Estado Diario</h3>
+        <div class="card-tools text-muted">{{ datos.total|default(0) }} registros encontrados</div>
+    </div>
+    <div class="card-body">
+        {% include 'lexflow/_tabs.html.twig' %}
+
+        {% if tab == 'materias' %}
+            <ul class="nav nav-pills mb-3">
+                {% for k, label in tabs_estado %}
+                    <li class="nav-item">
+                        <a class="nav-link {{ estado == k ? 'active' }}" href="{{ path('ed_estado_diario_index', app.request.query.all|merge({estado: k, page: 1})) }}">
+                            {{ label }} {% if conteos[k] is defined %}<span class="badge badge-light">{{ conteos[k] }}</span>{% endif %}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+
+            <form method="get" class="form-row mb-3">
+                <input type="hidden" name="tab" value="materias">
+                <input type="hidden" name="estado" value="{{ estado }}">
+                <div class="col-md-3 mb-2">
+                    <label class="small mb-0">Jurisdicción</label>
+                    <select name="jurisdiccion" class="form-control form-control-sm">
+                        <option value="">Todas</option>
+                        {% for j in jurisdicciones %}
+                            <option value="{{ j.id }}" {{ filtros.jurisdiccion|default('') == j.id ? 'selected' }}>{{ j.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2 mb-2">
+                    <label class="small mb-0">Fecha desde</label>
+                    <input type="date" name="fecha_desde" class="form-control form-control-sm" value="{{ filtros.fecha_desde|default('') }}">
+                </div>
+                <div class="col-md-2 mb-2">
+                    <label class="small mb-0">Fecha hasta</label>
+                    <input type="date" name="fecha_hasta" class="form-control form-control-sm" value="{{ filtros.fecha_hasta|default('') }}">
+                </div>
+                <div class="col-md-3 mb-2">
+                    <label class="small mb-0">RUT</label>
+                    <input type="text" name="rut" class="form-control form-control-sm" placeholder="Ej: 16952077-1" value="{{ filtros.rut|default('') }}">
+                </div>
+                <div class="col-md-2 mb-2 d-flex align-items-end">
+                    <button class="btn btn-primary btn-sm"><i class="fas fa-search"></i> Aplicar</button>
+                </div>
+            </form>
+            {% include 'lexflow/_chips.html.twig' %}
+
+            <div class="table-responsive">
+                <table class="table table-sm table-striped">
+                    <thead>
+                        <tr>
+                            <th>Rit/Rol</th><th>Ruc/RolUnico</th><th>FechaIngreso</th><th>Caratulado</th>
+                            <th>Tribunal</th><th>TipoCausa</th><th>Estado</th><th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for r in datos.movimientos|default([]) %}
+                        <tr>
+                            <td class="font-weight-bold">{{ m.dato(r.rol) }}</td>
+                            <td>{{ m.dato(r.rol_unico) }}</td>
+                            <td class="text-nowrap">{{ m.dato(r.fecha_ingreso) }}</td>
+                            <td title="{{ r.caratulado }}">{{ m.dato(r.caratulado) }}</td>
+                            <td>{{ m.dato(r.tribunal) }}</td>
+                            <td>{{ m.dato(r.tipo_causa) }}</td>
+                            <td>
+                                {% if r.leido %}
+                                    <span class="badge badge-success">Resuelto</span>
+                                {% elseif r.pendiente %}
+                                    <span class="badge {{ r.nivel_pendiente == 'alto' ? 'badge-danger' : (r.nivel_pendiente == 'medio' ? 'badge-warning' : 'badge-secondary') }}">Pendiente - {{ r.nivel_pendiente }}</span>
+                                {% else %}
+                                    <span class="badge badge-secondary">No leído</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-nowrap text-right">
+                                {{ pjud.boton(r.crm_causa_id|default(r.pjud_token|default(null))) }}
+                                {% if r.id is defined %}
+                                    {% set accion = r.leido ? 'no_leido' : 'leido' %}
+                                    <form method="post" action="{{ path('ed_estado_diario_' ~ accion, {id: r.id}) }}" class="d-inline">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('ed_' ~ accion|replace({'_': '-'}) ~ r.id) }}">
+                                        {% for k, v in app.request.query.all %}
+                                            {% if v is not iterable %}<input type="hidden" name="query[{{ k }}]" value="{{ v }}">{% endif %}
+                                        {% endfor %}
+                                        {% if r.leido %}
+                                            <button type="submit" class="btn btn-outline-secondary btn-sm" title="Marcar como no leído">
+                                                <i class="fas fa-undo"></i>
+                                            </button>
+                                        {% else %}
+                                            <button type="submit" class="btn btn-success btn-sm" title="Marcar como leído">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                        {% endif %}
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="8" class="text-center text-muted py-4">No se encontraron registros del estado diario</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {# Diagnóstico del botón "Detalle PJUD" (martillo): por qué aparece o no. #}
+            <p class="small text-muted mb-0">
+                {% if not pjud_info.configurado %}
+                    Detalle PJUD: la empresa no lo tiene habilitado o le faltan email y password de api-pjud (Empresa → editar).
+                {% else %}
+                    Detalle PJUD: {{ pjud_info.coinciden + pjud_info.externas }} de {{ datos.movimientos|default([])|length }} filas de esta página tienen detalle ({{ pjud_info.coinciden }} del CRM, con la clave del cliente; {{ pjud_info.externas }} fuera del CRM, con su clave PJUD de Mis Datos){% if pjud_info.sin_soporte %}. {{ pjud_info.sin_soporte }} no se pueden consultar (materia no soportada o rol sin formato LETRA-NÚMERO-AÑO){% endif %}.
+                {% endif %}
+            </p>
+        {% else %}
+            {% include 'lexflow/_filtros_corte.html.twig' with {placeholder_busqueda: 'Carátula o número de ingreso'} %}
+
+            <div class="table-responsive">
+                <table class="table table-sm table-striped">
+                    <thead>
+                        <tr><th>FechaIngreso</th><th>Caratulado</th><th>Ubicación</th><th>FechaUbicación</th><th>Corte</th><th>TipoRecurso</th></tr>
+                    </thead>
+                    <tbody>
+                    {% for c in datos.cortes|default([]) %}
+                        <tr>
+                            <td class="text-nowrap">{{ m.fecha(c.fecha_ingreso) }}</td>
+                            <td>{{ m.dato(c.caratulado) }}</td>
+                            <td>{{ m.dato(c.ubicacion) }}</td>
+                            <td class="text-nowrap">{{ m.fecha(c.fecha_ubicacion) }}</td>
+                            <td>{{ m.dato(c.corte) }}</td>
+                            <td>{{ m.dato(c.tipo_recurso) }}</td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="6" class="text-center text-muted py-4">No hay causas de corte</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+        {% include 'lexflow/_paginacion.html.twig' %}
+    </div>
+</div>
+{% endblock %}

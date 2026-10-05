@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Editar servicio{% endblock %}
+
+{% block body %}
+<div class="card">
+    <div class="card-header">Editar servicio - {{ servicio.materia.nombre }}</div>
+    <div class="card-body">
+        {{ form_start(form) }}
+        <div class="row">
+            <div class="col-sm-12 col-md-6">
+                <small class="text-muted">Servicio</small>
+                {{ form_widget(form.nombre, {'attr': {'class': 'form-control', 'maxlength': '255'}}) }}
+                {{ form_errors(form.nombre) }}
+            </div>
+            <div class="col-sm-12 col-md-3">
+                <small class="text-muted">Precio</small>
+                {{ form_widget(form.precio, {'attr': {'class': 'form-control'}}) }}
+            </div>
+        </div>
+        <button class="btn btn-primary mt-2">Guardar</button>
+        <a href="{{ path('servicio_new', {'id': servicio.materia.id}) }}" class="btn btn-secondary mt-2">Volver</a>
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}

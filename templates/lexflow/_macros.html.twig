@@ -1,0 +1,2 @@
+{% macro fecha(v) %}{% if v %}{{ v|slice(0,10)|split('-')|reverse|join('-') }}{% else %}-{% endif %}{% endmacro %}
+{% macro dato(v) %}{% if v is not null and v != '' %}{{ v }}{% else %}-{% endif %}{% endmacro %}

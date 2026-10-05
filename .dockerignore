@@ -1,0 +1,11 @@
+.git
+vendor
+var
+node_modules
+public/build
+.env.local
+.env.local.php
+.env.local.phpp
+.env.*.local
+docker
+docker-compose.yml

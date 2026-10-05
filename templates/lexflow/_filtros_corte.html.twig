@@ -1,0 +1,32 @@
+{# Filtros de la pestaña Cortes (idénticos en Estado Diario y Movimientos). #}
+<form method="get" class="form-row mb-3">
+    <input type="hidden" name="tab" value="cortes">
+    {% if vigencia is defined %}<input type="hidden" name="vigencia" value="{{ vigencia }}">{% endif %}
+    <div class="col-md-4 mb-2">
+        <label class="small mb-0">Búsqueda</label>
+        <input type="text" name="busqueda" class="form-control form-control-sm" placeholder="{{ placeholder_busqueda }}" value="{{ filtros.busqueda|default('') }}">
+    </div>
+    <div class="col-md-3 mb-2">
+        <label class="small mb-0">Tipo de corte</label>
+        <select name="tipo" class="form-control form-control-sm">
+            {% for k, label in tipos_corte %}
+                <option value="{{ k }}" {{ filtros.tipo|default('') == k ? 'selected' }}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    {% if datos.cortes_disponibles|default([])|length %}
+    <div class="col-md-3 mb-2">
+        <label class="small mb-0">Corte</label>
+        <select name="corte" class="form-control form-control-sm">
+            <option value="">Todas</option>
+            {% for c in datos.cortes_disponibles %}
+                <option value="{{ c }}" {{ filtros.corte|default('') == c ? 'selected' }}>{{ c }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    {% endif %}
+    <div class="col-md-2 mb-2 d-flex align-items-end">
+        <button class="btn btn-primary btn-sm"><i class="fas fa-search"></i> Aplicar</button>
+    </div>
+</form>
+{% include 'lexflow/_chips.html.twig' %}

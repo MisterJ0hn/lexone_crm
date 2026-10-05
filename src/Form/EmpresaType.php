@@ -6,7 +6,9 @@ use App\Entity\Empresa;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Validator\Constraints\File;
 
 class EmpresaType extends AbstractType
@@ -42,6 +44,14 @@ class EmpresaType extends AbstractType
                 ],
             ])
             ->add('fechaVigencia')
+            ->add('lexflowHabilitado', CheckboxType::class, ['required' => false])
+            ->add('lexflowSoloCrm', CheckboxType::class, ['required' => false])
+            ->add('pjudHabilitado', CheckboxType::class, ['required' => false])
+            ->add('pjudClientKey', null, ['required' => false])
+            ->add('pjudEmail', null, ['required' => false])
+            ->add('pjudPassword', PasswordType::class, ['required' => false, 'mapped' => false])
+            ->add('edapiKey', null, ['required' => false])
+            ->add('edapiClienteGuid', null, ['required' => false])
         ;
     }
 

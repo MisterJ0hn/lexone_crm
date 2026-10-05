@@ -6,6 +6,7 @@
 <div class="row">
     <div class="col-sm-12 col-md-12">
         {{ include('cabezera.html.twig') }}
+        {{ include('contrato/_notas.html.twig') }}
         <div class="card">
             <div class="card-body">
                 <h6>Agregar Causa</h6>
@@ -19,9 +20,12 @@
                         </select>
                     </div>
                     <div class="col-sm-12 col-md-3">
-                        <select class="form-control cboSubMateria-nueva">
-                            <option value="">Seleccione Servicio</option>
-                        </select>
+                        <div class="input-group">
+                            <select class="form-control cboSubMateria-nueva">
+                                <option value="">Seleccione Servicio</option>
+                            </select>
+                            <div class="input-group-append"><button type="button" class="btn btn-outline-primary" data-servicio-nuevo title="Agregar nuevo servicio"><i class="fas fa-plus"></i></button></div>
+                        </div>
                     </div>
                     <div class="col-sm-12 col-md-3">
                         <div class="row no-gutters">
@@ -84,7 +88,7 @@
                             </td>
                             <td>
                                 <strong>{{causa.materia.nombre}}</strong>
-                                {% if causa.materiaEstrategia %}<br><small>{{causa.materiaEstrategia.estrategiaJuridica}}</small>{% endif %}
+                                {% if causa.servicio %}<br><small>{{causa.servicio}}</small>{% endif %}
                             </td>
                             
                              <td>
@@ -102,7 +106,7 @@
                                 <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
                                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" 
                                         data-whatever="@fat"
-                                        data-servicio="{{causa.materiaEstrategia.estrategiaJuridica}}"
+                                        data-servicio="{{causa.servicio}}"
                                         data-idcausa="{{causa.idCausa}}"
                                         data-letra="{{causa.letra}}"
                                         data-rol="{{causa.rol}}"
@@ -238,7 +242,7 @@
             return;
         }
         $.ajax({
-            url: "/estrategia_juridica/"+materiaId+"/combo",
+            url: "/servicio/"+materiaId+"/combo",
             type: "post",
             dataType: "html",
             cache: false,

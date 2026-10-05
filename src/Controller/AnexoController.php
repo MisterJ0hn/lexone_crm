@@ -15,7 +15,7 @@ use App\Repository\CuotaRepository;
 use App\Repository\DiasPagoRepository;
 use App\Repository\JuzgadoCuentaRepository;
 use App\Repository\JuzgadoRepository;
-use App\Repository\MateriaEstrategiaRepository;
+use App\Repository\ServicioRepository;
 use App\Repository\MateriaRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -60,7 +60,7 @@ class AnexoController extends AbstractController
                             JuzgadoRepository $juzgadoRepository,
                             DiasPagoRepository $diasPagoRepository,
                             ContratoAnexoRepository $contratoAnexoRepository,
-                            MateriaEstrategiaRepository $materiaEstrategiaRepository,
+                            ServicioRepository $servicioRepository,
                             MateriaRepository $materiaRepository,
                             JuzgadoCuentaRepository $juzgadoCuentaRepository,
                             CausaRepository $causaRepository,
@@ -103,13 +103,13 @@ class AnexoController extends AbstractController
             $entityManager->persist($contratoAnexo);
             $entityManager->flush();
 
-           $materiasCausa=$request->request->get('hdMateria');
-            $submaterias=$request->request->get('hdSubMateria');
-            $letra = $request->request->get('hdLetraCausa');
-            $rol = $request->request->get('hdRolCausa');
-            $anio = $request->request->get('hdAnioCausa');
-            $caratulados=$request->request->get('hdCaratulado');
-            $hdjuzgados=$request->request->get('hdJuzgado');
+           $materiasCausa=$request->request->all('hdMateria');
+            $submaterias=$request->request->all('hdSubMateria');
+            $letra = $request->request->all('hdLetraCausa');
+            $rol = $request->request->all('hdRolCausa');
+            $anio = $request->request->all('hdAnioCausa');
+            $caratulados=$request->request->all('hdCaratulado');
+            $hdjuzgados=$request->request->all('hdJuzgado');
 
             // Materia es un catálogo global: mismo listado para todas las empresas.
             $materiasHabilitadas=[];
@@ -132,11 +132,11 @@ class AnexoController extends AbstractController
                 if(isset($materiasCausa[$i]) && $materiasCausa[$i]!=="" && isset($materiasHabilitadas[(int)$materiasCausa[$i]])){
                     $materia=$materiaRepository->find($materiasCausa[$i]);
                 }
-                $materiaEstrategia=null;
+                $servicio=null;
                 if(null !== $submaterias[$i] && $submaterias[$i]!==""){
-                    $materiaEstrategia=$materiaEstrategiaRepository->find($submaterias[$i]);
-                    if($materia===null && $materiaEstrategia!==null){
-                        $materia=$materiaEstrategia->getMateria();
+                    $servicio=$servicioRepository->find($submaterias[$i]);
+                    if($materia===null && $servicio!==null){
+                        $materia=$servicio->getMateria();
                     }
                 }
                 if($materia===null){
@@ -155,8 +155,8 @@ class AnexoController extends AbstractController
                 if(null !== $caratulados[$i]){
                     $causa->setCausaNombre($caratulados[$i]);
                 }
-                if($materiaEstrategia!==null && $materiaEstrategia->getMateria()->getId()===$materia->getId()){
-                    $causa->setMateriaEstrategia($materiaEstrategia);
+                if($servicio!==null && $servicio->getMateria()->getId()===$materia->getId()){
+                    $causa->setServicio($servicio);
                 }
                 if(null !== $hdjuzgados[$i]){
                     $juzgado=$juzgadoRepository->find($hdjuzgados[$i]);
@@ -178,7 +178,6 @@ class AnexoController extends AbstractController
                 $entityManager->flush();
                 
                 
-                //$etapa_pendiente = $lineaTiempoEtapasRepository->obtenerEtapaPendiente($causa->getId(),$causa->getMateriaEstrategia()->getEstrategiaJuridica()->getLineaTiempo()->getId());
                 //if($etapa_pendiente){
                 //    $causa->setEtapaPendiente($etapa_pendiente->getNombre());
                 //}*/

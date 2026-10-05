@@ -1,0 +1,13 @@
+{
+  "name": "lexone",
+  "private": true,
+  "description": "Compilación de estilos (Tailwind CSS) de LexOne CRM",
+  "scripts": {
+    "css:build": "tailwindcss -i assets/css/app.css -o public/assets/app.css --minify",
+    "css:watch": "tailwindcss -i assets/css/app.css -o public/assets/app.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.0",
+    "tailwindcss": "^4.1.0"
+  }
+}

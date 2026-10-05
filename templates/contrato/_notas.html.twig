@@ -1,0 +1,58 @@
+{#
+  Historial de observaciones del contrato (con archivo opcional). Solo se agregan registros.
+  Todo vive en un panel lateral que se abre desde la derecha (mismo patrón que app-filtros-panel
+  de estado_diario): arriba el formulario para agregar y debajo el historial como línea de tiempo.
+  El panel y su comportamiento son compartidos: ver components/_historial_panel.html.twig y public/assets/app.js.
+  Variables: contrato, notas.
+#}
+{% set itemsNotas = [] %}
+{# notas viene del más reciente al más antiguo: se invierte para listar de menor a mayor #}
+{% for nota in notas|reverse %}
+    {% set itemsNotas = itemsNotas|merge([{
+        fecha: nota.fechaRegistro,
+        titulo: '',
+        usuario: nota.usuario.nombre,
+        texto: nota.observacion,
+        archivo: nota.archivo ? {url: path('contrato_nota_descargar', {'id': nota.id}), nombre: nota.archivoNombre} : null
+    }]) %}
+{% endfor %}
+
+<div class="card card-outline">
+    <div class="card-header d-flex align-items-center">
+        <h3 class="card-title mb-0">Observaciones del contrato</h3>
+        <button type="button" class="btn btn-secondary btn-sm ml-auto" id="notaAbrir" data-side-panel-open="notaPanelRaiz">
+            <i class="fas fa-comments"></i> Ver / agregar observaciones
+            <span class="badge badge-light ml-1">{{ notas|length }}</span>
+        </button>
+    </div>
+</div>
+
+<div id="notaPanelRaiz" hidden>
+    <div class="side-panel-fondo" data-side-panel-close aria-hidden="true"></div>
+    <aside id="notaPanel" class="side-panel" tabindex="-1" role="dialog" aria-modal="true" aria-label="Observaciones del contrato">
+        <header>
+            <h2>Observaciones del contrato</h2>
+            <button type="button" class="side-panel-cerrar" data-side-panel-close aria-label="Cerrar el panel">&times;</button>
+        </header>
+
+        <div class="side-panel-cuerpo">
+            <form class="side-panel-nueva" method="post" action="{{ path('contrato_nota_agregar', {'id': contrato.id}) }}" enctype="multipart/form-data">
+                <input type="hidden" name="_token" value="{{ csrf_token('contrato_nota' ~ contrato.id) }}">
+                <div class="form-group">
+                    <label for="notaTexto">Nueva observación</label>
+                    <textarea id="notaTexto" name="txtNota" class="form-control" rows="4" required data-side-panel-focus></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="notaArchivo">Archivo (opcional)</label>
+                    <input type="file" id="notaArchivo" name="fileNota" class="form-control-file">
+                    <small class="text-muted">Máx. 10 MB. pdf, Word, Excel, PowerPoint, txt, imágenes o zip.</small>
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Guardar observación</button>
+                <p class="small text-muted mt-2 mb-0">Queda grabada con tu usuario y la fecha y hora; no se puede editar ni borrar.</p>
+            </form>
+
+            <h6 class="text-muted text-uppercase mb-3" style="letter-spacing:.04em;">Historial</h6>
+            {{ include('components/_timeline.html.twig', {items: itemsNotas}) }}
+        </div>
+    </aside>
+</div>

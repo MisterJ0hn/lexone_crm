@@ -156,7 +156,7 @@ class MenuController extends AbstractController
     {
         $this->denyAccessUnlessGranted('create','menu');
         $user=$this->getUser();
-        $empresa=$empresaRepository->find($user->getEmpresaActual());
+        $empresa=$empresaRepository->find(1);
         $padres=$menus=$menuRepository->findBy(['dependeDe'=>null,'menuCabezera'=>$menuCabezera->getId(),'empresa'=>1],['orden'=>'ASC']);
         $modulos=$moduloPerRepository->findBy(['empresa'=>1],['nombre'=>'ASC']);
         $menu = new Menu();
@@ -200,7 +200,7 @@ class MenuController extends AbstractController
         $menuCabezera=$menu->getMenuCabezera();
         $form = $this->createForm(MenuType::class, $menu);
         $padres=$menuRepository->findBy(['dependeDe'=>null,'menuCabezera'=>$menuCabezera->getId()],['orden'=>'ASC']);
-        $modulos=$moduloPerRepository->findBy(['empresa'=>$user->getEmpresaActual()],['nombre'=>'ASC']);
+        $modulos=$moduloPerRepository->findBy(['empresa'=>1],['nombre'=>'ASC']);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

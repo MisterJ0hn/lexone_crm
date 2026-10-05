@@ -4,6 +4,10 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
+    # Valores por defecto de las integraciones: se usan solo si la variable de entorno no está definida.
+    edapi_url_defecto: 'https://edapi.temposoft.cl'
+    pjud_api_url_defecto: 'https://api-pjud.codifica.cl'
+    pjud_api_verify_ssl_defecto: true
     url_raiz: '%kernel.project_dir%'
     url_root: '%kernel.project_dir%/public'
     recaptcha_site_key: '%env(RECAPTCHA_SITE_KEY)%'
@@ -44,3 +48,13 @@ services:
     App\Service\RecaptchaService:
         arguments:
             $recaptchaSecretKey: '%recaptcha_secret_key%'
+
+    App\Service\EdApiClient:
+        arguments:
+            $baseUrl: '%env(default:edapi_url_defecto:EDAPI_URL)%'
+
+    App\Service\PjudApiClient:
+        arguments:
+            $baseUrl: '%env(default:pjud_api_url_defecto:PJUD_API_URL)%'
+            $cache: '@cache.app'
+            $verifySsl: '%env(bool:default:pjud_api_verify_ssl_defecto:PJUD_API_VERIFY_SSL)%'

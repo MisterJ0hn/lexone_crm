@@ -36,6 +36,32 @@ class Empresa
     #[ORM\Column(type: "datetime")]
     private $fechaVigencia;
 
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private $edapiKey;
+
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private $edapiClienteGuid;
+
+    #[ORM\Column(type: "boolean", options: ["default" => false])]
+    private bool $lexflowHabilitado = false;
+
+    #[ORM\Column(type: "boolean", options: ["default" => false])]
+    private bool $lexflowSoloCrm = false;
+
+    /** Habilita el botón "Detalle PJUD" para la empresa (además de tener las credenciales). */
+    #[ORM\Column(type: "boolean", options: ["default" => false])]
+    private bool $pjudHabilitado = false;
+
+    /** Credenciales de la integración api-pjud (api-pjud.codifica.cl). */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private ?string $pjudClientKey = null;
+
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private ?string $pjudEmail = null;
+
+    #[ORM\Column(type: "encrypted_string", length: 255, nullable: true)]
+    private ?string $pjudPassword = null;
+
     #[ORM\OneToMany(targetEntity: Cuenta::class, mappedBy: "empresa")]
     private $cuentas;
 
@@ -68,9 +94,6 @@ class Empresa
 
     #[ORM\OneToMany(targetEntity: SituacionLaboral::class, mappedBy: "empresa")]
     private $situacionLaborals;
-
-    #[ORM\OneToMany(targetEntity: EstrategiaJuridica::class, mappedBy: "empresa")]
-    private $estrategiaJuridicas;
 
     #[ORM\OneToMany(targetEntity: Escritura::class, mappedBy: "empresa")]
     private $escrituras;
@@ -111,7 +134,6 @@ class Empresa
         $this->usuarioCategorias = new ArrayCollection();
         $this->estadoCivils = new ArrayCollection();
         $this->situacionLaborals = new ArrayCollection();
-        $this->estrategiaJuridicas = new ArrayCollection();
         $this->escrituras = new ArrayCollection();
         $this->juzgados = new ArrayCollection();
         $this->reunions = new ArrayCollection();
@@ -501,36 +523,6 @@ class Empresa
     }
 
     /**
-     * @return Collection|EstrategiaJuridica[]
-     */
-    public function getEstrategiaJuridicas(): Collection
-    {
-        return $this->estrategiaJuridicas;
-    }
-
-    public function addEstrategiaJuridica(EstrategiaJuridica $estrategiaJuridica): self
-    {
-        if (!$this->estrategiaJuridicas->contains($estrategiaJuridica)) {
-            $this->estrategiaJuridicas[] = $estrategiaJuridica;
-            $estrategiaJuridica->setEmpresa($this);
-        }
-
-        return $this;
-    }
-
-    public function removeEstrategiaJuridica(EstrategiaJuridica $estrategiaJuridica): self
-    {
-        if ($this->estrategiaJuridicas->removeElement($estrategiaJuridica)) {
-            // set the owning side to null (unless already changed)
-            if ($estrategiaJuridica->getEmpresa() === $this) {
-                $estrategiaJuridica->setEmpresa(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection|Escritura[]
      */
     public function getEscrituras(): Collection
@@ -801,4 +793,98 @@ class Empresa
     }
 
     
+
+    public function getEdapiKey(): ?string
+    {
+        return $this->edapiKey;
+    }
+
+    public function setEdapiKey(?string $edapiKey): self
+    {
+        $this->edapiKey = $edapiKey;
+        return $this;
+    }
+
+    public function isLexflowHabilitado(): bool
+    {
+        return $this->lexflowHabilitado;
+    }
+
+    public function setLexflowHabilitado(bool $lexflowHabilitado): self
+    {
+        $this->lexflowHabilitado = $lexflowHabilitado;
+        return $this;
+    }
+
+    public function getPjudClientKey(): ?string
+    {
+        return $this->pjudClientKey;
+    }
+
+    public function setPjudClientKey(?string $pjudClientKey): self
+    {
+        $this->pjudClientKey = $pjudClientKey;
+        return $this;
+    }
+
+    public function getPjudEmail(): ?string
+    {
+        return $this->pjudEmail;
+    }
+
+    public function setPjudEmail(?string $pjudEmail): self
+    {
+        $this->pjudEmail = $pjudEmail;
+        return $this;
+    }
+
+    public function getPjudPassword(): ?string
+    {
+        return $this->pjudPassword;
+    }
+
+    public function setPjudPassword(?string $pjudPassword): self
+    {
+        $this->pjudPassword = $pjudPassword;
+        return $this;
+    }
+
+    public function isPjudHabilitado(): bool
+    {
+        return $this->pjudHabilitado;
+    }
+
+    public function setPjudHabilitado(bool $pjudHabilitado): self
+    {
+        $this->pjudHabilitado = $pjudHabilitado;
+        return $this;
+    }
+
+    /** Botón Detalle PJUD disponible: flag activo y credenciales completas. */
+    public function isPjudConfigurado(): bool
+    {
+        return $this->pjudHabilitado && trim((string) $this->pjudEmail) !== '' && (string) $this->pjudPassword !== '';
+    }
+
+    public function isLexflowSoloCrm(): bool
+    {
+        return $this->lexflowSoloCrm;
+    }
+
+    public function setLexflowSoloCrm(bool $lexflowSoloCrm): self
+    {
+        $this->lexflowSoloCrm = $lexflowSoloCrm;
+        return $this;
+    }
+
+    public function getEdapiClienteGuid(): ?string
+    {
+        return $this->edapiClienteGuid;
+    }
+
+    public function setEdapiClienteGuid(?string $edapiClienteGuid): self
+    {
+        $this->edapiClienteGuid = $edapiClienteGuid;
+        return $this;
+    }
 }

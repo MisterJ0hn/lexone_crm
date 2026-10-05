@@ -53,10 +53,7 @@ class ContratoFunciones
         $entityManager->persist($observacion);
         $entityManager->flush();
         if($status==12){
-            $error_toast="Toast.fire({
-                icon: 'success',
-                title: 'Cliente desconoce contrato'
-              })";
+            $error_toast="Cliente desconoce contrato";
         }else{
             //$toku=new Toku();
             $dateInicio=strtotime($contrato->getFechaCreacion()->format('Y-m-d'));
@@ -106,10 +103,7 @@ class ContratoFunciones
                     $entityManager->flush();
                 }*/
             }
-            $error_toast="Toast.fire({
-                icon: 'success',
-                title: 'Cliente desiste de contrato'
-              })";
+            $error_toast="Cliente desiste de contrato";
         }
         return $error_toast;
     }

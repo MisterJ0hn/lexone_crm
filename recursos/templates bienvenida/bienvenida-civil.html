@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="color-scheme" content="light only">
+<meta name="supported-color-schemes" content="light">
+<title>Bienvenido/a a EJAM</title>
+<!--[if mso]>
+<noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript>
+<![endif]-->
+<style>
+  /* Cliente resets */
+  body, table, td, a { -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%; }
+  table, td { mso-table-lspace:0pt; mso-table-rspace:0pt; }
+  img { -ms-interpolation-mode:bicubic; border:0; outline:none; text-decoration:none; display:block; }
+  body { margin:0; padding:0; width:100% !important; height:100% !important; }
+  a { color:#5882E4; }
+
+  /* Tipografía base */
+  .ejam-font { font-family:-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Helvetica,Arial,sans-serif; }
+
+  /* Responsive */
+  @media only screen and (max-width:600px) {
+    .ejam-container { width:100% !important; }
+    .ejam-px { padding-left:24px !important; padding-right:24px !important; }
+    .ejam-h1 { font-size:23px !important; line-height:31px !important; }
+    .ejam-h2 { font-size:19px !important; line-height:26px !important; }
+    .ejam-body { font-size:16px !important; line-height:25px !important; }
+    .ejam-cta a { display:block !important; }
+    .ejam-thumb { height:auto !important; }
+  }
+
+  /* Fondo claro siempre: no se aplica dark mode, el correo conserva el branding sobre fondo blanco */
+</style>
+</head>
+<body class="ejam-font ejam-page" style="margin:0; padding:0; background:#EEF0F4;">
+
+<!-- Preview text (oculto) -->
+<div style="display:none; max-height:0; overflow:hidden; mso-hide:all; font-size:1px; line-height:1px; color:#EEF0F4; opacity:0;">
+  Esto es lo que sigue. Le contamos cómo trabajamos en menos de 1 minuto.
+  &#847;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;
+</div>
+
+<!-- Wrapper -->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="ejam-page" style="background:#EEF0F4;">
+  <tr>
+    <td align="center" style="padding:32px 12px;">
+
+      <!-- Card 600px -->
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" class="ejam-container ejam-card" style="width:600px; max-width:600px; background:#FFFFFF; border-radius:14px; overflow:hidden; box-shadow:0 1px 3px rgba(10,25,86,0.08);">
+
+        <!-- HEADER -->
+        <tr>
+          <td align="center" bgcolor="#0A1956" style="background:#0A1956; padding:26px 24px;">
+            <img src="cid:img" width="232" alt="Estudio Jurídico Alfaro y Madariaga" style="width:232px; max-width:62%; height:auto; margin:0 auto;">
+          </td>
+        </tr>
+
+        <!-- BLOQUE 1 — Saludo + bienvenida -->
+        <tr>
+          <td class="ejam-px" style="padding:40px 48px 8px 48px;">
+            <p class="ejam-font ejam-body" style="margin:0 0 18px 0; font-size:16px; line-height:26px; color:#1F2937;">Hola {{NOMBRE}},</p>
+            <p class="ejam-font ejam-body" style="margin:0 0 18px 0; font-size:16px; line-height:26px; color:#1F2937;">
+              <strong style="color:#0A1956;" class="ejam-h1">Bienvenido/a {{cliente_nombre}} a EJAM<span style="color:#5882E4;">.</span></strong>
+              Acaba de tomar una decisión importante, y desde hoy cuenta con un equipo legal que lo va a acompañar durante todo el proceso.
+            </p>
+            <p class="ejam-font ejam-body" style="margin:0; font-size:16px; line-height:26px; color:#6B7280; font-style:italic;">
+              Su tranquilidad es nuestra responsabilidad.
+            </p>
+          </td>
+        </tr>
+
+        <!-- BLOQUE 2 — Video -->
+        <tr>
+          <td class="ejam-px" style="padding:32px 48px 8px 48px;">
+            <p class="ejam-font ejam-h2" style="margin:0 0 18px 0; font-size:21px; line-height:28px; font-weight:700; color:#0A1956; letter-spacing:-0.2px;">
+              Conozca cómo trabajamos en 3 minutos<span style="color:#5882E4;">.</span>
+            </p>
+
+            <!-- Thumbnail bulletproof (bg image + navy fallback + botón play) -->
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td align="center" bgcolor="#0A1956" background="cid:tumb" valign="middle" class="ejam-thumb" height="284" style="height:284px; background-color:#0A1956; background-image:url('cid:tumb'); background-size:cover; background-position:center; border-radius:10px;">
+                  <!--[if gte mso 9]>
+                  <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:504px;height:284px;">
+                    <v:fill type="frame" src="{{VIDEO_THUMBNAIL_URL}}" color="#0A1956" />
+                    <v:textbox inset="0,0,0,0"><div><![endif]-->
+                  <a href="https://www.youtube.com/watch?v=8w6OCjwVTCc&feature=youtu.be" target="_blank" style="display:block; text-decoration:none;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="height:284px;">
+                      <tr>
+                        <td align="center" valign="middle" height="284" style="height:284px;">
+                          <!-- Botón play -->
+                          <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center">
+                            <tr>
+                              <td align="center" valign="middle" width="74" height="74" style="width:74px; height:74px; background:#FFFFFF; border-radius:37px; box-shadow:0 4px 14px rgba(10,25,86,0.35);">
+                                <div style="width:0; height:0; margin:0 auto; border-style:solid; border-width:13px 0 13px 22px; border-color:transparent transparent transparent #0A1956; line-height:0; font-size:0;">&nbsp;</div>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+                  </a>
+                  <!--[if gte mso 9]></div></v:textbox></v:rect><![endif]-->
+                </td>
+              </tr>
+            </table>
+
+            <!-- CTA bulletproof -->
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="ejam-cta">
+              <tr>
+                <td align="center" style="padding:20px 0 4px 0;">
+                  <!--[if mso]>
+                  <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{VIDEO_URL}}" style="height:54px;v-text-anchor:middle;width:340px;" arcsize="16%" strokecolor="#0A1956" fillcolor="#0A1956">
+                    <w:anchorlock/>
+                    <center style="color:#ffffff;font-family:Arial,sans-serif;font-size:16px;font-weight:bold;">&#9654;&nbsp;&nbsp;Ver video de bienvenida</center>
+                  </v:roundrect>
+                  <![endif]-->
+                  <!--[if !mso]><!-->
+                  <a href="https://www.youtube.com/watch?v=8w6OCjwVTCc&feature=youtu.be" target="_blank" class="ejam-font ejam-cta-btn" style="display:inline-block; background:#0A1956; color:#FFFFFF; font-size:16px; font-weight:700; line-height:54px; text-align:center; text-decoration:none; border-radius:9px; padding:0 38px; border:1px solid #0A1956; mso-padding-alt:0;">
+                    Ver video de bienvenida
+                  </a>
+                  <!--<![endif]-->
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- SECCIÓN DESTACADA — Asistencia fundamental -->
+        <tr>
+          <td class="ejam-px" style="padding:26px 48px 6px 48px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td bgcolor="#0A1956" style="background:#0A1956; border-radius:12px; padding:26px 30px;">
+                  <p class="ejam-font" style="margin:0 0 8px 0; font-size:12px; line-height:16px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#93ACF0;">Importante</p>
+                  <p class="ejam-font" style="margin:0 0 10px 0; font-size:20px; line-height:27px; font-weight:700; color:#FFFFFF;">Asistir a esta reunión es totalmente fundamental<span style="color:#6E97F0;">.</span></p>
+                  <p class="ejam-font" style="margin:0; font-size:15px; line-height:24px; color:#C9D4EC;">Es el punto de partida de su caso: en esta videollamada damos juntos el primer paso para trabajar en su causa. Le pedimos reservar ese momento en su agenda y conectarse puntualmente.</p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- BLOQUE 3 — Qué pasa ahora -->
+        <tr>
+          <td class="ejam-px" style="padding:24px 48px 8px 48px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="ejam-block3-bd">
+              <tr>
+                <td class="ejam-block3" bgcolor="#F9FAFB" style="background:#F9FAFB; border:1px solid #E5E7EB; border-radius:12px; padding:26px 28px;">
+                  <p class="ejam-font ejam-h2" style="margin:0 0 14px 0; font-size:18px; line-height:25px; font-weight:700; color:#0A1956;">
+                    Nos contactaremos a la brevedad para agendar su primera reunión<span style="color:#5882E4;">.</span>
+                  </p>
+                  <p class="ejam-font ejam-body" style="margin:0 0 18px 0; font-size:15px; line-height:24px; color:#1F2937;">
+                    Su videollamada de bienvenida con <strong style="color:#0A1956;">{{NOMBRE_TRAMITADOR}}</strong>, su abogado tramitador, quedó agendada.
+                  </p>
+                  <p class="ejam-font ejam-body" style="margin:0 0 10px 0; font-size:15px; line-height:24px; color:#1F2937;">En esta reunión de 15-20 minutos:</p>
+                  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                    <tr>
+                      <td valign="top" width="20" class="ejam-font" style="font-size:15px; line-height:24px; color:#5882E4;">&bull;</td>
+                      <td class="ejam-font ejam-body" style="font-size:15px; line-height:24px; color:#1F2937; padding-bottom:6px;">Conocerá a su tramitador y a su equipo legal.</td>
+                    </tr>
+                    <tr>
+                      <td valign="top" width="20" class="ejam-font" style="font-size:15px; line-height:24px; color:#5882E4;">&bull;</td>
+                      <td class="ejam-font ejam-body" style="font-size:15px; line-height:24px; color:#1F2937; padding-bottom:6px;">Le explicaremos el proceso de su causa paso a paso.</td>
+                    </tr>
+                    <tr>
+                      <td valign="top" width="20" class="ejam-font" style="font-size:15px; line-height:24px; color:#5882E4;">&bull;</td>
+                      <td class="ejam-font ejam-body" style="font-size:15px; line-height:24px; color:#1F2937; padding-bottom:0;">Coordinaremos los siguientes pasos juntos.</td>
+                    </tr>
+                  </table>
+                  <p class="ejam-font ejam-muted" style="margin:18px 0 0 0; font-size:14px; line-height:22px; color:#6B7280;">
+                    Si tiene cualquier consulta antes, escríbanos al SAC.
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- BLOQUE 4 — SAC + cierre -->
+        <tr>
+          <td class="ejam-px" style="padding:30px 48px 8px 48px;">
+            <p class="ejam-font ejam-body" style="margin:0 0 16px 0; font-size:15px; line-height:24px; color:#1F2937;">
+              Para cualquier consulta, estamos disponibles en nuestro SAC:
+            </p>
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+              <tr>
+                <td valign="top" width="28" class="ejam-font" style="font-size:15px; line-height:24px;">&#128231;</td>
+                <td class="ejam-font ejam-body" style="font-size:15px; line-height:24px; color:#1F2937; padding-bottom:6px;"><a href="mailto:sac@alfaromadariaga.cl" style="color:#5882E4; text-decoration:none;">sac@alfaromadariaga.cl</a></td>
+              </tr>
+              <tr>
+                <td valign="top" width="28" class="ejam-font" style="font-size:15px; line-height:24px;">&#128222;</td>
+                <td class="ejam-font ejam-body" style="font-size:15px; line-height:24px; color:#1F2937; padding-bottom:6px;">+569 3665 3829</td>
+              </tr>
+              <tr>
+                <td valign="top" width="28" class="ejam-font" style="font-size:15px; line-height:24px;">&#128336;</td>
+                <td class="ejam-font ejam-muted" style="font-size:15px; line-height:24px; color:#6B7280;">
+                Lunes a Jueves de 09:00 a 18:30
+                </td>
+              </tr>
+              <tr>
+                <td valign="top" width="28" class="ejam-font" style="font-size:15px; line-height:24px;">&#128336;</td>
+                <td class="ejam-font ejam-muted" style="font-size:15px; line-height:24px; color:#6B7280;">
+                      Viernes de 09:00 a 17:00
+                </td>
+              </tr>
+            </table>
+            <p class="ejam-font ejam-body" style="margin:24px 0 4px 0; font-size:16px; line-height:25px; color:#1F2937;">Nos vemos mañana.</p>
+            <p class="ejam-font ejam-h2" style="margin:0; font-size:16px; line-height:25px; font-weight:700; color:#0A1956;">Equipo EJAM</p>
+          </td>
+        </tr>
+
+        <!-- FOOTER -->
+        <tr>
+          <td class="ejam-px" style="padding:28px 48px 36px 48px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr><td class="ejam-hr" style="border-top:1px solid #E5E7EB; font-size:0; line-height:0;">&nbsp;</td></tr>
+            </table>
+            <p class="ejam-font ejam-foot" style="margin:20px 0 12px 0; font-size:12px; line-height:19px; color:#6B7280;">
+              Correo enviado desde una cuenta no monitoreada.<br>
+              Para responder, contacte al SAC: <a href="mailto:sac@alfaromadariaga.cl" style="color:#5882E4; text-decoration:none;">sac@alfaromadariaga.cl</a> &middot; +569 3665 3829
+            </p>
+            <p class="ejam-font ejam-foot" style="margin:0 0 12px 0; font-size:12px; line-height:19px; color:#6B7280;">
+              <strong style="color:#6B7280;">Estudio Jurídico Alfaro y Madariaga</strong><br>
+              La Concepción 266, Oficina 803 y 804, Providencia, Santiago, Chile.<br>
+              <span style="font-style:italic;">Su tranquilidad es nuestra responsabilidad.</span>
+            </p>
+            
+          </td>
+        </tr>
+
+      </table>
+      <!-- /Card -->
+
+    </td>
+  </tr>
+</table>
+</body>
+</html>

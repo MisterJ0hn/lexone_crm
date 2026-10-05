@@ -1,0 +1,71 @@
+{{ form_start(form) }}
+<div class="modal-body">
+    <div class="row">
+        <div class="col-sm-12 col-md-4">
+            <small class="text-muted">{{ (contrato.agenda.tipoCliente is not null and contrato.agenda.tipoCliente.nombre == 'Empresa') ? 'Razón social' : 'Nombre' }}</small>
+            {{ form_widget(form.nombre, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        <div class="col-sm-12 col-md-4">
+            <small class="text-muted">Rut *</small>
+            {{ form_widget(form.rut, {'attr': {'class': 'form-control format-rut-edit'}}) }}
+        </div>
+        <div class="col-sm-12 col-md-4">
+            <small class="text-muted">Clave única</small>
+            <div class="input-group">
+                {{ form_widget(form.claveUnica, {'type': 'password', 'attr': {'class': 'form-control', 'autocomplete': 'new-password'}}) }}
+                <div class="input-group-append">
+                    <button type="button" class="btn btn-outline-secondary" onclick="toggleClaveUnica(this)" title="Mostrar/ocultar"><i class="fas fa-eye"></i></button>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-4">
+            <small class="text-muted">Correo</small>
+            {{ form_widget(form.correo, {'attr': {'class': 'form-control mail-format', 'data-validar-correo': ''}}) }}
+        </div>
+        <div class="col-sm-12 col-md-4">
+            <small class="text-muted">Teléfono</small>
+            {{ form_widget(form.telefono, {'attr': {'class': 'form-control telefonoCliente'}}) }}
+        </div>
+        {% if form.sexo is defined %}
+        <div class="col-sm-12 col-md-4">
+            <small class="text-muted">Sexo</small>
+            {{ form_widget(form.sexo, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        {% endif %}
+        <div class="col-sm-12 col-md-4">
+            <small class="text-muted">Nacionalidad</small>
+            {{ form_widget(form.nacionalidad, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        <div class="col-sm-12 col-md-4">
+            <small class="text-muted">Región</small>
+            {{ form_widget(form.region, {'attr': {'class': 'form-control', 'onchange': 'cambiaRegionEditar(this)'}}) }}
+        </div>
+        <div class="col-sm-12 col-md-4">
+            <small class="text-muted">Ciudad</small>
+            {{ form_widget(form.ciudad, {'attr': {'class': 'form-control', 'onchange': 'cambiaCiudadEditar(this)'}}) }}
+        </div>
+        <div class="col-sm-12 col-md-4">
+            <small class="text-muted">Comuna</small>
+            {{ form_widget(form.comuna, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        <div class="col-sm-12 col-md-6">
+            <small class="text-muted">Dirección</small>
+            {{ form_widget(form.direccion, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        {% if form.estadoCivil is defined %}
+        <div class="col-sm-12 col-md-3">
+            <small class="text-muted">Estado Civil</small>
+            {{ form_widget(form.estadoCivil, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        {% endif %}
+        <div class="col-sm-12 col-md-3">
+            <small class="text-muted">Reunión</small>
+            {{ form_widget(form.reunion, {'attr': {'class': 'form-control'}}) }}
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</div>
+{{ form_end(form) }}

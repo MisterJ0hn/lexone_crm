@@ -1,0 +1,29 @@
+/* Base tipográfica y elementos HTML (Tailwind quita los estilos por defecto del navegador). */
+@layer base {
+  html { font-family: var(--font-sans); -webkit-text-size-adjust: 100%; }
+  body { @apply bg-slate-50 text-slate-700 text-[14px] leading-relaxed antialiased; }
+
+  h1, h2, h3, h4, h5, h6 { @apply font-semibold text-slate-900 leading-snug; margin: 0 0 .5rem; }
+  h1 { @apply text-2xl; }
+  h2 { @apply text-xl; }
+  h3 { @apply text-lg; }
+  h4 { @apply text-base; }
+  h5 { @apply text-[15px]; }
+  h6 { @apply text-sm; }
+  p { margin: 0 0 .75rem; }
+  a { @apply text-primary-700; text-decoration: none; }
+  a:hover { @apply text-primary-900 underline; }
+  small, .small { @apply text-xs; }
+  strong, b { @apply font-semibold; }
+  hr { @apply my-4 border-slate-200; }
+  label { @apply inline-block mb-1 text-[13px] font-medium text-slate-600; }
+  img { max-width: 100%; }
+  ul, ol { list-style: none; margin: 0; padding: 0; }
+  .content-prose ul { list-style: disc; padding-left: 1.25rem; }
+  table { border-collapse: collapse; }
+  code { @apply rounded bg-slate-100 px-1 py-0.5 text-[12px] text-slate-700; }
+  ::selection { @apply bg-primary-100; }
+
+  /* Foco visible y consistente en toda la app. */
+  :focus-visible { @apply outline-2 outline-offset-2 outline-primary-500; }
+}

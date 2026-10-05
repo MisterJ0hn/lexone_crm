@@ -1,0 +1,28 @@
+{#
+  Histórico en un panel lateral (se abre desde la derecha), igual que las observaciones del contrato.
+  Variables: items, origen (ver _timeline.html.twig), titulo (opcional), id (opcional, único por página).
+#}
+{% set pid = id|default('historial') %}
+{% set tituloHistorial = titulo|default('Histórico') %}
+<div class="card card-outline">
+    <div class="card-header d-flex align-items-center">
+        <h3 class="card-title mb-0">{{ tituloHistorial }}</h3>
+        <button type="button" class="btn btn-secondary btn-sm ml-auto" data-side-panel-open="{{ pid }}Raiz">
+            <i class="fas fa-history"></i> Ver histórico
+            <span class="badge badge-light ml-1">{{ items|length }}</span>
+        </button>
+    </div>
+</div>
+
+<div id="{{ pid }}Raiz" hidden>
+    <div class="side-panel-fondo" data-side-panel-close aria-hidden="true"></div>
+    <aside id="{{ pid }}Panel" class="side-panel" tabindex="-1" role="dialog" aria-modal="true" aria-label="{{ tituloHistorial }}">
+        <header>
+            <h2>{{ tituloHistorial }}</h2>
+            <button type="button" class="side-panel-cerrar" data-side-panel-close aria-label="Cerrar el panel">&times;</button>
+        </header>
+        <div class="side-panel-cuerpo">
+            {{ include('components/_timeline.html.twig', {items: items, origen: origen|default(null)}) }}
+        </div>
+    </aside>
+</div>

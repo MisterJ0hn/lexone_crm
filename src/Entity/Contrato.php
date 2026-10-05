@@ -29,14 +29,6 @@ class Contrato
     #[ORM\ManyToOne(targetEntity: SituacionLaboral::class, inversedBy: "contratos")]
     private $situacionLaboral;
 
-    /**
-     * @deprecated Vestigial. El contrato ya no tiene una única estrategia/materia:
-     * cada Causa lleva su propia materia y materiaEstrategia. No se escribe; se
-     * mantiene solo para vistas históricas de solo lectura. Ver Contrato::getMaterias().
-     */
-    #[ORM\ManyToOne(targetEntity: EstrategiaJuridica::class, inversedBy: "contratos")]
-    private $estrategiaJuridica;
-
     #[ORM\ManyToOne(targetEntity: Escritura::class, inversedBy: "contratos")]
     private $escritura;
 
@@ -125,9 +117,7 @@ class Contrato
     #[ORM\Column(type: "boolean", nullable: true)]
     private $isFinalizado;
 
-    #[ORM\Column(type: "integer", nullable: true)]
-    private $lote;
-
+  
     #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $pdfTermino;
 
@@ -160,9 +150,6 @@ class Contrato
 
     #[ORM\Column(type: "integer")]
     private $folio;
-
-    #[ORM\OneToOne(targetEntity: Lotes::class, cascade: ["persist", "remove"])]
-    private $idLote;
 
     #[ORM\ManyToOne(targetEntity: Comuna::class, inversedBy: "contratos")]
     private $ccomuna;
@@ -283,18 +270,6 @@ class Contrato
     public function setSituacionLaboral(?SituacionLaboral $situacionLaboral): self
     {
         $this->situacionLaboral = $situacionLaboral;
-
-        return $this;
-    }
-
-    public function getEstrategiaJuridica(): ?EstrategiaJuridica
-    {
-        return $this->estrategiaJuridica;
-    }
-
-    public function setEstrategiaJuridica(?EstrategiaJuridica $estrategiaJuridica): self
-    {
-        $this->estrategiaJuridica = $estrategiaJuridica;
 
         return $this;
     }
@@ -650,18 +625,6 @@ class Contrato
         return $this;
     }
 
-    public function getLote(): ?int
-    {
-        return $this->lote;
-    }
-
-    public function setLote(?int $lote): self
-    {
-        $this->lote = $lote;
-
-        return $this;
-    }
-
     public function getPdfTermino(): ?string
     {
         return $this->pdfTermino;
@@ -830,17 +793,6 @@ class Contrato
         return $this;
     }
 
-    public function getIdLote(): ?Lotes
-    {
-        return $this->idLote;
-    }
-
-    public function setIdLote(?Lotes $idLote): self
-    {
-        $this->idLote = $idLote;
-
-        return $this;
-    }
 
     public function getCcomuna(): ?Comuna
     {

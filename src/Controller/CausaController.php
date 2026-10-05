@@ -6,13 +6,12 @@ use Doctrine\ORM\EntityManagerInterface;
 
 use App\Entity\Agenda;
 use App\Entity\Causa;
-use App\Entity\MateriaEstrategia;
 use App\Repository\CausaRepository;
 use App\Repository\ClienteRepository;
 use App\Repository\CuentaRepository;
 use App\Repository\JuzgadoCuentaRepository;
 use App\Repository\JuzgadoRepository;
-use App\Repository\MateriaEstrategiaRepository;
+use App\Repository\ServicioRepository;
 use App\Repository\MateriaRepository;
 use Doctrine\ORM\EntityManager;
 use Exception;
@@ -39,9 +38,10 @@ class CausaController extends AbstractController
     public function agregar(Agenda $agenda,
                             Request $request,
                             MateriaRepository $materiaRepository,
-                            MateriaEstrategiaRepository $materiaEstrategiaRepository,
+                            ServicioRepository $servicioRepository,
                             
                             JuzgadoRepository $juzgadoRepository,
+                            \App\Repository\CorteRepository $corteRepository,
                             ClienteRepository $clienteRepository){
         $entityManager = $this->entityManager;
         $causa=new Causa();
@@ -74,31 +74,39 @@ class CausaController extends AbstractController
             $causa->setCausaNombre($request->query->get('txtCaratulado'));
         }
 
-        $materiaEstrategia=null;
+        $servicio=null;
         if($request->query->get('cboSubMateria')){
-            $materiaEstrategia=$materiaEstrategiaRepository->find($request->query->get('cboSubMateria'));
+            $servicio=$servicioRepository->find($request->query->get('cboSubMateria'));
         }
 
         // Materia obligatoria: se toma de cboMateria; si no viene, de la
-        // materiaEstrategia (servicio) elegida.
+        // servicio elegido.
         $materia=null;
         if($request->query->get('cboMateria')){
             $materia=$materiaRepository->find($request->query->get('cboMateria'));
         }
-        if($materia===null && $materiaEstrategia!==null){
-            $materia=$materiaEstrategia->getMateria();
+        if($materia===null && $servicio!==null){
+            $materia=$servicio->getMateria();
         }
         if($materia===null){
             return new Response('Falta la materia de la causa',400);
         }
         $causa->setMateria($materia);
 
-        if($materiaEstrategia!==null && $materiaEstrategia->getMateria()->getId()===$materia->getId()){
-            $causa->setMateriaEstrategia($materiaEstrategia);
+        if($servicio!==null && $servicio->getMateria()->getId()===$materia->getId()){
+            $causa->setServicio($servicio);
         }
 
-        if(null !== $request->query->get('juzgado')){
-            $causa->setJuzgado($juzgadoRepository->find($request->query->get('juzgado')));
+        // La corte elegida en el formulario manda; si no viene, se toma la del juzgado (como en contrata).
+        if($request->query->get('corte')){
+            $causa->setCorte($corteRepository->find($request->query->get('corte')));
+        }
+        if(null !== $request->query->get('juzgado') && $request->query->get('juzgado') !== ''){
+            $juzgado=$juzgadoRepository->find($request->query->get('juzgado'));
+            $causa->setJuzgado($juzgado);
+            if($juzgado && $causa->getCorte()===null && $juzgado->getCorte()!==null){
+                $causa->setCorte($juzgado->getCorte());
+            }
         }
 
         $entityManager->persist($causa);
@@ -111,7 +119,7 @@ class CausaController extends AbstractController
     public function list(Agenda $agenda,
                             Request $request, 
                             CausaRepository $causaRepository,
-                            MateriaEstrategiaRepository $materiaEstrategiaRepository,
+                            ServicioRepository $servicioRepository,
                             JuzgadoCuentaRepository $juzgadoCuentaRepository){
         
         $causas=$causaRepository->findBy(['agenda'=>$agenda->getId(),'estado'=>true]);
@@ -127,7 +135,7 @@ class CausaController extends AbstractController
     public function delete(Causa $causa,
                             Request $request, 
                             CausaRepository $causaRepository,
-                            MateriaEstrategiaRepository $materiaEstrategiaRepository,
+                            ServicioRepository $servicioRepository,
                             JuzgadoCuentaRepository $juzgadoCuentaRepository){
         $entityManager = $this->entityManager;
 

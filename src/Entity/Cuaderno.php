@@ -21,9 +21,6 @@ class Cuaderno
     #[ORM\OneToMany(targetEntity: Actuacion::class, mappedBy: "cuaderno")]
     private $actuacions;
 
-    #[ORM\ManyToOne(targetEntity: EstrategiaJuridica::class, inversedBy: "cuadernos")]
-    private $estrategiaJuridica;
-
     #[ORM\ManyToOne(targetEntity: Cuaderno::class)]
     private $dependeCuaderno;
 
@@ -75,18 +72,6 @@ class Cuaderno
                 $actuacion->setCuaderno(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getEstrategiaJuridica(): ?EstrategiaJuridica
-    {
-        return $this->estrategiaJuridica;
-    }
-
-    public function setEstrategiaJuridica(?EstrategiaJuridica $estrategiaJuridica): self
-    {
-        $this->estrategiaJuridica = $estrategiaJuridica;
 
         return $this;
     }
