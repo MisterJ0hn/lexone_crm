@@ -12,7 +12,7 @@ parameters:
     url_root: '%kernel.project_dir%/public'
     recaptcha_site_key: '%env(RECAPTCHA_SITE_KEY)%'
     recaptcha_secret_key: '%env(RECAPTCHA_SECRET_KEY)%'
-    url_web: 'https://127.0.0.1:8000/'
+    url_web: '%env(URL_WEB)%'
     pdf_contratos: '/build/contratos/pdf/'
     logos_empresa: '%kernel.project_dir%/public/build/img/empresas/'
     csv_importacion: '%kernel.project_dir%/public/build/csv/'
