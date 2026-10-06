@@ -40,9 +40,9 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
 
         $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $username);
 
-        /* if (!$this->recaptcha->verificar($recaptchaResponse, $clientIp)) {
+        if (!$this->recaptcha->verificar($recaptchaResponse, $clientIp)) {
             throw new CustomUserMessageAuthenticationException('Por favor completa la verificación reCAPTCHA.');
-        } */
+        }
 
         return new Passport(
             new UserBadge($username, function (string $userIdentifier): Usuario {
