@@ -32,6 +32,10 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: "string", length: 100)]
     private $nombre;
 
+    /** Tema de la interfaz elegido por el usuario: 'claro' | 'oscuro'. */
+    #[ORM\Column(type: "string", length: 10, options: ["default" => "claro"])]
+    private $tema = 'claro';
+
     #[ORM\Column(type: "boolean")]
     private $estado;
 
@@ -1597,6 +1601,18 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     public function getPasswordHistorials(): \Doctrine\Common\Collections\Collection
     {
         return $this->passwordHistorials;
+    }
+
+    public function getTema(): string
+    {
+        return $this->tema === 'oscuro' ? 'oscuro' : 'claro';
+    }
+
+    public function setTema(string $tema): self
+    {
+        $this->tema = $tema === 'oscuro' ? 'oscuro' : 'claro';
+
+        return $this;
     }
 
     

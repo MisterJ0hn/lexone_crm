@@ -1,0 +1,50 @@
+/* Tema oscuro: se activa con <html class="dark"> (ver TemaController y #btnTema).
+   Tailwind v4 compila las utilidades contra variables (bg-white -> var(--color-white)), así que basta
+   con invertir la escala de grises y el blanco para que toda la app (incluidas las plantillas) cambie. */
+html.dark {
+  color-scheme: dark;
+  --color-white: #1e293b;
+  --color-slate-50: #0f172a;
+  --color-slate-100: #1e293b;
+  --color-slate-200: #334155;
+  --color-slate-300: #475569;
+  --color-slate-400: #64748b;
+  --color-slate-500: #94a3b8;
+  --color-slate-600: #cbd5e1;
+  --color-slate-700: #e2e8f0;
+  --color-slate-800: #f1f5f9;
+  --color-slate-900: #f8fafc;
+  /* Acento: fondos suaves oscuros, textos claros; el 700 (botones) se mantiene. */
+  --color-primary-50: #16233b;
+  --color-primary-100: #1b2d4a;
+  --color-primary-200: #264370;
+  --color-primary-800: #9bb2d6;
+  --color-primary-900: #c6d4ea;
+}
+/* El texto blanco sobre botones/insignias de color no debe invertirse. */
+html.dark .text-white,
+html.dark .btn-primary, html.dark .btn-success, html.dark .btn-danger, html.dark .btn-warning,
+html.dark .btn-info, html.dark .btn-dark, html.dark .btn.active, html.dark .applyBtn { color: #fff; }
+html.dark .btn-primary:hover, html.dark .btn-primary:focus { background-color: var(--color-primary-600); border-color: var(--color-primary-600); }
+html.dark .btn-dark { background-color: #475569; border-color: #475569; }
+html.dark .bg-primary-900, html.dark .bg-primary-800 { background-color: var(--color-primary-700); }
+/* Controles con colores fijos (plugins y componentes sin variables). */
+html.dark .side-panel { background: #1e293b; }
+html.dark .select2-container--bootstrap4 .select2-selection,
+html.dark .select2-container--default .select2-selection--single,
+html.dark .select2-container--default .select2-selection--multiple,
+html.dark .select2-dropdown, html.dark .select2-search__field { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+html.dark .select2-container--default .select2-selection--single .select2-selection__rendered,
+html.dark .select2-container--bootstrap4 .select2-selection--single .select2-selection__rendered { color: #e2e8f0; }
+html.dark .select2-container--default .select2-results__option[aria-selected=true] { background: #334155; }
+html.dark .daterangepicker, html.dark .daterangepicker .calendar-table, html.dark .daterangepicker td.available:hover,
+html.dark .daterangepicker select.monthselect, html.dark .daterangepicker select.yearselect { background: #1e293b; color: #e2e8f0; border-color: #334155; }
+html.dark .daterangepicker td.off, html.dark .daterangepicker td.off.in-range { background: #1e293b; color: #64748b; }
+html.dark .daterangepicker td.in-range { background: #334155; color: #e2e8f0; }
+html.dark .fc-theme-standard td, html.dark .fc-theme-standard th, html.dark .fc-theme-standard .fc-scrollgrid { border-color: #334155; }
+html.dark .fc .fc-daygrid-day-number, html.dark .fc .fc-col-header-cell-cushion { color: #cbd5e1; }
+html.dark .swal2-popup { background: #1e293b; color: #e2e8f0; }
+html.dark .swal2-title, html.dark .swal2-html-container { color: #e2e8f0; }
+html.dark .modal-content, html.dark .dropdown-menu, html.dark .popover, html.dark .note-editor .note-editing-area .note-editable { background: #1e293b; color: #e2e8f0; }
+html.dark .form-control, html.dark .custom-select, html.dark input, html.dark select, html.dark textarea { background-color: #0f172a; color: #e2e8f0; border-color: #475569; }
+html.dark .form-control:disabled, html.dark .form-control[readonly] { background-color: #1e293b; }

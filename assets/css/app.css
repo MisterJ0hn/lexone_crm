@@ -17,3 +17,5 @@
 @import './adminlte-compat.css';
 @import './layout.css';
 @import './plugins.css';
+
+@import './dark.css';

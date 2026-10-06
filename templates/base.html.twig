@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es"{% if app.user and app.user.tema == 'oscuro' %} class="dark"{% endif %}>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -103,6 +103,9 @@
       </button>
       <a href="{{ path('dashboard') }}" class="text-[13px] font-medium text-slate-600 no-underline hover:text-slate-900 hover:no-underline">Inicio</a>
       <div class="ml-auto flex min-w-0 items-center gap-4 text-[13px] text-slate-600">
+        <button type="button" id="btnTema" class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100" title="Cambiar tema claro/oscuro" aria-label="Cambiar tema" data-url="{{ path('tema_guardar') }}" data-token="{{ csrf_token('tema') }}">
+          <i class="fas {{ (app.user and app.user.tema == 'oscuro') ? 'fa-sun' : 'fa-moon' }}"></i>
+        </button>
         {{ render(controller('App\\Controller\\ChangecompController::index', {'route_name': app.request.attributes.get('_route')|default('/')})) }}
         <span class="hidden items-center gap-2 sm:inline-flex"><i class="far fa-user-circle text-slate-400"></i>{{ sesion.getSesion.nombre }}</span>
       </div>

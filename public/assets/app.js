@@ -126,3 +126,13 @@
     if (e.target.matches && e.target.matches('input[data-validar-correo]')) { quitarError(e.target); }
   });
 })();
+/* Tema claro/oscuro: alterna la clase "dark" en <html> y lo guarda en el usuario (TemaController). */
+(function ($) {
+  'use strict';
+  $(document).on('click', '#btnTema', function () {
+    var $btn = $(this), oscuro = !document.documentElement.classList.contains('dark');
+    document.documentElement.classList.toggle('dark', oscuro);
+    $btn.find('i').toggleClass('fa-sun', oscuro).toggleClass('fa-moon', !oscuro);
+    $.post($btn.data('url'), { tema: oscuro ? 'oscuro' : 'claro', _token: $btn.data('token') });
+  });
+})(jQuery);

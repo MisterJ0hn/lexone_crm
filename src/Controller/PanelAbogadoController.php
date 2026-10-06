@@ -431,9 +431,13 @@ class PanelAbogadoController extends AbstractController
         // disponibles para el tipo de cliente de esta agenda. La elegida se usa
         // luego en ContratoController::pdf() para generar el PDF.
         $tipoClienteAgenda = $agenda->getTipoCliente() ?? $tipoClienteRepository->findOneByNombre('Persona');
+        $plantillasDisponibles = $tipoClienteAgenda ? $contratoTemplateRepository->findDisponibles($agenda->getEmpresa()->getId(), $tipoClienteAgenda->getId()) : [];
         $form->add('contratoTemplate', EntityType::class, [
             'class' => ContratoTemplate::class,
-            'choices' => $tipoClienteAgenda ? $contratoTemplateRepository->findDisponibles($agenda->getEmpresa()->getId(), $tipoClienteAgenda->getId()) : [],
+            'choices' => $plantillasDisponibles,
+            // Seleccionada por defecto la primera disponible (solo en el GET inicial;
+            // al enviar el formulario manda lo que eligió el usuario).
+            'data' => $plantillasDisponibles[0] ?? null,
             'choice_label' => 'nombre',
             'required' => false,
             'placeholder' => 'Plantilla predeterminada',

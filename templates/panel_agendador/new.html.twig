@@ -24,7 +24,7 @@
                         <label>{{agenda.campania}}</label>
                     </div>
                     <div class="col-sm-12 col-md-4">
-                        <small class="text-muted">Nombre Cliente</small>
+                        <small class="text-muted lbl-nombre-cliente">Nombre Cliente</small>
                         {{ form_row(form.nombreCliente,{'label':false,'attr':{'class':'form-control','autocomplete':"ÑÖcompletes","required":'true'}})}}
                     </div>
                     <div class="col-sm-6 col-md-3">
@@ -437,7 +437,14 @@
         // vive en este formulario, pero "Contrata" se carga aparte en #contrato con su
         // propia petición al servidor, así que necesita el valor ya persistido para
         // mostrar/ocultar sexo, estado civil y causas según corresponda).
+        function actualizaLabelNombre(){
+            var tipo = $.trim($('select[name$="[tipoCliente]"] option:selected').text());
+            $('.lbl-nombre-cliente').text(tipo && tipo !== 'Persona' ? 'Razón social' : 'Nombre Cliente');
+        }
+        $(actualizaLabelNombre);
+
         function cambiaTipoCliente(tipoClienteId){
+            actualizaLabelNombre();
             $.ajax({
                 url:"{{path('panel_agendador_tipo_cliente',{'id':agenda.id})}}",
                 type: "post",
