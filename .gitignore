@@ -5,7 +5,7 @@
 /.env.local.phpp
 /.env.*.local
 /config/secrets/prod/prod.decrypt.private.php
-/public/build/
+/public/
 /var/
 /vendor/
 /old/
