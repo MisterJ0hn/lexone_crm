@@ -34,7 +34,7 @@
                         <td>
                             <div class="btn-group btn-group-toggle" data-toggle="buttons">
                             {% for accion in acciones %}
-                                <label class="btn bg-primary active">
+                                <label class="btn btn-accion{% if accion.id == privilegio.accion.id %} active{% endif %}">
                                     <input type="radio" name="options" id="option{{privilegio.id}}{{accion.id}}" autocomplete="off" 
                                     {% if accion.id == privilegio.accion.id %}
                                             checked
@@ -58,8 +58,15 @@
         </div>
     </div>
     
+    <style>
+        .btn-accion { background-color:#cfe2ff; color:#6c8ebf; border-color:#cfe2ff; }
+        .btn-accion.active { background-color:#007bff; color:#fff; border-color:#007bff; }
+    </style>
     <script>
         function checkAccion(accion,privilegio){
+            var $sel = $('#option'+privilegio+accion).closest('label');
+            $sel.siblings('label').removeClass('active');
+            $sel.addClass('active');
             $.ajax({
                 url:"/privilegio/"+privilegio+"/edit",
                 type: "post",
