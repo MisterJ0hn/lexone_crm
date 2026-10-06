@@ -1,0 +1,10 @@
+form_name;nombre_completo;número_de_teléfono;correo_electrónico
+Formulario AD 03-12-2020 2345;Katherine Viviana Orellana Ritz;56753350239;katherineasesorafamiliar@gmail.com
+Formulario AD 03-12-2020 2346;Ana Montiel Alvarado;56778519337;anitamontiel60@gmail.com
+Formulario AD 03-12-2020 2347;Marcelo Urzua;56753766844;marcelo.urzua40@gmail.com
+Formulario AD 03-12-2020 2348;Carolina Muñoz Maldonado;56782384368;carolitadelcarmen44@gmail.com
+Formulario AD 03-12-2020 2349;Benedicto vega dubo;56788762300;sily40@hotmail.es
+Formulario AD 03-12-2020 2350;EXEQUIEL DEL ROSARIO AGUILERA ARAYA;56765077250;exequielaguilera1973@gmail.com
+Formulario AD 03-12-2020 2351;Arturo Hernan Estrada Fuentes;56786086370;el.papiarturo99@gmail.com
+Formulario AD 03-12-2020 2352;Patricio Morales Monroy;56792709787;patofenat@gmail.com
+Formulario AD 03-12-2020 2353;Marcia Verdugo Calderon;56775555630;marcia.verdugolp@gmail.com

@@ -1,0 +1,23 @@
+.nav-sidebar .nav-treeview {
+    padding: 0 0 0 10px;
+}
+
+.bg-calipso{
+    background-color: #91d7e8b3;
+    color:#000;
+
+}
+
+.fc-unthemed td.fc-today{
+    background: #ffffff;
+}
+
+.fc-unthemed td.fc-today .fc-day-number{
+    height: 25px;
+  width: 25px;
+    background-color: rgb(30, 0, 255);
+    border-radius: 50%;
+    display: inline-block;
+    align-items: center;
+    color:#ffffff;
+}

@@ -1,0 +1,11 @@
+form_name;full_name;phone_number;email;
+Formulario Viña DestacaWeb Febrero;Héctor Ramírez;56991335709;hgabriel79@gmail.com;4
+Formulario Viña DestacaWeb Febrero;Maikel Vilches Trigo;953156851;maikelvilches52@gmail.com;4
+Formulario Viña DestacaWeb Febrero;Juan Carlos Perez Bravo;56962819064;jc.perezbravo65@gmail.com;4
+Formulario Viña DestacaWeb Febrero;Rosa Arias Corvera;56961748510;rosa.arias.corvera@gmail.com;3
+Formulario Viña DestacaWeb Febrero;Priacilla duarte monsalves;56997965125;cdmv.cd1976@gmail.com;3
+Formulario Viña DestacaWeb Febrero;daniela andrea rojas gaetes;56955290836;javieralonsoestayvergara@gmail.com;4
+Formulario Viña DestacaWeb Febrero;Andrea Puebla;56948661961;vpueblaguzman@gmail.com;4
+Formulario Viña DestacaWeb Febrero;Makarena alejandra muñoz vergara;56982775454;m.alejandra.m.v@hotmail.com;3
+Formulario Viña DestacaWeb Febrero;Catherine Olivares Espinoza;56975748637;catita.renata.agustin@gmail.com;3
+Formulario Viña DestacaWeb Febrero;Alexis Bernardino Guerrero;56958079576;gonzalezguerreroalexis398@gmail.com;3

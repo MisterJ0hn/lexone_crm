@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Chekbox Personalizados | AntoFernandez.com | Ejemplo</title>
+	<!-- Cargamos Jquery desde su directorio CDN -->
+	<script
+  src="http://code.jquery.com/jquery-3.2.1.slim.min.js"
+  integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g="
+  crossorigin="anonymous"></script>
+  	<!-- Cargamos nuesto archivo Java Script-->
+	<script type="text/javascript" src="functions.js"></script>
+	<!-- Cargamos la fuente de Google Raleway : visitar Google Fonts -->
+	<link href="https://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet">
+	<!-- Cargamos nuestra hoja de estilos -->
+	<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<iframe src="http://www.antofernandez.com/files/fixed/index.html" width="100%" style="border: none; position: fixed; width: 100%; top: 0; z-index:50" height="50">
+</iframe>
+<div id="wrapper">
+		<!-- Inputs de tipo Radio -->
+		<h1>Input type Radio</h1>
+			<label for="bici" class="content-input">
+			<input type="radio" name="Vehiculo" id="bici" value="Bici">Bici
+			<i></i>
+			</label>
+		<label for="coche" class="content-input">
+			<input type="radio" name="Vehiculo" id="coche" value="Coche">Coche
+			<i></i>
+		</label>
+		<label for="moto" class="content-input">
+			<input type="radio" name="Vehiculo" id="moto" value="Moto">Moto
+			<i></i>
+		</label>
+		<!-- Inputs de tipo Checkbox -->
+		<h1>Input type Checkbox</h1>
+		<label for="autovia" class="content-input">
+			<input type="checkbox" name="Vehiculo" id="autovia" value="autovia">Autovia
+			<i></i>
+		</label>
+		<label for="autopista" class="content-input">
+			<input type="checkbox" name="Vehiculo" id="autopista" value="autopista">Autopista
+			<i></i>
+		</label>
+		<label for="carretera" class="content-input">
+			<input type="checkbox" name="Vehiculo" id="carretera" value="carretera">Carrertera
+			<i></i>
+		</label>
+		<!-- Select -->
+		<h1>Select</h1>
+		<div class="content-select">
+			<select>
+				<option>Option 1</option>
+				<option>Option 2</option>
+				<option>Option 3</option>
+			</select>
+			<i></i>
+		</div>
+</div>
+</body>
+</html>

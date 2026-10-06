@@ -1,0 +1,15 @@
+form_name;full_name;phone_number;email
+Formulario DestacaWeb 02-07;m.Carlos Eduardo Bustamante Carre–o;971746640;carlosseduardooo13@gmail.com
+Formulario DestacaWeb 02-07;m.Emilia Rosa Almuna Schulz;987990129;milita_acuario6@hotmail.com
+Formulario DestacaWeb 02-07;m.Ximena Cayul;964225130;ximena.cayul.b@gmail.com
+Formulario DestacaWeb 02-07;m.Simon Riquelme Varas;41421357;simon.riquelme@gmail.com
+Formulario DestacaWeb 02-07;m.Ricardo Miranda Valenzuela;68159879;Ricmir1959@gmail.com
+Formulario DestacaWeb 02-07;m.Francisco Enrique Tirado Medina;63561974;pancho.tirado@hotmail.com
+Formulario DestacaWeb 02-07;m.Myn Rand Jrez;79175688;marytong2@hotmail.com
+Formulario DestacaWeb 02-07;m.Freddy Francisco Torres Pe–a;78568679;freddy_t@hotmail.es
+Formulario DestacaWeb 02-07;m.Maria Morales;73462281;maria.morales.cabesas@gmail.com
+Formulario DestacaWeb 02-07;m.Jorge Cornejo Diaz;77669125;jcordiaz@gmail.com
+Formulario DestacaWeb 02-07;m.Victor Parraguez Quezada;86269381;victor.parraguez43@gmail.com
+Formulario DestacaWeb 02-07;m.Sibila Cuevas;62095780;cuevassibila@gmail.com
+Formulario DestacaWeb 02-07;m.Regina Huamn Leiva;98450227;reginahuaman@hotmail.com
+Formulario DestacaWeb 02-07;m.Juan Carlos Apablaza Caru;67165310;j.apablazacaru@gmail.com

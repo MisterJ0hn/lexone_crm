@@ -1,0 +1,1858 @@
+<?xml version="1.0" encoding="UTF-8"?>
+                      <Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+                       xmlns:x="urn:schemas-microsoft-com:office:excel"
+                       xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+                       xmlns:html="http://www.w3.org/TR/REC-html40">
+                      <Styles>
+                        <Style ss:ID="s17">
+                          <NumberFormat ss:Format="m/d/yy"/>
+                          <Font ss:FontName="Verdana"/>
+                        </Style>
+                        <Style ss:ID="s18">
+                          <NumberFormat ss:Format="m/d/yy"/>
+                          <Font ss:FontName="Verdana" ss:Bold="1"/>
+                        </Style>
+                        <Style ss:ID="s19">
+                          <NumberFormat ss:Format="m/yy"/>
+                          <Font ss:FontName="Verdana"/>
+                        </Style>
+                        <Style ss:ID="s20">
+                          <NumberFormat ss:Format="m/yy"/>
+                          <Font ss:FontName="Verdana" ss:Bold="1"/>
+                        </Style>
+                        <Style ss:ID="s21">
+                          <NumberFormat ss:Format="m/d/yy h:mm AM/PM"/>
+                          <Font ss:FontName="Verdana"/>
+                        </Style>
+                        <Style ss:ID="s22">
+                          <NumberFormat ss:Format="m/d/yy h:mm AM/PM"/>
+                          <Font ss:FontName="Verdana" ss:Bold="1"/>
+                        </Style>
+                        <Style ss:ID="s23">
+                         <Alignment ss:Horizontal="Right" ss:Vertical="Bottom"/>
+                         <Font ss:FontName="Verdana"/>
+                        </Style>
+                        <Style ss:ID="s24">
+                         <Alignment ss:Horizontal="Right" ss:Vertical="Bottom"/>
+                         <Font ss:FontName="Verdana" ss:Bold="1"/>
+                        </Style>
+                        <Style ss:ID="s25">
+                         <Alignment ss:Horizontal="Left" ss:Vertical="Bottom"/>
+                         <Font ss:FontName="Verdana"/>
+                        </Style>
+                        <Style ss:ID="s26">
+                         <Alignment ss:Horizontal="Left" ss:Vertical="Bottom"/>
+                         <Font ss:FontName="Verdana" ss:Bold="1"/>
+                        </Style>
+                        <Style ss:ID="s27">
+                         <NumberFormat ss:Format="0"/>
+                         <Alignment ss:Horizontal="Right" ss:Vertical="Bottom"/>
+                         <Font ss:FontName="Verdana"/>
+                        </Style>
+                        <Style ss:ID="s28">
+                         <NumberFormat ss:Format="0"/>
+                         <Alignment ss:Horizontal="Right" ss:Vertical="Bottom"/>
+                         <Font ss:FontName="Verdana" ss:Bold="1"/>
+                        </Style>
+                        <Style ss:ID="s29">
+                         <NumberFormat ss:Format="_(&quot;$&quot;* #,##0.00_);_(&quot;$&quot;* (#,##0.00);_(&quot;$&quot;* &quot;-&quot;??_);_(@_)"/>
+                         <Alignment ss:Horizontal="Right" ss:Vertical="Bottom"/>
+                         <Font ss:FontName="Verdana"/>
+                        </Style>
+                        <Style ss:ID="s30">
+                         <NumberFormat ss:Format="_(&quot;$&quot;* #,##0.00_);_(&quot;$&quot;* (#,##0.00);_(&quot;$&quot;* &quot;-&quot;??_);_(@_)"/>
+                         <Alignment ss:Horizontal="Right" ss:Vertical="Bottom"/>
+                         <Font ss:FontName="Verdana" ss:Bold="1"/>
+                        </Style>
+                        <Style ss:ID="s31">
+                         <NumberFormat ss:Format="Percent"/>
+                         <Alignment ss:Horizontal="Right" ss:Vertical="Bottom"/>
+                         <Font ss:FontName="Verdana"/>
+                        </Style>
+                        <Style ss:ID="s32">
+                         <NumberFormat ss:Format="Percent"/>
+                         <Alignment ss:Horizontal="Right" ss:Vertical="Bottom"/>
+                         <Font ss:FontName="Verdana" ss:Bold="1"/>
+                        </Style>
+                        <Style ss:ID="s33">
+                         <NumberFormat ss:Format="YYYY-mm-dd"/>
+                         <Alignment ss:Horizontal="Left" ss:Vertical="Bottom"/>
+                        </Style>
+                        <Style ss:ID="s34">
+                         <Alignment ss:Horizontal="Left" ss:Vertical="Bottom"/>
+                         <Font ss:FontName="Verdana" ss:Bold="1"/>
+                        </Style>
+                        <Style ss:ID="s35">
+                         <Alignment ss:Horizontal="Left" ss:Vertical="Bottom"/>
+                         <Font ss:FontName="Verdana"/>
+                        </Style>
+                        <Style ss:ID="s36">
+                         <Alignment ss:Horizontal="Left" ss:Vertical="Top" ss:WrapText="1"/>
+                         <Font ss:FontName="Verdana"/>
+                        </Style>
+                      </Styles>
+<Worksheet ss:Name="Sheet1">
+<Table>
+<Column ss:Index="1" ss:AutoFitWidth="0" ss:Width="150"/>
+<Column ss:Index="2" ss:AutoFitWidth="0" ss:Width="150"/>
+<Column ss:Index="3" ss:AutoFitWidth="0" ss:Width="150"/>
+<Column ss:Index="4" ss:AutoFitWidth="0" ss:Width="150"/>
+<Column ss:Index="5" ss:AutoFitWidth="0" ss:Width="150"/>
+<Column ss:Index="6" ss:AutoFitWidth="0" ss:Width="150"/>
+<Column ss:Index="7" ss:AutoFitWidth="0" ss:Width="150"/>
+<Column ss:Index="8" ss:AutoFitWidth="0" ss:Width="150"/>
+<Column ss:Index="9" ss:AutoFitWidth="0" ss:Width="150"/>
+<Column ss:Index="10" ss:AutoFitWidth="0" ss:Width="150"/>
+<Column ss:Index="11" ss:AutoFitWidth="0" ss:Width="150"/>
+<Column ss:Index="12" ss:AutoFitWidth="0" ss:Width="150"/>
+<Column ss:Index="13" ss:AutoFitWidth="0" ss:Width="150"/>
+<Column ss:Index="14" ss:AutoFitWidth="0" ss:Width="150"/>
+<Column ss:Index="15" ss:AutoFitWidth="0" ss:Width="150"/>
+<Row>
+<Cell ss:StyleID="s24"><Data ss:Type="String">id</Data></Cell>
+<Cell ss:StyleID="s24"><Data ss:Type="String">created_time</Data></Cell>
+<Cell ss:StyleID="s26"><Data ss:Type="String">ad_id</Data></Cell>
+<Cell ss:StyleID="s26"><Data ss:Type="String">ad_name</Data></Cell>
+<Cell ss:StyleID="s26"><Data ss:Type="String">adset_id</Data></Cell>
+<Cell ss:StyleID="s26"><Data ss:Type="String">adset_name</Data></Cell>
+<Cell ss:StyleID="s26"><Data ss:Type="String">campaign_id</Data></Cell>
+<Cell ss:StyleID="s26"><Data ss:Type="String">campaign_name</Data></Cell>
+<Cell ss:StyleID="s24"><Data ss:Type="String">form_id</Data></Cell>
+<Cell ss:StyleID="s26"><Data ss:Type="String">form_name</Data></Cell>
+<Cell ss:StyleID="s26"><Data ss:Type="String">is_organic</Data></Cell>
+<Cell ss:StyleID="s26"><Data ss:Type="String">platform</Data></Cell>
+<Cell ss:StyleID="s26"><Data ss:Type="String">nombre_completo</Data></Cell>
+<Cell ss:StyleID="s24"><Data ss:Type="String">número_de_teléfono</Data></Cell>
+<Cell ss:StyleID="s26"><Data ss:Type="String">correo_electrónico</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s25"><Data ss:Type="String">1052872838467362</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-29T08:31:11.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Omar Meza Molina</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56959515683</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">mezamolinaomar@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">679933029610384</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T22:55:27.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Elisa Cortes</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56979322123</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">gatazul_21@hotmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s25"><Data ss:Type="String">1474835312712972</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T22:20:50.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Alda Patricia Allendes Zamorano</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56964270044</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Alda36@gmail.cl</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s25"><Data ss:Type="String">2829877580579479</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T21:58:18.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Margot Menares Granifo</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56956051526</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">margotmenaresgranifo@hotmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">824200535046363</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T21:56:34.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Aurora Carreño</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56954992013</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">aurora.carreno16@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">635716703751968</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T21:55:56.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">María Mónica Aguilera Lamilla</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56992079315</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">monica.aguilera@hotmail.cl</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">352783562458325</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T21:45:33.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Miguel Silva Gonzalez</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56996558175</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">elenamiguel1956@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">344892779939144</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T21:42:15.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Carlos Fernández Marín</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56987669880</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">cafema1975@hotmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">360263898586560</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T21:41:31.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Miguel Lopes</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56966564270</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">miguel.lopez.sag@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">357801922198751</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T21:37:08.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Roxana Castillo</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56978236326</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">contreras.camila1809@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">770632290149401</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T21:30:14.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Ricardo Alberto Corral Vasquéz</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56965089368</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">racorralv@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s25"><Data ss:Type="String">3431686106949163</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T21:27:26.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Claudio Marcelo Santibañez Jofre</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56977005586</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">mstodopisos3@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">849485682523877</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T21:20:37.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Roberto Mora Reyes</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+560965682201</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">robertomora238@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">395888178111980</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T21:14:58.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Silvia Maria Rojas Lineros</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56989170613</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">silmaroli_bella@hotmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">996371377541178</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T21:14:37.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Cecilia Vasquez</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56945793986</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">cecilia.vasquez.vera@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">361445041964315</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T21:02:44.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Felipe Ojeda</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56941183473</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fojedaman@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">353168282771512</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T20:50:31.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">juan Alberto aspee romero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56956096729</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">juan.aspee.02@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s25"><Data ss:Type="String">1048564938939446</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T20:38:25.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Alejandro Moran humberto alejandro  959966360</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56959966360</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">am0384541@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">749119255642219</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T20:30:23.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Jua. claudio.  fernandez.  perez</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56979061465</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">jf921421@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">376119280468383</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T20:22:50.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Yolanda Gonzalez Miranda</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56962876821</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">yolandaeule2705@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">692645711662108</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T20:20:16.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Eduardo Antonio Cortes Guiñez</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56945413624</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">educortesgui@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">712145232742729</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T20:15:23.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Roxana Valdebenito</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56982588989</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">roxanavaldebenitomolina@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">374384063776547</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T20:14:02.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Ximena Vidal</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56963309265</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">ximenavidalv@hotmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s25"><Data ss:Type="String">1256467128043909</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T20:05:19.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Elena Ramirez</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56978650214</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">elenavidal2304@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">351880582703700</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T20:02:49.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Jose Reyes</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56950329551</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">jose.reyesaguilera@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">820677335398987</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T20:01:16.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Hugo eduardo gonzalez flores</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56975955993</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">hugo1976@live.cl</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">382600326428641</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T19:51:09.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Santiago Rojas</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56942125204</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">sr578685@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">626801891327727</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T19:46:21.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Juan Carlos Medina</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56961327374</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">jcarlos.medina_@hotmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s25"><Data ss:Type="String">1158136814588090</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T19:33:12.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Gloria Caceres</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56998025919</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Caceresgloria7@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">404154297416145</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T19:24:25.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Dany sebastian Jara Torres</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56995782905</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">danyjaratorres@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s25"><Data ss:Type="String">4852006421484039</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T19:22:52.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Exequiel Norberto Celis Cáceres</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56956474211</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">exequiel.celisc@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">975097319566959</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T19:19:45.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Noemi Morel Poly</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56950494437</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">noemi.morel1990@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">412507353084501</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T19:08:53.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">sergio jara</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56988305286</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">sergioalejandro25@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">639386103406626</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T19:05:54.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Fernando Salgado</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56983689861</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fmsalgadom@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">386476119070042</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T19:03:48.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Vivian Falcon Gallardo</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56975594781</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">vivianfalcon@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s25"><Data ss:Type="String">1290049291351109</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T19:02:06.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Carla Quiroz Ovalle</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56949483897</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">eventosfabian1979@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">273554347303971</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T18:51:33.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Alfredo Parra</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56948929459</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">albertoparrabenega@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">384803219223002</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T18:41:30.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">luz maria carrasco ceballo</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56955275023</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">cluzmaria982@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">357655348641015</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T18:39:18.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Estaban Aliaga Zuñiga</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56962566680</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">aliagae64@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">370882394167686</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T18:32:04.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Gina Ríos Sánchez</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56952539585</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">riosgina18@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">355260005532985</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T18:14:20.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Alejandro Jimenez</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56941631123</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">jimenezmunozmanuelalejandro@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s25"><Data ss:Type="String">3316302755133927</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T18:12:30.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Viorica Ushiñahua Garcia</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56972174122</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">vioricaushinahua@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">796518504477498</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T17:58:55.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Danilo Delgadillo</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56948787273</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">danilokillo@outlook.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">355467022539924</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T17:56:28.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Isabel Pavez</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56945186737</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">carola322005@hotmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">645949062760362</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T17:55:31.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Victor Beltran teran</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56983299129</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Victor_beltranteran@hotmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">355821935522012</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T17:55:17.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Jorge Hernández</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56976199488</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">jahajaha5326@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s25"><Data ss:Type="String">3954368544583029</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T17:36:07.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Marcelo Pablo Valencia Campos</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56969183864</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">marcelovalenciacampos@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s25"><Data ss:Type="String">2771996393128418</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T17:34:30.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Norma Malhuen</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56994913575</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">normamalhuen@hotmail.cl</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">452340469078602</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T17:28:58.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Ana Luisa Tapia Zelaya</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56995966306</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">anatapiazelaya15@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">355997898949684</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T17:23:11.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Patricio Meyer</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56948469608</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">patricio.meyer.guzman@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">841300176675347</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T17:20:46.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Raul Avila</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56963470879</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">raulaviladiaz04@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">726721774865980</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T17:12:10.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Johanns Martin Arriagada</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56976163366</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">johannsmartin@yahoo.es</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s25"><Data ss:Type="String">1666093620239887</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T17:10:34.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Hugo Alejandro Ortega Maldonado</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56944467191</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">jano-elec@hotmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">700352047269088</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T17:09:02.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Esteban Mendez</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56945831359</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">milagritomendezmendez@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s25"><Data ss:Type="String">4007134279315115</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T17:06:23.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Barbara Carstens Diaz</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+560977578617</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Bcarstensdiaz@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">461100458203354</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T16:58:19.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Raul Gonzalez</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56968096702</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">raulgonzalezbustamantebebe@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s25"><Data ss:Type="String">3613285535428148</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T16:56:00.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Pedro Chaufleur Aguilera</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56966388427</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">chaufler777@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s25"><Data ss:Type="String">2707666346152447</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T16:55:29.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Yasna Carolina Banda Donoso</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56442987259</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">yasnabandadonoso24@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s25"><Data ss:Type="String">1072547009849927</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T16:54:57.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">vargasleonardo1969@gmail.com</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56967193144</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">leonardovargashenriquez1110@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">409643883759823</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T16:54:45.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Bernabé Elías Azocar Salguero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56972442710</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">berny.azocar.salguero@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">686316868953889</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T16:54:10.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Edgardo Monsalvez</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56963435092</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">ignaciomonsalvez5@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">828112001275214</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T16:52:03.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Corin Andrea Zamorano Alburquenque</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56954321881</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">carenpaola1@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">383311292791385</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T16:50:08.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Yohana Piña Herrera</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56999219740</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">yohanaherrera1976@gmail.comail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s25"><Data ss:Type="String">1149656452096594</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T16:47:06.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Edgardo Alexis Casanueva Franchis</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56986244039</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">ecfranchis41@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">737194780203339</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T16:46:55.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Roberto Antonio Asecio Acuña</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56981264764</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">roberto.asecio.acuna@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">273268400695748</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T16:39:10.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Marcela Clemente</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+560984108650</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">marce1502@hotmail.cl</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">419552482423506</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T16:30:43.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">ig</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Danny</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56956212271</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">dppdam@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s25"><Data ss:Type="String">2030499433915717</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T16:30:36.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Jaime Lillo</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56954271231</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">ivettevalenzuela21@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s25"><Data ss:Type="String">3645578005550924</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T16:29:46.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Carlos Hernández Chavez</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56950469947</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">carloshernandez.sm07@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">796106504500755</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T16:27:02.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Florcita Gatica</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56999082014</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">florentinagatica@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s25"><Data ss:Type="String">2728562740793625</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T16:26:20.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Carlos Donoso Bass</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56998424533</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">carlosbass66@hotmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">349047836164698</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T16:24:10.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Leonardo Torres Tellechea</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56945213163</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">leonardot0106@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s25"><Data ss:Type="String">3897229186958471</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T16:11:28.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Apolonio Pajuelo</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56962644813</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">apoloniopajuelo77@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s25"><Data ss:Type="String">1109972239422579</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T16:09:55.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">dania jaramillo</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56965596017</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">daniacarojaramillo23@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">731668524101610</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T16:06:50.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Alex Javier Santana Alvear</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56964796391</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">santanaalveara@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">380186006680044</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T16:01:29.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Rodolfo Andres Parraguez Osorio</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56962969226</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">parraguezosoriorodolfoandres9@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">779771546137697</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T15:50:43.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">ronald figueroa</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56996872478</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">ronald.figueroaf@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">407414580640008</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T15:46:48.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Luis Quezada Parra</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56978331437</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">luisquezada78zx@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s25"><Data ss:Type="String">1015035202310479</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T15:42:00.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Maximiliano Benavides Manriquez</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56964226247</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">jmaxbena@hotmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s25"><Data ss:Type="String">3238669042910646</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T15:33:49.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Fierro Marcelo</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56998564431</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">maflavado@hotmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">377324050137005</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T15:33:07.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Luis Laura Rodriguez</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56988214049</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">luis03laura01@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">397784444730393</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T15:30:27.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">giusti gonzales</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56941134234</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">antony_g80@hotmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">803286060473855</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T15:27:57.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Belen Figueroa</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56947467439</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">ani.figueroa1223@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">440485756939580</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T15:26:34.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">penelope fuentes guerra</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56940448635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">penelofuentes9195@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">787112435457284</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T15:24:34.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Gabriela Gonzalez</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56973369348</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">gabrielagonzalezssbk@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s25"><Data ss:Type="String">1866605510157920</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T15:23:25.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Josue Zelada</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56959616348</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">josue.zelada.donoso@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">411287476660074</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T15:20:23.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Juan Carlos Martinez Leyton</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56964266455</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">juank-511@hotmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">411153803237690</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T15:16:40.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Leonardo Paredes</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56977990820</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">paredesleonardo607@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s25"><Data ss:Type="String">2781337618821970</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T15:11:46.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">ig</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Moises Nicolas Valdes Muñoz</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56936811515</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">moisesnicolas30m@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">761260634458001</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T15:09:39.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Maria Alicia Arenas Labra</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56963611851</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Pachy51@hotmail.es</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s25"><Data ss:Type="String">2741303342818089</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T15:09:18.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Mónica Valenzuela Marchant</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56965928105</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">monicadelcarm90@hotmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s25"><Data ss:Type="String">2875698126043509</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T15:01:22.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Francisco Javier Diaz Ojeda</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56953749040</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">diazojedafranciscojavier@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s25"><Data ss:Type="String">4119791954714572</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T14:46:14.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">nidia costas montenegro</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56963733161</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">nidia203-@hotmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">683523862548974</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T14:41:16.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Francisco Gutiérrez</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56961953866</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">franciscogutierrezaraya727@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">681872316091925</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T14:38:50.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">sara ivon carrasco duran</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56972505720</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">ivoncarrrasco@gmail.com</Data></Cell>
+</Row>
+
+<Row>
+<Cell ss:StyleID="s25"><Data ss:Type="String">1320433511630033</Data></Cell>
+<Cell ss:StyleID="s17"><Data ss:Type="DateTime">2020-10-28T14:35:25.000</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">No tienes suficientes permisos. Consulta este enlace de ayuda: https://www.facebook.com/business/help/766393076839635</Data></Cell>
+<Cell ss:StyleID="s27"><Data ss:Type="Number">202933604192436</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Formulario DestacaWeb Febrero</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">false</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">fb</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Luis Pavez</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">+56990977850</Data></Cell>
+<Cell ss:StyleID="s25"><Data ss:Type="String">Ramonluispavez@hotmail.com</Data></Cell>
+</Row>
+</Table>
+</Worksheet>
+</Workbook>
