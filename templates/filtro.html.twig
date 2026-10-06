@@ -4,7 +4,7 @@
             
             <div class="row">
                 
-                    <select name="bCompania" class="form-control" style="visibility:hidden">
+                    <select name="bCompania" class="form-control d-none">
                         <option value="0">Todos</option>
                         {% for compania in companias %}
                             <option value="{{compania.id}}"
@@ -15,14 +15,14 @@
                         {% endfor %}
                     </select>
  
-                <div class="col-sm-12 col-md-4 ">
+                <div class="col-sm-12 col-md-5">
                     <input type="text" class="form-control" name="bFiltro" placeholder="Nombre/Email/Teléfono" value="{{bFiltro}}">
                 </div>
                 
-                <div class="col-sm-12 col-md-3">
+                <div class="col-sm-12 col-md-5">
                     <input type="text" class="form-control" name="bFecha" id="bFecha"  value="">
                 </div>
-                <div class="col-sm-12 col-md-1">
+                <div class="col-sm-12 col-md-2">
                     <button class="btn btn-primary"><i class="fas fa-search"></i></button>
                 </div>
                 

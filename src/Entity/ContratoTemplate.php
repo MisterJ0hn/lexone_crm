@@ -32,7 +32,7 @@ class ContratoTemplate
     /**
      * Cuerpo HTML de la plantilla, con variables tipo {{cliente_nombre}}.
      */
-    #[ORM\Column(type: "text")]
+    #[ORM\Column(type: "text", length: 4294967295)]
     private $contenido;
 
     /**

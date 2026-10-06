@@ -11,6 +11,8 @@ use App\Repository\EmpresaRepository;
 use App\Repository\ModuloPerRepository;
 use App\Service\ContratoTemplateRenderer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -67,6 +69,36 @@ class ContratoTemplateController extends AbstractController
             'contratoTemplate' => $contratoTemplate,
             'form' => $form->createView(),
             'variables' => ContratoTemplateRenderer::catalogo(),
+        ]);
+    }
+
+    /**
+     * Previsualiza en PDF el contenido que está en el editor (aunque no esté
+     * guardado) con datos inventados. El contenido se trata como texto: solo
+     * se hace strtr() de variables, igual que en el contrato real.
+     */
+    #[Route("/preview", name: "contrato_template_preview", methods: ["POST"])]
+    public function preview(Request $request, ContratoTemplateRenderer $renderer): Response
+    {
+        if (!$this->isGranted('create', 'contrato_template') && !$this->isGranted('edit', 'contrato_template')) {
+            throw $this->createAccessDeniedException();
+        }
+        if (!$this->isCsrfTokenValid('contrato_template_preview', $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException('Token inválido.');
+        }
+
+        $html = $renderer->renderEjemplo((string) $request->request->get('contenido', ''));
+
+        $options = new Options();
+        $options->set('defaultFont', 'helvetica');
+        $dompdf = new Dompdf($options);
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('letter', 'portrait');
+        $dompdf->render();
+
+        return new Response($dompdf->output(), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="previsualizacion-contrato.pdf"',
         ]);
     }
 

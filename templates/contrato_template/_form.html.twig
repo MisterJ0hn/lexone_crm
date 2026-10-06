@@ -40,8 +40,14 @@
 
     <hr>
     <button type="submit" class="btn btn-primary">Guardar</button>
+    <button type="button" class="btn btn-info" id="btn-previsualizar"><i class="fas fa-file-pdf"></i> Previsualizar PDF</button>
     <a href="{{ path('contrato_template_index') }}" class="btn btn-secondary">Cancelar</a>
 {{ form_end(form) }}
+
+<form id="form-preview" method="post" action="{{ path('contrato_template_preview') }}" target="_blank" class="d-none">
+    <input type="hidden" name="_token" value="{{ csrf_token('contrato_template_preview') }}">
+    <input type="hidden" name="contenido" id="preview-contenido">
+</form>
 
 <script src="/build/adminlte/plugins/summernote/summernote-bs4.min.js"></script>
 <script>
@@ -54,9 +60,14 @@
                 ['fontsize', ['fontsize']],
                 ['para', ['ul', 'ol', 'paragraph']],
                 ['table', ['table']],
-                ['insert', ['link']],
+                ['insert', ['link', 'picture']],
                 ['view', ['fullscreen', 'codeview']],
             ],
+        });
+
+        $('#btn-previsualizar').on('click', function () {
+            $('#preview-contenido').val($('.contrato-template-editor').summernote('code'));
+            $('#form-preview').trigger('submit');
         });
 
         $('.btn-variable').on('click', function () {

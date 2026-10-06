@@ -35,12 +35,59 @@ class ContratoTemplateRenderer
             '{{monto_contrato}}' => 'Monto del contrato',
             '{{fecha_contrato}}' => 'Fecha de creación del contrato',
             '{{causas}}' => 'Tabla con las causas del contrato',
+            '{{nacionalidad}}' => 'Nacionalidad del cliente',
+            '{{estado_civil}}' => 'Estado civil del cliente',
+            '{{vigencia}}' => 'Vigencia del contrato (en meses)',
+            '{{detalle_cuotas}}' => 'Tabla con el detalle de cuotas (N°, vencimiento, monto)',
         ];
     }
 
     public function render(ContratoTemplate $template, Contrato $contrato): string
     {
         return strtr($template->getContenido(), $this->variables($contrato));
+    }
+
+    /**
+     * Renderiza un contenido (aún sin guardar) con datos inventados, para la
+     * previsualización del editor.
+     */
+    public function renderEjemplo(string $contenido): string
+    {
+        return strtr($contenido, $this->variablesEjemplo());
+    }
+
+    /**
+     * @return array<string,string> token => valor de ejemplo
+     */
+    public function variablesEjemplo(): array
+    {
+        $causas = '<table border="1" cellspacing="0" cellpadding="4" style="border-collapse:collapse;width:100%">'
+            . '<thead><tr><th>Materia</th><th>Causa/Rol</th><th>Caratulado</th><th>Juzgado</th></tr></thead>'
+            . '<tbody><tr><td>Cobranza</td><td>C-1234-2026</td><td>Banco Ejemplo / Pérez</td><td>1° Juzgado Civil de Santiago</td></tr>'
+            . '<tr><td>Laboral</td><td>O-567-2026</td><td>González / Empresa Demo SpA</td><td>2° Juzgado de Letras del Trabajo</td></tr></tbody></table>';
+
+        $cuotas = [];
+        for ($i = 1; $i <= 6; $i++) {
+            $cuotas[] = [$i, (new \DateTimeImmutable(sprintf('first day of +%d month', $i)))->modify('+4 days'), 150000];
+        }
+
+        return [
+            '{{cliente_nombre}}' => 'Juan Andrés Pérez Soto',
+            '{{cliente_rut}}' => '12.345.678-5',
+            '{{cliente_email}}' => 'juan.perez@ejemplo.cl',
+            '{{cliente_telefono}}' => '+56 9 1234 5678',
+            '{{cliente_direccion}}' => 'Av. Providencia 1234, Of. 56, Providencia',
+            '{{tipo_contrato}}' => 'Persona',
+            '{{folio}}' => '1024',
+            '{{cuotas}}' => '6',
+            '{{monto_contrato}}' => '900.000',
+            '{{fecha_contrato}}' => date('d-m-Y'),
+            '{{causas}}' => $causas,
+            '{{nacionalidad}}' => 'Chilena',
+            '{{estado_civil}}' => 'Casado',
+            '{{vigencia}}' => '12',
+            '{{detalle_cuotas}}' => $this->tablaCuotas($cuotas),
+        ];
     }
 
     /**
@@ -63,7 +110,67 @@ class ContratoTemplateRenderer
             '{{monto_contrato}}' => $contrato->getMontoContrato() !== null ? number_format((float) $contrato->getMontoContrato(), 0, ',', '.') : '',
             '{{fecha_contrato}}' => $contrato->getFechaCreacion() ? $contrato->getFechaCreacion()->format('d-m-Y') : '',
             '{{causas}}' => $this->causasHtml($contrato),
+            '{{nacionalidad}}' => $this->nacionalidad($contrato),
+            '{{estado_civil}}' => $this->estadoCivil($contrato),
+            '{{vigencia}}' => $contrato->getVigencia() !== null ? (string) $contrato->getVigencia() : '',
+            '{{detalle_cuotas}}' => $this->detalleCuotasHtml($contrato),
         ];
+    }
+
+    /**
+     * Para Persona la nacionalidad viene del país del contrato; para
+     * Convenio/Empresa, del campo propio del cliente (ver Cliente::$nacionalidad).
+     */
+    private function nacionalidad(Contrato $contrato): string
+    {
+        $cliente = $contrato->getCliente();
+        if ($cliente && $cliente->getNacionalidad()) {
+            return (string) $cliente->getNacionalidad();
+        }
+
+        return $contrato->getPais() ? (string) $contrato->getPais()->getNombre() : '';
+    }
+
+    private function estadoCivil(Contrato $contrato): string
+    {
+        $estadoCivil = $contrato->getEstadoCivil() ?? ($contrato->getCliente() ? $contrato->getCliente()->getEstadoCivil() : null);
+
+        return $estadoCivil ? (string) $estadoCivil->getNombre() : '';
+    }
+
+    private function detalleCuotasHtml(Contrato $contrato): string
+    {
+        $cuotas = [];
+        foreach ($contrato->getDetalleCuotas() as $cuota) {
+            if ($cuota->getAnular()) {
+                continue;
+            }
+            $cuotas[] = [$cuota->getNumero(), $cuota->getFechaPago(), $cuota->getMonto()];
+        }
+        usort($cuotas, static fn (array $a, array $b) => $a[0] <=> $b[0]);
+
+        return $this->tablaCuotas($cuotas);
+    }
+
+    /**
+     * @param list<array{0:int|null,1:\DateTimeInterface|null,2:int|float|string|null}> $cuotas
+     */
+    private function tablaCuotas(array $cuotas): string
+    {
+        if ($cuotas === []) {
+            return '';
+        }
+
+        $filas = '';
+        foreach ($cuotas as [$numero, $fecha, $monto]) {
+            $filas .= '<tr><td>' . (int) $numero . '</td>'
+                . '<td>' . ($fecha ? $fecha->format('d-m-Y') : '') . '</td>'
+                . '<td style="text-align:right">$' . number_format((float) $monto, 0, ',', '.') . '</td></tr>';
+        }
+
+        return '<table border="1" cellspacing="0" cellpadding="4" style="border-collapse:collapse;width:100%">'
+            . '<thead><tr><th>N° cuota</th><th>Vencimiento</th><th>Monto</th></tr></thead>'
+            . '<tbody>' . $filas . '</tbody></table>';
     }
 
     private function causasHtml(Contrato $contrato): string
