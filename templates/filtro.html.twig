@@ -4,16 +4,6 @@
             
             <div class="row">
                 
-                    <select name="bCompania" class="form-control d-none">
-                        <option value="0">Todos</option>
-                        {% for compania in companias %}
-                            <option value="{{compania.id}}"
-                            {% if bCompania==compania.id %}
-                                selected
-                            {% endif %}
-                            >{{compania.nombre}}</option>
-                        {% endfor %}
-                    </select>
  
                 <div class="col-sm-12 col-md-5">
                     <input type="text" class="form-control" name="bFiltro" placeholder="Nombre/Email/Teléfono" value="{{bFiltro}}">
@@ -32,3 +22,14 @@
         </div>  
         
     </div>
+    
+                    <select name="bCompania" class="form-control d-none">
+                        <option value="0">Todos</option>
+                        {% for compania in companias %}
+                            <option value="{{compania.id}}"
+                            {% if bCompania==compania.id %}
+                                selected
+                            {% endif %}
+                            >{{compania.nombre}}</option>
+                        {% endfor %}
+                    </select>
