@@ -10,7 +10,7 @@
 
 
 <div class="row">
-    <div class="col-md-6 col-sm-12">
+    <div class="col-12">
         <div class="card">
     
             <div class="card-body">
@@ -33,9 +33,9 @@
                         <p>{{misdatos.nombre}}</p>
                         
                     </div>
-                     <div class="col-md-3 col-sm-12">
+                     <div class="col-md-6 col-sm-12">
                         <small class="text-muted" for="inputNombre">Correo</small>
-                        <p>{{misdatos.correo}}</p>
+                        <p class="text-break">{{misdatos.correo}}</p>
                         
                     </div>
                      <div class="col-md-3 col-sm-12">
@@ -76,7 +76,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-4 col-sm-12">
+    <div class="col-12">
         <div class="card">
     
             <div class="card-body">
@@ -93,33 +93,6 @@
                             
                         </div>
                         <div class="mx-auto"><button type="submit" class="btn btn-primary">Cambiar Password</button></div>
-                    </div>
-                </form>
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-header"><h3 class="card-title">Clave del Poder Judicial</h3></div>
-            <div class="card-body">
-                <p class="text-muted small">Se usa para sincronizar causas desde el detalle PJUD (Oficina Judicial Virtual). Se guarda cifrada.</p>
-                <form action="{{ path('mis_datos_pjud') }}" method="post" autocomplete="off">
-                    <input type="hidden" name="_token" value="{{ csrf_token('mis_datos_pjud') }}">
-                    <div class="row">
-                        <div class="col-md-6 col-sm-12">
-                            <small class="text-muted">RUT</small>
-                            <input type="text" class="form-control" name="pjud_rut" value="{{ misdatos.pjudRut }}" placeholder="12345678-9">
-                        </div>
-                        <div class="col-md-6 col-sm-12">
-                            <small class="text-muted">Método de login</small>
-                            <select class="form-control" name="pjud_metodo_login">
-                                <option value="1" {{ misdatos.pjudMetodoLogin == 1 ? 'selected' }}>Clave del Poder Judicial</option>
-                                <option value="2" {{ misdatos.pjudMetodoLogin == 2 ? 'selected' }}>ClaveÚnica</option>
-                            </select>
-                        </div>
-                        <div class="col-12 mt-2">
-                            <small class="text-muted">Clave {% if misdatos.pjudClave %}<span class="text-success">(ya registrada; deje vacío para conservarla)</span>{% endif %}</small>
-                            <input type="password" class="form-control" name="pjud_clave" value="" autocomplete="new-password">
-                        </div>
-                        <div class="mx-auto mt-3"><button type="submit" class="btn btn-primary">Guardar clave PJUD</button></div>
                     </div>
                 </form>
             </div>

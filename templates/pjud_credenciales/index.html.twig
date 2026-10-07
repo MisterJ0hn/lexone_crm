@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Clave Poder Judicial{% endblock %}
+
+{% block body %}
+<div class="card">
+    <div class="card-header"><h3 class="card-title">Clave del Poder Judicial</h3></div>
+    <div class="card-body">
+        <p class="text-muted small">Es la clave de la empresa en la Oficina Judicial Virtual: la usan todos los usuarios al sincronizar causas desde el detalle PJUD. Se guarda cifrada.</p>
+        <form action="{{ path('pjud_credenciales_guardar') }}" method="post" autocomplete="off">
+            <input type="hidden" name="_token" value="{{ csrf_token('pjud_credenciales') }}">
+            <div class="row">
+                <div class="col-md-4 col-sm-12">
+                    <small class="text-muted">RUT</small>
+                    <input type="text" class="form-control" name="pjud_rut" value="{{ empresa.pjudRut }}" placeholder="12345678-9">
+                </div>
+                <div class="col-md-4 col-sm-12">
+                    <small class="text-muted">Método de login</small>
+                    <select class="form-control" name="pjud_metodo_login">
+                        <option value="1" {{ empresa.pjudMetodoLogin == 1 ? 'selected' }}>Clave del Poder Judicial</option>
+                        <option value="2" {{ empresa.pjudMetodoLogin == 2 ? 'selected' }}>ClaveÚnica</option>
+                    </select>
+                </div>
+                <div class="col-md-4 col-sm-12">
+                    <small class="text-muted">Clave {% if empresa.pjudClave %}<span class="text-success">(ya registrada; deje vacío para conservarla)</span>{% endif %}</small>
+                    <input type="password" class="form-control" name="pjud_clave" value="" autocomplete="new-password">
+                </div>
+            </div>
+            <div class="mt-3"><button type="submit" class="btn btn-primary">Guardar</button></div>
+        </form>
+    </div>
+</div>
+{% endblock %}

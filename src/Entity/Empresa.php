@@ -62,6 +62,20 @@ class Empresa
     #[ORM\Column(type: "encrypted_string", length: 255, nullable: true)]
     private ?string $pjudPassword = null;
 
+    /**
+     * Credenciales de la empresa en la Oficina Judicial Virtual (las usa api-pjud para sincronizar
+     * causas). Las edita el administrador desde Mantención → Clave Poder Judicial (PjudCredencialesController).
+     */
+    #[ORM\Column(type: "string", length: 20, nullable: true)]
+    private ?string $pjudRut = null;
+
+    #[ORM\Column(type: "encrypted_string", length: 255, nullable: true)]
+    private ?string $pjudClave = null;
+
+    /** 1 = Clave del Poder Judicial, 2 = ClaveÚnica */
+    #[ORM\Column(type: "smallint", options: ["default" => 1])]
+    private int $pjudMetodoLogin = 1;
+
     #[ORM\OneToMany(targetEntity: Cuenta::class, mappedBy: "empresa")]
     private $cuentas;
 
@@ -857,6 +871,39 @@ class Empresa
     public function setPjudHabilitado(bool $pjudHabilitado): self
     {
         $this->pjudHabilitado = $pjudHabilitado;
+        return $this;
+    }
+
+    public function getPjudRut(): ?string
+    {
+        return $this->pjudRut;
+    }
+
+    public function setPjudRut(?string $pjudRut): self
+    {
+        $this->pjudRut = $pjudRut;
+        return $this;
+    }
+
+    public function getPjudClave(): ?string
+    {
+        return $this->pjudClave;
+    }
+
+    public function setPjudClave(?string $pjudClave): self
+    {
+        $this->pjudClave = $pjudClave;
+        return $this;
+    }
+
+    public function getPjudMetodoLogin(): int
+    {
+        return $this->pjudMetodoLogin;
+    }
+
+    public function setPjudMetodoLogin(int $pjudMetodoLogin): self
+    {
+        $this->pjudMetodoLogin = $pjudMetodoLogin;
         return $this;
     }
 

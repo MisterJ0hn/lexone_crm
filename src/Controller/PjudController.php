@@ -184,7 +184,7 @@ class PjudController extends AbstractController
 
     /**
      * Detalle PJUD de una causa que no está en el CRM (fila de Lexflow). No hay cliente asociado, así que
-     * se sincroniza con las credenciales del usuario del sistema.
+     * se sincroniza con las credenciales de la empresa.
      */
     private function consultarExterna(string $token, Request $request, bool $forzar, \App\Entity\Empresa $empresa, object $user): JsonResponse
     {
@@ -212,7 +212,7 @@ class PjudController extends AbstractController
         $this->api->paraEmpresa($empresa);
         $cuaderno = $request->query->get('cuaderno');
         try {
-            $res = $this->api->detalle($d['m'], $datos, $forzar, $cuaderno !== null ? (int) $cuaderno : null, $this->credencialesUsuario($user));
+            $res = $this->api->detalle($d['m'], $datos, $forzar, $cuaderno !== null ? (int) $cuaderno : null, $this->credencialesEmpresa($user));
         } catch (PjudApiException $e) {
             return new JsonResponse(['detail' => $e->getMessage()], 502);
         }
@@ -234,14 +234,19 @@ class PjudController extends AbstractController
         if ($cliente && $cliente->getRut() && $cliente->getClaveUnica()) {
             return ['rut' => $cliente->getRut(), 'clave' => $cliente->getClaveUnica(), 'metodo_login' => 2];
         }
-        return $this->credencialesUsuario($user);
+        return $this->credencialesEmpresa($user);
     }
 
-    /** @return array{rut:?string,clave:?string,metodo_login:int} */
-    private function credencialesUsuario(object $user): array
+    /**
+     * Clave del Poder Judicial de la empresa (Mantención → Clave Poder Judicial).
+     *
+     * @return array{rut:?string,clave:?string,metodo_login:int}
+     */
+    private function credencialesEmpresa(object $user): array
     {
-        if ($user->getPjudRut() && $user->getPjudClave()) {
-            return ['rut' => $user->getPjudRut(), 'clave' => $user->getPjudClave(), 'metodo_login' => $user->getPjudMetodoLogin()];
+        $empresa = $this->empresas->find($user->getEmpresaActual());
+        if ($empresa && $empresa->getPjudRut() && $empresa->getPjudClave()) {
+            return ['rut' => $empresa->getPjudRut(), 'clave' => $empresa->getPjudClave(), 'metodo_login' => $empresa->getPjudMetodoLogin()];
         }
         return ['rut' => null, 'clave' => null, 'metodo_login' => 1];
     }

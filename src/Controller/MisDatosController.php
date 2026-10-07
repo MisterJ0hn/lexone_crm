@@ -59,26 +59,6 @@ class MisDatosController extends AbstractController
 
 
     }
-    #[Route("/pjud", name: "mis_datos_pjud", methods: ["POST"])]
-    public function pjud(UsuarioRepository $usuarioRepository, Request $request): Response
-    {
-        $this->denyAccessUnlessGranted('edit','mis_datos');
-        if (!$this->isCsrfTokenValid('mis_datos_pjud', (string) $request->request->get('_token'))) {
-            $this->addFlash('error', 'Token inválido, intente nuevamente');
-            return $this->redirectToRoute('mis_datos_index');
-        }
-        $usuario=$usuarioRepository->find($this->getUser()->getId());
-        $usuario->setPjudRut(trim((string) $request->request->get('pjud_rut')) ?: null);
-        $usuario->setPjudMetodoLogin($request->request->getInt('pjud_metodo_login', 1) === 2 ? 2 : 1);
-        // La clave no se muestra: vacío = conservar la actual.
-        $clave = (string) $request->request->get('pjud_clave');
-        if ($clave !== '') {
-            $usuario->setPjudClave($clave);
-        }
-        $this->entityManager->flush();
-        $this->addFlash('success', 'Clave del Poder Judicial guardada');
-        return $this->redirectToRoute('mis_datos_index');
-    }
     #[Route("/password", name: "mis_datos_password", methods: ["GET","POST"])]
     public function password(UsuarioRepository $usuarioRepository, Request $request,UserPasswordHasherInterface $encoder): Response
     {
