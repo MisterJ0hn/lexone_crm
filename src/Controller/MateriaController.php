@@ -26,6 +26,7 @@ class MateriaController extends AbstractController
     #[Route("/", name: "materia_index", methods: ["GET"])]
     public function index(MateriaRepository $materiaRepository): Response
     {
+         $this->denyAccessUnlessGranted('create','materia_index');
         // Materia es un catálogo global: mismo listado para todas las empresas.
         return $this->render('materia/index.html.twig', [
             'materias' => $materiaRepository->findBy([], ['nombre' => 'ASC']),
@@ -35,6 +36,7 @@ class MateriaController extends AbstractController
     #[Route("/new", name: "materia_new", methods: ["GET","POST"])]
     public function new(Request $request): Response
     {
+         $this->denyAccessUnlessGranted('new','materia_index');
         $user = $this->getUser();
         $empresa = $this->entityManager->getRepository(Empresa::class)->find($user->getEmpresaActual());
         $materium = new Materia();
@@ -60,6 +62,7 @@ class MateriaController extends AbstractController
     #[Route("/{id}", name: "materia_show", methods: ["GET"])]
     public function show(Materia $materium): Response
     {
+         $this->denyAccessUnlessGranted('view','materia_index');
         return $this->render('materia/show.html.twig', [
             'materium' => $materium,
         ]);
@@ -68,6 +71,7 @@ class MateriaController extends AbstractController
     #[Route("/{id}/edit", name: "materia_edit", methods: ["GET","POST"])]
     public function edit(Request $request, Materia $materium): Response
     {
+        $this->denyAccessUnlessGranted('edit', 'materia_index');
         $form = $this->createForm(MateriaType::class, $materium);
         $form->handleRequest($request);
 
