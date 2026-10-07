@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-  <title>CRM Legal</title>
+  <title>LexONE</title>
 
   <!-- Tipografía -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -184,6 +184,8 @@
 
                 $(".ocultar-campo").hide();
                 $( "form" ).submit(function( event ) {
+                    // Formularios que abren en otra pestaña (p.ej. previsualizar PDF) no deben bloquear la página.
+                    if ($(this).attr('target') === '_blank') { return; }
                     $("button").prop('disabled',true);
                 });
                 $(function() {

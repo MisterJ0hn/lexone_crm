@@ -28,7 +28,7 @@
         <div class="col-sm-12 col-md-3">
             <small class="text-muted">Variables disponibles</small>
             <p class="text-muted"><small>Haga clic para insertar en el punto donde esté escribiendo.</small></p>
-            <div class="list-group">
+            <div class="list-group" id="lista-variables" style="overflow-y:auto">
                 {% for token, descripcion in variables %}
                     <button type="button" class="list-group-item list-group-item-action py-1 px-2 btn-variable" data-token="{{ token }}">
                         <code>{{ token }}</code><br><small class="text-muted">{{ descripcion }}</small>
@@ -64,6 +64,12 @@
                 ['view', ['fullscreen', 'codeview']],
             ],
         });
+
+        // El cuadro de variables mide lo mismo que el editor y hace scroll por dentro.
+        var $editor = $('.note-editor'), $lista = $('#lista-variables');
+        function igualaAlto() { $lista.css('height', $editor.outerHeight()); }
+        igualaAlto();
+        if (window.ResizeObserver) { new ResizeObserver(igualaAlto).observe($editor[0]); }
 
         $('#btn-previsualizar').on('click', function () {
             $('#preview-contenido').val($('.contrato-template-editor').summernote('code'));

@@ -38,13 +38,19 @@ class ContratoTemplateRenderer
             '{{nacionalidad}}' => 'Nacionalidad del cliente',
             '{{estado_civil}}' => 'Estado civil del cliente',
             '{{vigencia}}' => 'Vigencia del contrato (en meses)',
-            '{{detalle_cuotas}}' => 'Tabla con el detalle de cuotas (N°, vencimiento, monto)',
+            '{{detalle_cuotas}}' => 'Tabla con el detalle de cuotas (N°, vencimiento, monto). Ancho opcional: {{detalle_cuotas:50%}} o {{detalle_cuotas:400px}}',
+            '{{comuna_cliente}}' => 'Comuna del cliente',
+            '{{ciudad_cliente}}' => 'Ciudad del cliente',
+            '{{situacion_laboral}}' => 'Situación laboral del cliente',
+            '{{reunion}}' => 'Reunión (modalidad) del contrato',
         ];
     }
 
     public function render(ContratoTemplate $template, Contrato $contrato): string
     {
-        return strtr($template->getContenido(), $this->variables($contrato));
+        $contenido = $this->detalleCuotasConAncho($template->getContenido(), $this->cuotasDe($contrato));
+
+        return strtr($contenido, $this->variables($contrato));
     }
 
     /**
@@ -53,6 +59,8 @@ class ContratoTemplateRenderer
      */
     public function renderEjemplo(string $contenido): string
     {
+        $contenido = $this->detalleCuotasConAncho($contenido, $this->cuotasEjemplo());
+
         return strtr($contenido, $this->variablesEjemplo());
     }
 
@@ -65,11 +73,6 @@ class ContratoTemplateRenderer
             . '<thead><tr><th>Materia</th><th>Causa/Rol</th><th>Caratulado</th><th>Juzgado</th></tr></thead>'
             . '<tbody><tr><td>Cobranza</td><td>C-1234-2026</td><td>Banco Ejemplo / Pérez</td><td>1° Juzgado Civil de Santiago</td></tr>'
             . '<tr><td>Laboral</td><td>O-567-2026</td><td>González / Empresa Demo SpA</td><td>2° Juzgado de Letras del Trabajo</td></tr></tbody></table>';
-
-        $cuotas = [];
-        for ($i = 1; $i <= 6; $i++) {
-            $cuotas[] = [$i, (new \DateTimeImmutable(sprintf('first day of +%d month', $i)))->modify('+4 days'), 150000];
-        }
 
         return [
             '{{cliente_nombre}}' => 'Juan Andrés Pérez Soto',
@@ -86,7 +89,11 @@ class ContratoTemplateRenderer
             '{{nacionalidad}}' => 'Chilena',
             '{{estado_civil}}' => 'Casado',
             '{{vigencia}}' => '12',
-            '{{detalle_cuotas}}' => $this->tablaCuotas($cuotas),
+            '{{detalle_cuotas}}' => $this->tablaCuotas($this->cuotasEjemplo()),
+            '{{comuna_cliente}}' => 'Providencia',
+            '{{ciudad_cliente}}' => 'Santiago',
+            '{{situacion_laboral}}' => 'Dependiente',
+            '{{reunion}}' => 'Presencial',
         ];
     }
 
@@ -114,6 +121,10 @@ class ContratoTemplateRenderer
             '{{estado_civil}}' => $this->estadoCivil($contrato),
             '{{vigencia}}' => $contrato->getVigencia() !== null ? (string) $contrato->getVigencia() : '',
             '{{detalle_cuotas}}' => $this->detalleCuotasHtml($contrato),
+            '{{comuna_cliente}}' => $contrato->getComuna() ?: ($cliente && $cliente->getComuna() ? (string) $cliente->getComuna()->getNombre() : ''),
+            '{{ciudad_cliente}}' => $contrato->getCiudad() ?: ($cliente && $cliente->getCiudad() ? (string) $cliente->getCiudad()->getNombre() : ''),
+            '{{situacion_laboral}}' => $contrato->getSituacionLaboral() ? (string) $contrato->getSituacionLaboral()->getNombre() : '',
+            '{{reunion}}' => ($reunion = $contrato->getReunion() ?? ($cliente ? $cliente->getReunion() : null)) ? (string) $reunion->getNombre() : '',
         ];
     }
 
@@ -138,7 +149,52 @@ class ContratoTemplateRenderer
         return $estadoCivil ? (string) $estadoCivil->getNombre() : '';
     }
 
+    /**
+     * Admite {{detalle_cuotas:50%}} o {{detalle_cuotas:400px}} (un número sin
+     * unidad se toma como %). Solo se aceptan números + % / px, así que el
+     * ancho nunca puede inyectar CSS ni HTML arbitrario.
+     *
+     * @param list<array{0:int|null,1:\DateTimeInterface|null,2:int|float|string|null}> $cuotas
+     */
+    private function detalleCuotasConAncho(string $contenido, array $cuotas): string
+    {
+        return preg_replace_callback(
+            '/\{\{detalle_cuotas:(\d{1,4})(%|px)?\}\}/',
+            function (array $m) use ($cuotas): string {
+                $unidad = $m[2] ?? '%';
+                $valor = (int) $m[1];
+                if ($unidad === '%') {
+                    $valor = max(1, min(100, $valor));
+                }
+
+                return $this->tablaCuotas($cuotas, $valor . $unidad);
+            },
+            $contenido
+        ) ?? $contenido;
+    }
+
+    /**
+     * @return list<array{0:int|null,1:\DateTimeInterface|null,2:int|float|string|null}>
+     */
+    private function cuotasEjemplo(): array
+    {
+        $cuotas = [];
+        for ($i = 1; $i <= 6; $i++) {
+            $cuotas[] = [$i, (new \DateTimeImmutable(sprintf('first day of +%d month', $i)))->modify('+4 days'), 150000];
+        }
+
+        return $cuotas;
+    }
+
     private function detalleCuotasHtml(Contrato $contrato): string
+    {
+        return $this->tablaCuotas($this->cuotasDe($contrato));
+    }
+
+    /**
+     * @return list<array{0:int|null,1:\DateTimeInterface|null,2:int|float|string|null}>
+     */
+    private function cuotasDe(Contrato $contrato): array
     {
         $cuotas = [];
         foreach ($contrato->getDetalleCuotas() as $cuota) {
@@ -149,13 +205,13 @@ class ContratoTemplateRenderer
         }
         usort($cuotas, static fn (array $a, array $b) => $a[0] <=> $b[0]);
 
-        return $this->tablaCuotas($cuotas);
+        return $cuotas;
     }
 
     /**
      * @param list<array{0:int|null,1:\DateTimeInterface|null,2:int|float|string|null}> $cuotas
      */
-    private function tablaCuotas(array $cuotas): string
+    private function tablaCuotas(array $cuotas, string $ancho = '100%'): string
     {
         if ($cuotas === []) {
             return '';
@@ -168,7 +224,7 @@ class ContratoTemplateRenderer
                 . '<td style="text-align:right">$' . number_format((float) $monto, 0, ',', '.') . '</td></tr>';
         }
 
-        return '<table border="1" cellspacing="0" cellpadding="4" style="border-collapse:collapse;width:100%">'
+        return '<table border="1" cellspacing="0" cellpadding="4" style="border-collapse:collapse;width:' . $ancho . '">'
             . '<thead><tr><th>N° cuota</th><th>Vencimiento</th><th>Monto</th></tr></thead>'
             . '<tbody>' . $filas . '</tbody></table>';
     }
