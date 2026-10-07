@@ -22,6 +22,14 @@ class ContratoNota
     #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private $contrato;
 
+    /**
+     * Sub cliente de un Convenio/Empresa al que pertenece la observación. null =
+     * observación del contrato (cliente principal / Persona).
+     */
+    #[ORM\ManyToOne(targetEntity: Cliente::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: "CASCADE")]
+    private $cliente;
+
     #[ORM\Column(type: "text")]
     private $observacion;
 
@@ -49,6 +57,9 @@ class ContratoNota
 
     public function getContrato(): ?Contrato { return $this->contrato; }
     public function setContrato(?Contrato $contrato): self { $this->contrato = $contrato; return $this; }
+
+    public function getCliente(): ?Cliente { return $this->cliente; }
+    public function setCliente(?Cliente $cliente): self { $this->cliente = $cliente; return $this; }
 
     public function getObservacion(): ?string { return $this->observacion; }
     public function setObservacion(?string $observacion): self { $this->observacion = $observacion; return $this; }

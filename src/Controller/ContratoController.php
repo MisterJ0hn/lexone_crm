@@ -1079,6 +1079,8 @@ class ContratoController extends AbstractController
                 // Materia es un catálogo global: mismo listado para todas las empresas.
                 'materias' => $materiaRepository->findBy([], ['nombre' => 'ASC']),
                 'notas' => $this->notasDelContrato($contrato),
+                // Cada sub cliente tiene su propio historial de observaciones.
+                'notasPorCliente' => array_map(fn (array $grupo) => $this->notasDelContrato($contrato, $grupo['cliente']), $clientes),
             ]);
         }
 
@@ -1094,10 +1096,15 @@ class ContratoController extends AbstractController
     private const NOTA_EXTENSIONES = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'jpg', 'jpeg', 'png', 'gif', 'zip'];
     private const NOTA_TAMANO_MAX = 10 * 1024 * 1024;
 
-    /** @return ContratoNota[] historial del contrato, lo más reciente primero. */
-    private function notasDelContrato(Contrato $contrato): array
+    /**
+     * Historial de observaciones, lo más reciente primero. Con $cliente son las de ese
+     * sub cliente; sin él, las del contrato (las que no pertenecen a ningún sub cliente).
+     *
+     * @return ContratoNota[]
+     */
+    private function notasDelContrato(Contrato $contrato, ?Cliente $cliente = null): array
     {
-        return $this->entityManager->getRepository(ContratoNota::class)->findBy(['contrato' => $contrato], ['fechaRegistro' => 'DESC', 'id' => 'DESC']);
+        return $this->entityManager->getRepository(ContratoNota::class)->findBy(['contrato' => $contrato, 'cliente' => $cliente], ['fechaRegistro' => 'DESC', 'id' => 'DESC']);
     }
 
     /**
@@ -1166,6 +1173,22 @@ class ContratoController extends AbstractController
 
         $nota = (new ContratoNota())->setContrato($contrato)->setObservacion($observacion)->setUsuario($this->getUser());
 
+        // Observación de un sub cliente (Convenio/Empresa): debe ser un cliente con causas en este contrato.
+        $clienteId = $request->request->get('cliente');
+        if ($clienteId !== null && $clienteId !== '') {
+            $clienteNota = null;
+            foreach ($contrato->getAgenda()->getCausas() as $causa) {
+                if ($causa->getCliente() !== null && (string) $causa->getCliente()->getId() === (string) $clienteId) {
+                    $clienteNota = $causa->getCliente();
+                    break;
+                }
+            }
+            if ($clienteNota === null) {
+                throw $this->createNotFoundException('Cliente no encontrado en este contrato.');
+            }
+            $nota->setCliente($clienteNota);
+        }
+
         $archivo = $request->files->get('fileNota');
         if ($archivo !== null) {
             $extension = strtolower((string) $archivo->getClientOriginalExtension());
@@ -1231,23 +1254,27 @@ class ContratoController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // La causa es obligatoria al crear el cliente: sin una materia válida no
-            // se crea ni el cliente ni la causa (mismos campos que ya usa
-            // CausaController::agregar()).
-            $servicio = null;
-            if ($request->request->get('cboSubMateria')) {
-                $servicio = $servicioRepository->find($request->request->get('cboSubMateria'));
+            // Al menos una causa es obligatoria al crear el cliente (pueden venir varias,
+            // en causas[N][...]): sin una materia válida en cada una no se crea ni el
+            // cliente ni ninguna causa. Mismos campos que ya usa CausaController::agregar().
+            $causasPost = $request->request->all('causas');
+            $causasDatos = [];
+            foreach ($causasPost as $datos) {
+                if (!is_array($datos)) {
+                    continue;
+                }
+                $servicio = !empty($datos['servicio']) ? $servicioRepository->find($datos['servicio']) : null;
+                $materia = !empty($datos['materia']) ? $materiaRepository->find($datos['materia']) : null;
+                if ($materia === null && $servicio !== null) {
+                    $materia = $servicio->getMateria();
+                }
+                if ($materia === null) {
+                    $this->addFlash('error', 'Debe ingresar la materia de cada causa: es obligatoria para crear el cliente.');
+                    return $this->redirectToRoute('contrato_linea_tiempo', ['id' => $contrato->getId()]);
+                }
+                $causasDatos[] = ['datos' => $datos, 'materia' => $materia, 'servicio' => $servicio];
             }
-
-            $materia = null;
-            if ($request->request->get('cboMateria')) {
-                $materia = $materiaRepository->find($request->request->get('cboMateria'));
-            }
-            if ($materia === null && $servicio !== null) {
-                $materia = $servicio->getMateria();
-            }
-
-            if ($materia === null) {
+            if ($causasDatos === []) {
                 $this->addFlash('error', 'Debe ingresar la materia de la causa: es obligatoria para crear el cliente.');
                 return $this->redirectToRoute('contrato_linea_tiempo', ['id' => $contrato->getId()]);
             }
@@ -1281,40 +1308,42 @@ class ContratoController extends AbstractController
             $entityManager->persist($cliente);
             $entityManager->flush();
 
-            $causa = new Causa();
-            $causa->setEstado(1);
-            $causa->setAgenda($contrato->getAgenda());
-            $causa->setCliente($cliente);
-            $causa->setMateria($materia);
+            foreach ($causasDatos as ['datos' => $datos, 'materia' => $materia, 'servicio' => $servicio]) {
+                $causa = new Causa();
+                $causa->setEstado(1);
+                $causa->setAgenda($contrato->getAgenda());
+                $causa->setCliente($cliente);
+                $causa->setMateria($materia);
 
-            if ($servicio !== null && $servicio->getMateria()->getId() === $materia->getId()) {
-                $causa->setServicio($servicio);
-            }
-            if ($request->request->get('txtLetra')) {
-                $causa->setLetra($request->request->get('txtLetra'));
-            }
-            if ($request->request->get('txtRol')) {
-                $causa->setRol($request->request->get('txtRol'));
-            }
-            if ($request->request->get('txtAnio')) {
-                $causa->setAnio($request->request->get('txtAnio'));
-            }
-            // causaNombre no admite null en la base de datos: igual que en
-            // CausaController::agregar(), se setea aunque venga vacío.
-            $causa->setCausaNombre((string) $request->request->get('txtCaratulado'));
-            // La corte elegida en el formulario manda; si no viene, se toma la del juzgado (como en contrata).
-            if ($request->request->get('corte')) {
-                $causa->setCorte($corteRepository->find($request->request->get('corte')));
-            }
-            if ($request->request->get('juzgado')) {
-                $juzgado = $juzgadoRepository->find($request->request->get('juzgado'));
-                $causa->setJuzgado($juzgado);
-                if ($juzgado && $causa->getCorte() === null && $juzgado->getCorte() !== null) {
-                    $causa->setCorte($juzgado->getCorte());
+                if ($servicio !== null && $servicio->getMateria()->getId() === $materia->getId()) {
+                    $causa->setServicio($servicio);
                 }
-            }
+                if (!empty($datos['letra'])) {
+                    $causa->setLetra($datos['letra']);
+                }
+                if (!empty($datos['rol'])) {
+                    $causa->setRol($datos['rol']);
+                }
+                if (!empty($datos['anio'])) {
+                    $causa->setAnio($datos['anio']);
+                }
+                // causaNombre no admite null en la base de datos: igual que en
+                // CausaController::agregar(), se setea aunque venga vacío.
+                $causa->setCausaNombre((string) ($datos['caratulado'] ?? ''));
+                // La corte elegida en el formulario manda; si no viene, se toma la del juzgado (como en contrata).
+                if (!empty($datos['corte'])) {
+                    $causa->setCorte($corteRepository->find($datos['corte']));
+                }
+                if (!empty($datos['juzgado'])) {
+                    $juzgado = $juzgadoRepository->find($datos['juzgado']);
+                    $causa->setJuzgado($juzgado);
+                    if ($juzgado && $causa->getCorte() === null && $juzgado->getCorte() !== null) {
+                        $causa->setCorte($juzgado->getCorte());
+                    }
+                }
 
-            $entityManager->persist($causa);
+                $entityManager->persist($causa);
+            }
             $entityManager->flush();
 
             return $this->redirectToRoute('contrato_linea_tiempo', ['id' => $contrato->getId()]);

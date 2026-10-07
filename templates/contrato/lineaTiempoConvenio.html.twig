@@ -29,6 +29,7 @@
                 <h5 class="card-title"><strong>{{ grupo.cliente.nombre }}</strong> - {{ grupo.cliente.rut }}</h5>
             </div>
             <div class="card-body">
+                {{ include('contrato/_notas.html.twig', {cliente: grupo.cliente, notas: notasPorCliente[grupo.cliente.id]}) }}
                 <div class="card card-outline collapsed-card">
                     <div class="card-header">
                         <h3 class="card-title">Datos {% if contrato.agenda.tipoCliente.nombre == 'Convenio' %}
@@ -292,55 +293,62 @@
                 </div>
 
                 <hr>
-                <h5>Causa *</h5>
-                <small class="text-muted">Obligatoria: se crea junto con el cliente. Pueden agregarse más después, desde su tarjeta.</small>
-                <div class="row mt-2">
-                    <div class="col-sm-12 col-md-2">
-                        <select name="cboMateria" class="form-control cbomateria-convenio" required onchange="cambiaMateriaCausaConvenio(this.value)">
-                            <option value="">Seleccione Materia</option>
-                            {% for materia in materias %}
-                            <option value="{{ materia.id }}">{{ materia.nombre }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-sm-12 col-md-3 submateria-convenio">
-                        <div class="input-group">
-                            <select name="cboSubMateria" class="form-control cboSubMateria-convenio" required>
-                                <option value="">Seleccione Servicio</option>
+                <h5>Causas *</h5>
+                <small class="text-muted">La primera es obligatoria: se crea junto con el cliente. Use "Agregar otra causa" para cargar más.</small>
+                <div id="causasConvenio">
+                    <div class="row mt-2 causa-convenio" data-idx="0">
+                        <div class="col-12 d-flex justify-content-between align-items-center">
+                            <strong class="causa-convenio-titulo">Causa 1</strong>
+                            <button type="button" class="btn btn-sm btn-outline-danger quitar-causa-convenio d-none" onclick="quitarCausaConvenio(this)"><i class="fas fa-times"></i> Quitar</button>
+                        </div>
+                        <div class="col-sm-12 col-md-2">
+                            <select name="causas[0][materia]" class="form-control cbomateria-convenio" required onchange="cambiaMateriaCausaConvenio(this)">
+                                <option value="">Seleccione Materia</option>
+                                {% for materia in materias %}
+                                <option value="{{ materia.id }}">{{ materia.nombre }}</option>
+                                {% endfor %}
                             </select>
-                            <div class="input-group-append"><button type="button" class="btn btn-outline-primary" data-servicio-nuevo title="Agregar nuevo servicio"><i class="fas fa-plus"></i></button></div>
                         </div>
-                    </div>
-                    <div class="col-sm-12 col-md-4">
-                        <div class="row no-gutters">
-                            <div class="col-4 letras-convenio">
-                                <input type="text" name="txtLetra" placeholder="Letra" class="form-control txtLetra-convenio" size="3" maxlength="10">
-                            </div>
-                            <div class="col-1" align="center">-</div>
-                            <div class="col-3">
-                                <input type="text" name="txtRol" placeholder="N°" class="form-control txtRol-convenio" size="6" maxlength="255">
-                            </div>
-                            <div class="col-1" align="center">-</div>
-                            <div class="col-3">
-                                <input type="text" name="txtAnio" placeholder="Año" class="form-control txtAnio-convenio" size="4" maxlength="4">
+                        <div class="col-sm-12 col-md-3 submateria-convenio">
+                            <div class="input-group">
+                                <select name="causas[0][servicio]" class="form-control cboSubMateria-convenio" required>
+                                    <option value="">Seleccione Servicio</option>
+                                </select>
+                                <div class="input-group-append"><button type="button" class="btn btn-outline-primary" data-servicio-nuevo title="Agregar nuevo servicio"><i class="fas fa-plus"></i></button></div>
                             </div>
                         </div>
-                        <small class="text-muted">Formato: Letra-Rol-Año</small>
-                    </div>
-                    <div class="col-sm-12 col-md-3">
-                        <input type="text" name="txtCaratulado" placeholder="Caratulado" class="form-control" maxlength="30">
-                    </div>
-                    <div class="col-sm-12 col-md-6">
-                        <select name="corte" class="form-control corte-convenio">
-                            <option value="">Seleccione Corte</option>
-                        </select>
-                    </div>
-                    <div class="col-sm-12 col-md-6">
-                        <select name="juzgado" class="form-control juzgado-convenio">
-                            <option value="">Seleccione Juzgado</option>
-                        </select>
+                        <div class="col-sm-12 col-md-4">
+                            <div class="row no-gutters">
+                                <div class="col-4 letras-convenio">
+                                    <input type="text" name="causas[0][letra]" placeholder="Letra" class="form-control txtLetra-convenio" size="3" maxlength="10">
+                                </div>
+                                <div class="col-1" align="center">-</div>
+                                <div class="col-3">
+                                    <input type="text" name="causas[0][rol]" placeholder="N°" class="form-control txtRol-convenio" size="6" maxlength="255">
+                                </div>
+                                <div class="col-1" align="center">-</div>
+                                <div class="col-3">
+                                    <input type="text" name="causas[0][anio]" placeholder="Año" class="form-control txtAnio-convenio" size="4" maxlength="4">
+                                </div>
+                            </div>
+                            <small class="text-muted">Formato: Letra-Rol-Año</small>
+                        </div>
+                        <div class="col-sm-12 col-md-3">
+                            <input type="text" name="causas[0][caratulado]" placeholder="Caratulado" class="form-control" maxlength="30">
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                            <select name="causas[0][corte]" class="form-control corte-convenio" onchange="cambiaCorteCausaConvenio(this)">
+                                <option value="">Seleccione Corte</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                            <select name="causas[0][juzgado]" class="form-control juzgado-convenio">
+                                <option value="">Seleccione Juzgado</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
+                <button type="button" class="btn btn-outline-primary btn-sm mt-3" onclick="agregarOtraCausaConvenio()"><i class="fas fa-plus"></i> Agregar otra causa</button>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
@@ -521,76 +529,90 @@
         });
     }
 
-    function cambiaMateriaCausaConvenio(materiaId){
+    // Modal "Nuevo Cliente": cada causa es un bloque ".causa-convenio" (causas[N][...]);
+    // los combos dependientes se resuelven dentro de su propio bloque.
+    function cambiaMateriaCausaConvenio(select){
+        var $fila = $(select).closest('.causa-convenio');
+        var materiaId = $(select).val();
+        var $submateria = $fila.find('.cboSubMateria-convenio');
+        var $corte = $fila.find('.corte-convenio');
+        var $juzgado = $fila.find('.juzgado-convenio');
         if(!materiaId){
-            $(".cboSubMateria-convenio").html('<option value="">Seleccione Servicio</option>');
-            $(".corte-convenio").html('<option value="">Seleccione Corte</option>');
-            $(".juzgado-convenio").html('<option value="">Seleccione Juzgado</option>');
+            $submateria.html('<option value="">Seleccione Servicio</option>');
+            $corte.html('<option value="">Seleccione Corte</option>');
+            $juzgado.html('<option value="">Seleccione Juzgado</option>');
             return;
         }
         $.ajax({
             url:"/servicio/"+materiaId+"/combo",
-            type: "post",
-            dataType: "html",
-            cache: false,
-            contentType: false,
-            processData: false,
-            async: true,
-            success:function(data){
-                $(".cboSubMateria-convenio").html(data);
-            }
+            type: "post", dataType: "html", cache: false, contentType: false, processData: false, async: true,
+            success:function(data){ $submateria.html(data); }
         });
         $.ajax({
             url:"/materia/"+materiaId+"/corte_combo",
-            type: "post",
-            dataType: "html",
-            cache: false,
-            contentType: false,
-            processData: false,
-            async: true,
+            type: "post", dataType: "html", cache: false, contentType: false, processData: false, async: true,
             success:function(data){
-                $(".corte-convenio").html(data);
-                $(".juzgado-convenio").html('<option value="">Seleccione Juzgado</option>');
+                $corte.html(data);
+                $juzgado.html('<option value="">Seleccione Juzgado</option>');
             }
         });
-        letrasCausaConvenio(materiaId);
+        letrasCausaConvenio($fila, materiaId);
     }
 
-    $(".corte-convenio").on("change",function(){
+    function cambiaCorteCausaConvenio(select){
+        var $juzgado = $(select).closest('.causa-convenio').find('.juzgado-convenio');
         $.ajax({
-            url:"/juzgado_cuenta/"+$(this).val()+"/corte_combo",
-            type: "post",
-            dataType: "html",
-            cache: false,
-            contentType: false,
-            processData: false,
-            async: true,
-            success:function(data){
-                $(".juzgado-convenio").html(data);
-            }
+            url:"/juzgado_cuenta/"+$(select).val()+"/corte_combo",
+            type: "post", dataType: "html", cache: false, contentType: false, processData: false, async: true,
+            success:function(data){ $juzgado.html(data); }
         });
-    });
+    }
 
     // Igual que letrasCausa() (contrata.html.twig / edición de causa de este modal),
     // pero con sus propias clases para no interferir con el modal "Editar" (#exampleModal).
-    function letrasCausaConvenio(materia_id){
+    function letrasCausaConvenio($fila, materia_id){
+        var nombre = $fila.find('.txtLetra-convenio').attr('name');
         $.ajax({
             url:"/materia/"+materia_id+"/causa_letras",
-            type: "get",
-            dataType: "json",
-            cache: false,
-            contentType: false,
-            processData: false,
-            async: true,
+            type: "get", dataType: "json", cache: false, contentType: false, processData: false, async: true,
             success:function(data){
-                var letras=data;
-                $('.letras-convenio').html('<select name="txtLetra" class="form-control txtLetra-convenio"><option value=""> Letra </option></select>');
-                $.each(letras,function(i,letra){
-                    $('.txtLetra-convenio').append('<option value="'+letra+'">'+letra+'</option>');
-                });
-            },error:function(error){
-                $(".letras-convenio").html('<input type="text" name="txtLetra" placeholder="Letra" class="form-control txtLetra-convenio" size="3" maxlength="10">');
+                var $select = $('<select class="form-control txtLetra-convenio"><option value=""> Letra </option></select>').attr('name', nombre);
+                $.each(data,function(i,letra){ $select.append($('<option>').val(letra).text(letra)); });
+                $fila.find('.letras-convenio').html($select);
+            },error:function(){
+                $fila.find('.letras-convenio').html($('<input type="text" placeholder="Letra" class="form-control txtLetra-convenio" size="3" maxlength="10">').attr('name', nombre));
             }
+        });
+    }
+
+    var causaConvenioSiguiente = 1;
+
+    function agregarOtraCausaConvenio(){
+        var idx = causaConvenioSiguiente++;
+        var $nueva = $('#causasConvenio .causa-convenio').first().clone();
+        $nueva.attr('data-idx', idx);
+        $nueva.find('[name]').each(function(){
+            $(this).attr('name', $(this).attr('name').replace(/^causas\[\d+\]/, 'causas['+idx+']'));
+        });
+        $nueva.find('input').val('');
+        $nueva.find('.cbomateria-convenio').val('');
+        $nueva.find('.cboSubMateria-convenio').html('<option value="">Seleccione Servicio</option>');
+        $nueva.find('.corte-convenio').html('<option value="">Seleccione Corte</option>');
+        $nueva.find('.juzgado-convenio').html('<option value="">Seleccione Juzgado</option>');
+        $nueva.find('.letras-convenio').html($('<input type="text" placeholder="Letra" class="form-control txtLetra-convenio" size="3" maxlength="10">').attr('name', 'causas['+idx+'][letra]'));
+        $nueva.find('.quitar-causa-convenio').removeClass('d-none');
+        $('#causasConvenio').append($nueva);
+        renumeraCausasConvenio();
+    }
+
+    function quitarCausaConvenio(boton){
+        $(boton).closest('.causa-convenio').remove();
+        renumeraCausasConvenio();
+    }
+
+    function renumeraCausasConvenio(){
+        $('#causasConvenio .causa-convenio').each(function(i){
+            $(this).find('.causa-convenio-titulo').text('Causa ' + (i + 1));
         });
     }
 

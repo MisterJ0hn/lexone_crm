@@ -8,13 +8,13 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Ítem del estado procesal de una causa. Reemplaza a la antigua línea de tiempo
  * (LineaTiempo/Etapas/Terminada): cada causa lleva su propia lista, que parte con
- * "Bienvenida" ya completado y a la que se agregan ítems a mano. Se graba por
+ * "Inicio tramitación" ya completado y a la que se agregan ítems a mano. Se graba por
  * empresa (empresa_id) como el resto de las tablas del tenant.
  */
 #[ORM\Entity(repositoryClass: EstadoProcesalRepository::class)]
 class EstadoProcesal
 {
-    public const BIENVENIDA = 'Bienvenida';
+    public const BIENVENIDA = 'Inicio tramitación';
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
