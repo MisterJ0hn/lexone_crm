@@ -1,8 +1,15 @@
 
+{% extends 'base.html.twig' %}
+
+{% block title %}{{pagina|default('Usuario')}}{% endblock %}
 
 {% block body %}
-	<h5 class="modal-title" id="exampleModalLabel">Editar Usuario</h5>
-    {{ include('usuario/_form.html.twig', {'button_label': 'Modificar','action_form':path('usuario_edit',{'id':usuario.id})}) }}
+	<div class="card">
+        <div class="card-body">
+    {{ include('usuario/_form.html.twig', {'button_label': 'Modificar'}) }}
 
+    
+        </div>
+    </div>
     
 {% endblock %}

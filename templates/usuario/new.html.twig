@@ -1,8 +1,13 @@
 
+{% extends 'base.html.twig' %}
+
+{% block title %}{{pagina|default('usuarios')}}{% endblock %}
+
 {% block body %}
-    <h5 class="modal-title" id="exampleModalLabel">Crear Usuario</h5>
+    <div class="card">
+        <div class="card-body">
+    {{ include('usuario/_form.html.twig') }}
 
-    {{ include('usuario/_form.html.twig',{'action_form':'/usuario/new'}) }}
-
-    
+        </div>
+    </div>
 {% endblock %}

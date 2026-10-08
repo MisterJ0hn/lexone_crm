@@ -83,9 +83,13 @@ class PanelAgendadorController extends AbstractController
         $form->add('canal' ,EntityType::class,[
             
             'class' => Canal::class,
-            'query_builder' => function (EntityRepository $er) {
-                $user=$this->getUser();
-                return $er->createQueryBuilder('c')->AndWhere('c.empresa = 1')->andWhere('c.estado=true');
+            // Solo los canales de la empresa en la que el usuario está trabajando ahora.
+            'query_builder' => function (EntityRepository $er) use ($user) {
+                return $er->createQueryBuilder('c')
+                    ->andWhere('c.empresa = :empresa')
+                    ->andWhere('c.estado = true')
+                    ->setParameter('empresa', $user->getEmpresaActual())
+                    ->orderBy('c.nombre', 'ASC');
             },
         ]);
         
