@@ -244,7 +244,7 @@ class UsuarioController extends AbstractController
             foreach($usuarioCuentas as $usuarioCuenta){
                 $usuario->removeUsuarioCuenta($usuarioCuenta);
             }
-            $getcuentas=$_POST['cboEmpresa'];
+            $getcuentas=(array) ($_POST['cboEmpresa'] ?? []);
          
             foreach($getcuentas as $getcuenta){
                 $cuenta=$this->entityManager->getRepository(Cuenta::class)->find($getcuenta);
