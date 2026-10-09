@@ -1,0 +1,154 @@
+{#
+    Limpia el HTML que Word deja en el portapapeles al copiar: elimina clases Mso*, estilos mso-*,
+    etiquetas o:p y comentarios condicionales, pero conserva (en pt) fuente, tamaño, color, negrita,
+    alineación, márgenes, sangrías, interlineado, bordes y anchos de tabla. Los estilos que Word
+    declara en la hoja <style> se "bajan" a estilos en línea leyéndolos con getComputedStyle.
+    Expone window.limpiarPegadoWord(html) => {html, avisos}.
+#}
+<script>
+(function () {
+    var ALIAS = {{ constant('App\\Service\\DocxToHtmlConverter::ALIAS_VARIABLES')|json_encode|raw }};
+    var TOKENS = {{ variables|keys|json_encode|raw }}.map(function (t) { return t.replace(/[{}]/g, ''); });
+    var PERMITIDAS = {p:1, h1:1, h2:1, h3:1, h4:1, h5:1, h6:1, div:'p', span:1, b:1, strong:1, i:1, em:1, u:1, sub:1, sup:1, br:1,
+        a:1, ul:1, ol:1, li:1, table:1, thead:1, tbody:1, tfoot:1, tr:1, td:1, th:1, img:1};
+    var DESCARTAR = {style:1, script:1, meta:1, link:1, title:1, head:1, xml:1, object:1, iframe:1, 'o:p-vacio':1};
+    var BLOQUES = {p:1, h1:1, h2:1, h3:1, h4:1, h5:1, h6:1, li:1, td:1, th:1, div:1};
+
+    function esc(t) { return t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/ /g, '&nbsp;'); }
+    function pt(px) { return (Math.round(parseFloat(px) * 75) / 100) + 'pt'; }
+    function hex(rgb) {
+        var m = /rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/.exec(rgb || '');
+        if (!m || (m[4] !== undefined && parseFloat(m[4]) === 0)) { return null; }
+        return '#' + [m[1], m[2], m[3]].map(function (n) { return ('0' + parseInt(n, 10).toString(16)).slice(-2); }).join('');
+    }
+    function familia(f) {
+        var limpia = (f || '').replace(/["']/g, '').split(',')[0].replace(/[^A-Za-z0-9 \-]/g, '').replace(/\s+MT$/i, '').trim();
+        if (!limpia) { return null; }
+        var serif = /times|cambria|georgia|garamond|palatino|serif/i.test(limpia);
+        return "'" + limpia + "', " + (serif ? 'serif' : 'sans-serif');
+    }
+
+    function estiloInline(el, padre, tag, win) {
+        var c = win.getComputedStyle(el), p = padre ? win.getComputedStyle(padre) : null, css = '';
+        if (tag === 'table') {
+            var wt = el.style.width || el.getAttribute('width');
+            if (wt && /^[\d.]+(pt|px|%)?$/.test(wt)) { css += 'width:' + (/%$|pt$/.test(wt) ? wt : pt(parseFloat(wt))) + ';'; }
+            return css + 'border-collapse:collapse;';
+        }
+        var bloque = !!BLOQUES[tag] || tag === 'table';
+        function difiere(prop) { return bloque || !p || c.getPropertyValue(prop) !== p.getPropertyValue(prop); }
+
+        var f = familia(c.fontFamily);
+        if (f && difiere('font-family')) { css += 'font-family:' + f + ';'; }
+        if (difiere('font-size')) { css += 'font-size:' + pt(c.fontSize) + ';'; }
+        var negrita = parseInt(c.fontWeight, 10) >= 600 || c.fontWeight === 'bold';
+        var negritaPadre = p && (parseInt(p.fontWeight, 10) >= 600 || p.fontWeight === 'bold');
+        if (negrita !== !!negritaPadre || (bloque && negrita)) { css += 'font-weight:' + (negrita ? 'bold' : 'normal') + ';'; }
+        if (c.fontStyle !== (p ? p.fontStyle : 'normal')) { css += 'font-style:' + (c.fontStyle === 'italic' ? 'italic' : 'normal') + ';'; }
+        var deco = (c.textDecorationLine || '').replace('none', '').trim();
+        if (deco && (!p || deco !== (p.textDecorationLine || '').replace('none', '').trim())) { css += 'text-decoration:' + deco + ';'; }
+        var color = hex(c.color);
+        if (color && difiere('color') && (!bloque || color !== '#000000')) { css += 'color:' + color + ';'; }
+        var fondo = hex(c.backgroundColor);
+        if (fondo && (!p || c.backgroundColor !== p.backgroundColor)) { css += 'background-color:' + fondo + ';'; }
+
+        if (bloque && tag !== 'table') {
+            if (['left', 'right', 'center', 'justify'].indexOf(c.textAlign) >= 0 && (c.textAlign !== 'left' || tag === 'td' || tag === 'th' || tag === 'p')) {
+                css += 'text-align:' + c.textAlign + ';';
+            }
+            if (c.lineHeight !== 'normal') {
+                css += 'line-height:' + (Math.round(parseFloat(c.lineHeight) / parseFloat(c.fontSize) * 100) / 100) + ';';
+            }
+            if (tag === 'p' || tag === 'li' || /^h\d$/.test(tag) || tag === 'div') {
+                css += 'margin:' + pt(c.marginTop) + ' ' + pt(c.marginRight) + ' ' + pt(c.marginBottom) + ' ' + pt(c.marginLeft) + ';';
+                if (parseFloat(c.textIndent)) { css += 'text-indent:' + pt(c.textIndent) + ';'; }
+            }
+            if (tag === 'td' || tag === 'th') {
+                css += 'padding:' + pt(c.paddingTop) + ' ' + pt(c.paddingRight) + ' ' + pt(c.paddingBottom) + ' ' + pt(c.paddingLeft) + ';';
+                var va = el.style.verticalAlign || el.getAttribute('valign') || 'top';
+                css += 'vertical-align:' + (['middle', 'bottom'].indexOf(va) >= 0 ? va : 'top') + ';';
+                ['top', 'right', 'bottom', 'left'].forEach(function (l) {
+                    var w = parseFloat(c.getPropertyValue('border-' + l + '-width')), st = c.getPropertyValue('border-' + l + '-style');
+                    if (st !== 'none' && st !== 'hidden' && w > 0) {
+                        css += 'border-' + l + ':' + pt(w) + ' ' + (st === 'dashed' || st === 'dotted' || st === 'double' ? st : 'solid') + ' ' + (hex(c.getPropertyValue('border-' + l + '-color')) || '#000000') + ';';
+                    }
+                });
+            }
+        }
+        // Anchos: sólo los declarados por el autor (el iframe de lectura no tiene el ancho real).
+        if (tag === 'td' || tag === 'th' || tag === 'table') {
+            var w = el.style.width || el.getAttribute('width');
+            if (w && /^[\d.]+(pt|px|%)?$/.test(w)) {
+                css += 'width:' + (/%$/.test(w) ? w : (/pt$/.test(w) ? w : pt(parseFloat(w)))) + ';';
+            }
+        }
+        if (tag === 'table') { css += 'border-collapse:collapse;'; }
+        return css;
+    }
+
+    function recorrer(nodo, padre, win, ctx) {
+        var out = '';
+        for (var n = nodo.firstChild; n; n = n.nextSibling) {
+            if (n.nodeType === 3) { out += esc(n.nodeValue); continue; }
+            if (n.nodeType !== 1) { continue; }
+            var tag = n.tagName.toLowerCase();
+            if (DESCARTAR[tag]) { continue; }
+            // Viñeta/numeración "falsa" de Word: se conserva el texto, es parte del contenido visible.
+            if (tag === 'img') {
+                var src = n.getAttribute('src') || '';
+                if (/^data:image\/(png|jpe?g|gif);base64,/i.test(src)) {
+                    out += '<img src="' + src + '" style="' + (n.style.width ? 'width:' + n.style.width + ';' : '') + (n.style.height ? 'height:' + n.style.height + ';' : '') + '">';
+                } else {
+                    ctx.imagenes++;
+                }
+                continue;
+            }
+            if (tag === 'br') { out += '<br>'; continue; }
+            var destino = PERMITIDAS[tag];
+            if (!destino) { out += recorrer(n, padre, win, ctx); continue; }
+            var salida = destino === 'p' ? 'p' : tag;
+            var attrs = '';
+            if (tag === 'a') {
+                var href = n.getAttribute('href') || '';
+                if (/^(https?:|mailto:|tel:)/i.test(href)) { attrs += ' href="' + href.replace(/"/g, '&quot;') + '"'; }
+            }
+            if (tag === 'td' || tag === 'th') {
+                ['colspan', 'rowspan'].forEach(function (a) { if (/^\d+$/.test(n.getAttribute(a) || '')) { attrs += ' ' + a + '="' + n.getAttribute(a) + '"'; } });
+            }
+            var css = estiloInline(n, padre, tag === 'div' ? 'p' : tag, win);
+            var interior = recorrer(n, n, win, ctx);
+            if (tag === 'table') { attrs += ' cellspacing="0" cellpadding="0"'; }
+            out += '<' + salida + attrs + (css ? ' style="' + css + '"' : '') + '>' + interior + '</' + salida + '>';
+        }
+        return out;
+    }
+
+    function variables(html, ctx) {
+        return html.replace(/\[([\p{L}_][\p{L}0-9_]*)\]/gu, function (todo, nombre) {
+            var limpio = nombre.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+            var token = ALIAS[limpio] || limpio;
+            if (TOKENS.indexOf(token) >= 0) { ctx.variables++; return '{' + '{' + token + '}' + '}'; }
+            return todo;
+        });
+    }
+
+    window.limpiarPegadoWord = function (html) {
+        var ifr = document.createElement('iframe');
+        ifr.setAttribute('sandbox', 'allow-same-origin');
+        ifr.style.cssText = 'position:absolute;left:-9999px;top:0;width:900px;height:10px;visibility:hidden';
+        document.body.appendChild(ifr);
+        var ctx = {imagenes: 0, variables: 0}, resultado = '';
+        try {
+            var doc = ifr.contentDocument;
+            doc.open(); doc.write(html); doc.close();
+            resultado = variables(recorrer(doc.body, doc.body, ifr.contentWindow, ctx), ctx);
+        } finally {
+            document.body.removeChild(ifr);
+        }
+        var avisos = [];
+        if (ctx.imagenes) { avisos.push('Se omitieron ' + ctx.imagenes + ' imagen(es) pegadas desde Word (el navegador no puede leerlas). Insértelas con el botón de imagen.'); }
+        if (ctx.variables) { avisos.push('Se convirtieron ' + ctx.variables + ' variable(s) [nombre] al formato del sistema.'); }
+        return {html: resultado, avisos: avisos};
+    };
+})();
+</script>

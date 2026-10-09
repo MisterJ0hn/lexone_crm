@@ -77,6 +77,10 @@
                     <div class="card-body">
                         <h3>Estado Procesal</h3>
                         <table class="table table-sm" style="max-width:800px">
+                        <tr><th></th><th>Etapa</th><th>Fecha Registro</th><th>Fecha Completado</th></tr>
+                        {% if estadosProcesales is empty %}
+                            <tr><td colspan="4">No hay estados procesales registrados.</td></tr>
+                        {% endif %}
                         {% for estado in estadosProcesales %}
                             <tr>
                                 <td style="width:60px; padding-bottom:12px;">
@@ -93,12 +97,13 @@
                                     <strong>{{ estado.nombre }}</strong>
                                     {% if estado.observacion %}<br><small class="text-muted">{{ estado.observacion }}</small>{% endif %}
                                 </td>
-                                <td class="text-muted text-nowrap"><small>{{ (estado.fechaCompletado ?: estado.fecha)|date('d-m-Y H:i') }}</small></td>
+                                <td class="text-muted text-nowrap"><small>{{  estado.fecha|date('d-m-Y H:i') }}</small></td>
+                                <td class="text-muted text-nowrap"><small>{{ estado.fechaCompletado ?estado.fechaCompletado|date('d-m-Y H:i'):'' }}</small></td>
                             </tr>
                         {% endfor %}
                         </table>
 
-                        {% if causa.estado %}
+                        {% if causa.estado and not causa.causaFinalizada %}
                         <div class="mt-2">
                             <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#nuevoEstadoProcesal" title="Agregar estado procesal"><i class="fas fa-plus"></i></button>
                             <form method="post" action="{{ path('contrato_estado_procesal_finalizar', {'id': causa.id}) }}" class="d-inline" onsubmit="return confirm('¿Finalizar esta causa?');">

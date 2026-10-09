@@ -13,6 +13,16 @@ class ConfiguracionType extends AbstractType
     {
         $builder
             ->add('maxDiasComision')
+            ->add('morosidadPatColor', ChoiceType::class, [
+                'choices' => [
+                    'text-warning' => 'text-warning',
+                    'text-danger'  => 'text-danger',
+                    'text-info'    => 'text-info',
+                    'text-success'    => 'text-success',
+                    'text-ligth'    => 'text-ligth',
+                ],
+            ])
+        ;
         ;
     }
 

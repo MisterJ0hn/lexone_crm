@@ -34,11 +34,11 @@ class ContratoTemplateRenderer
             '{{cuotas}}' => 'Número de cuotas',
             '{{monto_contrato}}' => 'Monto del contrato',
             '{{fecha_contrato}}' => 'Fecha de creación del contrato',
-            '{{causas}}' => 'Tabla con las causas del contrato',
+            '{{causas}}' => 'Tabla con las causas del contrato. Use ⚙ para elegir columnas y cabeceras',
             '{{nacionalidad}}' => 'Nacionalidad del cliente',
             '{{estado_civil}}' => 'Estado civil del cliente',
             '{{vigencia}}' => 'Vigencia del contrato (en meses)',
-            '{{detalle_cuotas}}' => 'Tabla con el detalle de cuotas (N°, vencimiento, monto). Ancho opcional: {{detalle_cuotas:50%}} o {{detalle_cuotas:400px}}',
+            '{{detalle_cuotas}}' => 'Tabla con el detalle de cuotas (N°, vencimiento, monto). Ancho opcional: {{detalle_cuotas:50%}} o {{detalle_cuotas:400px}}. Use ⚙ para elegir columnas y cabeceras',
             '{{comuna_cliente}}' => 'Comuna del cliente',
             '{{ciudad_cliente}}' => 'Ciudad del cliente',
             '{{situacion_laboral}}' => 'Situación laboral del cliente',
@@ -48,7 +48,11 @@ class ContratoTemplateRenderer
 
     public function render(ContratoTemplate $template, Contrato $contrato): string
     {
-        $contenido = $this->detalleCuotasConAncho($template->getContenido(), $this->cuotasDe($contrato));
+        $contenido = $this->tablasConOpciones(
+            $template->getContenido(),
+            fn (?array $cols, string $ancho): string => $this->causasHtml($contrato, $cols, $ancho),
+            fn (?array $cols, string $ancho): string => $this->tablaCuotas($this->cuotasDe($contrato), $ancho, $cols)
+        );
 
         return strtr($contenido, $this->variables($contrato));
     }
@@ -59,7 +63,11 @@ class ContratoTemplateRenderer
      */
     public function renderEjemplo(string $contenido): string
     {
-        $contenido = $this->detalleCuotasConAncho($contenido, $this->cuotasEjemplo());
+        $contenido = $this->tablasConOpciones(
+            $contenido,
+            fn (?array $cols, string $ancho): string => $this->causasEjemplo($cols, $ancho),
+            fn (?array $cols, string $ancho): string => $this->tablaCuotas($this->cuotasEjemplo(), $ancho, $cols)
+        );
 
         return strtr($contenido, $this->variablesEjemplo());
     }
@@ -69,11 +77,6 @@ class ContratoTemplateRenderer
      */
     public function variablesEjemplo(): array
     {
-        $causas = '<table border="1" cellspacing="0" cellpadding="4" style="border-collapse:collapse;width:100%">'
-            . '<thead><tr><th>Materia</th><th>Causa/Rol</th><th>Caratulado</th><th>Juzgado</th></tr></thead>'
-            . '<tbody><tr><td>Cobranza</td><td>C-1234-2026</td><td>Banco Ejemplo / Pérez</td><td>1° Juzgado Civil de Santiago</td></tr>'
-            . '<tr><td>Laboral</td><td>O-567-2026</td><td>González / Empresa Demo SpA</td><td>2° Juzgado de Letras del Trabajo</td></tr></tbody></table>';
-
         return [
             '{{cliente_nombre}}' => 'Juan Andrés Pérez Soto',
             '{{cliente_rut}}' => '12.345.678-5',
@@ -85,7 +88,7 @@ class ContratoTemplateRenderer
             '{{cuotas}}' => '6',
             '{{monto_contrato}}' => '900.000',
             '{{fecha_contrato}}' => date('d-m-Y'),
-            '{{causas}}' => $causas,
+            '{{causas}}' => $this->causasEjemplo(null),
             '{{nacionalidad}}' => 'Chilena',
             '{{estado_civil}}' => 'Casado',
             '{{vigencia}}' => '12',
@@ -150,27 +153,108 @@ class ContratoTemplateRenderer
     }
 
     /**
-     * Admite {{detalle_cuotas:50%}} o {{detalle_cuotas:400px}} (un número sin
-     * unidad se toma como %). Solo se aceptan números + % / px, así que el
-     * ancho nunca puede inyectar CSS ni HTML arbitrario.
+     * Columnas que se pueden elegir en {{causas}} y {{detalle_cuotas}}, con su cabecera por defecto.
+     * Sirve tanto para renderizar como para armar el selector del editor.
      *
-     * @param list<array{0:int|null,1:\DateTimeInterface|null,2:int|float|string|null}> $cuotas
+     * @return array<string,array<string,string>> tabla => [columna => cabecera]
      */
-    private function detalleCuotasConAncho(string $contenido, array $cuotas): string
+    public static function columnasTabla(): array
+    {
+        return [
+            'causas' => [
+                'cliente' => 'Cliente',
+                'materia' => 'Materia',
+                'servicio' => 'Servicio',
+                'rol' => 'Causa/Rol',
+                'caratulado' => 'Caratulado',
+                'juzgado' => 'Juzgado',
+            ],
+            'detalle_cuotas' => [
+                'numero' => 'N° cuota',
+                'vencimiento' => 'Vencimiento',
+                'monto' => 'Monto',
+            ],
+        ];
+    }
+
+    /**
+     * Sintaxis: {{causas}} · {{detalle_cuotas:50%}} · {{causas|materia=Servicio;rol=Id Causa}}
+     * · {{detalle_cuotas:60%|numero=N°;monto=Valor}}. Tras la barra van, en orden, las columnas
+     * a mostrar con su cabecera (opcional). Sólo se aceptan columnas conocidas, el ancho es
+     * número + % / px (un número sin unidad es %) y las cabeceras se escapan: nada de lo que
+     * escriba el usuario llega como HTML ni como CSS.
+     *
+     * @param callable(?array<string,string>,string):string $causas
+     * @param callable(?array<string,string>,string):string $cuotas
+     */
+    private function tablasConOpciones(string $contenido, callable $causas, callable $cuotas): string
     {
         return preg_replace_callback(
-            '/\{\{detalle_cuotas:(\d{1,4})(%|px)?\}\}/',
-            function (array $m) use ($cuotas): string {
-                $unidad = $m[2] ?? '%';
-                $valor = (int) $m[1];
-                if ($unidad === '%') {
-                    $valor = max(1, min(100, $valor));
+            '/\{\{(causas|detalle_cuotas)(?::(\d{1,4})(%|px)?)?(?:\|([^{}]*))?\}\}/u',
+            function (array $m) use ($causas, $cuotas): string {
+                $ancho = '100%';
+                if (($m[2] ?? '') !== '') {
+                    $unidad = ($m[3] ?? '') ?: '%';
+                    $valor = (int) $m[2];
+                    if ($unidad === '%') {
+                        $valor = max(1, min(100, $valor));
+                    }
+                    $ancho = $valor . $unidad;
                 }
+                $cols = $this->parseColumnas($m[1], $m[4] ?? '');
 
-                return $this->tablaCuotas($cuotas, $valor . $unidad);
+                return $m[1] === 'causas' ? $causas($cols, $ancho) : $cuotas($cols, $ancho);
             },
             $contenido
         ) ?? $contenido;
+    }
+
+    /**
+     * @return array<string,string>|null columna => cabecera (en el orden pedido); null = columnas por defecto
+     */
+    private function parseColumnas(string $tabla, string $crudo): ?array
+    {
+        $validas = self::columnasTabla()[$tabla];
+        $crudo = html_entity_decode(strip_tags($crudo), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $crudo = str_replace("\u{00A0}", ' ', $crudo);
+
+        $cols = [];
+        foreach (explode(';', $crudo) as $parte) {
+            [$clave, $etiqueta] = array_pad(explode('=', $parte, 2), 2, '');
+            $clave = strtolower(trim($clave));
+            if (!isset($validas[$clave]) || isset($cols[$clave])) {
+                continue;
+            }
+            $etiqueta = trim((string) preg_replace('/\s+/u', ' ', $etiqueta));
+            $cols[$clave] = $etiqueta !== '' ? mb_substr($etiqueta, 0, 60) : $validas[$clave];
+        }
+
+        return $cols !== [] ? $cols : null;
+    }
+
+    /**
+     * @param array<string,string> $cols columna => cabecera
+     * @param list<array<string,string>> $filas texto (sin escapar) de cada columna, por fila
+     * @param list<string> $derecha columnas alineadas a la derecha
+     */
+    private function armarTabla(array $cols, array $filas, string $ancho, array $derecha = []): string
+    {
+        $cabecera = '';
+        foreach ($cols as $etiqueta) {
+            $cabecera .= '<th>' . htmlspecialchars($etiqueta) . '</th>';
+        }
+        $cuerpo = '';
+        foreach ($filas as $fila) {
+            $cuerpo .= '<tr>';
+            foreach (array_keys($cols) as $clave) {
+                $estilo = in_array($clave, $derecha, true) ? ' style="text-align:right"' : '';
+                $cuerpo .= '<td' . $estilo . '>' . htmlspecialchars($fila[$clave] ?? '') . '</td>';
+            }
+            $cuerpo .= '</tr>';
+        }
+
+        return '<table border="1" cellspacing="0" cellpadding="4" style="border-collapse:collapse;width:' . $ancho . '">'
+            . '<thead><tr>' . $cabecera . '</tr></thead><tbody>' . $cuerpo . '</tbody></table>';
     }
 
     /**
@@ -210,26 +294,31 @@ class ContratoTemplateRenderer
 
     /**
      * @param list<array{0:int|null,1:\DateTimeInterface|null,2:int|float|string|null}> $cuotas
+     * @param array<string,string>|null $cols columna => cabecera; null = todas con su cabecera por defecto
      */
-    private function tablaCuotas(array $cuotas, string $ancho = '100%'): string
+    private function tablaCuotas(array $cuotas, string $ancho = '100%', ?array $cols = null): string
     {
         if ($cuotas === []) {
             return '';
         }
+        $cols ??= self::columnasTabla()['detalle_cuotas'];
 
-        $filas = '';
+        $filas = [];
         foreach ($cuotas as [$numero, $fecha, $monto]) {
-            $filas .= '<tr><td>' . (int) $numero . '</td>'
-                . '<td>' . ($fecha ? $fecha->format('d-m-Y') : '') . '</td>'
-                . '<td style="text-align:right">$' . number_format((float) $monto, 0, ',', '.') . '</td></tr>';
+            $filas[] = [
+                'numero' => (string) (int) $numero,
+                'vencimiento' => $fecha ? $fecha->format('d-m-Y') : '',
+                'monto' => '$' . number_format((float) $monto, 0, ',', '.'),
+            ];
         }
 
-        return '<table border="1" cellspacing="0" cellpadding="4" style="border-collapse:collapse;width:' . $ancho . '">'
-            . '<thead><tr><th>N° cuota</th><th>Vencimiento</th><th>Monto</th></tr></thead>'
-            . '<tbody>' . $filas . '</tbody></table>';
+        return $this->armarTabla($cols, $filas, $ancho, ['monto']);
     }
 
-    private function causasHtml(Contrato $contrato): string
+    /**
+     * @param array<string,string>|null $cols columna => cabecera; null = las de siempre (Cliente sólo si no es Persona)
+     */
+    private function causasHtml(Contrato $contrato, ?array $cols = null, string $ancho = '100%'): string
     {
         $agenda = $contrato->getAgenda();
         if (!$agenda) {
@@ -237,27 +326,53 @@ class ContratoTemplateRenderer
         }
 
         $esPersona = $agenda->getTipoCliente() === null || $agenda->getTipoCliente()->getNombre() === 'Persona';
+        $cols ??= $this->columnasCausasPorDefecto($esPersona);
 
-        $filas = '';
+        $filas = [];
         foreach ($agenda->getCausas() as $causa) {
             if (!$causa->getEstado()) {
                 continue;
             }
-            $filas .= $this->filaCausa($causa, $esPersona);
+            $filas[] = $this->datosCausa($causa);
         }
-
-        if ($filas === '') {
+        if ($filas === []) {
             return '';
         }
 
-        $columnaCliente = $esPersona ? '' : '<th>Cliente</th>';
-
-        return '<table border="1" cellspacing="0" cellpadding="4" style="border-collapse:collapse;width:100%">'
-            . '<thead><tr>' . $columnaCliente . '<th>Materia</th><th>Causa/Rol</th><th>Caratulado</th><th>Juzgado</th></tr></thead>'
-            . '<tbody>' . $filas . '</tbody></table>';
+        return $this->armarTabla($cols, $filas, $ancho);
     }
 
-    private function filaCausa(Causa $causa, bool $esPersona): string
+    /**
+     * @return array<string,string>
+     */
+    private function columnasCausasPorDefecto(bool $esPersona): array
+    {
+        $cols = self::columnasTabla()['causas'];
+        if ($esPersona) {
+            unset($cols['cliente']);
+        }
+
+        return $cols;
+    }
+
+    /**
+     * @param array<string,string>|null $cols
+     */
+    private function causasEjemplo(?array $cols, string $ancho = '100%'): string
+    {
+        $cols ??= $this->columnasCausasPorDefecto(true);
+        $filas = [
+            ['cliente' => 'Juan Andrés Pérez Soto', 'materia' => 'Cobranza', 'servicio' => 'Demanda ejecutiva', 'rol' => 'C-1234-2026', 'caratulado' => 'Banco Ejemplo / Pérez', 'juzgado' => '1° Juzgado Civil de Santiago'],
+            ['cliente' => 'Juan Andrés Pérez Soto', 'materia' => 'Laboral', 'servicio' => 'Despido injustificado', 'rol' => 'O-567-2026', 'caratulado' => 'González / Empresa Demo SpA', 'juzgado' => '2° Juzgado de Letras del Trabajo'],
+        ];
+
+        return $this->armarTabla($cols, $filas, $ancho);
+    }
+
+    /**
+     * @return array<string,string>
+     */
+    private function datosCausa(Causa $causa): array
     {
         $rol = trim(sprintf('%s-%s-%s', $causa->getLetra(), $causa->getRol(), $causa->getAnio()), '-');
 
@@ -269,13 +384,13 @@ class ContratoTemplateRenderer
             ? (string) $causa->getJuzgado()->getNombre()
             : ($causa->getJuzgadoCuenta() && $causa->getJuzgadoCuenta()->getJuzgado() ? (string) $causa->getJuzgadoCuenta()->getJuzgado()->getNombre() : '');
 
-        $columnaCliente = $esPersona ? '' : '<td>' . htmlspecialchars((string) ($causa->getCliente() ? $causa->getCliente()->getNombre() : '')) . '</td>';
-
-        return '<tr>' . $columnaCliente
-            . '<td>' . htmlspecialchars($materia) . '</td>'
-            . '<td>' . htmlspecialchars($rol) . '</td>'
-            . '<td>' . htmlspecialchars((string) $causa->getCausaNombre()) . '</td>'
-            . '<td>' . htmlspecialchars($juzgado) . '</td>'
-            . '</tr>';
+        return [
+            'cliente' => (string) ($causa->getCliente() ? $causa->getCliente()->getNombre() : ''),
+            'materia' => $materia,
+            'servicio' => $causa->getServicio() ? (string) $causa->getServicio() : '',
+            'rol' => $rol,
+            'caratulado' => (string) $causa->getCausaNombre(),
+            'juzgado' => $juzgado,
+        ];
     }
 }

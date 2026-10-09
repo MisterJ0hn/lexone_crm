@@ -102,6 +102,11 @@
                             </td>
                             <td>
                                 <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+                                    {% if causa.causaFinalizada == true %}
+                                        <span class="btn btn-sm btn-success" title="Causa finalizada"><i class="fas fa-check-circle"></i></span>
+                                    {% else %}
+                                        <span class="btn btn-sm btn-danger" title="Causa pendiente"><i class="fas fa-times"></i></span>
+                                    {% endif %}
                                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" 
                                         data-whatever="@fat"
                                         data-servicio="{{causa.servicio}}"
@@ -185,9 +190,7 @@
                         
                         <select name="juzgado" class="form-control juzgado">
                             <option value=""> Seleccione Juzgado </option>
-                            {% for juzgado in juzgados %}
-                                
-                            {% endfor %}
+                          
                         </select> 
                     </div>   
                     <div class="col-sm-12 col-md-12">

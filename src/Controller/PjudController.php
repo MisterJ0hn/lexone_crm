@@ -188,7 +188,9 @@ class PjudController extends AbstractController
      */
     private function consultarExterna(string $token, Request $request, bool $forzar, \App\Entity\Empresa $empresa, object $user): JsonResponse
     {
-        $this->denyAccessUnlessGranted('view', 'ed_estado_diario');
+        if (!$this->isGranted('view', 'ed_estado_diario') && !$this->isGranted('view', 'ed_causas')) {
+            throw $this->createAccessDeniedException();
+        }
         if (!$empresa->isLexflowHabilitado()) {
             return new JsonResponse(['detail' => 'Lexflow no está habilitado para esta empresa'], 404);
         }

@@ -10,9 +10,12 @@ use App\Repository\ContratoTemplateRepository;
 use App\Repository\EmpresaRepository;
 use App\Repository\ModuloPerRepository;
 use App\Service\ContratoTemplateRenderer;
+use App\Service\DocxToHtmlConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -69,6 +72,7 @@ class ContratoTemplateController extends AbstractController
             'contratoTemplate' => $contratoTemplate,
             'form' => $form->createView(),
             'variables' => ContratoTemplateRenderer::catalogo(),
+            'columnas' => ContratoTemplateRenderer::columnasTabla(),
         ]);
     }
 
@@ -102,6 +106,40 @@ class ContratoTemplateController extends AbstractController
         ]);
     }
 
+    /**
+     * Convierte un .docx subido en HTML para cargarlo en el editor. No guarda
+     * nada: el usuario revisa el resultado y recién ahí guarda la plantilla.
+     */
+    #[Route("/importar-docx", name: "contrato_template_importar_docx", methods: ["POST"])]
+    public function importarDocx(Request $request, DocxToHtmlConverter $conversor): JsonResponse
+    {
+        if (!$this->isGranted('create', 'contrato_template') && !$this->isGranted('edit', 'contrato_template')) {
+            throw $this->createAccessDeniedException();
+        }
+        if (!$this->isCsrfTokenValid('contrato_template_importar', $request->request->get('_token'))) {
+            return new JsonResponse(['detail' => 'Token inválido, recargue la página.'], 403);
+        }
+
+        $archivo = $request->files->get('docx');
+        if (!$archivo instanceof UploadedFile || !$archivo->isValid()) {
+            return new JsonResponse(['detail' => 'Seleccione un archivo .docx.'], 422);
+        }
+        if (strtolower((string) $archivo->getClientOriginalExtension()) !== 'docx') {
+            return new JsonResponse(['detail' => 'El archivo debe ser un .docx (Word 2007 o superior).'], 422);
+        }
+
+        try {
+            $resultado = $conversor->convertir($archivo->getPathname());
+        } catch (\InvalidArgumentException $e) {
+            return new JsonResponse(['detail' => $e->getMessage()], 422);
+        }
+        if ($resultado['html'] === '') {
+            return new JsonResponse(['detail' => 'El documento no tiene contenido.'], 422);
+        }
+
+        return new JsonResponse($resultado);
+    }
+
     #[Route("/{id}/edit", name: "contrato_template_edit", methods: ["GET","POST"])]
     public function edit(Request $request, ContratoTemplate $contratoTemplate): Response
     {
@@ -125,6 +163,7 @@ class ContratoTemplateController extends AbstractController
             'contratoTemplate' => $contratoTemplate,
             'form' => $form->createView(),
             'variables' => ContratoTemplateRenderer::catalogo(),
+            'columnas' => ContratoTemplateRenderer::columnasTabla(),
         ]);
     }
 

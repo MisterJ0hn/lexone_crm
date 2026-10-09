@@ -1,0 +1,141 @@
+{% extends 'base.html.twig' %}
+{% import 'lexflow/_macros.html.twig' as m %}
+{% import 'pjud/_boton.html.twig' as pjud %}
+
+{% block title %}Mis Causas{% endblock %}
+
+{% block body %}
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">{{ vigencia == 'vigentes' ? 'Cartera cliente Vigentes' : 'Cartera cliente Finalizada' }}</h3>
+        <div class="card-tools text-muted">{{ datos.total|default(0) }} causas encontradas</div>
+    </div>
+    <div class="card-body">
+        {% include 'lexflow/_tabs.html.twig' %}
+
+        <ul class="nav nav-pills mb-3">
+            <li class="nav-item">
+                <a class="nav-link {{ not materia ? 'active' }}" href="{{ path('ed_causas_index', app.request.query.all|merge({materia: '', page: 1})) }}">
+                    Todas <span class="badge badge-light">{{ resumen.total }}</span>
+                </a>
+            </li>
+            {% for c in resumen.por_materia %}
+                <li class="nav-item">
+                    <a class="nav-link {{ materia == c.materia ? 'active' }}" href="{{ path('ed_causas_index', app.request.query.all|merge({materia: c.materia, page: 1})) }}">
+                        {{ c.materia ?: 'Sin materia' }} <span class="badge badge-light">{{ c.total }}</span>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <form method="get" class="form-row mb-3">
+            <input type="hidden" name="tab" value="materias">
+            {% if materia %}<input type="hidden" name="materia" value="{{ materia }}">{% endif %}
+            <div class="col-md-2 mb-2">
+                <label class="small mb-0">Vigencia</label>
+                <select name="vigencia" class="form-control form-control-sm">
+                    {% for k, label in vigencias %}
+                        <option value="{{ k }}" {{ vigencia == k ? 'selected' }}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3 mb-2">
+                <label class="small mb-0">Búsqueda</label>
+                <input type="text" name="busqueda" class="form-control form-control-sm" placeholder="Carátula, rol o RUC" value="{{ filtros.busqueda|default('') }}">
+            </div>
+            <div class="col-md-3 mb-2">
+                <label class="small mb-0">Estado de la causa</label>
+                <select name="estado_causa" class="form-control form-control-sm">
+                    <option value="">Todos</option>
+                    {% for e in resumen.estados_causa %}
+                        <option value="{{ e }}" {{ filtros.estado_causa|default('') == e ? 'selected' }}>{{ e }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4 mb-2">
+                <label class="small mb-0">Tribunal</label>
+                <input type="text" name="tribunal" class="form-control form-control-sm" placeholder="Coincidencia parcial" value="{{ filtros.tribunal|default('') }}">
+            </div>
+            <div class="col-md-3 mb-2">
+                <label class="small mb-0">Sin novedades hace</label>
+                <select name="sin_actividad_meses" class="form-control form-control-sm">
+                    <option value="">No filtrar</option>
+                    {% for k, label in {1: 'Más de 1 mes', 3: 'Más de 3 meses', 6: 'Más de 6 meses', 12: 'Más de 1 año'} %}
+                        <option value="{{ k }}" {{ filtros.sin_actividad_meses|default('') == k ~ '' ? 'selected' }}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3 mb-2">
+                <label class="small mb-0">Con audiencia en</label>
+                <select name="con_audiencia_dias" class="form-control form-control-sm">
+                    <option value="">No filtrar</option>
+                    {% for k, label in {7: 'Los próximos 7 días', 15: 'Los próximos 15 días', 30: 'Los próximos 30 días'} %}
+                        <option value="{{ k }}" {{ filtros.con_audiencia_dias|default('') == k ~ '' ? 'selected' }}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4 mb-2">
+                <label class="small mb-0">Ordenar por</label>
+                <select name="orden" class="form-control form-control-sm">
+                    {% for k, label in {'': 'Fecha de ingreso', 'actividad': 'Última novedad, más antigua primero', 'audiencia': 'Próxima audiencia'} %}
+                        <option value="{{ k }}" {{ filtros.orden|default('') == k ? 'selected' }}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2 mb-2 d-flex align-items-end">
+                <button class="btn btn-primary btn-sm"><i class="fas fa-search"></i> Aplicar</button>
+            </div>
+        </form>
+        {% include 'lexflow/_chips.html.twig' %}
+
+        <div class="table-responsive">
+            <table class="table table-sm table-striped">
+                <thead>
+                    <tr>
+                        <th>TipoCausa</th><th>Rol/Rit</th><th>Ruc</th><th>Tribunal</th><th>FechaIngreso</th>
+                        <th>Caratulado</th><th>EstadoCausa</th><th>Institución</th>
+                        <th title="Última vez que la causa apareció en el estado diario, en movimientos o en una audiencia">Última novedad</th>
+                        <th title="Próxima audiencia agendada">Audiencia</th>
+                        {% if pjud_info.configurado %}<th>Acciones</th>{% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                {% for c in datos.causas|default([]) %}
+                    <tr>
+                        <td>{{ m.dato(c.tipo_causa) }}</td>
+                        <td class="font-weight-bold text-nowrap">{{ m.dato(c.rol) }}</td>
+                        <td class="text-nowrap">{{ m.dato(c.ruc) }}</td>
+                        <td title="{{ c.tribunal }}">{{ m.dato(c.tribunal) }}</td>
+                        <td class="text-nowrap">{{ m.fecha(c.fecha_ingreso) }}</td>
+                        <td title="{{ c.caratulado }}">{{ m.dato(c.caratulado) }}</td>
+                        <td>{{ m.dato(c.estado_causa) }}</td>
+                        <td>{{ m.dato(c.institucion) }}</td>
+                        <td class="text-nowrap">
+                            {% if c.ultima_actividad %}
+                                <span title="{{ m.fecha(c.ultima_actividad) }}">{{ m.fecha(c.ultima_actividad) }}</span>
+                            {% else %}
+                                <span class="text-muted" title="No aparece en los reportes cargados">sin registro</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-nowrap">
+                            {% if c.proxima_audiencia %}
+                                {% set dias = (date(c.proxima_audiencia|slice(0,10)).timestamp - date(hoy).timestamp) / 86400 %}
+                                <span class="badge {{ dias <= 7 ? 'badge-danger' : (dias <= 30 ? 'badge-warning' : 'badge-secondary') }}">{{ m.fecha(c.proxima_audiencia) }}</span>
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                        {% if pjud_info.configurado %}
+                            <td class="text-nowrap text-right">{{ pjud.boton(c.crm_causa_id|default(c.pjud_token|default(null))) }}</td>
+                        {% endif %}
+                    </tr>
+                {% else %}
+                    <tr><td colspan="{{ pjud_info.configurado ? 11 : 10 }}" class="text-center text-muted py-4">No hay causas para este filtro</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% include 'lexflow/_paginacion.html.twig' %}
+    </div>
+</div>
+{% endblock %}
