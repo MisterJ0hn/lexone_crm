@@ -220,10 +220,14 @@ class LexflowController extends AbstractController
         $resumen = ['total' => 0, 'por_materia' => [], 'estados_causa' => []];
 
         try {
-            $datos = $this->api->get('causas', $filtros + [
-                'materia' => $materia, 'vigencia' => $vigencia, 'page' => $page, 'limit' => 20,
-            ]);
-            $resumen = $this->api->get('causas/resumen', array_intersect_key($filtros, array_flip(['busqueda', 'estado_causa', 'tribunal'])) + ['vigencia' => $vigencia]);
+            $roles = $this->rolesCrm($empresa);
+            if ($roles !== '') {
+                $restriccion = $roles !== null ? ['roles' => $roles] : [];
+                $datos = $this->api->get('causas', $filtros + $restriccion + [
+                    'materia' => $materia, 'vigencia' => $vigencia, 'page' => $page, 'limit' => 20,
+                ]);
+                $resumen = $this->api->get('causas/resumen', array_intersect_key($filtros, array_flip(['busqueda', 'estado_causa', 'tribunal'])) + $restriccion + ['vigencia' => $vigencia]);
+            }
         } catch (\RuntimeException $e) {
             $error = $e->getMessage();
         }
