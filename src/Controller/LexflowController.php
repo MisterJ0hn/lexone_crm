@@ -203,6 +203,64 @@ class LexflowController extends AbstractController
         ]);
     }
 
+    // ───────────────────────── Mis causas ─────────────────────────
+
+    #[Route('/causas', name: 'ed_causas_index', methods: ['GET'])]
+    public function causasLexflow(Request $request): Response
+    {
+        $this->denyAccessUnlessGranted('view', 'ed_causas');
+        $empresa = $this->usarEmpresa();
+        $page = max(1, $request->query->getInt('page', 1));
+        $vigencia = array_key_exists((string) $request->query->get('vigencia'), self::VIGENCIAS)
+            ? $request->query->get('vigencia') : 'vigentes';
+        $materia = $request->query->get('materia');
+        $filtros = $this->filtros($request, ['busqueda', 'estado_causa', 'tribunal', 'sin_actividad_meses', 'con_audiencia_dias', 'orden']);
+        $error = null;
+        $datos = ['total' => 0, 'total_pages' => 1, 'page' => 1, 'causas' => []];
+        $resumen = ['total' => 0, 'por_materia' => [], 'estados_causa' => []];
+
+        try {
+            $datos = $this->api->get('causas', $filtros + [
+                'materia' => $materia, 'vigencia' => $vigencia, 'page' => $page, 'limit' => 20,
+            ]);
+            $resumen = $this->api->get('causas/resumen', array_intersect_key($filtros, array_flip(['busqueda', 'estado_causa', 'tribunal'])) + ['vigencia' => $vigencia]);
+        } catch (\RuntimeException $e) {
+            $error = $e->getMessage();
+        }
+
+        // Botón "Detalle PJUD": igual que en Estado Diario, por causa del CRM o por token externo.
+        $pjudInfo = ['configurado' => $empresa->isPjudConfigurado()];
+        if ($pjudInfo['configurado'] && !empty($datos['causas'])) {
+            $mapa = $this->causas->mapaPorRol($empresa->getId());
+            foreach ($datos['causas'] as &$fila) {
+                $crm = $mapa[CausaRepository::claveRol((string) ($fila['rol'] ?? ''), (string) ($fila['tribunal'] ?? ''))] ?? null;
+                if ($crm && PjudController::competencia($crm['materia'])) {
+                    $fila['crm_causa_id'] = $crm['id'];
+                } else {
+                    $fila['jurisdiccion'] = $fila['materia'] ?? '';
+                    if ($token = PjudController::tokenExterno($fila)) {
+                        $fila['pjud_token'] = $token;
+                    }
+                }
+            }
+            unset($fila);
+        }
+
+        return $this->render('lexflow/causas.html.twig', [
+            'pjud_info' => $pjudInfo,
+            'tab' => 'materias',
+            'vigencia' => $vigencia,
+            'vigencias' => self::VIGENCIAS,
+            'materia' => $materia,
+            'resumen' => $resumen,
+            'datos' => $datos,
+            'filtros' => $filtros,
+            'hoy' => date('Y-m-d'),
+            'error' => $error,
+            'chips' => $this->chips($request, $filtros + ($vigencia === 'finalizadas' ? ['vigencia' => 'No vigentes'] : [])),
+        ]);
+    }
+
     // ───────────────────────── Audiencias ─────────────────────────
 
     #[Route('/audiencias', name: 'ed_audiencias_index', methods: ['GET'])]
@@ -283,7 +341,8 @@ class LexflowController extends AbstractController
             'busqueda' => 'Búsqueda', 'rut' => 'RUT', 'tribunal' => 'Tribunal', 'estado_causa' => 'Estado',
             'tipo' => 'Tipo', 'corte' => 'Corte', 'fecha_desde' => 'Desde', 'fecha_hasta' => 'Hasta',
             'desde' => 'Desde', 'hasta' => 'Hasta', 'tipo_audiencia' => 'Tipo', 'jurisdiccion' => 'Jurisdicción',
-            'vigencia' => 'Vigencia',
+            'vigencia' => 'Vigencia', 'sin_actividad_meses' => 'Sin novedades (meses)',
+            'con_audiencia_dias' => 'Audiencia (días)', 'orden' => 'Orden',
         ];
         $query = $request->query->all();
         unset($query['page']);
