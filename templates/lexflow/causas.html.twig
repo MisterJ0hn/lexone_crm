@@ -96,6 +96,7 @@
                         <th>Caratulado</th><th>EstadoCausa</th><th>Institución</th>
                         <th title="Última vez que la causa apareció en el estado diario, en movimientos o en una audiencia">Última novedad</th>
                         <th title="Próxima audiencia agendada">Audiencia</th>
+                        {% if pjud_info.configurado %}<th>Acciones</th>{% endif %}
                     </tr>
                 </thead>
                 <tbody>
@@ -125,7 +126,7 @@
                             {% endif %}
                         </td>
                         {% if pjud_info.configurado %}
-                            <td class="text-nowrap">{{ pjud.boton(c.crm_causa_id|default(c.pjud_token|default(null))) }}</td>
+                            <td class="text-nowrap text-right">{{ pjud.boton(c.crm_causa_id|default(c.pjud_token|default(null))) }}</td>
                         {% endif %}
                     </tr>
                 {% else %}
