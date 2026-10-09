@@ -22,17 +22,38 @@
 
     <div class="row">
         <div class="col-sm-12 col-md-9">
-            <small class="text-muted">Contenido</small>
+            <div class="d-flex justify-content-between align-items-end mb-1">
+                <small class="text-muted">Contenido</small>
+                <div>
+                    <input type="file" id="docx-importar" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" class="d-none">
+                    <button type="button" class="btn btn-sm btn-outline-primary" id="btn-importar-docx">
+                        <i class="fas fa-file-word"></i> Importar desde Word (.docx)
+                    </button>
+                </div>
+            </div>
+            <div id="aviso-importacion" class="alert alert-warning alert-dismissible py-2 d-none">
+                <button type="button" class="close py-1" data-dismiss="alert" aria-label="Cerrar">&times;</button>
+                <ul class="mb-0 pl-3" id="aviso-importacion-lista"></ul>
+            </div>
             {{ form_widget(form.contenido, {'attr': {'class': 'contrato-template-editor'}}) }}
+            <small class="text-muted">Puede pegar directamente desde Word: se conservan fuente, tamaño, color, alineación, sangrías, espaciado y tablas.</small>
         </div>
         <div class="col-sm-12 col-md-3">
             <small class="text-muted">Variables disponibles</small>
             <p class="text-muted"><small>Haga clic para insertar en el punto donde esté escribiendo.</small></p>
             <div class="list-group" id="lista-variables" style="overflow-y:auto">
                 {% for token, descripcion in variables %}
-                    <button type="button" class="list-group-item list-group-item-action py-1 px-2 btn-variable" data-token="{{ token }}">
-                        <code>{{ token }}</code><br><small class="text-muted">{{ descripcion }}</small>
-                    </button>
+                    {% set tabla = token|trim('{}') %}
+                    <div class="list-group-item list-group-item-action p-0 d-flex">
+                        <button type="button" class="btn-variable flex-grow-1 text-left bg-transparent border-0 py-1 px-2" data-token="{{ token }}">
+                            <code>{{ token }}</code><br><small class="text-muted">{{ descripcion }}</small>
+                        </button>
+                        {% if columnas[tabla] is defined %}
+                            <button type="button" class="btn-config-tabla btn btn-sm btn-outline-secondary border-0 rounded-0" data-tabla="{{ tabla }}" title="Elegir columnas y cabeceras">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                        {% endif %}
+                    </div>
                 {% endfor %}
             </div>
         </div>
@@ -44,14 +65,49 @@
     <a href="{{ path('contrato_template_index') }}" class="btn btn-secondary">Cancelar</a>
 {{ form_end(form) }}
 
+<div class="modal fade" id="modal-tabla" tabindex="-1" role="dialog" aria-labelledby="modal-tabla-titulo" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-tabla-titulo">Columnas de la tabla</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted mb-2"><small>Marque las columnas que quiere mostrar, escriba el nombre de la cabecera y ordénelas con las flechas.</small></p>
+                <table class="table table-sm mb-2">
+                    <thead><tr><th style="width:2rem"></th><th>Cabecera</th><th style="width:5rem"></th></tr></thead>
+                    <tbody id="modal-tabla-columnas"></tbody>
+                </table>
+                <div class="form-inline mb-2">
+                    <label class="mr-2" for="modal-tabla-ancho"><small>Ancho de la tabla (%)</small></label>
+                    <input type="number" min="1" max="100" class="form-control form-control-sm" id="modal-tabla-ancho" placeholder="100" style="width:5rem">
+                </div>
+                <small class="text-muted">Se insertará:</small>
+                <code id="modal-tabla-token" class="d-block"></code>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="modal-tabla-insertar">Insertar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <form id="form-preview" method="post" action="{{ path('contrato_template_preview') }}" target="_blank" class="d-none">
     <input type="hidden" name="_token" value="{{ csrf_token('contrato_template_preview') }}">
     <input type="hidden" name="contenido" id="preview-contenido">
 </form>
 
 <script src="/build/adminlte/plugins/summernote/summernote-bs4.min.js"></script>
+{% include 'contrato_template/_limpiar_pegado_word.html.twig' %}
 <script>
     $(function () {
+        function mostrarAvisos(avisos) {
+            var $lista = $('#aviso-importacion-lista').empty();
+            (avisos || []).forEach(function (a) { $lista.append($('<li>').text(a)); });
+            $('#aviso-importacion').toggleClass('d-none', !(avisos && avisos.length)).addClass('show');
+        }
+
         $('.contrato-template-editor').summernote({
             height: 400,
             toolbar: [
@@ -74,6 +130,105 @@
         $('#btn-previsualizar').on('click', function () {
             $('#preview-contenido').val($('.contrato-template-editor').summernote('code'));
             $('#form-preview').trigger('submit');
+        });
+
+        // Pegado desde Word: se intercepta en fase de captura, antes de los manejadores de Summernote.
+        var editable = $('.note-editable')[0];
+        if (editable) {
+            editable.addEventListener('paste', function (e) {
+                var cd = e.clipboardData;
+                var html = cd ? cd.getData('text/html') : '';
+                if (!html || !/urn:schemas-microsoft-com:office|mso-|MsoNormal|ProgId content=Word/i.test(html)) { return; }
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                var r = window.limpiarPegadoWord(html);
+                $('.contrato-template-editor').summernote('pasteHTML', r.html);
+                mostrarAvisos(r.avisos);
+            }, true);
+        }
+
+        $('#btn-importar-docx').on('click', function () { $('#docx-importar').trigger('click'); });
+        $('#docx-importar').on('change', function () {
+            var archivo = this.files[0], input = this;
+            if (!archivo) { return; }
+            var $ed = $('.contrato-template-editor');
+            if (!$ed.summernote('isEmpty') && !window.confirm('Esto reemplazará el contenido actual del editor. ¿Continuar?')) {
+                input.value = '';
+                return;
+            }
+            var datos = new FormData();
+            datos.append('docx', archivo);
+            datos.append('_token', '{{ csrf_token('contrato_template_importar') }}');
+            var $btn = $('#btn-importar-docx').prop('disabled', true);
+            fetch('{{ path('contrato_template_importar_docx') }}', {method: 'POST', body: datos, credentials: 'same-origin'})
+                .then(function (resp) { return resp.json().then(function (j) { return {ok: resp.ok, json: j}; }); })
+                .then(function (r) {
+                    if (!r.ok) { mostrarAvisos([r.json.detail || 'No se pudo importar el archivo.']); return; }
+                    $ed.summernote('code', r.json.html);
+                    mostrarAvisos(r.json.avisos);
+                })
+                .catch(function () { mostrarAvisos(['No se pudo importar el archivo.']); })
+                .finally(function () { $btn.prop('disabled', false); input.value = ''; });
+        });
+
+        // Selector de columnas y cabeceras para {{ '{{causas}}' }} y {{ '{{detalle_cuotas}}' }}.
+        var COLUMNAS = {{ columnas|json_encode|raw }};
+        var DEFECTO = {causas: ['materia', 'rol', 'caratulado', 'juzgado'], detalle_cuotas: ['numero', 'vencimiento', 'monto']};
+        var tablaActual = null;
+        function limpiaEtiqueta(t) { return (t || '').replace(/[;=|{}<>]/g, '').replace(/\s+/g, ' ').trim(); }
+
+        function tokenTabla() {
+            var cols = [], etiquetasDefecto = true;
+            $('#modal-tabla-columnas tr').each(function () {
+                if (!$(this).find('.col-activa').prop('checked')) { return; }
+                var clave = $(this).data('clave'), etiqueta = limpiaEtiqueta($(this).find('.col-etiqueta').val());
+                if (etiqueta === '' || etiqueta === COLUMNAS[tablaActual][clave]) { etiqueta = ''; } else { etiquetasDefecto = false; }
+                cols.push(clave + (etiqueta ? '=' + etiqueta : ''));
+            });
+            var claves = cols.map(function (c) { return c.split('=')[0]; });
+            var ancho = parseInt($('#modal-tabla-ancho').val(), 10);
+            var token = '{' + '{' + tablaActual + (ancho > 0 && ancho < 100 ? ':' + ancho + '%' : '');
+            var esDefecto = etiquetasDefecto && claves.join() === DEFECTO[tablaActual].join();
+            if (!esDefecto && cols.length) { token += '|' + cols.join(';'); }
+            return token + '}' + '}';
+        }
+        function refrescaToken() {
+            var hay = $('#modal-tabla-columnas .col-activa:checked').length > 0;
+            $('#modal-tabla-token').text(hay ? tokenTabla() : 'Seleccione al menos una columna');
+            $('#modal-tabla-insertar').prop('disabled', !hay);
+        }
+        $('.btn-config-tabla').on('click', function () {
+            tablaActual = $(this).data('tabla');
+            $('.contrato-template-editor').summernote('editor.saveRange');
+            var $cuerpo = $('#modal-tabla-columnas').empty();
+            var activas = DEFECTO[tablaActual];
+            // Primero las columnas por defecto (en su orden), luego las demás sin marcar.
+            var orden = activas.concat(Object.keys(COLUMNAS[tablaActual]).filter(function (k) { return activas.indexOf(k) < 0; }));
+            orden.forEach(function (clave) {
+                var $fila = $('<tr>').data('clave', clave);
+                $fila.append($('<td>').append($('<input type="checkbox" class="col-activa">').prop('checked', activas.indexOf(clave) >= 0)));
+                $fila.append($('<td>').append($('<input type="text" class="form-control form-control-sm col-etiqueta" maxlength="60">').val(COLUMNAS[tablaActual][clave])));
+                $fila.append($('<td class="text-right text-nowrap">')
+                    .append('<button type="button" class="btn btn-xs btn-light col-sube" title="Subir"><i class="fas fa-arrow-up"></i></button> ')
+                    .append('<button type="button" class="btn btn-xs btn-light col-baja" title="Bajar"><i class="fas fa-arrow-down"></i></button>'));
+                $cuerpo.append($fila);
+            });
+            $('#modal-tabla-ancho').val('');
+            $('#modal-tabla-titulo').text(tablaActual === 'causas' ? 'Columnas de la tabla de causas' : 'Columnas del detalle de cuotas');
+            refrescaToken();
+            $('#modal-tabla').modal('show');
+        });
+        $('#modal-tabla').on('input change', 'input', refrescaToken);
+        $('#modal-tabla').on('click', '.col-sube', function () { var $f = $(this).closest('tr'); $f.prev().before($f); refrescaToken(); });
+        $('#modal-tabla').on('click', '.col-baja', function () { var $f = $(this).closest('tr'); $f.next().after($f); refrescaToken(); });
+        $('#modal-tabla-insertar').on('click', function () {
+            var token = tokenTabla();
+            $('#modal-tabla').one('hidden.bs.modal', function () {
+                var $ed = $('.contrato-template-editor');
+                $ed.summernote('editor.restoreRange');
+                $ed.summernote('editor.focus');
+                $ed.summernote('insertText', token);
+            }).modal('hide');
         });
 
         $('.btn-variable').on('click', function () {

@@ -1501,6 +1501,7 @@ class ContratoController extends AbstractController
                 $estado->setObservacion($observacion);
             }
             $estado->setCompletado(true)->setUsuarioRegistro($this->getUser());
+            
             $this->entityManager->flush();
         }
 
@@ -1521,7 +1522,7 @@ class ContratoController extends AbstractController
                 ->setObservacion(trim((string) $request->request->get('txtObservacion')) ?: null)
                 ->setUsuarioRegistro($this->getUser())
                 ->setCompletado(true);
-            $causa->setEstado(false);
+            $causa->setCausaFinalizada(true); //jrm 09-10-2026: Se cambia el estado de la causa a finalizada, pero sigue con estado = true.
             $this->entityManager->persist($final);
             $this->entityManager->flush();
             $this->addFlash('success', 'Causa finalizada.');

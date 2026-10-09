@@ -183,6 +183,11 @@
                             <td>{{ causa.juzgado is null ? '' : causa.juzgado }}</td>
                             <td>
                                 <div class="btn-group btn-group-sm" role="group">
+                                {% if causa.causaFinalizada == true %}
+                                        <span class="btn btn-sm btn-success" title="Causa finalizada"><i class="fas fa-check-circle"></i></span>
+                                    {% else %}
+                                        <span class="btn btn-sm btn-danger" title="Causa pendiente"><i class="fas fa-times"></i></span>
+                                    {% endif %}
                                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal"
                                         data-whatever="@fat"
                                         data-servicio="{{ causa.servicio }}"
