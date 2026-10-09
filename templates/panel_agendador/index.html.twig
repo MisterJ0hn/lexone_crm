@@ -194,7 +194,7 @@
     // Convenio/Empresa: el campo "Nombre" pasa a ser "Razón social".
     function actualizaLabelNombre(){
         var tipo = $.trim($('select[name$="[tipoCliente]"] option:selected').text());
-        $('.lbl-nombre-cliente').text(tipo && tipo !== 'Persona' ? 'Razón social' : 'Nombre');
+        /*$('.lbl-nombre-cliente').text(tipo && tipo !== 'Persona' ? 'Razón social' : 'Nombre');*/
     }
     $('select[name$="[tipoCliente]"]').on('change', actualizaLabelNombre);
     actualizaLabelNombre();
