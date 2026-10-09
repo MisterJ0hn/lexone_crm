@@ -589,7 +589,7 @@
             return;
         }
         if($('.cboSubMateria').val()!=""){
-               console.log("valida campos");
+               
             if($('.txtLetra').val()!="" || $('.txtRol').val()!="" || $('.txtAnio').val()!=""){
                 if(!/^\d+$/.test($('.txtAnio').val())){
                     alert("El año debe contener solo números");
@@ -605,7 +605,7 @@
                 }
             }
             $(".loading").html('');
-            console.log("agregar causas");
+   
             var item_id=Math.floor(Math.random() * 100);
             var fieldHTML = "<tr class='causa-"+item_id+"'>"+
                                 "<td><input type='hidden' value='"+$('.cbomateria').val()+"' name='hdMateria[]'  >"+$('.cbomateria option:selected').text()+"</td>"+
@@ -622,6 +622,16 @@
 
             $(".detalle_causas").append(fieldHTML); 
              item_causa++;
+
+             //limpiar campos
+            $('.txtLetra').val('');
+            $('.txtRol').val('');
+            $('.txtAnio').val('');
+            $('.txtCaratulado').val('');
+            $('.juzgado').val('');
+            $('.cboSubMateria').val('');
+            $('.cbomateria').val('');
+            $('.corte').val('');
         }else{
             alert("Debe ingresar un servicio");
             console.log("sin servicios");

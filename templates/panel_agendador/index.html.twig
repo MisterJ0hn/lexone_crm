@@ -26,6 +26,8 @@
                     <a href="#" class="small-box-footer" onclick="javascript:buscar({{resumen[0].status.id}})">
                         Ver Más <i class="fas fa-arrow-circle-right"></i>
                     </a>
+                {% else %}
+                    <br>
                 {% endif %}
                 
           
@@ -45,8 +47,10 @@
                 <div class="info-box-content">
                 <span class="info-box-text">Total</span>
                 <span class="info-box-number">{{total}}</span>
+                <br>
                 </div>
                 <!-- /.info-box-content -->
+              
             </div>
         </div>
         {% endif %}
@@ -54,9 +58,7 @@
     </div>
     
 </section>
-<section class="{% if status is null %}
-    
-    {% endif %}">
+<section >
 
     {{ include('filtro.html.twig') }}
 </section>
@@ -95,7 +97,7 @@
     <div class="row">
         <div class="col-sm-6 col-md-3">
             <small class="text-muted">Tipo Cliente</small>
-            {{form_row(form.tipoCliente,{'label':false,'attr':{'class':'form-control','required':true}})}}
+            {{form_row(form.tipoCliente,{'label':false,'attr':{'class':'form-control tipo-cliente','required':true}})}}
         </div>
         <div class="col-sm-6 col-md-3">
             <small class="text-muted lbl-nombre-cliente">Nombre</small>
@@ -149,6 +151,7 @@
         <thead>
             <tr>               
                 <th>{{ knp_pagination_sortable(agendas, 'Cliente', 'tipoClienteNombre') }} {% if agendas.isSorted('tipoClienteNombre') %} <i class="fas fa-sort"></i>{% endif %}</th>
+               <th>{{ knp_pagination_sortable(agendas,'Canal', 'canal') }} {% if agendas.isSorted('canal') %} <i class="fas fa-sort"></i>{% endif %}</th>
                <th>{{ knp_pagination_sortable(agendas, 'Nombre', 'nombreCliente') }} {% if agendas.isSorted('nombreCliente') %} <i class="fas fa-sort"></i>{% endif %}</th>              
                 <th>{{ knp_pagination_sortable(agendas, 'Fecha Carga', 'fechaCarga') }} {% if agendas.isSorted('fechaCarga') %} <i class="fas fa-sort"></i>{% endif %}</th>                
                 <th style="text-align: center;">Gestión</th>
@@ -158,6 +161,7 @@
         {% for agenda in agendas %}
             <tr>                
                 <td>{{ agenda.tipoClienteNombre|default('') }}</td>
+                <td>{{ agenda.canal|default('') }}</td>
                 <td>{{ agenda.nombreCliente }}</td>
               
                   <td>{{ agenda.fechaCarga ? agenda.fechaCarga|date('d-m-Y H:i') : '' }}</td>
@@ -205,7 +209,11 @@
         text: 'Seleccione'
     }));
     $('.canal').val('0').change();
-
+     $('.tipo-cliente').append($('<option>', {
+        value: 0,
+        text: 'Seleccione'
+    }));
+    $('.tipo-cliente').val('0').change();  
 
     $(".format-rut").rut();
     

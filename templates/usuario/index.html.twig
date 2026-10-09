@@ -21,7 +21,7 @@
                         <th>ID</th>
                         <th>Usuario</th>
                         <th>Nombre</th>
-                        <th>TipoUsuario</th>
+
                         <th>Estado</th>
                         <th>FechaIngreso</th>
                         <th>Correo</th>
@@ -34,7 +34,7 @@
                         <td>{{ usuario.id }}</td>
                         <td>{{ usuario.username }}</td>
                         <td>{{ usuario.nombre }}</td>
-                        <td>{{ usuario.usuarioTipo.nombre }}</td>
+                       
                         <td>{{ usuario.estado ? 'Activo' : 'Deshabilitado' }}</td>
                         <td>{{ usuario.fechaActivacion ? usuario.fechaActivacion|date('Y-m-d H:i:s') : '' }}</td>
                         <td>{{ usuario.correo }}</td>

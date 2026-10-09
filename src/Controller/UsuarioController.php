@@ -189,10 +189,11 @@ class UsuarioController extends AbstractController
     {
         $this->denyAccessUnlessGranted('edit','usuario');
         $user=$this->getUser();
-        $pagina=$moduloPerRepository->findOneByName('usuario',1);
-        $empresa=$this->entityManager->getRepository(Empresa::class)->find(1);
+        $pagina=$moduloPerRepository->findOneByName('usuario',$user->getEmpresaActual());
+        $empresa=$this->entityManager->getRepository(Empresa::class)->find($user->getEmpresaActual());
         $usuarioCuenta=$this->entityManager->getRepository(UsuarioCuenta::class)->findOneBy(['usuario'=>$usuario->getId()]);
    
+
         $cuentas=$empresa->getCuentas();
         //$usuario->setPasswordAnt($usuario->getPassword());
         //$usuario->setPassword('');
@@ -219,51 +220,55 @@ class UsuarioController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            if($usuario->getPasswordAnt()!=""){
-                $password=$usuario->getPasswordAnt();
-                $encoded=$encoder->hashPassword($usuario,$password);
-                $usuario->setPassword($encoded);
-                $usuario->setPasswordAnt("");
-            }
-            
-            $this->entityManager->flush();
-            
-
-            $entityManager = $this->entityManager;
-
-            
-
-            $usuario->setTipoDocumento($tipoDocumento->find($request->request->get('cboTipoDocumento')));
-
-            $usuario->setFechaNacimiento(new \DateTime(date('Y-m-d H:i',strtotime($request->request->get('fecha_nacimiento')))));
-            $usuario->setFechaActivacion(new \DateTime(date('Y-m-d H:i',strtotime($request->request->get('fecha_ingreso')))));
-            
-
-            $usuarioCuentas=$usuario->getUsuarioCuentas();
-            foreach($usuarioCuentas as $usuarioCuenta){
-                $usuario->removeUsuarioCuenta($usuarioCuenta);
-            }
-            $getcuentas=(array) ($_POST['cboEmpresa'] ?? []);
-         
-            foreach($getcuentas as $getcuenta){
-                $cuenta=$this->entityManager->getRepository(Cuenta::class)->find($getcuenta);
-                
-                $usuarioCuenta=new UsuarioCuenta();
-
-                $usuarioCuenta->setCuenta($cuenta);
-                $usuarioCuenta->setUsuario($usuario);
-
-                $entityManager->persist($usuarioCuenta);
-                $entityManager->flush();
-
-                $usuario->setEmpresa($cuenta->getEmpresa());
-                if(is_null($usuario->getEmpresaActual())){
-                    $usuario->setEmpresaActual($user->getEmpresaActual());
+            try{
+                if($usuario->getPasswordAnt()!=""){
+                    $password=$usuario->getPasswordAnt();
+                    $encoded=$encoder->hashPassword($usuario,$password);
+                    $usuario->setPassword($encoded);
+                    $usuario->setPasswordAnt("");
                 }
+                
+                $this->entityManager->flush();
+                
+
+                $entityManager = $this->entityManager;
+
+                
+
+                $usuario->setTipoDocumento($tipoDocumento->find($request->request->get('cboTipoDocumento')));
+
+                $usuario->setFechaNacimiento(new \DateTime(date('Y-m-d H:i',strtotime($request->request->get('fecha_nacimiento')))));
+                $usuario->setFechaActivacion(new \DateTime(date('Y-m-d H:i',strtotime($request->request->get('fecha_ingreso')))));
+                
+
+                $usuarioCuentas=$usuario->getUsuarioCuentas();
+                foreach($usuarioCuentas as $usuarioCuenta){
+                    $usuario->removeUsuarioCuenta($usuarioCuenta);
+                }
+                $getcuentas=(array) ($_POST['cboEmpresa'] ?? []);
+            
+                foreach($getcuentas as $getcuenta){
+                    $cuenta=$this->entityManager->getRepository(Cuenta::class)->find($getcuenta);
+                    
+                    $usuarioCuenta=new UsuarioCuenta();
+
+                    $usuarioCuenta->setCuenta($cuenta);
+                    $usuarioCuenta->setUsuario($usuario);
+
+                    $entityManager->persist($usuarioCuenta);
+                    $entityManager->flush();
+
+                    $usuario->setEmpresa($cuenta->getEmpresa());
+                    if(is_null($usuario->getEmpresaActual())){
+                        $usuario->setEmpresaActual($user->getEmpresaActual());
+                    }
+                }
+                $entityManager->persist($usuario);
+                $entityManager->flush();  
+                $this->addFlash('success','Usuario editado con éxito');  
+            }catch(Exception $e){
+                $this->addFlash('error','ha ocurrido un error al editar el usuario: '.$e->getMessage());
             }
-            $entityManager->persist($usuario);
-            $entityManager->flush();
             return $this->redirectToRoute('usuario_index');
         }
         $id_cuenta=null;
