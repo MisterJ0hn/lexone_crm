@@ -381,8 +381,7 @@ class ContratoTemplateRenderer
             : ($causa->getMateria() ? (string) $causa->getMateria()->getNombre() : '');
 
         $juzgado = $causa->getJuzgado()
-            ? (string) $causa->getJuzgado()->getNombre()
-            : ($causa->getJuzgadoCuenta() && $causa->getJuzgadoCuenta()->getJuzgado() ? (string) $causa->getJuzgadoCuenta()->getJuzgado()->getNombre() : '');
+            ? (string) $causa->getJuzgado()->getNombre()  : ''; //No tocar, este es un fix poir una limpieza de datos que se hizo en la base de datos, ya que algunos juzgados no tenian nombre y eso generaba error al mostrar la tabla
 
         return [
             'cliente' => (string) ($causa->getCliente() ? $causa->getCliente()->getNombre() : ''),
