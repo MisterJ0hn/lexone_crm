@@ -34,6 +34,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormError;
 
 
 #[Route("/panel_agendador")]
@@ -94,6 +95,28 @@ class PanelAgendadorController extends AbstractController
         ]);
         
         $form->handleRequest($request);
+
+        // Validación server-side: todos los campos visibles son obligatorios.
+        if ($form->isSubmitted()) {
+            $obligatorios = [
+                'tipoCliente' => 'Tipo Cliente',
+                'nombreCliente' => 'Nombre',
+                'rutCliente' => 'Rut',
+                'emailCliente' => 'Email',
+                'telefonoCliente' => 'Teléfono Móvil',
+                'canal' => 'Canal',
+            ];
+            foreach ($obligatorios as $campo => $etiqueta) {
+                $valor = $form->get($campo)->getData();
+                if ($valor === null || (is_string($valor) && trim($valor) === '')) {
+                    $form->get($campo)->addError(new FormError("El campo $etiqueta es obligatorio"));
+                }
+            }
+            $email = trim((string) $form->get('emailCliente')->getData());
+            if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $form->get('emailCliente')->addError(new FormError('El Email no es válido'));
+            }
+        }
 
         switch($user->getUsuarioTipo()->getId()){
             case 1:

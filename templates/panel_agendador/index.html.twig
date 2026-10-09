@@ -105,12 +105,12 @@
         </div>
         <div class="col-sm-6 col-md-3">
             <small class="text-muted">Rut</small>
-            {{form_row(form.rutCliente,{'label':false,'attr':{'class':'form-control format-rut'}})}}
+            {{form_row(form.rutCliente,{'label':false,'attr':{'class':'form-control format-rut','required':true}})}}
         </div>
        
         <div class="col-sm-6 col-md-3">
             <small class="text-muted">Email</small>
-            {{form_row(form.emailCliente,{'label':false,'attr':{'class':'form-control'}})}}
+            {{form_row(form.emailCliente,{'label':false,'attr':{'class':'form-control','required':true}})}}
         </div>
         <div class="col-sm-6 col-md-3">
             <small class="text-muted">Teléfono Móvil</small>
@@ -126,7 +126,7 @@
         </div>
         <div class="col-sm-6 col-md-3" >
             <small class="text-muted">Canal</small>
-            {{form_row(form.canal,{'label':false,'attr':{'class':'form-control canal' }})}}
+            {{form_row(form.canal,{'label':false,'attr':{'class':'form-control canal','required':true}})}}
         </div>
         
     
@@ -238,7 +238,33 @@
 
     function validarut(){
 
-        if($(".format-rut").val()=="") return true;
+        // Todos los campos visibles son obligatorios.
+        var campos = [
+            ['select[name$="[tipoCliente]"]', 'Tipo Cliente'],
+            ['input[name$="[nombreCliente]"]', 'Nombre'],
+            ['input[name$="[rutCliente]"]', 'Rut'],
+            ['input[name$="[emailCliente]"]', 'Email'],
+            ['input[name$="[telefonoCliente]"]', 'Teléfono Móvil'],
+            ['select[name$="[canal]"]', 'Canal']
+        ];
+        for (var i = 0; i < campos.length; i++) {
+            var $c = $(campos[i][0]);
+            var v = $.trim($c.val() || '');
+            if (v === '' || v === '0') {
+                alert('El campo ' + campos[i][1] + ' es obligatorio');
+                $c.focus();
+                $("button").prop('disabled',false);
+                return false;
+            }
+        }
+        var email = $.trim($('input[name$="[emailCliente]"]').val());
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            alert('El Email no es válido');
+            $('input[name$="[emailCliente]"]').focus();
+            $("button").prop('disabled',false);
+            return false;
+        }
+
         if($.validateRut($(".format-rut").val())) {
             return true;
         }

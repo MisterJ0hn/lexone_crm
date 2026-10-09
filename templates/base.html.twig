@@ -187,6 +187,8 @@
                 $( "form" ).submit(function( event ) {
                     // Formularios que abren en otra pestaña (p.ej. previsualizar PDF) no deben bloquear la página.
                     if ($(this).attr('target') === '_blank') { return; }
+                    // Si una validación (onsubmit) canceló el envío, no bloquear los botones.
+                    if (event.isDefaultPrevented()) { return; }
                     $("button").prop('disabled',true);
                 });
                 $(function() {
