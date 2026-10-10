@@ -86,6 +86,16 @@ class EmpresaController extends AbstractController
                 $empresa->setPjudPassword($pjudPassword);
             }
 
+            // Llave privada RSA de edapi: no se muestra; vacío = conservar la actual.
+            $llave = trim((string) $form->get('edapiLlavePrivada')->getData());
+            if ($llave !== '') {
+                if (\App\Service\EdApiClient::llavePrivadaValida($llave)) {
+                    $empresa->setEdapiLlavePrivada($llave);
+                } else {
+                    $this->addFlash('error', 'La llave privada de Estado Diario no es un PEM RSA privado válido; se conservó la anterior.');
+                }
+            }
+
             /** @var Logo $logoFile */
             $logoFile = $form['logo']->getData();
             
@@ -189,6 +199,16 @@ class EmpresaController extends AbstractController
             $pjudPassword = (string) $form->get('pjudPassword')->getData();
             if ($pjudPassword !== '') {
                 $empresa->setPjudPassword($pjudPassword);
+            }
+
+            // Llave privada RSA de edapi: no se muestra; vacío = conservar la actual.
+            $llave = trim((string) $form->get('edapiLlavePrivada')->getData());
+            if ($llave !== '') {
+                if (\App\Service\EdApiClient::llavePrivadaValida($llave)) {
+                    $empresa->setEdapiLlavePrivada($llave);
+                } else {
+                    $this->addFlash('error', 'La llave privada de Estado Diario no es un PEM RSA privado válido; se conservó la anterior.');
+                }
             }
 
             $logoFile = $form['logo']->getData();

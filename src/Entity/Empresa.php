@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\EmpresaRepository;
+use App\Security\Cifrado;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -41,6 +42,13 @@ class Empresa
 
     #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $edapiClienteGuid;
+
+    /**
+     * Llave privada RSA (PEM) con la que se abren las credenciales PJUD que entrega edapi
+     * (incluir_credenciales=true). Se guarda cifrada con Cifrado (AES-GCM); el getter la devuelve en claro.
+     */
+    #[ORM\Column(type: "text", nullable: true)]
+    private ?string $edapiLlavePrivada = null;
 
     #[ORM\Column(type: "boolean", options: ["default" => false])]
     private bool $lexflowHabilitado = false;
@@ -816,6 +824,17 @@ class Empresa
     public function setEdapiKey(?string $edapiKey): self
     {
         $this->edapiKey = $edapiKey;
+        return $this;
+    }
+
+    public function getEdapiLlavePrivada(): ?string
+    {
+        return $this->edapiLlavePrivada === null ? null : Cifrado::decrypt($this->edapiLlavePrivada);
+    }
+
+    public function setEdapiLlavePrivada(?string $pem): self
+    {
+        $this->edapiLlavePrivada = ($pem === null || trim($pem) === '') ? null : Cifrado::encrypt(trim($pem));
         return $this;
     }
 

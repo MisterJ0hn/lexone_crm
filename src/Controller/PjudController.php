@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Causa;
 use App\Repository\CausaRepository;
 use App\Repository\EmpresaRepository;
+use App\Service\EdApiClient;
 use App\Service\PjudApiClient;
 use App\Service\PjudApiException;
 use App\Service\PjudNoEncontrado;
@@ -24,6 +25,7 @@ class PjudController extends AbstractController
 {
     public function __construct(
         private readonly PjudApiClient $api,
+        private readonly EdApiClient $edapi,
         private readonly CausaRepository $causas,
         private readonly EmpresaRepository $empresas,
         private readonly \Psr\Log\LoggerInterface $logger,
@@ -132,7 +134,7 @@ class PjudController extends AbstractController
         $this->api->paraEmpresa($empresa);
         $cuaderno = $request->query->get('cuaderno');
         try {
-            $res = $this->api->detalle($competencia, $datos, $forzar, $cuaderno !== null ? (int) $cuaderno : null, $this->credenciales($user, $causa));
+            $res = $this->api->detalle($competencia, $datos, $forzar, $cuaderno !== null ? (int) $cuaderno : null, $this->credenciales($empresa, $datos));
         } catch (PjudApiException $e) {
             return new JsonResponse(['detail' => $e->getMessage()], 502);
         }
@@ -183,8 +185,8 @@ class PjudController extends AbstractController
     }
 
     /**
-     * Detalle PJUD de una causa que no está en el CRM (fila de Lexflow). No hay cliente asociado, así que
-     * se sincroniza con las credenciales de la empresa.
+     * Detalle PJUD de una causa que no está en el CRM (fila de Lexflow).
+     * se sincroniza con las credenciales que entrega Lexflow para esa causa.
      */
     private function consultarExterna(string $token, Request $request, bool $forzar, \App\Entity\Empresa $empresa, object $user): JsonResponse
     {
@@ -214,7 +216,7 @@ class PjudController extends AbstractController
         $this->api->paraEmpresa($empresa);
         $cuaderno = $request->query->get('cuaderno');
         try {
-            $res = $this->api->detalle($d['m'], $datos, $forzar, $cuaderno !== null ? (int) $cuaderno : null, $this->credencialesEmpresa($user));
+            $res = $this->api->detalle($d['m'], $datos, $forzar, $cuaderno !== null ? (int) $cuaderno : null, $this->credenciales($empresa, $datos));
         } catch (PjudApiException $e) {
             return new JsonResponse(['detail' => $e->getMessage()], 502);
         }
@@ -224,33 +226,19 @@ class PjudController extends AbstractController
         return new JsonResponse($res);
     }
     /**
-     * Credenciales OJV para sincronizar: la causa es del CRM, así que primero las del cliente
-     * asociado a la causa (RUT + ClaveÚnica); si el cliente no las tiene completas, las del
-     * usuario del sistema.
+     * Credenciales OJV para sincronizar: siempre las que usa Lexflow para esa causa (edapi, con
+     * incluir_credenciales). No se usan las del abogado, del cliente ni de la empresa. Se piden de forma
+     * diferida: solo si hay que sincronizar.
      *
-     * @return array{rut:?string,clave:?string,metodo_login:int}
+     * @param array{tipo:string,rol:int,anio:int,tribunal:string} $datos
      */
-    private function credenciales(object $user, Causa $causa): array
+    private function credenciales(\App\Entity\Empresa $empresa, array $datos): \Closure
     {
-        $cliente = $causa->getCliente() ?? $causa->getAgenda()?->getContrato()?->getCliente();
-        if ($cliente && $cliente->getRut() && $cliente->getClaveUnica()) {
-            return ['rut' => $cliente->getRut(), 'clave' => $cliente->getClaveUnica(), 'metodo_login' => 2];
-        }
-        return $this->credencialesEmpresa($user);
-    }
+        return function () use ($empresa, $datos): array {
+            $this->edapi->paraEmpresa($empresa);
 
-    /**
-     * Clave del Poder Judicial de la empresa (Mantención → Clave Poder Judicial).
-     *
-     * @return array{rut:?string,clave:?string,metodo_login:int}
-     */
-    private function credencialesEmpresa(object $user): array
-    {
-        $empresa = $this->empresas->find($user->getEmpresaActual());
-        if ($empresa && $empresa->getPjudRut() && $empresa->getPjudClave()) {
-            return ['rut' => $empresa->getPjudRut(), 'clave' => $empresa->getPjudClave(), 'metodo_login' => $empresa->getPjudMetodoLogin()];
-        }
-        return ['rut' => null, 'clave' => null, 'metodo_login' => 1];
+            return $this->edapi->credencialesPjud($datos['tipo'] . '-' . $datos['rol'] . '-' . $datos['anio'], $datos['tribunal']);
+        };
     }
 
     /** @return array{tipo:string,rol:int,anio:int,tribunal:string,tipo_causa:?string}|null */

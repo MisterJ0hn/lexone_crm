@@ -29,7 +29,7 @@ class PjudApiClient
 
     private const MSG_SINCRONIZANDO = 'La primera consulta puede tardar varios minutos.';
     private const MSG_ERROR_SYNC = 'La sincronización de esta causa con el Poder Judicial falló. Puedes reintentarla.';
-    private const MSG_SIN_CREDENCIALES = 'Para consultar esta causa por primera vez hay que iniciar sesión en el Poder Judicial con tu clave (Mis Datos → Clave del Poder Judicial) o con la ClaveÚnica del cliente de la causa.';
+    private const MSG_SIN_CREDENCIALES = 'Lexflow no entregó credenciales del Poder Judicial para consultar esta causa por primera vez.';
 
     /**
      * Por materia: si usa catálogo de tribunales, si expone cuadernos, clave de cuaderno en el request
@@ -188,10 +188,28 @@ class PjudApiClient
 
     /**
      * @param array{tipo:string,rol:int,anio:int,tribunal:string,tipo_causa?:?string} $causa
-     * @param array{rut?:?string,clave?:?string,metodo_login?:int}|null $credenciales OJV de la persona
+     * @param array{rut?:?string,clave?:?string,metodo_login?:int}|\Closure|null $credenciales OJV; un Closure se
+     *        resuelve solo si hay que sincronizar y puede lanzar \RuntimeException con el motivo de que no haya
      */
-    public function detalle(string $materia, array $causa, bool $forzar = false, ?int $cuaderno = null, ?array $credenciales = null): array
+    public function detalle(string $materia, array $causa, bool $forzar = false, ?int $cuaderno = null, array|\Closure|null $credenciales = null): array
     {
+        $motivoSinCredenciales = null;
+        $resuelto = false;
+        $obtener = function () use (&$credenciales, &$resuelto, &$motivoSinCredenciales): ?array {
+            if (!$resuelto) {
+                $resuelto = true;
+                if ($credenciales instanceof \Closure) {
+                    try {
+                        $credenciales = $credenciales();
+                    } catch (\RuntimeException $e) {
+                        $motivoSinCredenciales = $e->getMessage();
+                        $credenciales = null;
+                    }
+                }
+            }
+            return $credenciales;
+        };
+
         $cfg = self::CONFIG[$materia] ?? throw new PjudApiException('Materia no soportada por el detalle PJUD.');
 
         $cuerpo = ['corte' => 0, 'tribunal' => 0, 'tipo' => $causa['tipo'], 'rol' => $causa['rol'], 'anio' => $causa['anio']];
@@ -209,9 +227,8 @@ class PjudApiClient
             }
         }
 
-        $puedeSincronizar = !empty($credenciales['rut']) && !empty($credenciales['clave']);
-        if ($forzar && $puedeSincronizar) {
-            $this->sincronizar($materia, $cuerpo, $credenciales);
+        if ($forzar) {
+            $this->sincronizar($materia, $cuerpo, $obtener());
         }
 
         $detalleEstado = $ultimoError = null;
@@ -234,11 +251,14 @@ class PjudApiClient
             || in_array($estadoNorm, self::ESTADOS_SINCRONIZANDO, true)
             || ($cfg['cuadernos'] && !$cuadernos);
 
-        if ($sincronizando && !$puedeSincronizar) {
-            return ['estado' => 'sin_credenciales', 'mensaje' => self::MSG_SIN_CREDENCIALES, 'detalle_estado' => $detalleEstado];
-        }
-        if ($sincronizando && !$forzar) {
-            $this->sincronizar($materia, $cuerpo, $credenciales);
+        if ($sincronizando) {
+            $cred = $obtener();
+            if (empty($cred['rut']) || empty($cred['clave'])) {
+                return ['estado' => 'sin_credenciales', 'mensaje' => $motivoSinCredenciales ?? self::MSG_SIN_CREDENCIALES, 'detalle_estado' => $detalleEstado];
+            }
+            if (!$forzar) {
+                $this->sincronizar($materia, $cuerpo, $cred);
+            }
         }
 
         $identificador = $detalle['identificador'] ?? null;

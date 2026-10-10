@@ -9,6 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Validator\Constraints\File;
 
 class EmpresaType extends AbstractType
@@ -52,6 +53,7 @@ class EmpresaType extends AbstractType
             ->add('pjudPassword', PasswordType::class, ['required' => false, 'mapped' => false])
             ->add('edapiKey', null, ['required' => false])
             ->add('edapiClienteGuid', null, ['required' => false])
+            ->add('edapiLlavePrivada', TextareaType::class, ['required' => false, 'mapped' => false])
         ;
     }
 

@@ -40,6 +40,10 @@
                     <small class="text_mute">Cliente GUID Estado Diario (opcional)</small>
                     {{ form_row(form.edapiClienteGuid,{'label':false,'attr':{'class':'form-control'}})}}
                 </div>
+                <div class="col-sm-12 col-md-8">
+                    <small class="text_mute">Llave privada RSA (PEM) para credenciales PJUD de Lexflow{% if empresa is defined and empresa.edapiLlavePrivada %} <span class="text-success">(ya registrada; deje vacío para conservarla)</span>{% endif %}</small>
+                    {{ form_row(form.edapiLlavePrivada,{'label':false,'attr':{'class':'form-control','rows':3,'autocomplete':'off','placeholder':'-----BEGIN PRIVATE KEY-----'}})}}
+                </div>
                 <div class="col-sm-6 col-md-4">
                     <small class="text_mute">Habilitar Lexflow</small>
                     <div class="custom-control custom-switch mt-2">

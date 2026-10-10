@@ -15,6 +15,7 @@
         "guzzlehttp/guzzle": "^8.1",
         "knplabs/knp-paginator-bundle": "^6.3",
         "knplabs/knp-snappy-bundle": "^1.10",
+        "phpseclib/phpseclib": "^3.0",
         "stof/doctrine-extensions-bundle": "^1.15",
         "symfony/console": "7.4.*",
         "symfony/dotenv": "7.4.*",
