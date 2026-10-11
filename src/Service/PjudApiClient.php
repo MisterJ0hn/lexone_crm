@@ -233,7 +233,7 @@ class PjudApiClient
 
         $detalleEstado = $ultimoError = null;
         try {
-            $data = $this->peticion('POST', '/consultar_' . $materia, ['json' => $cuerpo]);
+            $data = $this->peticion('POST', '/consultar_' . $materia, ['json' => $cuerpo + $this->credencialesCuerpo($obtener())]);
             $detalle = $data['causa'] ?? $data;
             $detalleEstado = trim((string) ($detalle['detalle_estado'] ?? '')) ?: null;
             $ultimoError = trim((string) ($detalle['ultimo_error'] ?? '')) ?: null;
@@ -276,7 +276,7 @@ class PjudApiClient
             $elegido = $cfg['cuadernos'] ? $this->elegirCuaderno($cuadernos, $cuaderno) : ['id' => 1];
             try {
                 $mov = $this->peticion('POST', '/consultar_movimientos_' . $materia, [
-                    'json' => ['identificador' => $identificador, $cfg['clave_cuaderno'] => $elegido['id']],
+                    'json' => ['identificador' => $identificador, $cfg['clave_cuaderno'] => $elegido['id']] + $this->credencialesCuerpo($obtener()),
                 ]);
             } catch (PjudApiException $e) {
                 // Mientras sincroniza, los movimientos pueden no estar listos: se devuelve la cabecera sola.
@@ -300,6 +300,15 @@ class PjudApiClient
             }
         }
         return 'Ordinaria';
+    }
+
+    /** Campos de credenciales que consultar_* y consultar_movimientos_* aceptan de forma opcional (como sincronizar_*). */
+    private function credencialesCuerpo(?array $cred): array
+    {
+        if (empty($cred['rut']) || empty($cred['clave'])) {
+            return [];
+        }
+        return ['rut' => $cred['rut'], 'clave' => $cred['clave'], 'metodo_login' => $cred['metodo_login'] ?? 1];
     }
 
     private function sincronizar(string $materia, array $cuerpo, ?array $cred): void
