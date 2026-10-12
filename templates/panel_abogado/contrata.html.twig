@@ -649,8 +649,12 @@
         $('button').attr("disabled", true);
 
 
-        if(esClientePersona && $('.hdCausas').val()==0){
-            alert("Debe ingresar al menos una Causa");
+        if(esClientePersona && $('.detalle_causas tr').length==0){
+            if($('.cbomateria').val()!="" || $('.cboSubMateria').val()!="" || $('.txtRol').val()!=""){
+                alert("Ingresó datos de la causa pero no la agregó. Presione el botón + para agregarla a la lista.");
+            }else{
+                alert("Debe ingresar al menos una Causa");
+            }
             $(".cboSubMateria").focus();
             $('button').attr("disabled", false);
             return false;

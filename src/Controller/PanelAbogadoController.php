@@ -475,8 +475,22 @@ class PanelAbogadoController extends AbstractController
             ]
             ]);
         $form->handleRequest($request);
-        
+
+        // Un contrato de tipo Persona siempre debe tener al menos una causa: se
+        // valida antes de persistir para no dejar un contrato sin causas.
+        $faltaCausa = false;
         if ($form->isSubmitted() && $form->isValid()) {
+            $tipoPre = $agenda->getTipoClienteNombre();
+            if ($tipoPre === null || $tipoPre === 'Persona') {
+                $serviciosPost = array_filter($request->request->all('hdSubMateria'), fn($v) => $v !== '' && $v !== null);
+                if (count($serviciosPost) === 0) {
+                    $faltaCausa = true;
+                    $this->addFlash('error', 'Debe agregar al menos una causa (presione el botón + para añadirla a la lista) antes de contratar.');
+                }
+            }
+        }
+
+        if ($form->isSubmitted() && $form->isValid() && !$faltaCausa) {
             //$this->entityManager->flush();
             $entityManager = $this->entityManager;
 
