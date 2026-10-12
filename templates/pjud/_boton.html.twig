@@ -1,12 +1,16 @@
 {#
-  Botón "Detalle PJUD" (martillo del Poder Judicial) que abre el popup global.
-  Uso:  {% import 'pjud/_boton.html.twig' as pjud %}  {{ pjud.boton(causa.id) }}
-  Solo se pinta si hay id de Causa del CRM (si no, no hay nada que consultar).
+  Botón "Detalle PJUD" que abre el popup global. Uso:
+    {% import 'pjud/_boton.html.twig' as pjud %}  {{ pjud.boton(causa.id) }}
+  Solo se pinta si hay id de Causa del CRM (o token de fila de Lexflow); si no, no hay nada que consultar.
+
+  Estados (igual que Lexflow): nuevo (sin sincronizar, amarillo), sincronizando (verde, girando),
+  error (rojo, tachado) y listo (martillo del Poder Judicial). Parte siempre en "nuevo": el estado
+  real lo maneja /build/js/pjud-popup.js tras el clic.
 #}
 {% macro boton(causaId) %}
     {% if causaId %}
-        <button type="button" class="btn btn-outline-primary btn-sm px-2" data-pjud-causa="{{ causaId }}" title="Detalle PJUD" aria-label="Ver detalle de la causa en el Poder Judicial">
-            <img src="/build/img/martillo_pjud.png" alt="" width="16" height="16">
+        <button type="button" class="btn btn-outline-primary btn-sm px-2 pjud-e-nuevo" data-pjud-causa="{{ causaId }}" data-pjud-estado="nuevo" title="Aún no se ha sincronizado con el Poder Judicial" aria-label="Ver detalle de la causa en el Poder Judicial">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
         </button>
     {% endif %}
 {% endmacro %}

@@ -440,6 +440,61 @@
         abrirSub('Georeferencia', h);
     }
 
+    // ───────────────────────── estado del botón ─────────────────────────
+    // Igual que Lexflow: nuevo (sin sincronizar), sincronizando, error y listo (martillo). Los botones
+    // nacen en "nuevo" (ver pjud/_boton.html.twig); el estado cambia tras el clic y con lo que responde el popup.
+
+    var TITULOS_BOTON = {
+        nuevo: 'Aún no se ha sincronizado con el Poder Judicial',
+        sincronizando: 'Sincronizando con el Poder Judicial...',
+        error: 'La sincronización con el Poder Judicial falló',
+        listo: 'Detalle PJUD',
+    };
+    var ICONO_SYNC = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+        '<path d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"/>__TACHE__</svg>';
+    var ICONO_MARTILLO = '<img src="/build/img/martillo_pjud.png" alt="" width="16" height="16">';
+    var botonesPolling = {}; // causaId -> intervalo mientras el popup está cerrado y la causa sigue sincronizando
+
+    /** Estado de api-pjud -> variante del botón (sin_credenciales o desconocido = nuevo). */
+    function variante(e) { return (e === 'sincronizando' || e === 'error' || e === 'listo') ? e : 'nuevo'; }
+
+    function botonesDe(causaId) {
+        return Array.prototype.filter.call(document.querySelectorAll('[data-pjud-causa]'), function (b) {
+            return b.getAttribute('data-pjud-causa') === String(causaId);
+        });
+    }
+    function estadoBoton(causaId) {
+        var b = botonesDe(causaId)[0];
+        return b ? (b.getAttribute('data-pjud-estado') || 'nuevo') : null;
+    }
+    function pintarBoton(causaId, e) {
+        var v = variante(e);
+        botonesDe(causaId).forEach(function (b) {
+            b.setAttribute('data-pjud-estado', v);
+            b.className = b.className.replace(/\bpjud-e-\w+\b/g, '').replace(/\s+/g, ' ').trim() + ' pjud-e-' + v;
+            b.title = TITULOS_BOTON[v];
+            b.innerHTML = v === 'listo' ? ICONO_MARTILLO : ICONO_SYNC.replace('__TACHE__', v === 'error' ? '<line x1="4" y1="4" x2="20" y2="20"/>' : '');
+        });
+    }
+
+    function detenerPollingBoton(causaId) {
+        if (botonesPolling[causaId]) { clearInterval(botonesPolling[causaId]); delete botonesPolling[causaId]; }
+    }
+    /** Pregunta solo el estado (?solo_estado=1: no dispara scrape ni pide credenciales); cualquier cosa distinta de "sincronizando" es terminal. */
+    function pollingBoton(causaId) {
+        if (botonesPolling[causaId]) { return; }
+        botonesPolling[causaId] = setInterval(function () {
+            fetch(URL_DETALLE.replace('__ID__', causaId) + '?solo_estado=1', { credentials: 'same-origin', headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } })
+                .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+                .then(function (res) {
+                    if (!res.ok || res.j.estado === 'sincronizando') { return; }
+                    detenerPollingBoton(causaId);
+                    pintarBoton(causaId, res.j.estado);
+                })
+                .catch(function () { /* error de red: se reintenta en el próximo tick */ });
+        }, POLL_MS);
+    }
+
     // ───────────────────────── datos ─────────────────────────
 
     function pedir(metodo, forzar) {
@@ -461,11 +516,14 @@
             estado.cargando = false;
             if (!res.ok) {
                 estado.error = res.j.detail || 'No se pudo consultar el detalle PJUD';
+                // El clic lo dejó en "sincronizando" de forma optimista; si no se pudo consultar, vuelve a "sin sincronizar".
+                if (estadoBoton(estado.causaId) === 'sincronizando') { pintarBoton(estado.causaId, 'nuevo'); }
                 render();
                 return;
             }
             estado.error = null;
             estado.datos = res.j;
+            pintarBoton(estado.causaId, res.j.estado);
             render();
             if (res.j.estado === 'sincronizando') {
                 estado.timer = setTimeout(function () { pedir('GET'); }, POLL_MS);
@@ -491,10 +549,15 @@
         el.subtitulo.textContent = '';
         el.overlay.style.display = 'flex';
         document.body.classList.add('pjud-abierto');
+        detenerPollingBoton(causaId); // mientras el popup está abierto, él mismo consulta
         pedir('GET');
     }
     function cerrar() {
-        if (estado) { clearTimeout(estado.timer); }
+        if (estado) {
+            clearTimeout(estado.timer);
+            // Si sigue sincronizando, el botón sigue preguntando solo para pintar el resultado sin abrir el popup.
+            if (estadoBoton(estado.causaId) === 'sincronizando') { pollingBoton(estado.causaId); }
+        }
         estado = null;
         cerrarSub();
         el.overlay.style.display = 'none';
@@ -505,7 +568,14 @@
 
     document.addEventListener('click', function (e) {
         var b = e.target.closest('[data-pjud-causa]');
-        if (b) { e.preventDefault(); abrir(b.getAttribute('data-pjud-causa')); return; }
+        if (b) {
+            e.preventDefault();
+            var id = b.getAttribute('data-pjud-causa');
+            // Optimista: abrir el popup es lo que dispara el scrape de una causa nunca sincronizada.
+            if (estadoBoton(id) === 'nuevo') { pintarBoton(id, 'sincronizando'); }
+            abrir(id);
+            return;
+        }
 
         if (e.target.closest('[data-pjud-cerrar]')) { cerrar(); return; }
         if (e.target.closest('[data-pjud-cerrar-sub]')) { cerrarSub(); return; }

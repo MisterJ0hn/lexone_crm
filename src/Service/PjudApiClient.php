@@ -190,8 +190,10 @@ class PjudApiClient
      * @param array{tipo:string,rol:int,anio:int,tribunal:string,tipo_causa?:?string} $causa
      * @param array{rut?:?string,clave?:?string,metodo_login?:int}|\Closure|null $credenciales OJV; un Closure se
      *        resuelve solo si hay que sincronizar y puede lanzar \RuntimeException con el motivo de que no haya
+     * @param bool $soloEstado solo pregunta el estado (consultar_*): sin credenciales, sin sincronizar_* y sin movimientos;
+     *        es lo que usa el botón mientras espera que termine una sincronización
      */
-    public function detalle(string $materia, array $causa, bool $forzar = false, ?int $cuaderno = null, array|\Closure|null $credenciales = null): array
+    public function detalle(string $materia, array $causa, bool $forzar = false, ?int $cuaderno = null, array|\Closure|null $credenciales = null, bool $soloEstado = false): array
     {
         $motivoSinCredenciales = null;
         $resuelto = false;
@@ -233,7 +235,7 @@ class PjudApiClient
 
         $detalleEstado = $ultimoError = null;
         try {
-            $data = $this->peticion('POST', '/consultar_' . $materia, ['json' => $cuerpo + $this->credencialesCuerpo($obtener())]);
+            $data = $this->peticion('POST', '/consultar_' . $materia, ['json' => $cuerpo + ($soloEstado ? [] : $this->credencialesCuerpo($obtener()))]);
             $detalle = $data['causa'] ?? $data;
             $detalleEstado = trim((string) ($detalle['detalle_estado'] ?? '')) ?: null;
             $ultimoError = trim((string) ($detalle['ultimo_error'] ?? '')) ?: null;
@@ -251,6 +253,9 @@ class PjudApiClient
             || in_array($estadoNorm, self::ESTADOS_SINCRONIZANDO, true)
             || ($cfg['cuadernos'] && !$cuadernos);
 
+        if ($soloEstado) {
+            return ['estado' => $sincronizando ? 'sincronizando' : 'listo', 'detalle_estado' => $detalleEstado];
+        }
         if ($sincronizando) {
             $cred = $obtener();
             if (empty($cred['rut']) || empty($cred['clave'])) {

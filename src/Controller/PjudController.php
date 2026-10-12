@@ -134,7 +134,7 @@ class PjudController extends AbstractController
         $this->api->paraEmpresa($empresa);
         $cuaderno = $request->query->get('cuaderno');
         try {
-            $res = $this->api->detalle($competencia, $datos, $forzar, $cuaderno !== null ? (int) $cuaderno : null, $this->credenciales($empresa, $datos));
+            $res = $this->api->detalle($competencia, $datos, $forzar, $cuaderno !== null ? (int) $cuaderno : null, $this->credenciales($empresa, $datos), !$forzar && $request->query->getBoolean('solo_estado'));
         } catch (PjudApiException $e) {
             return new JsonResponse(['detail' => $e->getMessage()], 502);
         }
@@ -216,7 +216,7 @@ class PjudController extends AbstractController
         $this->api->paraEmpresa($empresa);
         $cuaderno = $request->query->get('cuaderno');
         try {
-            $res = $this->api->detalle($d['m'], $datos, $forzar, $cuaderno !== null ? (int) $cuaderno : null, $this->credenciales($empresa, $datos));
+            $res = $this->api->detalle($d['m'], $datos, $forzar, $cuaderno !== null ? (int) $cuaderno : null, $this->credenciales($empresa, $datos), !$forzar && $request->query->getBoolean('solo_estado'));
         } catch (PjudApiException $e) {
             return new JsonResponse(['detail' => $e->getMessage()], 502);
         }
