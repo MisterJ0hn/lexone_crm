@@ -260,8 +260,22 @@ class PjudController extends AbstractController
         };
     }
 
+    /**
+     * Qué consultar a api-pjud para una Causa del CRM: materia soportada y letra, rol numérico, año, corte y
+     * juzgado completos. null = el botón "Detalle PJUD" no aplica.
+     *
+     * @return array{materia:string,causa:array{tipo:string,rol:int,anio:int,tribunal:string,tipo_causa:?string}}|null
+     */
+    public static function especDeCausa(Causa $c): ?array
+    {
+        $materia = self::competencia($c->getMateria()?->getNombre());
+        $datos = $c->getCorte() !== null ? self::datosCausa($c) : null;
+
+        return $materia !== null && $datos !== null ? ['materia' => $materia, 'causa' => $datos] : null;
+    }
+
     /** @return array{tipo:string,rol:int,anio:int,tribunal:string,tipo_causa:?string}|null */
-    private function datosCausa(Causa $c): ?array
+    private static function datosCausa(Causa $c): ?array
     {
         $tribunal = $c->getJuzgado()?->getNombre();
         if (!$c->getLetra() || !ctype_digit(trim((string) $c->getRol())) || !$c->getAnio() || !$tribunal) {

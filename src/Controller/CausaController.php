@@ -42,7 +42,8 @@ class CausaController extends AbstractController
                             
                             JuzgadoRepository $juzgadoRepository,
                             \App\Repository\CorteRepository $corteRepository,
-                            ClienteRepository $clienteRepository){
+                            ClienteRepository $clienteRepository,
+                            \App\Service\LexflowCausaCreator $lexflowCausas){
         $entityManager = $this->entityManager;
         $causa=new Causa();
         $causa->setEstado(1);
@@ -111,6 +112,7 @@ class CausaController extends AbstractController
 
         $entityManager->persist($causa);
         $entityManager->flush();
+        $lexflowCausas->enviar($causa);
 
         return $this->render('causa/index.html.twig');
 

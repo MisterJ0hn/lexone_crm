@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% import 'pjud/_boton.html.twig' as pjud %}
 
 {% block title %}Contrato{% endblock %}
 
@@ -122,6 +123,7 @@
                                         data-materia="{{causa.materia.id}}"
                                         ><i class="fas fa-edit"></i></button>
                                     <a href="{{ path('contrato_linea_tiempo_detalle', {'id': causa.id}) }}" class="btn  btn-sm text-white bg-dark">LT</a>
+                                    {% if pjud_botones[causa.id] is defined %}{{ pjud.boton(causa.id, pjud_botones[causa.id]) }}{% endif %}
                                 </div>                        
                             </td>
                         </tr>

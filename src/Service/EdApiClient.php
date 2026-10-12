@@ -83,6 +83,45 @@ class EdApiClient
         return json_decode((string) $resp->getBody(), true) ?? [];
     }
 
+    /**
+     * Crea una causa en Lexflow (POST api/v1/causas).
+     *
+     * @param array<string,string> $payload materia, rol, tribunal, tipo_causa, ruc, fecha_ingreso, caratulado, estado_causa, institucion
+     * @return array{estado:'creada'|'duplicada'|'error',mensaje:string}
+     */
+    public function crearCausa(array $payload): array
+    {
+        if (!$this->configurado()) {
+            return ['estado' => 'error', 'mensaje' => 'La empresa no tiene API Key de Estado Diario'];
+        }
+        $headers = ['X-API-Key' => $this->apiKey, 'Accept' => 'application/json'];
+        if ($this->clienteGuid !== '') {
+            $headers['X-Cliente-Guid'] = $this->clienteGuid;
+        }
+        try {
+            $resp = $this->http->post('api/v1/causas', ['headers' => $headers, 'json' => $payload, 'http_errors' => false, 'timeout' => 10]);
+        } catch (GuzzleException $e) {
+            return ['estado' => 'error', 'mensaje' => 'No se pudo conectar con Lexflow: ' . mb_substr($e->getMessage(), 0, 160)];
+        }
+        $codigo = $resp->getStatusCode();
+        if ($codigo >= 200 && $codigo < 300) {
+            return ['estado' => 'creada', 'mensaje' => ''];
+        }
+        if ($codigo === 409) {
+            return ['estado' => 'duplicada', 'mensaje' => 'La causa ya existe en Lexflow'];
+        }
+        $cuerpo = json_decode((string) $resp->getBody(), true);
+        $detalle = is_array($cuerpo) ? ($cuerpo['detail'] ?? $cuerpo['mensaje'] ?? $cuerpo['message'] ?? null) : null;
+
+        return ['estado' => 'error', 'mensaje' => match (true) {
+            $codigo === 401 => 'Lexflow rechazó la API Key (inválida, revocada, vencida o IP no permitida)',
+            $codigo === 403 => 'La API Key de Lexflow no tiene permiso para crear causas',
+            is_string($detalle) && $detalle !== '' => 'Lexflow respondió ' . $codigo . ': ' . mb_substr($detalle, 0, 200),
+            is_array($detalle) => 'Lexflow respondió ' . $codigo . ': ' . mb_substr((string) json_encode($detalle, JSON_UNESCAPED_UNICODE), 0, 200),
+            default => 'Lexflow respondió con error ' . $codigo,
+        }];
+    }
+
     /** True si el texto es un PEM RSA privado que phpseclib puede cargar. */
     public static function llavePrivadaValida(string $pem): bool
     {

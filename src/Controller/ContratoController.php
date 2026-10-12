@@ -1027,7 +1027,8 @@ class ContratoController extends AbstractController
     function lineaTiempo(Contrato $contrato,
                         ModuloPerRepository $moduloPerRepository,
                         MateriaRepository $materiaRepository,
-                        PaisRepository $paisRepository): Response
+                        PaisRepository $paisRepository,
+                        \App\Service\PjudApiClient $pjudApi): Response
     {
         $this->denyAccessUnlessGranted('create','linea_tiempo');
         $user=$this->getUser();
@@ -1036,6 +1037,8 @@ class ContratoController extends AbstractController
         $cuenta=$contrato->getAgenda()->getCuenta();
 
         $tipoCliente = $contrato->getAgenda()->getTipoClienteNombre();
+
+        $pjudBotones = $this->botonesPjud($contrato, $pjudApi);
 
         // Cada causa lleva su propia materia; los combos de servicio/corte/letras del
         // modal de edición se cargan por AJAX según la materia de la causa editada.
@@ -1075,6 +1078,7 @@ class ContratoController extends AbstractController
                 'juzgados' => $cuenta->getJuzgadoCuentas(),
                 'clientes' => $clientes,
                 'tipoCliente' => $tipoCliente,
+                'pjud_botones' => $pjudBotones,
                 'formNuevoCliente' => $formNuevoCliente->createView(),
                 // Materia es un catálogo global: mismo listado para todas las empresas.
                 'materias' => $materiaRepository->findBy([], ['nombre' => 'ASC']),
@@ -1088,9 +1092,33 @@ class ContratoController extends AbstractController
             'contrato' => $contrato,
             'pagina'=>$pagina->getNombre(),
             'juzgados' => $cuenta->getJuzgadoCuentas(),
+            'pjud_botones' => $pjudBotones,
             'materias' => $materiaRepository->findBy([], ['nombre' => 'ASC']),
             'notas' => $this->notasDelContrato($contrato),
         ]);
+    }
+
+    /**
+     * Botón "Detalle PJUD" de la línea de tiempo: causas activas de la agenda con rol, corte y tribunal completos y
+     * de una materia que expone api-pjud. Devuelve [id de Causa => estado inicial del botón] (consultar_*, en
+     * paralelo y con caché corta); vacío si la empresa no tiene el detalle PJUD configurado.
+     *
+     * @return array<int,string>
+     */
+    private function botonesPjud(Contrato $contrato, \App\Service\PjudApiClient $pjudApi): array
+    {
+        $empresa = $contrato->getAgenda()->getEmpresa();
+        if (!$empresa?->isPjudConfigurado()) {
+            return [];
+        }
+        $specs = [];
+        foreach ($contrato->getAgenda()->getCausas() as $causa) {
+            if ($causa->getEstado() && ($spec = \App\Controller\PjudController::especDeCausa($causa))) {
+                $specs[$causa->getId()] = $spec;
+            }
+        }
+
+        return $pjudApi->paraEmpresa($empresa)->estadosIniciales($specs);
     }
 
     private const NOTA_EXTENSIONES = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'jpg', 'jpeg', 'png', 'gif', 'zip'];
@@ -1233,7 +1261,8 @@ class ContratoController extends AbstractController
                                 ServicioRepository $servicioRepository,
                                 JuzgadoRepository $juzgadoRepository,
                                 CorteRepository $corteRepository,
-                                PaisRepository $paisRepository): Response
+                                PaisRepository $paisRepository,
+                                \App\Service\LexflowCausaCreator $lexflowCausas): Response
     {
         $this->denyAccessUnlessGranted('create','linea_tiempo');
         $tipoCliente = $contrato->getAgenda()->getTipoClienteNombre();
@@ -1308,6 +1337,7 @@ class ContratoController extends AbstractController
             $entityManager->persist($cliente);
             $entityManager->flush();
 
+            $causasCreadas = [];
             foreach ($causasDatos as ['datos' => $datos, 'materia' => $materia, 'servicio' => $servicio]) {
                 $causa = new Causa();
                 $causa->setEstado(1);
@@ -1343,8 +1373,13 @@ class ContratoController extends AbstractController
                 }
 
                 $entityManager->persist($causa);
+                $causasCreadas[] = $causa;
             }
             $entityManager->flush();
+            // Ya tienen id: cada causa con rol, corte y tribunal se crea también en Lexflow.
+            foreach ($causasCreadas as $causaCreada) {
+                $lexflowCausas->enviar($causaCreada);
+            }
 
             return $this->redirectToRoute('contrato_linea_tiempo', ['id' => $contrato->getId()]);
         }
@@ -1692,8 +1727,11 @@ class ContratoController extends AbstractController
                                 ServicioRepository $servicioRepository,
                                 JuzgadoRepository $juzgadoRepository,
                                 CorteRepository $corteRepository,
-                                JuzgadoCuentaRepository $juzgadoCuentaRepository)
+                                JuzgadoCuentaRepository $juzgadoCuentaRepository,
+                                \App\Service\LexflowCausaCreator $lexflowCausas)
     {
+        // Si la causa no tenía rol, corte y tribunal completos y esta edición los completa, se crea en Lexflow.
+        $estabaCompleta = $lexflowCausas->payload($causa) !== null;
 
         
         if($request->request->get('juzgado')!=null){            
@@ -1724,7 +1762,10 @@ class ContratoController extends AbstractController
         $entity=$this->entityManager;
         $entity->persist($causa);
         $entity->flush();
-        
+        if (!$estabaCompleta) {
+            $lexflowCausas->enviar($causa);
+        }
+
         return $this->redirectToRoute('contrato_linea_tiempo',['id'=>$causa->getAgenda()->getContrato()->getId()]);
     }
 

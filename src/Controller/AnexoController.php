@@ -56,6 +56,7 @@ class AnexoController extends AbstractController
 
     #[Route("/{id}/causas", name: "anexo_causas", methods: ["GET","POST"])]
     public function causas(Contrato $contrato,
+                            \App\Service\LexflowCausaCreator $lexflowCausas,
                             CuotaRepository $cuotaRepository,
                             JuzgadoRepository $juzgadoRepository,
                             DiasPagoRepository $diasPagoRepository,
@@ -171,6 +172,7 @@ class AnexoController extends AbstractController
                 
                 $entityManager->persist($causa);
                 $entityManager->flush();
+                $lexflowCausas->enviar($causa);
 
                /* //$contrato->setVigenciaUltAnexo($contratoAnexo->getVigencia());
                 //$contrato->setFechaCreacionUltAnexo($contratoAnexo->getFechaCreacion());

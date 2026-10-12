@@ -321,6 +321,7 @@ class PanelAbogadoController extends AbstractController
     }
     #[Route("/{id}/contrata", name: "panel_abogado_contrata", methods: ["GET","POST"])]
     public function contrata(Agenda $agenda,Request $request,
+                            \App\Service\LexflowCausaCreator $lexflowCausas,
                             \App\Service\CorreoBienvenidaService $correoBienvenida,
                             AgendaStatusRepository  $agendaStatusRepository,
                             JuzgadoRepository $juzgadoRepository,
@@ -635,6 +636,7 @@ class PanelAbogadoController extends AbstractController
 
                 $entityManager->persist($causa);
                 $entityManager->flush();
+                $lexflowCausas->enviar($causa);
                 //if($etapa_pendiente){
                 //    $causa->setEtapaPendiente($etapa_pendiente->getNombre());
                 //}
