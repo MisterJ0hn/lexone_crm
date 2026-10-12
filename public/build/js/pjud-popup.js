@@ -495,6 +495,14 @@
         }, POLL_MS);
     }
 
+    // Botones que la lista ya trae en "sincronizando": se actualizan solos sin abrir el popup.
+    function iniciarBotones() {
+        Array.prototype.forEach.call(document.querySelectorAll('[data-pjud-causa][data-pjud-estado="sincronizando"]'), function (b) {
+            pollingBoton(b.getAttribute('data-pjud-causa'));
+        });
+    }
+    if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', iniciarBotones); } else { iniciarBotones(); }
+
     // ───────────────────────── datos ─────────────────────────
 
     function pedir(metodo, forzar) {

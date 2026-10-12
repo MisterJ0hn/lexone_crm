@@ -81,7 +81,7 @@
                                 {% endif %}
                             </td>
                             <td class="text-nowrap text-right">
-                                {{ pjud.boton(r.crm_causa_id|default(r.pjud_token|default(null))) }}
+                                {{ pjud.boton(r.crm_causa_id|default(r.pjud_token|default(null)), r.pjud_estado|default('nuevo')) }}
                                 {% if r.id is defined %}
                                     {% set accion = r.leido ? 'no_leido' : 'leido' %}
                                     <form method="post" action="{{ path('ed_estado_diario_' ~ accion, {id: r.id}) }}" class="d-inline">

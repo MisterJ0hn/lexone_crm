@@ -6,6 +6,7 @@ use App\Entity\Empresa;
 use App\Repository\CausaRepository;
 use App\Repository\EmpresaRepository;
 use App\Service\EdApiClient;
+use App\Service\PjudApiClient;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,6 +25,7 @@ class LexflowController extends AbstractController
 
     public function __construct(
         private readonly EdApiClient $api,
+        private readonly PjudApiClient $pjud,
         private readonly EmpresaRepository $empresas,
         private readonly CausaRepository $causas,
     ) {
@@ -105,6 +107,7 @@ class LexflowController extends AbstractController
                 }
             }
             unset($fila);
+            $this->estadosPjud($empresa, $datos['movimientos']);
         }
 
         return $this->render('lexflow/estado_diario.html.twig', [
@@ -248,6 +251,7 @@ class LexflowController extends AbstractController
                 }
             }
             unset($fila);
+            $this->estadosPjud($empresa, $datos['causas']);
         }
 
         return $this->render('lexflow/causas.html.twig', [
@@ -320,6 +324,29 @@ class LexflowController extends AbstractController
     private function rolesCrm(Empresa $empresa): ?string
     {
         return $empresa->isLexflowSoloCrm() ? $this->causas->rolesParaEdapi($empresa->getId()) : null;
+    }
+
+    /**
+     * Estado inicial del botón "Detalle PJUD" de cada fila (`pjud_estado`): se consulta consultar_* de api-pjud
+     * una vez por causa de la página, en paralelo. Solo filas con botón (crm_causa_id o pjud_token).
+     *
+     * @param list<array<string,mixed>> $filas
+     */
+    private function estadosPjud(Empresa $empresa, array &$filas): void
+    {
+        $specs = [];
+        foreach ($filas as $i => $fila) {
+            if (empty($fila['crm_causa_id']) && empty($fila['pjud_token'])) {
+                continue;
+            }
+            // En Mis causas la materia viene en `materia`; en Estado diario, en `jurisdiccion`.
+            if ($spec = PjudController::especDeFila($fila + ['jurisdiccion' => (string) ($fila['materia'] ?? '')])) {
+                $specs[$i] = $spec;
+            }
+        }
+        foreach ($this->pjud->paraEmpresa($empresa)->estadosIniciales($specs) as $i => $estado) {
+            $filas[$i]['pjud_estado'] = $estado;
+        }
     }
 
     /** Toma del querystring solo los filtros permitidos y no vacíos. */

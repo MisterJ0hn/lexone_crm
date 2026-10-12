@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\Empresa;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Promise\Utils;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -23,6 +24,8 @@ class PjudApiClient
     public const MATERIAS = ['civil', 'familia', 'laboral', 'cobranza', 'penal'];
 
     private const CATALOGO_TTL = 6 * 3600;
+    /** Vigencia del estado inicial del botón por causa (segundos). */
+    private const ESTADO_TTL = 30;
     private const ESTADOS_SINCRONIZANDO = ['sincronizando', 'pendiente', 'en proceso', 'encolada'];
     private const ESTADOS_ERROR = ['error', 'fallido', 'fallida', 'fallo', 'rechazada'];
     private const TIPOS_PENAL = ['Ordinaria', 'Exhorto', 'Administrativa', 'Extradición', 'Militar'];
@@ -213,6 +216,7 @@ class PjudApiClient
         };
 
         $cfg = self::CONFIG[$materia] ?? throw new PjudApiException('Materia no soportada por el detalle PJUD.');
+        $this->cache->delete($this->claveEstado($materia, $causa));
 
         $cuerpo = ['corte' => 0, 'tribunal' => 0, 'tipo' => $causa['tipo'], 'rol' => $causa['rol'], 'anio' => $causa['anio']];
         if ($materia === 'penal') {
@@ -295,6 +299,107 @@ class PjudApiClient
         }
 
         return $resultado;
+    }
+
+    /**
+     * Estado inicial del botón "Detalle PJUD" de varias causas a la vez: un consultar_<materia> por causa, en
+     * paralelo y sin credenciales. Es solo lectura (no sincroniza). Cualquier falla, causa no registrada en el
+     * PJUD o tribunal fuera del catálogo = 'nuevo' (sin sincronizar); nunca lanza.
+     *
+     * @param array<int|string,array{materia:string,causa:array{tipo:string,rol:int,anio:int,tribunal:string,tipo_causa?:?string}}> $causas
+     * @return array<int|string,string> misma clave -> nuevo|sincronizando|error|listo
+     */
+    public function estadosIniciales(array $causas): array
+    {
+        $estados = array_fill_keys(array_keys($causas), 'nuevo');
+        if (!$causas || !$this->configurado()) {
+            return $estados;
+        }
+
+        // Caché de 30 s por causa: solo se consultan a api-pjud las que no están.
+        $pendientes = [];
+        foreach ($causas as $k => $c) {
+            if (!isset(self::CONFIG[$c['materia']])) {
+                continue;
+            }
+            try {
+                $estados[$k] = $this->cache->get($this->claveEstado($c['materia'], $c['causa']), static fn() => throw new \LogicException('sin caché'));
+            } catch (\LogicException) {
+                $pendientes[$k] = $c;
+            }
+        }
+        if (!$pendientes) {
+            return $estados;
+        }
+        try {
+            $cabeceras = $this->cabeceras(true);
+        } catch (\Throwable) {
+            return $estados;
+        }
+
+        $promesas = [];
+        foreach ($pendientes as $k => $c) {
+            $cfg = self::CONFIG[$c['materia']];
+            $causa = $c['causa'];
+            $cuerpo = ['corte' => 0, 'tribunal' => 0, 'tipo' => $causa['tipo'], 'rol' => $causa['rol'], 'anio' => $causa['anio']];
+            if ($c['materia'] === 'penal') {
+                $cuerpo['tipo'] = $this->tipoPenal($causa['tipo_causa'] ?? null);
+            }
+            if ($cfg['catalogo']) {
+                try {
+                    [$cuerpo['corte'], $cuerpo['tribunal']] = $this->resolverTribunal($causa['tribunal'], $c['materia']);
+                } catch (\Throwable) {
+                    continue;
+                }
+            }
+            $promesas[$k] = $this->http->requestAsync('POST', $this->base . '/consultar_' . $c['materia'], [
+                'headers' => $cabeceras, 'json' => $cuerpo, 'timeout' => 8,
+            ]);
+        }
+
+        foreach (Utils::settle($promesas)->wait() as $k => $r) {
+            if ($r['state'] !== 'fulfilled') {
+                continue;
+            }
+            $codigo = $r['value']->getStatusCode();
+            if ($codigo === 404) {
+                // El PJUD aún no la tiene: sin sincronizar (respuesta definitiva, se guarda en caché).
+                $this->guardarEstado($causas[$k], 'nuevo');
+                continue;
+            }
+            $data = $codigo === 200 ? json_decode((string) $r['value']->getBody(), true) : null;
+            if (!is_array($data)) {
+                continue;
+            }
+            $d = $data['causa'] ?? $data;
+            $norm = mb_strtolower(trim((string) ($d['estado'] ?? '')));
+            $cfg = self::CONFIG[$causas[$k]['materia']];
+            $estados[$k] = match (true) {
+                in_array($norm, self::ESTADOS_ERROR, true) => 'error',
+                in_array($norm, self::ESTADOS_SINCRONIZANDO, true), $cfg['cuadernos'] && empty($d['cuadernos']) => 'sincronizando',
+                default => 'listo',
+            };
+            $this->guardarEstado($causas[$k], $estados[$k]);
+        }
+
+        return $estados;
+    }
+
+    /** @param array{materia:string,causa:array<string,mixed>} $c */
+    private function guardarEstado(array $c, string $estado): void
+    {
+        // beta INF fuerza recalcular y guardar aunque ya hubiera un valor.
+        $this->cache->get($this->claveEstado($c['materia'], $c['causa']), static function (ItemInterface $item) use ($estado) {
+            $item->expiresAfter(self::ESTADO_TTL);
+            return $estado;
+        }, INF);
+    }
+
+    private function claveEstado(string $materia, array $causa): string
+    {
+        return 'pjud_estado_' . $this->empresaId . '_' . md5(implode('|', [
+            $materia, $causa['tipo'], $causa['rol'], $causa['anio'], self::normalizar((string) $causa['tribunal']),
+        ]));
     }
 
     private function tipoPenal(?string $tipoCausa): string

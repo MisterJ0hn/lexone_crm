@@ -167,6 +167,25 @@ class PjudController extends AbstractController
     }
 
     /**
+     * Qué consultar a api-pjud para una fila de Lexflow (rol, tribunal y materia salen de la fila). `$materia` es la
+     * competencia ya resuelta si se conoce. null = no se puede consultar.
+     *
+     * @return array{materia:string,causa:array{tipo:string,rol:int,anio:int,tribunal:string,tipo_causa:?string}}|null
+     */
+    public static function especDeFila(array $fila, ?string $materia = null): ?array
+    {
+        $materia ??= self::competenciaDeFila($fila);
+        $tribunal = trim((string) ($fila['tribunal'] ?? ''));
+        if ($materia === null || $tribunal === '' || !preg_match('/^([A-Za-z]+)-(\d+)-(\d{4})$/', trim((string) ($fila['rol'] ?? '')), $m)) {
+            return null;
+        }
+        return ['materia' => $materia, 'causa' => [
+            'tipo' => strtoupper($m[1]), 'rol' => (int) $m[2], 'anio' => (int) $m[3], 'tribunal' => $tribunal,
+            'tipo_causa' => isset($fila['tipo_causa']) ? (string) $fila['tipo_causa'] : null,
+        ]];
+    }
+
+    /**
      * Identificador para el botón "Detalle PJUD" de una fila de Lexflow que NO coincide con una causa del CRM.
      * Lleva rol, tribunal, competencia y tipo de causa en base64url; null si la fila no se puede consultar
      * (competencia no soportada o rol sin formato LETRA-NÚMERO-AÑO).

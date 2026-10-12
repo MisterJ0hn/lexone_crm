@@ -126,7 +126,7 @@
                             {% endif %}
                         </td>
                         {% if pjud_info.configurado %}
-                            <td class="text-nowrap text-right">{{ pjud.boton(c.crm_causa_id|default(c.pjud_token|default(null))) }}</td>
+                            <td class="text-nowrap text-right">{{ pjud.boton(c.crm_causa_id|default(c.pjud_token|default(null)), c.pjud_estado|default('nuevo')) }}</td>
                         {% endif %}
                     </tr>
                 {% else %}
