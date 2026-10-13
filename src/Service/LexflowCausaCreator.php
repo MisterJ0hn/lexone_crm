@@ -33,7 +33,8 @@ class LexflowCausaCreator
         if (!$empresa?->isLexflowHabilitado()) {
             return;
         }
-        $res = $this->api->paraEmpresa($empresa)->crearCausa($payload);
+        return; // Se deshabilita temporalmente la creación de causas en Lexflow, hasta que se resuelvan los problemas de duplicados y de roles incompletos.
+        /*$res = $this->api->paraEmpresa($empresa)->crearCausa($payload);
 
         if ($res['estado'] === 'error') {
             $this->logger->warning('Lexflow: no se pudo crear la causa ' . $payload['rol'] . ' (id ' . $causa->getId() . '): ' . $res['mensaje']);
@@ -41,7 +42,7 @@ class LexflowCausaCreator
             if (method_exists($session, 'getFlashBag')) {
                 $session->getFlashBag()->add('error', 'La causa ' . $payload['rol'] . ' se creó, pero no se pudo crear en Lexflow: ' . $res['mensaje']);
             }
-        }
+        }*/
     }
 
     /**
