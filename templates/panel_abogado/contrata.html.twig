@@ -647,19 +647,20 @@
     // visible (p. ej. Sexo y Estado civil no existen en Convenio/Empresa).
     function camposObligatorios(){
         return [
-            ['Nombre', '#{{ form.nombre.vars.id }}'],
+            ['Nombre', '#{{ form.nombre is defined ? form.nombre.vars.id : '' }}'],
             ['Rut', '.format-rut'],
             ['Email', '.emailCliente'],
             ['Sexo', 'select[name="cboSexo"]'],
-            ['Nacionalidad', '#{{ form.pais.vars.id }}'],
+            ['Nacionalidad', '#{{ form.pais is defined ? form.pais.vars.id : '' }}'],
             ['Región', 'select[name="cboRegion"]'],
             ['Ciudad', 'select[name="cboCiudad"]'],
             ['Comuna', 'select[name="cboComuna"]'],
-            ['Dirección', '#{{ form.direccion.vars.id }}'],
+            ['Dirección', '#{{ form.direccion is defined ? form.direccion.vars.id : '' }}'],
             ['Teléfono', '.telefonoCliente'],
-            ['Estado civil', '#{{ form.estadoCivil.vars.id }}'],
-            ['Reunión', '#{{ form.reunion.vars.id }}']
-        ];
+            ['Estado civil', '#{{ form.estadoCivil is defined ? form.estadoCivil.vars.id : '' }}'],
+            ['Reunión', '#{{ form.reunion is defined ? form.reunion.vars.id : '' }}']
+        // Campos que el formulario no tiene (p. ej. Estado civil en Empresa) dejan el selector en "#".
+        ].filter(function(c){ return c[1] !== '#'; });
     }
 
     function validarut(){
