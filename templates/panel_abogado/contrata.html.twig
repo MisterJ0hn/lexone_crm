@@ -647,26 +647,63 @@
     
     var esClientePersona = {{ (agenda.tipoCliente is null or agenda.tipoCliente.nombre == 'Persona') ? 'true' : 'false' }};
 
+    // Campos obligatorios de "Preparar Contrato". Cada uno se valida solo si está
+    // visible (p. ej. Sexo y Estado civil no existen en Convenio/Empresa).
+    function camposObligatorios(){
+        return [
+            ['Nombre', '#{{ form.nombre.vars.id }}'],
+            ['Rut', '.format-rut'],
+            ['Email', '.emailCliente'],
+            ['Sexo', 'select[name="cboSexo"]'],
+            ['Nacionalidad', '#{{ form.pais.vars.id }}'],
+            ['Región', 'select[name="cboRegion"]'],
+            ['Ciudad', 'select[name="cboCiudad"]'],
+            ['Comuna', 'select[name="cboComuna"]'],
+            ['Dirección', '#{{ form.direccion.vars.id }}'],
+            ['Teléfono', '.telefonoCliente'],
+            ['Estado civil', '#{{ form.estadoCivil.vars.id }}'],
+            ['Reunión', '#{{ form.reunion.vars.id }}']
+        ];
+    }
+
     function validarut(){
         $('button').attr("disabled", true);
 
+        function falla(mensaje, $campo){
+            alert(mensaje);
+            $('button').attr("disabled", false);
+            if($campo && $campo.length){ $campo.focus(); }
+            return false;
+        }
+
+        var obligatorios = camposObligatorios();
+        for(var k=0; k<obligatorios.length; k++){
+            var $c = $(obligatorios[k][1]).first();
+            if($c.length && $c.is(':visible') && $.trim($c.val() || '') === ''){
+                return falla('Debe ingresar: ' + obligatorios[k][0], $c);
+            }
+        }
+        if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($.trim($('.emailCliente').val()))){
+            return falla('El email no es válido', $('.emailCliente'));
+        }
+
+        var monto = parseInt(String($(".monto-contrato").val()).replace(/\D/g, ''), 10) || 0;
+        if(monto <= 0){
+            return falla('Debe ingresar un monto de contrato', $(".monto-contrato"));
+        }
+        var $valorCuota = $('.valor-cuota').first();
+        if($valorCuota.is(':visible') && (parseInt(String($valorCuota.val()).replace(/\D/g, ''), 10) || 0) <= 0){
+            return falla('Debe ingresar el valor de la cuota', $valorCuota);
+        }
+        if($('input[name="chkDiasPago"]').length && !$('input[name="chkDiasPago"]:checked').length){
+            return falla('Debe seleccionar un día de pago', $('.diasPago'));
+        }
 
         if(esClientePersona && $('.detalle_causas tr').length==0){
             if($('.cbomateria').val()!="" || $('.cboSubMateria').val()!="" || $('.txtRol').val()!=""){
-                alert("Ingresó datos de la causa pero no la agregó. Presione el botón + para agregarla a la lista.");
-            }else{
-                alert("Debe ingresar al menos una Causa");
+                return falla("Ingresó datos de la causa pero no la agregó. Presione el botón + para agregarla a la lista.", $('.cbomateria'));
             }
-            $(".cboSubMateria").focus();
-            $('button').attr("disabled", false);
-            return false;
-
-        }
-        if($(".monto-contrato").val()<=0){
-            alert("Debe ingresar un monto");
-            $(".monto-contrato").focus();
-            $('button').attr("disabled", false);
-            return false;
+            return falla("Debe ingresar al menos una Causa", $('.cbomateria'));
         }
         if($.validateRut($(".format-rut").val())) {
             return true;
