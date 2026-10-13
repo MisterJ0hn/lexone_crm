@@ -44,10 +44,15 @@
                         </div>
                         <small class="text-muted">Formato: Letra-Rol-Año</small>
                     </div>
-                    <div class="col-sm-12 col-md-2">
+                    <div class="col-sm-12 col-md-3">
                         <input type="text" class="form-control txtCaratulado-nueva" placeholder="Caratulado" maxlength="30">
                     </div>
-                    <div class="col-sm-12 col-md-2">
+                    <div class="col-sm-12 col-md-5">
+                        <select class="form-control corte-nueva" onchange="cambiaCorteNueva(this.value)">
+                            <option value="">Seleccione Corte</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-12 col-md-6">
                         <select class="form-control juzgado-nueva">
                             <option value="">Seleccione Juzgado</option>
                             
@@ -257,6 +262,29 @@
             }
         });
         letrasCausaNueva(materiaId);
+        // La corte depende de la materia y habilita el combo de juzgados.
+        $(".juzgado-nueva").html('<option value="">Seleccione Juzgado</option>');
+        $.ajax({
+            url: "/materia/"+materiaId+"/corte_combo",
+            type: "post",
+            dataType: "html",
+            cache: false,
+            success: function(data){ $(".corte-nueva").html(data); }
+        });
+    }
+
+    function cambiaCorteNueva(corteId){
+        if(!corteId){
+            $(".juzgado-nueva").html('<option value="">Seleccione Juzgado</option>');
+            return;
+        }
+        $.ajax({
+            url: "/juzgado_cuenta/"+corteId+"/corte_combo",
+            type: "post",
+            dataType: "html",
+            cache: false,
+            success: function(data){ $(".juzgado-nueva").html(data); }
+        });
     }
 
     // Igual que letrasCausa() (modal "Editar"), pero con sus propias clases para
@@ -298,13 +326,14 @@
                 txtRol: $(".txtRol-nueva").val(),
                 txtAnio: $(".txtAnio-nueva").val(),
                 txtCaratulado: $(".txtCaratulado-nueva").val(),
+                corte: $(".corte-nueva").val(),
                 juzgado: $(".juzgado-nueva").val()
             },
             cache: false,
             success: function(){
                 // location.reload() conserva los valores de los campos en algunos
                 // navegadores: se limpian antes de recargar.
-                $(".cbomateria-nueva, .cboSubMateria-nueva, .txtLetra-nueva, .txtRol-nueva, .txtAnio-nueva, .txtCaratulado-nueva, .juzgado-nueva").val('');
+                $(".cbomateria-nueva, .cboSubMateria-nueva, .txtLetra-nueva, .txtRol-nueva, .txtAnio-nueva, .txtCaratulado-nueva, .corte-nueva, .juzgado-nueva").val('');
                 location.reload();
             },
             error: function(){

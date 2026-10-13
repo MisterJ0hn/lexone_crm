@@ -164,15 +164,7 @@
                     <p>{{contrato.fechaPrimerPago|date('Y-m-d')}}</p> 
                 </div>
             </div>
-            <hr>
-            <div class="card">
-                <div class="card-header">
-                    Roles
-                </div>
-                <div class="card-body" id="contratoRoles">
-            
-                </div>
-            </div>
+           
             <div class="col-sm-12 col-md-12">
                 <small class="text-muted">Observación</small>
                 <p>{{contrato.observacion|raw}}</p>   
@@ -208,22 +200,6 @@
 
     </div>
 </div>
-    <script>
-        
-        $.ajax({
-            url:"{{path('contrato_new_rol',{'id':contrato.id,'mode':'view'})}}",
-            type: "get",
-            dataType: "html",
-            cache: false,
-            contentType: false,
-            processData: false,
-            async: true,
-            success:function(data){
-                $("#contratoRoles").html(data);
-            }
-    
-        });
-    </script>
     
 
 {% endblock %}
