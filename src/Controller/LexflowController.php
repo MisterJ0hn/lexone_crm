@@ -217,14 +217,22 @@ class LexflowController extends AbstractController
         $vigencia = array_key_exists((string) $request->query->get('vigencia'), self::VIGENCIAS)
             ? $request->query->get('vigencia') : 'vigentes';
         $materia = $request->query->get('materia');
-        $filtros = $this->filtros($request, ['busqueda', 'estado_causa', 'tribunal', 'sin_actividad_meses', 'con_audiencia_dias', 'orden']);
+        $tab = $request->query->get('tab') === 'cortes' ? 'cortes' : 'materias';
+        $filtros = $tab === 'cortes'
+            ? $this->filtros($request, ['busqueda', 'tipo', 'corte'])
+            : $this->filtros($request, ['busqueda', 'estado_causa', 'tribunal', 'sin_actividad_meses', 'con_audiencia_dias', 'orden']);
         $error = null;
         $datos = ['total' => 0, 'total_pages' => 1, 'page' => 1, 'causas' => []];
         $resumen = ['total' => 0, 'por_materia' => [], 'estados_causa' => []];
 
         try {
             $roles = $this->rolesCrm($empresa);
-            if ($roles !== '') {
+            if ($tab === 'cortes') {
+                // Cortes de Mis causas, limitado a las causas del CRM si corresponde.
+                if ($roles !== '') {
+                    $datos = $this->api->get('causas/cortes', $filtros + ($roles !== null ? ['roles' => $roles] : []) + ['vigencia' => $vigencia, 'page' => $page, 'limit' => 50]);
+                }
+            } elseif ($roles !== '') {
                 $restriccion = $roles !== null ? ['roles' => $roles] : [];
                 $datos = $this->api->get('causas', $filtros + $restriccion + [
                     'materia' => $materia, 'vigencia' => $vigencia, 'page' => $page, 'limit' => 20,
@@ -237,7 +245,7 @@ class LexflowController extends AbstractController
 
         // Botón "Detalle PJUD": igual que en Estado Diario, por causa del CRM o por token externo.
         $pjudInfo = ['configurado' => $empresa->isPjudConfigurado()];
-        if ($pjudInfo['configurado'] && !empty($datos['causas'])) {
+        if ($tab === 'materias' && $pjudInfo['configurado'] && !empty($datos['causas'])) {
             $mapa = $this->causas->mapaPorRol($empresa->getId());
             foreach ($datos['causas'] as &$fila) {
                 $crm = $mapa[CausaRepository::claveRol((string) ($fila['rol'] ?? ''), (string) ($fila['tribunal'] ?? ''))] ?? null;
@@ -256,7 +264,8 @@ class LexflowController extends AbstractController
 
         return $this->render('lexflow/causas.html.twig', [
             'pjud_info' => $pjudInfo,
-            'tab' => 'materias',
+            'tab' => $tab,
+            'tipos_corte' => self::TIPOS_CORTE,
             'vigencia' => $vigencia,
             'vigencias' => self::VIGENCIAS,
             'materia' => $materia,
