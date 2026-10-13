@@ -190,7 +190,7 @@ class PanelAgendadorController extends AbstractController
                 $entityManager->flush();
                 
                 $this->addFlash('success',' Carga realizada con éxito');
-               return $this->redirectToRoute('panel_agendador_index',['bStatus'=>1]);
+               return $this->redirectToRoute('panel_agendador_index');
                
 
                 // $agenda=new Agenda();
@@ -246,21 +246,7 @@ class PanelAgendadorController extends AbstractController
 
         $fecha="(a.fechaCarga between '$dateInicio' and '$dateFin 23:59:59')
                " ;
-        /*switch($tipo_fecha){
-            case 0:
-                
-                break;
-            case 1:
-                $fecha="a.fechaAsignado between '$dateInicio' and '$dateFin 23:59:59'" ;
-                break;
-            case 2:
-                $fecha="a.fechaContrato between '$dateInicio' and '$dateFin 23:59:59'" ;
-                break;
-            default:
-                $fecha="a.fechaCarga between '$dateInicio' and '$dateFin 23:59:59'" ;
-                break;
-        }*/
-        //$fecha="a.fechaCarga between '$dateInicio' and '$dateFin 23:59:59'" ;
+        
        
         if(null !== $request->query->get('bStatus') && trim($request->query->get('bStatus')!='')){
             $status=$request->query->get('bStatus');
