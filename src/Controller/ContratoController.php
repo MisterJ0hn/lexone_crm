@@ -92,7 +92,7 @@ class ContratoController extends AbstractController
 
             $dateInicio=date('Y-m-d',mktime(0,0,0,date('m'),date('d'),date('Y'))-60*60*24*30*24);//2 años atrás
             $dateFin=date('Y-m-d');
-            $fecha=$otros. " and a.status in (7,14)";
+            $fecha=$otros. " and a.status in (7)";
 
         }else{
             if(null !== $request->query->get('bFiltro') && $request->query->get('bFiltro')!=''){
@@ -122,6 +122,7 @@ class ContratoController extends AbstractController
             case 13:
             case 7:
                 $query=$contratoRepository->findByPers(null,$user->getEmpresaActual(),$compania,$filtro,null,$fecha);
+                
                 $companias=$cuentaRepository->findByPers($user->getId(),1);
                 break;            
             default:
@@ -130,6 +131,7 @@ class ContratoController extends AbstractController
                 
             break;
         }
+        $resumenes = $contratoRepository->findByPersGroup(null,$user->getEmpresaActual(),$compania,7,$filtro,null,$fecha);
         //$companias=$cuentaRepository->findByPers($user->getId());
         //$query=$contratoRepository->findAll();
         $contratos=$paginator->paginate(
@@ -138,6 +140,7 @@ class ContratoController extends AbstractController
             20 /*limit per page*/,
             array('defaultSortFieldName' => 'id', 'defaultSortDirection' => 'desc'));
         return $this->render('contrato/index.html.twig', [
+
             'contratos' => $contratos,
             'bFiltro'=>$filtro,
             'bFolio'=>$folio,
@@ -145,9 +148,10 @@ class ContratoController extends AbstractController
             'bCompania'=>$compania,
             'dateInicio'=>$dateInicio,
             'dateFin'=>$dateFin,
-            'pagina'=>$pagina->getNombre(),
+            'pagina'=>'Clientes',
             'error'=>$error,
             'error_toast'=>$error_toast,
+            'resumenes'=>$resumenes
         ]);
     }
 

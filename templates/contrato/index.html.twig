@@ -3,6 +3,27 @@
 {% block title %}Contrato index{% endblock %}
 
 {% block body %}
+    <div class="row">
+        {% set total = 0 %}
+        {% for resumen in resumenes %}
+
+        <div class="col-sm-6 col-md-3">
+            
+            <div class="info-box">
+                <span class="info-box-icon bg-info"><i class="fab fa-searchengin"></i></span>
+
+                <div class="info-box-content">
+                <span class="info-box-text">CONTRATO</span>
+                <span class="info-box-number">{{resumen.valor}}</span>                                   
+                </div>
+
+                
+                <!-- /.info-box-content -->
+            </div>
+      
+        </div>
+        {% endfor %}
+    </div>
     <form action="" method="get">
     {{ include('filtro.html.twig') }}
     </form>

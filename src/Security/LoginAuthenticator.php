@@ -32,6 +32,15 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
     ) {
     }
 
+    /** Clave de sesión con el último RUT de empresa digitado, para repoblar el formulario tras un error. */
+    public const LAST_RUT_EMPRESA = '_security.last_rut_empresa';
+
+    /** Deja solo dígitos y K en mayúscula: "76.123.456-7" y "761234567" comparan igual. */
+    public static function normalizarRut(string $rut): string
+    {
+        return strtoupper(preg_replace('/[^0-9kK]/', '', $rut) ?? '');
+    }
+
     public function authenticate(Request $request): Passport
     {
         $username = $request->request->get('username', '');
@@ -44,13 +53,27 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
             throw new CustomUserMessageAuthenticationException('Por favor completa la verificación reCAPTCHA.');
         }
 
-        return new Passport(
-            new UserBadge($username, function (string $userIdentifier): Usuario {
-                $user = $this->entityManager->getRepository(Usuario::class)->findOneBy([
-                    'username' => $userIdentifier,
-                    'estado' => 1,
-                ]);
+        $rutEmpresa = self::normalizarRut((string) $request->request->get('rut_empresa', ''));
+        $request->getSession()->set(self::LAST_RUT_EMPRESA, (string) $request->request->get('rut_empresa', ''));
 
+        return new Passport(
+            new UserBadge($username, function (string $userIdentifier) use ($rutEmpresa): Usuario {
+                // El username se repite entre empresas: se elige el que pertenece a la del RUT digitado.
+                $user = null;
+                if ($rutEmpresa !== '') {
+                    $candidatos = $this->entityManager->getRepository(Usuario::class)->findBy([
+                        'username' => $userIdentifier,
+                        'estado' => 1,
+                    ]);
+                    foreach ($candidatos as $candidato) {
+                        if (self::normalizarRut((string) $candidato->getEmpresa()?->getRut()) === $rutEmpresa) {
+                            $user = $candidato;
+                            break;
+                        }
+                    }
+                }
+
+                // Mismo mensaje que usuario inexistente para no revelar qué dato falló.
                 if (!$user) {
                     throw new CustomUserMessageAuthenticationException('Username could not be found.');
                 }

@@ -10,6 +10,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UsuarioRepository::class)]
+#[ORM\UniqueConstraint(name: "uniq_usuario_username_empresa", columns: ["username", "empresa_id"])]
 class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id()]
@@ -17,10 +18,10 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: "integer")]
     private $id;
 
-    #[ORM\Column(type: "string", length: 180, unique: true)]
+    #[ORM\Column(type: "string", length: 180)]
     private $username;
     
-    #[ORM\Column(type: "string", length: 180, unique: true)]
+    #[ORM\Column(type: "string", length: 180)]
     private $usernameOriginal;
 
     /**
@@ -312,9 +313,13 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @see UserInterface
      */
+    /**
+     * El username ya no es único global (lo es por empresa), así que la identidad de sesión y de
+     * remember-me es el id (ver `property: id` en security.yaml).
+     */
     public function getUserIdentifier(): string
     {
-        return (string) $this->username;
+        return (string) $this->id;
     }
 
     public function setUsername(string $username): self

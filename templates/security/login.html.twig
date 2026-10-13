@@ -89,13 +89,29 @@
 
                     <div class="input-group mb-3">
                         <input type="text"
+                               value="{{ last_rut_empresa }}"
+                               name="rut_empresa"
+                               id="inputRutEmpresa"
+                               class="form-control"
+                               placeholder="RUT empresa"
+                               required
+                               autofocus>
+
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-building"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <input type="text"
                                value="{{ last_username }}"
                                name="username"
                                id="inputUsername"
                                class="form-control"
                                placeholder="Usuario"
-                               required
-                               autofocus>
+                               required>
 
                         <div class="input-group-append">
                             <div class="input-group-text">

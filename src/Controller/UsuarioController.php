@@ -106,14 +106,27 @@ class UsuarioController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->entityManager;
 
+            // La empresa sale de la cuenta elegida; el username debe ser único dentro de ella.
+            $cuenta=$this->entityManager->getRepository(Cuenta::class)->find($_POST['cboEmpresa'] ?? 0);
+            if(!$cuenta){
+                $this->addFlash('error','Debe seleccionar la empresa del usuario.');
+                return $this->redirectToRoute('usuario_index');
+            }
+            $existente=$this->entityManager->getRepository(Usuario::class)->findOneBy(['username'=>$usuario->getUsername(),'empresa'=>$cuenta->getEmpresa()]);
+            if($existente){
+                $this->addFlash('error','No se creó el usuario: ya existe el username "'.$usuario->getUsername().'" en la empresa seleccionada.');
+                return $this->redirectToRoute('usuario_index');
+            }
+
             try{
                 $password=$usuario->getPassword();
                 $encoded=$encoder->hashPassword($usuario,$password);
                 $usuario->setPassword($encoded);
-                $usuario->setUsername($usuario->getUsername().$user->getEmpresaActual());
-            
+                $usuario->setUsername($usuario->getUsername());
+                $usuario->setEmpresa($cuenta->getEmpresa());
+
                 $usuarioCuenta=new UsuarioCuenta();
-        
+
                 $usuario->setTipoDocumento($tipoDocumento->find($request->request->get('cboTipoDocumento')));
 
                 $usuario->setFechaNacimiento(new \DateTime(date('Y-m-d H:i',strtotime($request->request->get('fecha_nacimiento')))));
@@ -122,9 +135,6 @@ class UsuarioController extends AbstractController
                 $entityManager->persist($usuario);
                 $entityManager->flush();
 
-                $getcuenta=$_POST['cboEmpresa'];
-            
-                $cuenta=$this->entityManager->getRepository(Cuenta::class)->find($getcuenta);
                 $usuarioCuenta=new UsuarioCuenta();
                 $usuarioCuenta->setCuenta($cuenta);
                 $usuarioCuenta->setUsuario($usuario);
@@ -294,7 +304,7 @@ class UsuarioController extends AbstractController
         try{
             $usuarioRepository->restaurarUsername($usuario);
         } catch (\Exception $e) {
-            $usuarioexistente=$usuarioRepository->findOneBy(['username'=>$usuario->getUsernameOriginal()]);
+            $usuarioexistente=$usuarioRepository->findOneBy(['username'=>$usuario->getUsernameOriginal(),'empresa'=>$usuario->getEmpresa()]);
             if($usuarioexistente){
                 $this->addFlash('error', 'No se puede restaurar el username original del usuario porque ya existe otro usuario con ese username. Nombre Usuario: '.$usuarioexistente->getNombre().' - Perfil: '.$usuarioexistente->getUsuarioTipo()->getNombre());
 

@@ -85,15 +85,8 @@
 			<h1>Datos de Sesión</h1>
 			</div>
 			<div class="col-sm-6 col-md-3">
-				<small class="text-muted">Usuario</small>
-				<div class="input-group">
-                            
-							{{form_row(form.username,{'label':false,'attr':{'class':'form-control','placeholder':'Usuario'}})}}			
-                            <div class="input-group-append">
-                               <a href="#" class="btn btn-outline-success">{{empresaActual}}</a> 
-                            </div>
-                        </div>
-				
+				<small class="text-muted">Usuario</small>          
+				{{form_row(form.username,{'label':false,'attr':{'class':'form-control','placeholder':'Usuario'}})}}			
 			</div>
 			<div class="col-sm-6 col-md-3">
 				<small class="text-muted">Password</small>
