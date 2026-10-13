@@ -227,7 +227,7 @@
     <h4 id="materia">Causa</h4>
 
         <div class="row">
-            <div class="col-sm-12 col-md-4">
+            <div class="col-sm-12 col-md-2">
                 <select name="cboMateria" class="form-control cbomateria" onchange="cambiaMateriaCausa(this.value)">
                     <option value="">Seleccione Materia</option>
                     {% for materia in materias %}
@@ -235,7 +235,7 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="col-sm-12 col-md-3 submateria">
+            <div class="col-sm-12 col-md-4 submateria">
                 <div class="input-group">
                     <select name="cboSubMateria" class="form-control cboSubMateria"  >
                         <option>Seleccione Servicio</option>
@@ -243,21 +243,17 @@
                     <div class="input-group-append"><button type="button" class="btn btn-outline-primary" data-servicio-nuevo title="Agregar nuevo servicio"><i class="fas fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="col-sm-12 col-md-4">
+            <div class="col-sm-12 col-md-6">
                 <div class="row">
-                    <div class="col-sm-12 col-md-3 ml-0 mr-0 pl-0 pr-0 letras">
+                    <div class="col-sm-12 col-md-4 ml-0 mr-0 pl-0 pr-0 letras">
                         <input type="text" name="txtLetra" placeholder="Letra" class="form-control txtLetra" size="3" maxlength="10"> 
                         
                     </div>
-                    <div class="col-sm-12 col-md-1 ml-0 mr-0 pl-0 pr-0" align="center">
-                        -
-                    </div>
+                    <div class="col-sm-12 col-md-1 ml-0 mr-0 pl-0 pr-0" align="center">-</div>
                     <div class="col-sm-12 col-md-3 ml-0 mr-0 pl-0 pr-0">
                         <input type="text" name="txtRol" placeholder="N°" class="form-control txtRol" size="6" maxlength="255">
                     </div>
-                    <div class="col-sm-12 col-md-1 ml-0 mr-0 pl-0 pr-0" align="center">
-                        -
-                    </div>
+                    <div class="col-sm-12 col-md-1 ml-0 mr-0 pl-0 pr-0" align="center">-</div>
                     <div class="col-sm-12 col-md-3 ml-0 mr-0 pl-0 pr-0">
                         <input type="text" name="txtAnio" placeholder="Año" class="form-control txtAnio" size="4" maxlength="4">
                     </div>
@@ -266,7 +262,7 @@
             </div> 
         </div>
         <div class="row">
-            <div class="col-sm-12 col-md-5">
+            <div class="col-sm-12 col-md-6">
                 
                 <select name="corte" class="form-control corte">
                     <option value=""> Seleccione Corte </option>
@@ -283,7 +279,7 @@
             </div>  
         </div>
         <div class="row mt-2">
-            <div class="col-sm-12 col-md-10">
+            <div class="col-sm-12 col-md-11">
                 <input type="text" name="txtCaratulado" placeholder="Caratulado" class="form-control txtCaratulado" size="30" maxlength="30">
                 <small class="text-muted">Caracteres max. 30</small>
             </div>
