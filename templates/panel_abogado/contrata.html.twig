@@ -264,10 +264,6 @@
                 </div>
                <small class="text-muted">Formato: Letra-Rol-Año</small>
             </div> 
-            <div class="col-sm-12 col-md-2 ">
-                <input type="text" name="txtCaratulado" placeholder="Caratulado" class="form-control txtCaratulado" size="30" maxlength="30">
-                <small class="text-muted">Caracteres max. 30</small>
-            </div> 
         </div>
         <div class="row">
             <div class="col-sm-12 col-md-5">
@@ -294,6 +290,12 @@
             
             
     
+        </div>
+        <div class="row mt-2">
+            <div class="col-sm-12 col-md-5">
+                <input type="text" name="txtCaratulado" placeholder="Caratulado" class="form-control txtCaratulado" size="30" maxlength="30">
+                <small class="text-muted">Caracteres max. 30</small>
+            </div>
         </div>
         <div class="card-body" >
 
@@ -347,6 +349,10 @@
         </button>
       </div>
       <div class="modal-body">
+        <div class="row mb-2">
+            <div class="col-sm-6"><strong>Nombre:</strong> <span id="resumenNombre"></span></div>
+            <div class="col-sm-6"><strong>RUT:</strong> <span id="resumenRut"></span></div>
+        </div>
         <div class="row mb-3">
             <div class="col-sm-6"><strong>Monto contrato:</strong> <span id="resumenMontoContrato"></span></div>
             <div class="col-sm-6"><strong>Cantidad de cuotas:</strong> <span id="resumenCantidadCuotas"></span></div>
@@ -758,6 +764,8 @@
         var cuotas = calcularCuotas();
         var montoContrato = parseInt($('.monto-contrato').val()) || 0;
 
+        $('#resumenNombre').text($('#' + {{ form.nombre.vars.id|json_encode|raw }}).val());
+        $('#resumenRut').text($('.format-rut').val());
         $('#resumenMontoContrato').text('$' + $.number(montoContrato, 0, ',', '.'));
         $('#resumenCantidadCuotas').text(cuotas.length);
 

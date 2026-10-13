@@ -360,6 +360,10 @@ class ContratoController extends AbstractController
             $contrato->setCregion($regionRepository->find($request->request->get('cboRegion')));
             $contrato->setCciudad($ciudadRepository->find($request->request->get('cboCiudad')));
             $contrato->setCcomuna($comunaRepository->find($request->request->get('cboComuna')));
+            if ($contrato->getCliente()) {
+                $contrato->getCliente()->setCiudad($contrato->getCciudad());
+                $contrato->getCliente()->setComuna($contrato->getCcomuna());
+            }
             $entityManager = $this->entityManager;
             $contrato->setPdf(null);
 
@@ -598,6 +602,10 @@ class ContratoController extends AbstractController
             $contrato->setCregion($regionRepository->find($request->request->get('cboRegion')));
             $contrato->setCciudad($ciudadRepository->find($request->request->get('cboCiudad')));
             $contrato->setCcomuna($comunaRepository->find($request->request->get('cboComuna')));
+            if ($contrato->getCliente()) {
+                $contrato->getCliente()->setCiudad($contrato->getCciudad());
+                $contrato->getCliente()->setComuna($contrato->getCcomuna());
+            }
             
 
             $contrato->setDiaPago($request->request->get('chkDiasPago'));

@@ -104,9 +104,9 @@
                             <td>
                                 <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
                                     {% if causa.causaFinalizada == true %}
-                                        <span class="btn btn-sm btn-success" title="Causa finalizada"><i class="fas fa-check-circle"></i></span>
+                                        <span class="btn btn-sm btn-success" style="cursor:default" title="Causa finalizada"><i class="fas fa-check-circle"></i></span>
                                     {% else %}
-                                        <span class="btn btn-sm btn-danger" title="Causa pendiente"><i class="fas fa-times"></i></span>
+                                        <span class="btn btn-sm btn-danger" style="cursor:default" title="Causa pendiente"><i class="fas fa-times"></i></span>
                                     {% endif %}
                                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" 
                                         data-whatever="@fat"
@@ -153,7 +153,7 @@
                     <div class="col-sm-12 col-md-3 submateria pt-2">
                         
                     </div>
-                    <div class="col-sm-12 col-md-3 "> 
+                    <div class="col-sm-12 col-md-6 "> 
 
                         <div class="row">
                             <div class="col-sm-12 col-md-3 ml-0 mr-0 pl-0 pr-0 letras">
@@ -162,7 +162,7 @@
                             <div class="col-sm-12 col-md-1 ml-0 mr-0 pl-0 pr-0" align="center">
                                 -
                             </div>
-                            <div class="col-sm-12 col-md-3 ml-0 mr-0 pl-0 pr-0">
+                            <div class="col-sm-12 col-md-4 ml-0 mr-0 pl-0 pr-0">
                                 <input type="text" name="txtRol" placeholder="N°" class="form-control txtRol" size="6" maxlength="255">
                             </div>
                             <div class="col-sm-12 col-md-1 ml-0 mr-0 pl-0 pr-0" align="center">
@@ -176,7 +176,7 @@
                         
                     </div> 
                     
-                    <div class="col-sm-12 col-md-6 ">
+                    <div class="col-sm-12 col-md-3 ">
                         <input type="text" name="txtCaratulado" placeholder="Caratulado" class="form-control txtCaratulado" size="50" maxlength="30">
                         <small class="text-muted">Caracteres max. 50</small>
                     </div>  
@@ -302,6 +302,9 @@
             },
             cache: false,
             success: function(){
+                // location.reload() conserva los valores de los campos en algunos
+                // navegadores: se limpian antes de recargar.
+                $(".cbomateria-nueva, .cboSubMateria-nueva, .txtLetra-nueva, .txtRol-nueva, .txtAnio-nueva, .txtCaratulado-nueva, .juzgado-nueva").val('');
                 location.reload();
             },
             error: function(){

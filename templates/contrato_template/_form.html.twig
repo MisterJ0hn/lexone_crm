@@ -121,6 +121,16 @@
             ],
         });
 
+        // En modo código el textarea original no se sincroniza solo: se vuelve al
+        // modo visual (que vuelca el HTML editado) antes de enviar el formulario.
+        $('.contrato-template-editor').closest('form').on('submit', function () {
+            var $ed = $('.contrato-template-editor');
+            if ($ed.summernote('codeview.isActivated')) {
+                $ed.summernote('codeview.deactivate');
+            }
+            $ed.val($ed.summernote('code'));
+        });
+
         // El cuadro de variables mide lo mismo que el editor y hace scroll por dentro.
         var $editor = $('.note-editor'), $lista = $('#lista-variables');
         function igualaAlto() { $lista.css('height', $editor.outerHeight()); }

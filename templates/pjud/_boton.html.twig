@@ -13,7 +13,7 @@
     {% set titulos = {nuevo: 'Aún no se ha sincronizado con el Poder Judicial', sincronizando: 'Sincronizando con el Poder Judicial...', error: 'La sincronización con el Poder Judicial falló', listo: 'Detalle PJUD'} %}
     {% if causaId %}
         <button type="button" class="btn btn-outline-primary btn-sm px-2 pjud-e-{{ estado }}" data-pjud-causa="{{ causaId }}" data-pjud-estado="{{ estado }}" title="{{ titulos[estado] }}" aria-label="Ver detalle de la causa en el Poder Judicial">
-            {% if estado == 'listo' %}<img src="/build/img/martillo_pjud.png" alt="" width="16" height="16">{% else %}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"/>{% if estado == 'error' %}<line x1="4" y1="4" x2="20" y2="20"/>{% endif %}</svg>{% endif %}
+            {% if estado == 'sincronizando' %}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>{% else %}<img src="/build/img/{{ {nuevo: 'martillo_pjud_sin_sincronizar.png', error: 'martillo_pjud_error.png', listo: 'martillo_pjud.png'}[estado] }}" alt="" width="16" height="16">{% endif %}
         </button>
     {% endif %}
 {% endmacro %}

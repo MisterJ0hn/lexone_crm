@@ -540,6 +540,10 @@ class PanelAbogadoController extends AbstractController
             $contrato->setCregion($regionRepository->find($request->request->get('cboRegion')));
             $contrato->setCciudad($ciudadRepository->find($request->request->get('cboCiudad')));
             $contrato->setCcomuna($comunaRepository->find($request->request->get('cboComuna')));
+            if ($cliente) {
+                $cliente->setCiudad($contrato->getCciudad());
+                $cliente->setComuna($contrato->getCcomuna());
+            }
            
             
             $entityManager->persist($contrato);
