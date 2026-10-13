@@ -134,7 +134,7 @@ class PjudController extends AbstractController
         $this->api->paraEmpresa($empresa);
         $cuaderno = $request->query->get('cuaderno');
         try {
-            $res = $this->api->detalle($competencia, $datos, $forzar, $cuaderno !== null ? (int) $cuaderno : null, $this->credenciales($empresa, $datos), !$forzar && $request->query->getBoolean('solo_estado'));
+            $res = $this->api->detalle($competencia, $datos, $forzar, $cuaderno !== null ? (int) $cuaderno : null, $this->credenciales($empresa, $datos, $causa->getCliente() ?? $causa->getAgenda()?->getContrato()?->getCliente()), !$forzar && $request->query->getBoolean('solo_estado'));
         } catch (PjudApiException $e) {
             return new JsonResponse(['detail' => $e->getMessage()], 502);
         }
@@ -245,18 +245,34 @@ class PjudController extends AbstractController
         return new JsonResponse($res);
     }
     /**
-     * Credenciales OJV para sincronizar: siempre las que usa Lexflow para esa causa (edapi, con
-     * incluir_credenciales). No se usan las del abogado, del cliente ni de la empresa. Se piden de forma
-     * diferida: solo si hay que sincronizar.
+     * Credenciales OJV para sincronizar, en orden de prioridad:
+     *  1. Abogado patrocinador: las que entrega Lexflow para esa causa (edapi), si la empresa tiene Lexflow habilitado.
+     *  2. Cliente de la causa: su RUT y ClaveÚnica (metodo_login 2).
+     *  3. Ninguna: arreglo vacío, el scrape se hace sin clave.
+     * Se piden de forma diferida: solo si hay que sincronizar.
      *
      * @param array{tipo:string,rol:int,anio:int,tribunal:string} $datos
      */
-    private function credenciales(\App\Entity\Empresa $empresa, array $datos): \Closure
+    private function credenciales(\App\Entity\Empresa $empresa, array $datos, ?\App\Entity\Cliente $cliente = null): \Closure
     {
-        return function () use ($empresa, $datos): array {
-            $this->edapi->paraEmpresa($empresa);
+        return function () use ($empresa, $datos, $cliente): array {
+            if ($empresa->isLexflowHabilitado()) {
+                try {
+                    $this->edapi->paraEmpresa($empresa);
 
-            return $this->edapi->credencialesPjud($datos['tipo'] . '-' . $datos['rol'] . '-' . $datos['anio'], $datos['tribunal']);
+                    return $this->edapi->credencialesPjud($datos['tipo'] . '-' . $datos['rol'] . '-' . $datos['anio'], $datos['tribunal']);
+                } catch (\RuntimeException $e) {
+                    $this->logger->info('Detalle PJUD: sin credenciales de Lexflow, se prueba con las del cliente: ' . $e->getMessage());
+                }
+            }
+
+            $rut = trim((string) $cliente?->getRut());
+            $clave = (string) $cliente?->getClaveUnica();
+            if ($rut !== '' && $clave !== '') {
+                return ['rut' => $rut, 'clave' => $clave, 'metodo_login' => 2];
+            }
+
+            return [];
         };
     }
 

@@ -17,7 +17,7 @@ use Symfony\Contracts\Cache\ItemInterface;
  * El scrape del proveedor es asíncrono: consultar_<materia> devuelve la causa a medias o 404 mientras
  * sincroniza, y sincronizar_<materia> (que usa el RUT/clave del OJV de la persona) encola el trabajo.
  *
- * detalle() devuelve siempre un arreglo con `estado` = listo | sincronizando | error | sin_credenciales.
+ * detalle() devuelve siempre un arreglo con `estado` = listo | sincronizando | error.
  */
 class PjudApiClient
 {
@@ -32,7 +32,6 @@ class PjudApiClient
 
     private const MSG_SINCRONIZANDO = 'La primera consulta puede tardar varios minutos.';
     private const MSG_ERROR_SYNC = 'La sincronización de esta causa con el Poder Judicial falló. Puedes reintentarla.';
-    private const MSG_SIN_CREDENCIALES = 'Lexflow no entregó credenciales del Poder Judicial para consultar esta causa por primera vez.';
 
     /**
      * Por materia: si usa catálogo de tribunales, si expone cuadernos, clave de cuaderno en el request
@@ -198,16 +197,14 @@ class PjudApiClient
      */
     public function detalle(string $materia, array $causa, bool $forzar = false, ?int $cuaderno = null, array|\Closure|null $credenciales = null, bool $soloEstado = false): array
     {
-        $motivoSinCredenciales = null;
         $resuelto = false;
-        $obtener = function () use (&$credenciales, &$resuelto, &$motivoSinCredenciales): ?array {
+        $obtener = function () use (&$credenciales, &$resuelto): ?array {
             if (!$resuelto) {
                 $resuelto = true;
                 if ($credenciales instanceof \Closure) {
                     try {
                         $credenciales = $credenciales();
-                    } catch (\RuntimeException $e) {
-                        $motivoSinCredenciales = $e->getMessage();
+                    } catch (\RuntimeException) {
                         $credenciales = null;
                     }
                 }
@@ -261,12 +258,9 @@ class PjudApiClient
             return ['estado' => $sincronizando ? 'sincronizando' : 'listo', 'detalle_estado' => $detalleEstado];
         }
         if ($sincronizando) {
-            $cred = $obtener();
-            if (empty($cred['rut']) || empty($cred['clave'])) {
-                return ['estado' => 'sin_credenciales', 'mensaje' => $motivoSinCredenciales ?? self::MSG_SIN_CREDENCIALES, 'detalle_estado' => $detalleEstado];
-            }
+            // Sin credenciales (ni del abogado ni del cliente) igual se sincroniza: scrape sin clave.
             if (!$forzar) {
-                $this->sincronizar($materia, $cuerpo, $cred);
+                $this->sincronizar($materia, $cuerpo, $obtener());
             }
         }
 
@@ -423,10 +417,7 @@ class PjudApiClient
 
     private function sincronizar(string $materia, array $cuerpo, ?array $cred): void
     {
-        if (empty($cred['rut']) || empty($cred['clave'])) {
-            return;
-        }
-        $cuerpo += ['rut' => $cred['rut'], 'clave' => $cred['clave'], 'metodo_login' => $cred['metodo_login'] ?? 1];
+        $cuerpo += $this->credencialesCuerpo($cred);
         try {
             $this->peticion('POST', '/sincronizar_' . $materia, ['json' => $cuerpo]);
         } catch (PjudConflicto) {
