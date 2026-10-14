@@ -11,20 +11,24 @@
 
         <div class="card">
             <div class="card-body">
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalNuevoCliente">
-                    <i class="fas fa-plus"></i> 
-                    {% if contrato.agenda.tipoCliente.nombre == 'Convenio' %}
-                        Nueva Persona
-                    {% else %}
-                        Nueva Empresa
-                    {% endif %}
-                    
+                {% if tipoCliente == 'Convenio' %}
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalNuevoCliente" data-persona="1">
+                    <i class="fas fa-plus"></i> Nueva Persona
                 </button>
+                {% else %}
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalNuevoCliente" data-persona="0">
+                    <i class="fas fa-plus"></i> Nueva Empresa
+                </button>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalNuevoCliente" data-persona="1">
+                    <i class="fas fa-plus"></i> Nueva Persona
+                </button>
+                {% endif %}
             </div>
         </div>
 
 
         {% for grupo in clientes %}
+        {% set esPersona = tipoCliente == 'Convenio' or grupo.cliente.sexo is not null or grupo.cliente.estadoCivil is not null %}
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title"><strong>{{ grupo.cliente.nombre }}</strong> - {{ grupo.cliente.rut }}</h5>
@@ -33,7 +37,7 @@
                 {{ include('contrato/_notas.html.twig', {cliente: grupo.cliente, notas: notasPorCliente[grupo.cliente.id]}) }}
                 <div class="card card-outline collapsed-card">
                     <div class="card-header">
-                        <h3 class="card-title">Datos {% if contrato.agenda.tipoCliente.nombre == 'Convenio' %}
+                        <h3 class="card-title">Datos {% if esPersona %}
                                 Persona
                             {% else %}
                                 Empresa
@@ -77,7 +81,7 @@
                                 <small class="text-muted">Dirección</small><br>
                                 <label>{{ grupo.cliente.direccion }}</label>
                             </div>
-                            {% if tipoCliente == 'Convenio' %}
+                            {% if esPersona %}
                             <div class="col-sm-12 col-md-3">
                                 <small class="text-muted">Sexo</small><br>
                                 <label>{{ grupo.cliente.sexo }}</label>
@@ -91,7 +95,7 @@
                                 <small class="text-muted">Región / Ciudad / Comuna</small><br>
                                 <label>{{ grupo.cliente.region ? grupo.cliente.region.nombre : '' }}{% if grupo.cliente.ciudad %} / {{ grupo.cliente.ciudad.nombre }}{% endif %}{% if grupo.cliente.comuna %} / {{ grupo.cliente.comuna.nombre }}{% endif %}</label>
                             </div>
-                            {% if tipoCliente == 'Convenio' %}
+                            {% if esPersona %}
                             <div class="col-sm-12 col-md-3">
                                 <small class="text-muted">Estado Civil</small><br>
                                 <label>{{ grupo.cliente.estadoCivil }}</label>
@@ -229,15 +233,16 @@
         <div class="modal-content">
             {{ form_start(formNuevoCliente, {'action': path('contrato_convenio_nuevo_cliente', {'id': contrato.id}), 'method': 'post'}) }}
             <div class="modal-header">
-                <h5 class="modal-title">{{ tipoCliente == 'Convenio' ? 'Datos nuevo convenio' : 'Datos nueva empresa' }}</h5>
+                <h5 class="modal-title" id="tituloNuevoCliente" data-convenio="{{ tipoCliente == 'Convenio' ? 1 : 0 }}">{{ tipoCliente == 'Convenio' ? 'Datos nuevo convenio' : 'Datos nueva empresa' }}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
+                <input type="hidden" name="esPersona" id="esPersonaNuevoCliente" value="{{ tipoCliente == 'Convenio' ? 1 : 0 }}">
                 <div class="row">
                     <div class="col-sm-12 col-md-4">
-                        <small class="text-muted">{{ (tipoCliente == 'Empresa') ? 'Razón social' : 'Nombre' }} *</small>
+                        <small class="text-muted"><span id="lblNombreNuevoCliente">{{ (tipoCliente == 'Empresa') ? 'Razón social' : 'Nombre' }}</span> *</small>
                         {{ form_widget(formNuevoCliente.nombre, {'attr': {'class': 'form-control'}}) }}
                     </div>
                     <div class="col-sm-12 col-md-4">
@@ -253,7 +258,7 @@
                         {{ form_widget(formNuevoCliente.telefono, {'attr': {'class': 'form-control telefonoCliente'}}) }}
                     </div>
                     {% if formNuevoCliente.sexo is defined %}
-                    <div class="col-sm-12 col-md-4">
+                    <div class="col-sm-12 col-md-4 solo-persona">
                         <small class="text-muted">Sexo *</small>
                         {{ form_widget(formNuevoCliente.sexo, {'attr': {'class': 'form-control'}}) }}
                     </div>
@@ -279,7 +284,7 @@
                         {{ form_widget(formNuevoCliente.direccion, {'attr': {'class': 'form-control'}}) }}
                     </div>
                     {% if formNuevoCliente.estadoCivil is defined %}
-                    <div class="col-sm-12 col-md-4">
+                    <div class="col-sm-12 col-md-4 solo-persona">
                         <small class="text-muted">Estado Civil *</small>
                         {{ form_widget(formNuevoCliente.estadoCivil, {'attr': {'class': 'form-control'}}) }}
                     </div>
@@ -647,6 +652,21 @@
         $('.letras-convenio').html('<input type="text" placeholder="Letra" class="form-control txtLetra-convenio" size="3" maxlength="10">');
         $('.txtRol-convenio, .txtAnio-convenio, .txtCaratulado-convenio').val('');
     }
+
+    // El modal de nuevo cliente sirve para Empresa o Persona: en un contrato Empresa, el botón
+    // pulsado (data-persona) decide si se piden sexo/estado civil (deshabilitados no se envían).
+    $('#modalNuevoCliente').on('show.bs.modal', function(e){
+        var $btn = $(e.relatedTarget);
+        var $titulo = $('#tituloNuevoCliente');
+        var persona = $titulo.data('convenio') == 1 || $btn.data('persona') == 1;
+        var enEmpresa = $titulo.data('convenio') != 1;
+        $('#esPersonaNuevoCliente').val(persona ? 1 : 0);
+        $('#modalNuevoCliente .solo-persona').toggle(persona).find('select, input').prop('disabled', !persona);
+        if(enEmpresa){
+            $titulo.text(persona ? 'Datos nueva persona' : 'Datos nueva empresa');
+            $('#lblNombreNuevoCliente').text(persona ? 'Nombre' : 'Razón social');
+        }
+    });
 
     // Al menos una causa en la lista para poder crear el cliente.
     $('#modalNuevoCliente form').on('submit', function(e){

@@ -1082,7 +1082,9 @@ class ContratoController extends AbstractController
             foreach ($paisRepository->findBy([], ['orden' => 'ASC']) as $pais) {
                 $paisChoices[$pais->getNombre()] = $pais->getNombre();
             }
-            $this->agregarCamposObligatoriosDeCreacion($formNuevoCliente, $paisChoices, $tipoCliente);
+            // En Empresa el modal también sirve para "Nueva Persona": se incluyen sexo y estado civil
+            // y la plantilla los muestra solo en ese modo.
+            $this->agregarCamposObligatoriosDeCreacion($formNuevoCliente, $paisChoices, 'Convenio');
 
             return $this->render('contrato/lineaTiempoConvenio.html.twig', [
                 'contrato' => $contrato,
@@ -1289,8 +1291,10 @@ class ContratoController extends AbstractController
         foreach ($paisRepository->findBy([], ['orden' => 'ASC']) as $pais) {
             $paisChoices[$pais->getNombre()] = $pais->getNombre();
         }
-        // El sexo y el estado civil solo aplican a clientes de tipo Convenio (no a Empresa).
-        $this->agregarCamposObligatoriosDeCreacion($form, $paisChoices, $tipoCliente);
+        // El sexo y el estado civil solo aplican a fichas de persona: contratos Convenio, o
+        // "Nueva Persona" dentro de un contrato Empresa (esPersona=1).
+        $esPersona = $tipoCliente === 'Convenio' || ($tipoCliente === 'Empresa' && $request->request->getBoolean('esPersona'));
+        $this->agregarCamposObligatoriosDeCreacion($form, $paisChoices, $esPersona ? 'Convenio' : $tipoCliente);
 
         $form->handleRequest($request);
 
@@ -1338,11 +1342,11 @@ class ContratoController extends AbstractController
                 $clienteExistente->setComuna($cliente->getComuna());
                 $clienteExistente->setEstadoCivil($cliente->getEstadoCivil());
                 $clienteExistente->setReunion($cliente->getReunion());
-                if ($tipoCliente === 'Convenio') {
+                if ($esPersona) {
                     $clienteExistente->setSexo($form->has('sexo') ? $form->get('sexo')->getData() : null);
                 }
                 $cliente = $clienteExistente;
-            } elseif ($tipoCliente === 'Convenio') {
+            } elseif ($esPersona) {
                 $cliente->setSexo($form->has('sexo') ? $form->get('sexo')->getData() : null);
             }
 
@@ -1445,7 +1449,8 @@ class ContratoController extends AbstractController
             $paisChoices[$pais->getNombre()] = $pais->getNombre();
         }
         $form->add('nacionalidad', ChoiceType::class, ['choices' => $paisChoices, 'required' => false]);
-        if ($tipoCliente === 'Convenio') {
+        // Una persona creada dentro de un contrato Empresa se reconoce por tener sexo/estado civil.
+        if ($tipoCliente === 'Convenio' || $cliente->getSexo() !== null || $cliente->getEstadoCivil() !== null) {
             $form->add('sexo', ChoiceType::class, [
                 'choices' => ['Masculino' => 'Masculino', 'Femenino' => 'Femenino'],
                 'required' => false,

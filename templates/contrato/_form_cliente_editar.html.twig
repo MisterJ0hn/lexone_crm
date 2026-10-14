@@ -2,7 +2,7 @@
 <div class="modal-body">
     <div class="row">
         <div class="col-sm-12 col-md-4">
-            <small class="text-muted">{{ (contrato.agenda.tipoCliente is not null and contrato.agenda.tipoCliente.nombre == 'Empresa') ? 'Razón social' : 'Nombre' }}</small>
+            <small class="text-muted">{{ (contrato.agenda.tipoCliente is not null and contrato.agenda.tipoCliente.nombre == 'Empresa' and form.sexo is not defined) ?'Razón social' : 'Nombre' }}</small>
             {{ form_widget(form.nombre, {'attr': {'class': 'form-control'}}) }}
         </div>
         <div class="col-sm-12 col-md-4">

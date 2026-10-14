@@ -132,7 +132,7 @@
                             <td>{{ m.dato(c.ubicacion) }}</td>
                             <td class="text-nowrap">{{ m.fecha(c.fecha_ubicacion) }}</td>
                             <td>{{ m.dato(c.corte) }}</td>
-                            <td>{{ m.dato(c.tipo_recurso) }}</td>
+                            <td>{{ m.dato(c.tipo_recurso|default(c.tipo|default(null))) }}</td>
                         </tr>
                     {% else %}
                         <tr><td colspan="6" class="text-center text-muted py-4">No hay causas de corte</td></tr>
