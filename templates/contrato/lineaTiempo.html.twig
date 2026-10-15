@@ -45,7 +45,7 @@
                         <small class="text-muted">Formato: Letra-Rol-Año</small>
                     </div>
                     <div class="col-sm-12 col-md-3">
-                        <input type="text" class="form-control txtCaratulado-nueva" placeholder="Caratulado" maxlength="30">
+                        <input type="text" class="form-control txtCaratulado-nueva" placeholder="Caratulado" maxlength="100">
                     </div>
                     <div class="col-sm-12 col-md-5">
                         <select class="form-control corte-nueva" onchange="cambiaCorteNueva(this.value)">
@@ -182,8 +182,8 @@
                     </div> 
                     
                     <div class="col-sm-12 col-md-3 ">
-                        <input type="text" name="txtCaratulado" placeholder="Caratulado" class="form-control txtCaratulado" size="50" maxlength="30">
-                        <small class="text-muted">Caracteres max. 50</small>
+                        <input type="text" name="txtCaratulado" placeholder="Caratulado" class="form-control txtCaratulado" size="50" maxlength="100">
+                        <small class="text-muted">Caracteres max. 100</small>
                     </div>  
                     
                     
@@ -222,6 +222,10 @@
         var nombre = button.data('nombre')
         var juzgado = button.data('juzgado')
         var materia = button.data('materia')
+        var corte = button.data('corteid')
+        var letra = button.data('letra')
+        var rol = button.data('rol')
+        var anio = button.data('anio')
         var url=button.data('url') // Extract info from data-* attributes
         // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
         // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
@@ -229,19 +233,51 @@
         $(".submateria").html(servicio)
         $(".txtNombreCausa").val(idCausa)
         $(".txtCaratulado").val(nombre)
-        $(".juzgado").val(juzgado)
+        $(".txtRol").val(rol)
+        $(".txtAnio").val(anio)
         $(".hdCausa").val(causa)
         $("#frmEditar").attr("action","/contrato/"+causa+"/modificar_servicio")
+        materiaEdicion = materia
 
-        // Combos dependientes de la materia de la causa editada
-        letrasCausa(materia)
+        // Combos dependientes de la materia de la causa editada, con los valores actuales preseleccionados
+        letrasCausa(materia, letra)
+        $(".juzgado").html('<option value=""> Seleccione Juzgado </option>')
         $.ajax({
             url:"/materia/"+materia+"/corte_combo",
             type:"post",
             dataType:"html",
             cache:false,
-            success:function(data){ $(".corte").html(data); }
+            success:function(data){
+                $(".corte").html(data)
+                if(corte){
+                    $(".corte").val(String(corte))
+                    cargaJuzgadosEdicion(corte, juzgado)
+                }
+            }
         })
+    })
+
+    var materiaEdicion = null
+
+    function cargaJuzgadosEdicion(corteId, juzgadoId){
+        if(!corteId){
+            $(".juzgado").html('<option value=""> Seleccione Juzgado </option>')
+            return
+        }
+        $.ajax({
+            url:"/materia/"+materiaEdicion+"/corte/"+corteId+"/juzgado_combo",
+            type:"post",
+            dataType:"html",
+            cache:false,
+            success:function(data){
+                $(".juzgado").html(data)
+                if(juzgadoId){ $(".juzgado").val(String(juzgadoId)) }
+            }
+        })
+    }
+
+    $(".corte").on("change",function(){
+        cargaJuzgadosEdicion($(this).val(), null)
     })
 
     function cambiaMateriaCausaNueva(materiaId){
@@ -342,7 +378,7 @@
         });
     }
 
-function letrasCausa(materia_id){
+function letrasCausa(materia_id, letraSel){
     $.ajax({
         url:"/materia/"+materia_id+"/causa_letras",
         type: "get",
@@ -362,9 +398,16 @@ function letrasCausa(materia_id){
             $.each(letras,function(i,letra){
                 $('.txtLetra').append('<option value="'+letra+'">'+letra+'</option>');
             });
+            if(letraSel){
+                if($('.txtLetra option[value="'+letraSel+'"]').length==0){
+                    $('.txtLetra').append('<option value="'+letraSel+'">'+letraSel+'</option>');
+                }
+                $('.txtLetra').val(String(letraSel));
+            }
 
         },error:function(error){
             $(".letras").html('<input type="text" name="txtLetra" placeholder="Letra" class="form-control txtLetra" size="3" maxlength="10">');
+            if(letraSel){ $('.txtLetra').val(letraSel); }
         }
     });
 }
