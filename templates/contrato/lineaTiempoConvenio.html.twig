@@ -29,13 +29,17 @@
 
         {% for grupo in clientes %}
         {% set esPersona = tipoCliente == 'Convenio' or grupo.cliente.sexo is not null or grupo.cliente.estadoCivil is not null %}
-        <div class="card">
+        <div class="card collapsed-card">
             <div class="card-header">
                 <h5 class="card-title"><strong>{{ grupo.cliente.nombre }}</strong> - {{ grupo.cliente.rut }}</h5>
+                 <div class="card-tools">
+                            <button type="button" class="btn btn-sm btn-primary rounded-circle" data-card-widget="collapse"><i class="fas fa-eye"></i>
+                            </button>
+                        </div>
             </div>
             <div class="card-body">
                 {{ include('contrato/_notas.html.twig', {cliente: grupo.cliente, notas: notasPorCliente[grupo.cliente.id]}) }}
-                <div class="card card-outline collapsed-card">
+                <div class="card card-outline ">
                     <div class="card-header">
                         <h3 class="card-title">Datos {% if esPersona %}
                                 Persona
@@ -43,10 +47,7 @@
                                 Empresa
                             {% endif %}
                         </h3>
-                        <div class="card-tools">
-                            <button type="button" class="btn btn-sm btn-primary rounded-circle" data-card-widget="collapse"><i class="fas fa-plus"></i>
-                            </button>
-                        </div>
+                       
                     </div>
                     <div class="card-body">
                         <div class="mb-2">

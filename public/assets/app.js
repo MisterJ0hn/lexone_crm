@@ -25,7 +25,14 @@
     e.preventDefault();
     var $card = $(this).closest('.card');
     $card.toggleClass('collapsed-card');
-    $(this).find('i').toggleClass('fa-plus', $card.hasClass('collapsed-card')).toggleClass('fa-minus', !$card.hasClass('collapsed-card'));
+    var plegada = $card.hasClass('collapsed-card');
+    var $icono = $(this).find('i');
+    if ($icono.hasClass('fa-eye') || $icono.hasClass('fa-eye-slash')) {
+      // Botones con ojo: fa-eye para abrir (plegada), fa-eye-slash para cerrar
+      $icono.toggleClass('fa-eye', plegada).toggleClass('fa-eye-slash', !plegada);
+    } else {
+      $icono.toggleClass('fa-plus', plegada).toggleClass('fa-minus', !plegada);
+    }
   });
   $(document).on('click', '[data-card-widget="remove"]', function (e) {
     e.preventDefault();
