@@ -279,7 +279,7 @@
             return;
         }
         $.ajax({
-            url: "/juzgado_cuenta/"+corteId+"/corte_combo",
+            url: "/materia/"+$(".cbomateria-nueva").val()+"/corte/"+corteId+"/juzgado_combo",
             type: "post",
             dataType: "html",
             cache: false,

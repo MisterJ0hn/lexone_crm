@@ -33,10 +33,12 @@ class Juzgado
     #[ORM\Column(type: "bigint", nullable: true)]
     private $pjudTribunalId;
 
-
+    #[ORM\OneToMany(targetEntity: MateriaJuzgado::class, mappedBy: "juzgado")]
+    private $materiaJuzgados;
 
     public function __construct()
     {
+        $this->materiaJuzgados = new ArrayCollection();
         $this->contratoRols = new ArrayCollection();
         $this->juzgadoCuentas = new ArrayCollection();
     }
@@ -144,6 +146,14 @@ class Juzgado
         $this->corte = $corte;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, MateriaJuzgado>
+     */
+    public function getMateriaJuzgados(): Collection
+    {
+        return $this->materiaJuzgados;
     }
 
     public function getPjudTribunalId(): ?string

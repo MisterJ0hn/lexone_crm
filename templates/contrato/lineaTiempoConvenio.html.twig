@@ -581,7 +581,7 @@
 
     $(".corte-convenio").on("change",function(){
         $.ajax({
-            url:"/juzgado_cuenta/"+$(this).val()+"/corte_combo",
+            url:"/materia/"+$(".cbomateria-convenio").val()+"/corte/"+$(this).val()+"/juzgado_combo",
             type: "post", dataType: "html", cache: false, contentType: false, processData: false, async: true,
             success:function(data){ $(".juzgado-convenio").html(data); }
         });
@@ -745,7 +745,7 @@
     function cambiaCorteCausaCliente(select){
         var $fila = $(select).closest('.agregar-causa-cliente');
         $.ajax({
-            url: "/juzgado_cuenta/"+$(select).val()+"/corte_combo",
+            url: "/materia/"+$fila.find('.cbomateria-cliente').val()+"/corte/"+$(select).val()+"/juzgado_combo",
             type: "post",
             dataType: "html",
             cache: false,
@@ -806,6 +806,7 @@
         $(".hdCausa").val(causa)
         $("#frmEditar").attr("action","/contrato/"+causa+"/modificar_servicio")
 
+        materiaEdicion = materia
         letrasCausa(materia)
         $.ajax({
             url:"/materia/"+materia+"/corte_combo",
@@ -816,9 +817,10 @@
         })
     })
 
+    var materiaEdicion = null
     $(".corte").on("change",function(){
         $.ajax({
-            url:"/juzgado_cuenta/"+$(this).val()+"/corte_combo",
+            url:"/materia/"+materiaEdicion+"/corte/"+$(this).val()+"/juzgado_combo",
             type: "post",
             dataType: "html",
             cache: false,

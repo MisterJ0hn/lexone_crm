@@ -1133,7 +1133,7 @@
     }
      $(".corte").on("change",function(){
         $.ajax({
-                url:"/juzgado_cuenta/"+$(this).val()+"/corte_combo",
+                url:"/materia/"+$(".cbomateria").val()+"/corte/"+$(this).val()+"/juzgado_combo",
                 type: "post",
                 dataType: "html",
                 cache: false,

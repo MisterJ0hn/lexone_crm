@@ -8,7 +8,9 @@ use App\Entity\Materia;
 use App\Entity\Empresa;
 use App\Form\MateriaType;
 use App\Repository\CausaRepository;
+use App\Entity\Corte;
 use App\Repository\MateriaCorteRepository;
+use App\Repository\MateriaJuzgadoRepository;
 use App\Repository\MateriaRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -127,8 +129,19 @@ class MateriaController extends AbstractController
         ]);
     }
 
+    /**
+     * Juzgados de una corte que atienden la materia.
+     */
+    #[Route("/{id}/corte/{corte}/juzgado_combo", name: "materia_juzgado_combo", methods: ["GET","POST"])]
+    public function juzgadoCombo(Materia $materia, Corte $corte, MateriaJuzgadoRepository $materiaJuzgadoRepository): Response
+    {
+        return $this->render('juzgado_cuenta/comboCorte.html.twig', [
+            'juzgados' => $materiaJuzgadoRepository->findJuzgados($materia, $corte),
+        ]);
+    }
+
     #[Route("/{id}", name: "materia_delete", methods: ["DELETE"])]
-    public function delete(Request $request, Materia $materium, CausaRepository $causaRepository, MateriaCorteRepository $materiaCorteRepository, \App\Repository\ServicioRepository $servicioRepository): Response
+    public function delete(Request $request, Materia $materium, CausaRepository $causaRepository, MateriaCorteRepository $materiaCorteRepository, MateriaJuzgadoRepository $materiaJuzgadoRepository, \App\Repository\ServicioRepository $servicioRepository): Response
     {
         if ($this->isCsrfTokenValid('delete'.$materium->getId(), $request->request->get('_token'))) {
             $entityManager = $this->entityManager;
@@ -148,6 +161,9 @@ class MateriaController extends AbstractController
             }
             foreach ($materiaCorteRepository->findBy(['materia' => $materium]) as $materiaCorte) {
                 $entityManager->remove($materiaCorte);
+            }
+            foreach ($materiaJuzgadoRepository->findBy(['materia' => $materium]) as $materiaJuzgado) {
+                $entityManager->remove($materiaJuzgado);
             }
 
             $entityManager->remove($materium);

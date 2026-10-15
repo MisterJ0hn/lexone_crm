@@ -43,7 +43,8 @@ class CausaController extends AbstractController
                             JuzgadoRepository $juzgadoRepository,
                             \App\Repository\CorteRepository $corteRepository,
                             ClienteRepository $clienteRepository,
-                            \App\Service\LexflowCausaCreator $lexflowCausas){
+                            \App\Service\LexflowCausaCreator $lexflowCausas,
+                            \App\Repository\MateriaJuzgadoRepository $materiaJuzgadoRepository){
         $entityManager = $this->entityManager;
         $causa=new Causa();
         $causa->setEstado(1);
@@ -104,6 +105,10 @@ class CausaController extends AbstractController
         }
         if(null !== $request->query->get('juzgado') && $request->query->get('juzgado') !== ''){
             $juzgado=$juzgadoRepository->find($request->query->get('juzgado'));
+            // Cada materia tiene sus propios juzgados.
+            if($juzgado && !$materiaJuzgadoRepository->atiende($materia,$juzgado)){
+                return new Response('El juzgado no corresponde a la materia de la causa',400);
+            }
             $causa->setJuzgado($juzgado);
             if($juzgado && $causa->getCorte()===null && $juzgado->getCorte()!==null){
                 $causa->setCorte($juzgado->getCorte());

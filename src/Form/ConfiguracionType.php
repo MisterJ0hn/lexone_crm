@@ -4,7 +4,6 @@ namespace App\Form;
 
 use App\Entity\Configuracion;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -14,16 +13,6 @@ class ConfiguracionType extends AbstractType
     {
         $builder
             ->add('maxDiasComision')
-            ->add('morosidadPatColor', ChoiceType::class, [
-                'choices' => [
-                    'text-warning' => 'text-warning',
-                    'text-danger'  => 'text-danger',
-                    'text-info'    => 'text-info',
-                    'text-success'    => 'text-success',
-                    'text-ligth'    => 'text-ligth',
-                ],
-            ])
-        ;
         ;
     }
 
