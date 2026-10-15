@@ -16,7 +16,7 @@
                             {{causa.causaNombre}}
                         </td>
                         <td>
-                            {{causa.juzgadoCuenta is null ? '': causa.juzgadoCuenta.juzgado.nombre}}
+                            {{causa.juzgado is null ? '': causa.juzgado.nombre}}
                         </td>
                         <td>
                         <button type="button" class="btn btn-danger btn-sm" onclick="javascript:eliminarCausaAnterior({{causa.id}})"><i class="fa fa-trash"></i></button>

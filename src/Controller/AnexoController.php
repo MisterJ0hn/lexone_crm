@@ -23,6 +23,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 #[Route("/anexo")]
 class AnexoController extends AbstractController
@@ -79,7 +80,35 @@ class AnexoController extends AbstractController
         $contratoAnexo->setContrato($contrato);
         $contratoAnexo->setTipoAnexo(1);
         $form = $this->createForm(ContratoAnexoType::class, $contratoAnexo);
-
+        $form->add('nCuotas', ChoiceType::class,[
+            'choices'=>[
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16,
+                17,
+                18,
+                19,
+                20,
+                21,
+                22,
+                23,
+                24,
+            ]
+            ]);
         $ultAnexo=$contratoAnexoRepository->findOneBy(['contrato'=>$contrato,'isDesiste'=>false],['folio'=>'desc']);
             
         $folio=1;
@@ -229,7 +258,35 @@ class AnexoController extends AbstractController
         $contratoAnexo->setContrato($contrato);
         $contratoAnexo->setTipoAnexo(2);
         $form = $this->createForm(ContratoAnexoType::class, $contratoAnexo);
-        
+        $form->add('nCuotas', ChoiceType::class,[
+            'choices'=>[
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16,
+                17,
+                18,
+                19,
+                20,
+                21,
+                22,
+                23,
+                24,
+            ]
+            ]);
         $ultAnexo=$contratoAnexoRepository->findOneBy(['contrato'=>$contrato,'isDesiste'=>false],['folio'=>'desc']);
 
         $folio=1;
@@ -298,7 +355,35 @@ class AnexoController extends AbstractController
         $contratoAnexo->setContrato($contrato);
         $contratoAnexo->setTipoAnexo(3);
         $form = $this->createForm(ContratoAnexoType::class, $contratoAnexo);
-        
+        $form->add('nCuotas', ChoiceType::class,[
+            'choices'=>[
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16,
+                17,
+                18,
+                19,
+                20,
+                21,
+                22,
+                23,
+                24,
+            ]
+            ]);
         $ultAnexo=$contratoAnexoRepository->findOneBy(['contrato'=>$contrato,'isDesiste'=>false],['folio'=>'desc']);
 
         $folio=1;
