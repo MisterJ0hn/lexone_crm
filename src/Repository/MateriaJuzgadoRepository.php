@@ -38,7 +38,7 @@ class MateriaJuzgadoRepository extends ServiceEntityRepository
             ->andWhere('mj.materia = :materia')
             ->andWhere('j.corte = :corte')
             ->setParameter('materia', $materia)
-            ->setParameter('corte', $corte->getPjudCorteId())
+            ->setParameter('corte', $corte)
             ->orderBy('j.nombre', 'ASC')
             ->getQuery()
             ->getResult();
