@@ -7,6 +7,8 @@
 <style>
     body.pjud-abierto { overflow: hidden; }
     /* Estados del botón "Detalle PJUD" (ver pjud/_boton.html.twig). */
+    /* Mismo tamaño en todos los estados (el ícono de fuente de "nuevo"/"error" es más angosto que la imagen del martillo). */
+    button[data-pjud-causa] { display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; width: 34px; height: 31px; padding-left: 0; padding-right: 0; }
     button[data-pjud-causa].pjud-e-nuevo { color: #d97706; border-color: #f59e0b; }
     button[data-pjud-causa].pjud-e-sincronizando { color: #16a34a; border-color: #16a34a; }
     button[data-pjud-causa].pjud-e-sincronizando svg { animation: pjud-giro 1s linear infinite; }
