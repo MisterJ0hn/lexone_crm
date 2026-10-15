@@ -227,7 +227,7 @@
     <h4 id="materia">Causa</h4>
 
         <div class="row">
-            <div class="col-sm-12 col-md-2">
+            <div class="col-sm-12 col-md-3 mt-1">
                 <select name="cboMateria" class="form-control cbomateria" onchange="cambiaMateriaCausa(this.value)">
                     <option value="">Seleccione Materia</option>
                     {% for materia in materias %}
@@ -235,7 +235,7 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="col-sm-12 col-md-4 submateria">
+            <div class="col-sm-12 col-md-3 mt-1 submateria">
                 <div class="input-group">
                     <select name="cboSubMateria" class="form-control cboSubMateria"  >
                         <option>Seleccione Servicio</option>
@@ -243,33 +243,34 @@
                     <div class="input-group-append"><button type="button" class="btn btn-outline-primary" data-servicio-nuevo title="Agregar nuevo servicio"><i class="fas fa-plus"></i></button></div>
                 </div>
             </div>
-            <div class="col-sm-12 col-md-6">
-                <div class="row">
-                    <div class="col-sm-12 col-md-4 ml-0 mr-0 pl-0 pr-0 letras">
-                        <input type="text" name="txtLetra" placeholder="Letra" class="form-control txtLetra" size="3" maxlength="10"> 
-                        
+            <div class="col-sm-12 col-md-6 mt-1">
+               
+               <div class="input-group ">
+                    <div class="input-group-prepend letras">
+                    <input type="text" name="txtLetra" placeholder="Letra" class="form-control txtLetra" size="3" maxlength="10">
                     </div>
-                    <div class="col-sm-12 col-md-1 ml-0 mr-0 pl-0 pr-0" align="center">-</div>
-                    <div class="col-sm-12 col-md-3 ml-0 mr-0 pl-0 pr-0">
-                        <input type="text" name="txtRol" placeholder="N°" class="form-control txtRol" size="6" maxlength="255">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">-</span>
                     </div>
-                    <div class="col-sm-12 col-md-1 ml-0 mr-0 pl-0 pr-0" align="center">-</div>
-                    <div class="col-sm-12 col-md-3 ml-0 mr-0 pl-0 pr-0">
-                        <input type="text" name="txtAnio" placeholder="Año" class="form-control txtAnio" size="4" maxlength="4">
+                    <input type="text" name="txtRol" placeholder="N°" class="form-control txtRol" size="6" maxlength="255">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">-</span>
                     </div>
+                    <input type="text" name="txtAnio" placeholder="Año" class="form-control txtAnio" size="4" maxlength="4">
+                
+                
                 </div>
-               <small class="text-muted">Formato: Letra-Rol-Año</small>
             </div> 
         </div>
         <div class="row">
-            <div class="col-sm-12 col-md-6">
+            <div class="col-sm-12 col-md-6 mt-1">
                 
                 <select name="corte" class="form-control corte">
                     <option value=""> Seleccione Corte </option>
                     
                 </select> 
             </div>   
-            <div class="col-sm-12 col-md-6">
+            <div class="col-sm-12 col-md-6 mt-1">
                 <select name="juzgado" class="form-control juzgado">
                     <option value=""> Seleccione Juzgado </option>
                     {% for juzgado in juzgados %}
@@ -278,12 +279,12 @@
                 </select> 
             </div>  
         </div>
-        <div class="row mt-2">
-            <div class="col-sm-12 col-md-11">
+        <div class="row ">
+            <div class="col-sm-12 col-md-11 mt-1">
                 <input type="text" name="txtCaratulado" placeholder="Caratulado" class="form-control txtCaratulado" size="100" maxlength="100">
                 <small class="text-muted">Caracteres max. 100</small>
             </div>
-            <div class="col-sm-12 col-md-1">
+            <div class="col-sm-12 col-md-1 mt-1">
                 <button type="button" class="btn btn-primary btn-agregar" onclick="javascript:agregarCausa()"><i class="fas fa-plus"></i></button>
 
             </div>  

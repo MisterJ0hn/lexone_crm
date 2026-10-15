@@ -12,7 +12,7 @@
             <div class="card-body">
                 <h6>Agregar Causa</h6>
                 <div class="row agregar-causa-nueva">
-                    <div class="col-sm-12 col-md-2">
+                    <div class="col-sm-12 col-md-3 mt-1">
                         <select class="form-control cbomateria-nueva" onchange="cambiaMateriaCausaNueva(this.value)">
                             <option value="">Seleccione Materia</option>
                             {% for materia in materias %}
@@ -20,7 +20,7 @@
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="col-sm-12 col-md-3">
+                    <div class="col-sm-12 col-md-3 mt-1">
                         <div class="input-group">
                             <select class="form-control cboSubMateria-nueva">
                                 <option value="">Seleccione Servicio</option>
@@ -28,37 +28,40 @@
                             <div class="input-group-append"><button type="button" class="btn btn-outline-primary" data-servicio-nuevo title="Agregar nuevo servicio"><i class="fas fa-plus"></i></button></div>
                         </div>
                     </div>
-                    <div class="col-sm-12 col-md-3">
-                        <div class="row no-gutters">
-                            <div class="col-4 letras-nueva">
-                                <input type="text" class="form-control txtLetra-nueva" placeholder="Letra" size="3" maxlength="10">
+                    <div class="col-sm-12 col-md-6 mt-1">
+                        
+                        <div class="input-group ">
+                            <div class="input-group-prepend letras-nueva">
+                            <input type="text" class="form-control txtLetra-nueva" placeholder="Letra" size="3" maxlength="10">
                             </div>
-                            <div class="col-1" align="center">-</div>
-                            <div class="col-3">
-                                <input type="text" class="form-control txtRol-nueva" placeholder="N°" size="6" maxlength="255">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">-</span>
                             </div>
-                            <div class="col-1" align="center">-</div>
-                            <div class="col-3">
-                                <input type="text" class="form-control txtAnio-nueva" placeholder="Año" size="4" maxlength="4">
+                            <input type="text" class="form-control txtRol-nueva" placeholder="N°" size="6" maxlength="255">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">-</span>
                             </div>
+                            <input type="text" class="form-control txtAnio-nueva" placeholder="Año" size="4" maxlength="4">
+                        
+                        
                         </div>
-                        <small class="text-muted">Formato: Letra-Rol-Año</small>
                     </div>
-                    <div class="col-sm-12 col-md-3">
-                        <input type="text" class="form-control txtCaratulado-nueva" placeholder="Caratulado" maxlength="100">
-                    </div>
-                    <div class="col-sm-12 col-md-5">
+                   
+                    <div class="col-sm-12 col-md-6 mt-1">
                         <select class="form-control corte-nueva" onchange="cambiaCorteNueva(this.value)">
                             <option value="">Seleccione Corte</option>
                         </select>
                     </div>
-                    <div class="col-sm-12 col-md-6">
+                    <div class="col-sm-12 col-md-6 mt-1">
                         <select class="form-control juzgado-nueva">
                             <option value="">Seleccione Juzgado</option>
                             
                         </select>
                     </div>
-                    <div class="col-sm-12 col-md-1">
+                     <div class="col-sm-12 col-md-11 mt-1">
+                        <input type="text" class="form-control txtCaratulado-nueva" placeholder="Caratulado" maxlength="100">
+                    </div>
+                    <div class="col-sm-12 col-md-1 mt-1">
                         <button type="button" class="btn btn-primary" onclick="agregarCausaNueva()"><i class="fas fa-plus"></i></button>
                     </div>
                 </div>
@@ -126,6 +129,7 @@
                                         data-corteid="{{causa.corte is null?'':causa.corte.id}}"
                                         data-cuenta="{{causa.agenda.cuenta.id}}"
                                         data-materia="{{causa.materia.id}}"
+                                        data-nombre-materia="{{causa.materia.nombre}}"
                                         ><i class="fas fa-edit"></i></button>
                                     <a href="{{ path('contrato_linea_tiempo_detalle', {'id': causa.id}) }}" class="btn  btn-sm text-white bg-dark">LT</a>
                                     {% if pjud_botones[causa.id] is defined %}{{ pjud.boton(causa.id, pjud_botones[causa.id]) }}{% endif %}
@@ -155,54 +159,52 @@
             <div class="modal-body">
                 <form action="" method="post" id="frmEditar">
                 <div class="row">
-                    <div class="col-sm-12 col-md-3 submateria pt-2">
+                    <div class="col-sm-12 col-md-3 mt-1 materia ">
                         
                     </div>
-                    <div class="col-sm-12 col-md-6 "> 
-
-                        <div class="row">
-                            <div class="col-sm-12 col-md-3 ml-0 mr-0 pl-0 pr-0 letras">
-                                <input type="text" name="txtLetra" placeholder="Letra" class="form-control txtLetra" size="3" maxlength="10"> 
-                            </div>
-                            <div class="col-sm-12 col-md-1 ml-0 mr-0 pl-0 pr-0" align="center">
-                                -
-                            </div>
-                            <div class="col-sm-12 col-md-4 ml-0 mr-0 pl-0 pr-0">
-                                <input type="text" name="txtRol" placeholder="N°" class="form-control txtRol" size="6" maxlength="255">
-                            </div>
-                            <div class="col-sm-12 col-md-1 ml-0 mr-0 pl-0 pr-0" align="center">
-                                -
-                            </div>
-                            <div class="col-sm-12 col-md-3 ml-0 mr-0 pl-0 pr-0">
-                                <input type="text" name="txtAnio" placeholder="Año" class="form-control txtAnio" size="4" maxlength="4">
-                            </div>
-
-                        </div>
+                    <div class="col-sm-12 col-md-3 mt-1 submateria ">
                         
+                    </div>
+                    <div class="col-sm-12 col-md-6 mt-1"> 
+                        
+                        <div class="input-group ">
+                            <div class="input-group-prepend letras">
+                            <input type="text" name="txtLetra" placeholder="Letra" class="form-control txtLetra" size="3" maxlength="10">
+                            </div>
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">-</span>
+                            </div>
+                            <input type="text" name="txtRol" placeholder="N°" class="form-control txtRol" size="6" maxlength="255">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">-</span>
+                            </div>
+                            <input type="text" name="txtAnio" placeholder="Año" class="form-control txtAnio" size="4" maxlength="4">
+                        
+                        
+                        </div>
                     </div> 
-                    
-                    <div class="col-sm-12 col-md-3 ">
-                        <input type="text" name="txtCaratulado" placeholder="Caratulado" class="form-control txtCaratulado" size="50" maxlength="100">
-                        <small class="text-muted">Caracteres max. 100</small>
-                    </div>  
-                    
-                    
-                     <div class="col-sm-12 col-md-6">
+
+                    <div class="col-sm-12 col-md-6 mt-1">
                         
                         <select name="corte" class="form-control corte">
                             <option value=""> Seleccione Corte </option>
                         </select>
                     </div>   
-                    <div class="col-sm-12 col-md-6">
+                    <div class="col-sm-12 col-md-6 mt-1  ">
                         
                         <select name="juzgado" class="form-control juzgado">
                             <option value=""> Seleccione Juzgado </option>
                           
                         </select> 
                     </div>   
-                    <div class="col-sm-12 col-md-12">
+                     <div class="col-sm-12 col-md-11 mt-1">
+                        <input type="text" name="txtCaratulado" placeholder="Caratulado" class="form-control txtCaratulado" size="50" maxlength="100">
+                        <small class="text-muted">Caracteres max. 100</small>
+                    </div>  
+                    <div class="col-sm-12 col-md-1 mt-1">
                         <input type="hidden" class="hdCausa">
-                        <button type="submit" class="btn btn-primary btn-agregar" >Modficar</button>
+                       <button type="submit" class="btn btn-primary btn-agregar" ><i class="far fa-edit"
+                        ></i></button>
 
                     </div>  
                 </div>
@@ -226,6 +228,7 @@
         var letra = button.data('letra')
         var rol = button.data('rol')
         var anio = button.data('anio')
+        var nombreMateria = button.data('nombre-materia')
         var url=button.data('url') // Extract info from data-* attributes
         // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
         // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
@@ -236,6 +239,7 @@
         $(".txtRol").val(rol)
         $(".txtAnio").val(anio)
         $(".hdCausa").val(causa)
+        $(".materia").html(nombreMateria)
         $("#frmEditar").attr("action","/contrato/"+causa+"/modificar_servicio")
         materiaEdicion = materia
 
