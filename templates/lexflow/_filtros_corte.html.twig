@@ -1,18 +1,20 @@
 {# Filtros de la pestaña Cortes (idénticos en Estado Diario y Movimientos). #}
+{% set ruta_corte = app.request.attributes.get('_route') %}
+<ul class="nav nav-pills mb-3">
+    {% for k, label in tipos_corte %}
+        <li class="nav-item">
+            <a class="nav-link {{ filtros.tipo|default('') == k ? 'active' }}" href="{{ path(ruta_corte, app.request.query.all|merge({tab: 'cortes', tipo: k, page: 1})) }}">{{ label }}</a>
+        </li>
+    {% endfor %}
+</ul>
+
 <form method="get" class="form-row mb-3">
     <input type="hidden" name="tab" value="cortes">
+    <input type="hidden" name="tipo" value="{{ filtros.tipo|default('') }}">
     {% if vigencia is defined %}<input type="hidden" name="vigencia" value="{{ vigencia }}">{% endif %}
-    <div class="col-md-4 mb-2">
+    <div class="col-md-5 mb-2">
         <label class="small mb-0">Búsqueda</label>
         <input type="text" name="busqueda" class="form-control form-control-sm" placeholder="{{ placeholder_busqueda }}" value="{{ filtros.busqueda|default('') }}">
-    </div>
-    <div class="col-md-3 mb-2">
-        <label class="small mb-0">Tipo de corte</label>
-        <select name="tipo" class="form-control form-control-sm">
-            {% for k, label in tipos_corte %}
-                <option value="{{ k }}" {{ filtros.tipo|default('') == k ? 'selected' }}>{{ label }}</option>
-            {% endfor %}
-        </select>
     </div>
     {% if datos.cortes_disponibles|default([])|length %}
     <div class="col-md-3 mb-2">
