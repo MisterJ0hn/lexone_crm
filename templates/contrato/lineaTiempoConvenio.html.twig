@@ -130,7 +130,7 @@
                                 
                                 <div class="input-group ">
                                     <div class="input-group-prepend letra-cliente">
-                                    <input type="text" class="form-control txtLetra-cliente" placeholder="Letra" size="3" maxlength="10">
+                                    <input type="text" class="form-control txtLetra-cliente" placeholder="Letra" size="10" maxlength="10">
                                     </div>
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">-</span>
@@ -333,7 +333,7 @@
                         
                         <div class="input-group ">
                             <div class="input-group-prepend letras-convenio">
-                            <input type="text" name="txtLetra" placeholder="Letra" class="form-control txtLetra-convenio" size="3" maxlength="10">
+                            <input type="text" name="txtLetra" placeholder="Letra" class="form-control txtLetra-convenio" size="10" maxlength="10">
                             </div>
                             <div class="input-group-prepend">
                                 <span class="input-group-text">-</span>
@@ -431,7 +431,7 @@
                     <div class="col-sm-12 col-md-6 mt-1">
                         <div class="input-group ">
                             <div class="input-group-prepend letras">
-                            <input type="text" name="txtLetra" placeholder="Letra" class="form-control txtLetra" size="3" maxlength="10">
+                            <input type="text" name="txtLetra" placeholder="Letra" class="form-control txtLetra" size="10" maxlength="10">
                             </div>
                             <div class="input-group-prepend">
                                 <span class="input-group-text">-</span>
@@ -603,7 +603,7 @@
                 $('.letras-convenio').html('<select class="form-control txtLetra-convenio"><option value=""> Letra </option></select>');
                 $.each(data,function(i,letra){ $('.txtLetra-convenio').append($('<option>').val(letra).text(letra)); });
             },error:function(){
-                $(".letras-convenio").html('<input type="text" placeholder="Letra" class="form-control txtLetra-convenio" size="3" maxlength="10">');
+                $(".letras-convenio").html('<input type="text" placeholder="Letra" class="form-control txtLetra-convenio" size="10" maxlength="10">');
             }
         });
     }
@@ -655,7 +655,7 @@
         // Deja la fila de captura lista para la siguiente causa.
         $('.cbomateria-convenio').val('');
         cambiaMateriaCausaConvenio('');
-        $('.letras-convenio').html('<input type="text" placeholder="Letra" class="form-control txtLetra-convenio" size="3" maxlength="10">');
+        $('.letras-convenio').html('<input type="text" placeholder="Letra" class="form-control txtLetra-convenio" size="10" maxlength="10">');
         $('.txtRol-convenio, .txtAnio-convenio, .txtCaratulado-convenio').val('');
     }
 
@@ -743,7 +743,7 @@
                 });
                 $letras.html($select);
             },error:function(error){
-                $letras.html('<input type="text" placeholder="Letra" class="form-control txtLetra-cliente" size="3" maxlength="10">');
+                $letras.html('<input type="text" placeholder="Letra" class="form-control txtLetra-cliente" size="10" maxlength="10">');
             }
         });
     }
@@ -882,7 +882,7 @@
                     $('.txtLetra').val(String(letraSel));
                 }
             },error:function(error){
-                $(".letras").html('<input type="text" name="txtLetra" placeholder="Letra" class="form-control txtLetra" size="3" maxlength="10">');
+                $(".letras").html('<input type="text" name="txtLetra" placeholder="Letra" class="form-control txtLetra" size="10" maxlength="10">');
                 if(letraSel){ $('.txtLetra').val(letraSel); }
             }
         });
