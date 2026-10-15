@@ -67,8 +67,6 @@
 
   .input-group { @apply flex w-full items-stretch; }
   .input-group > .form-control, .input-group > select, .input-group > .custom-select { @apply min-w-0 flex-1; }
-  .input-group > :not(:first-child) { @apply rounded-l-none; }
-  .input-group > :not(:last-child) { @apply rounded-r-none; }
   .input-group-append, .input-group-prepend { @apply flex; }
   .input-group-append > .btn, .input-group-prepend > .btn { @apply h-full; }
   .input-group-append { @apply -ml-px; }
