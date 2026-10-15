@@ -81,6 +81,8 @@
                                 {% endif %}
                             </td>
                             <td class="text-nowrap text-right">
+                                <div class="btn-group" role="group">
+                                    
                                 {{ pjud.boton(r.crm_causa_id|default(r.pjud_token|default(null)), r.pjud_estado|default('nuevo')) }}
                                 {% if r.id is defined %}
                                     {% set accion = r.leido ? 'no_leido' : 'leido' %}
@@ -100,6 +102,7 @@
                                         {% endif %}
                                     </form>
                                 {% endif %}
+                                </div>
                             </td>
                         </tr>
                     {% else %}
