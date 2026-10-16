@@ -65,16 +65,27 @@ class PjudController extends AbstractController
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $empresa = $this->empresas->find($this->getUser()->getEmpresaActual());
-        if (!$empresa?->isPjudConfigurado()) {
-            throw $this->createNotFoundException();
+        // El documento pertenece al host de la conexión de Lexflow o al de la Empresa: se prueba cada una.
+        $upstream = null;
+        $error = null;
+        foreach ([false, true] as $soloEmpresa) {
+            if (!$this->api->paraEmpresa($empresa, $soloEmpresa)->configurado()) {
+                continue;
+            }
+            try {
+                $upstream = $this->api->abrirDocumento((string) $request->query->get('url'));
+                break;
+            } catch (PjudNoEncontrado) {
+                throw $this->createNotFoundException('Documento no encontrado en el PJUD');
+            } catch (PjudApiException $e) {
+                $error = $e;
+            }
         }
-        $this->api->paraEmpresa($empresa);
-        try {
-            $upstream = $this->api->abrirDocumento((string) $request->query->get('url'));
-        } catch (PjudNoEncontrado) {
-            throw $this->createNotFoundException('Documento no encontrado en el PJUD');
-        } catch (PjudApiException $e) {
-            return new Response($e->getMessage(), 502);
+        if ($upstream === null) {
+            if ($error === null) {
+                throw $this->createNotFoundException();
+            }
+            return new Response($error->getMessage(), 502);
         }
 
         $cuerpo = $upstream->getBody();
@@ -109,12 +120,11 @@ class PjudController extends AbstractController
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $user = $this->getUser();
         $empresa = $this->empresas->find($user->getEmpresaActual());
-        if (!$empresa?->isPjudConfigurado()) {
-            return new JsonResponse(['detail' => 'La empresa no tiene configurada la API PJUD'], 404);
-        }
-
         // Fila de Lexflow que no está en el CRM: el id es un token con rol, tribunal y materia (ver tokenExterno()).
         if (!ctype_digit($id)) {
+            if (!$this->api->paraEmpresa($empresa)->configurado()) {
+                return new JsonResponse(['detail' => 'La empresa no tiene configurada la API PJUD'], 404);
+            }
             return $this->consultarExterna($id, $request, $forzar, $empresa, $user);
         }
 
@@ -131,7 +141,10 @@ class PjudController extends AbstractController
             return new JsonResponse(['detail' => 'La causa no tiene letra, rol, año y juzgado completos en el CRM'], 422);
         }
 
-        $this->api->paraEmpresa($empresa);
+        // Causa del CRM: si está en Lexflow manda su conexión PJUD; si no, la configuración de la Empresa.
+        if (!$this->api->paraCausaCrm($empresa, $datos['tipo'] . '-' . $datos['rol'] . '-' . $datos['anio'], $datos['tribunal'])->configurado()) {
+            return new JsonResponse(['detail' => 'La empresa no tiene configurada la API PJUD'], 404);
+        }
         $cuaderno = $request->query->get('cuaderno');
         try {
             $res = $this->api->detalle($competencia, $datos, $forzar, $cuaderno !== null ? (int) $cuaderno : null, $this->credenciales($empresa, $datos, $causa->getCliente() ?? $causa->getAgenda()?->getContrato()?->getCliente()), !$forzar && $request->query->getBoolean('solo_estado'));

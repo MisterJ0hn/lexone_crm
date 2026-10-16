@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Empresa;
+use App\Repository\CausaRepository;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Promise\Utils;
@@ -52,36 +53,97 @@ class PjudApiClient
 
     private Client $http;
     private string $base;
+    private bool $habilitado = false;
     private string $clientKey = '';
     private string $email = '';
     private string $password = '';
     private int $empresaId = 0;
 
-    public function __construct(string $baseUrl, private readonly CacheInterface $cache, bool $verifySsl = true)
+    private readonly string $baseDefecto;
+
+    public function __construct(string $baseUrl, private readonly CacheInterface $cache, private readonly EdApiClient $edapi, bool $verifySsl = true)
     {
-        $this->base = rtrim($baseUrl, '/');
+        $this->baseDefecto = $this->base = rtrim($baseUrl, '/');
         $this->http = new Client(['timeout' => 25, 'http_errors' => false, 'verify' => $verifySsl]);
     }
 
-    public function paraEmpresa(?Empresa $empresa): self
+    /**
+     * Con Lexflow habilitado (y llave privada cargada) la conexión a api-pjud la entrega Lexflow (`api_pjud`) y su
+     * `pjud_habilitado` manda; si no, o si Lexflow no responde, se usan los datos guardados en la Empresa.
+     */
+    public function paraEmpresa(?Empresa $empresa, bool $soloEmpresa = false): self
     {
         $this->empresaId = (int) $empresa?->getId();
-        $this->clientKey = trim((string) $empresa?->getPjudClientKey());
-        $this->email = trim((string) $empresa?->getPjudEmail());
-        $this->password = (string) $empresa?->getPjudPassword();
+        $this->base = $this->baseDefecto;
+        $this->habilitado = false;
+        $this->clientKey = $this->email = $this->password = '';
+        if ($empresa === null) {
+            return $this;
+        }
+
+        if (!$soloEmpresa && $empresa->isLexflowHabilitado() && trim((string) $empresa->getEdapiLlavePrivada()) !== '') {
+            try {
+                $conexion = $this->edapi->paraEmpresa($empresa)->conexionApiPjud();
+                if ($conexion !== null) {
+                    $this->habilitado = true;
+                    $this->base = rtrim($conexion['base_url'], '/');
+                    $this->clientKey = trim($conexion['client_key']);
+                    $this->email = trim($conexion['email']);
+                    $this->password = $conexion['password'];
+                }
+
+                return $this;
+            } catch (\RuntimeException) {
+                // Lexflow no respondió o no se pudo abrir el sello: se prueba con lo guardado en la Empresa.
+            }
+        }
+
+        $this->habilitado = $empresa->isPjudHabilitado();
+        $this->clientKey = trim((string) $empresa->getPjudClientKey());
+        $this->email = trim((string) $empresa->getPjudEmail());
+        $this->password = (string) $empresa->getPjudPassword();
         return $this;
+    }
+
+    /**
+     * Causa del CRM (rol "C-1234-2025"): si existe en Lexflow usa la conexión PJUD de Lexflow (y su
+     * `pjud_habilitado`); si no, hereda la configuración guardada en la Empresa.
+     */
+    public function paraCausaCrm(Empresa $empresa, string $rol, string $tribunal): self
+    {
+        $enLexflow = $this->causasEnLexflow($empresa, [[$rol, $tribunal]]);
+
+        return $this->paraEmpresa($empresa, !isset($enLexflow[CausaRepository::claveRol($rol, $tribunal)]));
+    }
+
+    /**
+     * Cuáles de las causas [rol, tribunal] existen en Lexflow. Clave = CausaRepository::claveRol().
+     *
+     * @param list<array{0:string,1:string}> $causas
+     * @return array<string,true>
+     */
+    public function causasEnLexflow(Empresa $empresa, array $causas): array
+    {
+        if (!$causas || !$empresa->isLexflowHabilitado()) {
+            return [];
+        }
+        try {
+            return $this->edapi->paraEmpresa($empresa)->causasExistentes($causas);
+        } catch (\RuntimeException) {
+            return [];
+        }
     }
 
     public function configurado(): bool
     {
-        return $this->email !== '' && $this->password !== '';
+        return $this->habilitado && $this->email !== '' && $this->password !== '';
     }
 
     // ───────────────────────── HTTP ─────────────────────────
 
     private function token(bool $renovar = false): string
     {
-        $clave = 'pjud_token_' . $this->empresaId . '_' . md5($this->email);
+        $clave = 'pjud_token_' . $this->empresaId . '_' . md5($this->base . '|' . $this->email);
         if ($renovar) {
             $this->cache->delete($clave);
         }

@@ -89,7 +89,7 @@ class LexflowController extends AbstractController
         }
 
         // Botón "Detalle PJUD": solo para filas que calzan con una Causa del CRM de materia soportada.
-        $pjudInfo = ['configurado' => $empresa->isPjudConfigurado(), 'crm' => 0, 'coinciden' => 0, 'externas' => 0, 'sin_soporte' => 0];
+        $pjudInfo = ['configurado' => $this->pjud->paraEmpresa($empresa)->configurado(), 'crm' => 0, 'coinciden' => 0, 'externas' => 0, 'sin_soporte' => 0];
         if ($tab === 'materias' && $pjudInfo['configurado'] && !empty($datos['movimientos'])) {
             $mapa = $this->causas->mapaPorRol($empresa->getId());
             $pjudInfo['crm'] = count($mapa);
@@ -244,7 +244,7 @@ class LexflowController extends AbstractController
         }
 
         // Botón "Detalle PJUD": igual que en Estado Diario, por causa del CRM o por token externo.
-        $pjudInfo = ['configurado' => $empresa->isPjudConfigurado()];
+        $pjudInfo = ['configurado' => $this->pjud->paraEmpresa($empresa)->configurado()];
         if ($tab === 'materias' && $pjudInfo['configurado'] && !empty($datos['causas'])) {
             $mapa = $this->causas->mapaPorRol($empresa->getId());
             foreach ($datos['causas'] as &$fila) {

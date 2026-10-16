@@ -1123,17 +1123,37 @@ class ContratoController extends AbstractController
     private function botonesPjud(Contrato $contrato, \App\Service\PjudApiClient $pjudApi): array
     {
         $empresa = $contrato->getAgenda()->getEmpresa();
-        if (!$empresa?->isPjudConfigurado()) {
-            return [];
-        }
-        $specs = [];
+        $specs = $pares = [];
         foreach ($contrato->getAgenda()->getCausas() as $causa) {
             if ($causa->getEstado() && ($spec = \App\Controller\PjudController::especDeCausa($causa))) {
                 $specs[$causa->getId()] = $spec;
+                $pares[] = [self::rolDeSpec($spec), $spec['causa']['tribunal']];
+            }
+        }
+        if (!$specs) {
+            return [];
+        }
+
+        // Las causas que están en Lexflow usan su conexión PJUD (y su habilitación); las demás, la de la Empresa.
+        $enLexflow = $pjudApi->causasEnLexflow($empresa, $pares);
+        $grupos = [true => [], false => []];
+        foreach ($specs as $id => $spec) {
+            $grupos[isset($enLexflow[\App\Repository\CausaRepository::claveRol(self::rolDeSpec($spec), $spec['causa']['tribunal'])])][$id] = $spec;
+        }
+        $estados = [];
+        foreach ($grupos as $esLexflow => $grupo) {
+            if ($grupo && $pjudApi->paraEmpresa($empresa, !$esLexflow)->configurado()) {
+                $estados += $pjudApi->estadosIniciales($grupo);
             }
         }
 
-        return $pjudApi->paraEmpresa($empresa)->estadosIniciales($specs);
+        return $estados;
+    }
+
+    /** @param array{causa:array{tipo:string,rol:int,anio:int}} $spec */
+    private static function rolDeSpec(array $spec): string
+    {
+        return $spec['causa']['tipo'] . '-' . $spec['causa']['rol'] . '-' . $spec['causa']['anio'];
     }
 
     private const NOTA_EXTENSIONES = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'jpg', 'jpeg', 'png', 'gif', 'zip'];

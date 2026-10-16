@@ -9,6 +9,8 @@ use GuzzleHttp\Exception\GuzzleException;
 use phpseclib3\Crypt\PublicKeyLoader;
 use phpseclib3\Crypt\RSA;
 use phpseclib3\Crypt\RSA\PrivateKey;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * Cliente de solo lectura de la API de Estado Diario (edapi.temposoft.cl).
@@ -25,7 +27,12 @@ class EdApiClient
     /** AAD con el que edapi sella las credenciales PJUD (formato v1). */
     private const AAD_CREDENCIALES = 'estado-diario/credenciales-pjud/v1';
 
-    public function __construct(private readonly string $baseUrl)
+    private const API_PJUD_TTL = 300;
+
+    /** @var array<string,array{base_url:string,email:string,password:string,client_key:string}|null> */
+    private array $memoApiPjud = [];
+
+    public function __construct(private readonly string $baseUrl, private readonly CacheInterface $cache)
     {
         $this->http = new Client(['base_uri' => rtrim($baseUrl, '/') . '/', 'timeout' => 30]);
     }
@@ -165,12 +172,7 @@ class EdApiClient
         }
         $codigo = $resp->getStatusCode();
         if ($codigo !== 200) {
-            throw new \RuntimeException(match ($codigo) {
-                401 => 'Lexflow rechazó la API Key (inválida, revocada, vencida o IP del servidor no permitida)',
-                403 => 'La API Key de Lexflow no tiene permiso para entregar credenciales (faltan permiso, IPs o llave pública)',
-                429 => 'Lexflow limitó las consultas; reintente en unos segundos',
-                default => 'Lexflow respondió con error ' . $codigo . ' al pedir las credenciales',
-            });
+            throw new \RuntimeException($this->mensajeErrorCredenciales($codigo));
         }
         $data = json_decode((string) $resp->getBody(), true);
         $causas = is_array($data) ? ($data['causas'] ?? []) : [];
@@ -192,12 +194,145 @@ class EdApiClient
     }
 
     /**
-     * Abre un sello v1.<llave AES>.<nonce>.<cifrado> (base64 URL-safe sin relleno): RSA-OAEP SHA-256
-     * abre la llave AES-256 y AES-GCM (AAD fijo) abre el JSON {rut, clave, metodo_login}.
+     * Conexión a api-pjud que Lexflow entrega en `api_pjud` (GET api/v1/causas?incluir_credenciales=true).
+     * Es una sola por plataforma (no cambia entre llamadas), así que se cachea unos minutos.
+     *
+     * @return array{base_url:string,email:string,password:string,client_key:string}|null null = el cliente no tiene
+     *         PJUD habilitado en Lexflow o la plataforma no tiene api-pjud configurada
+     * @throws \RuntimeException con un mensaje apto para mostrar al usuario
+     */
+    public function conexionApiPjud(): ?array
+    {
+        if (!$this->configurado()) {
+            throw new \RuntimeException('La empresa no tiene API Key de Estado Diario (configúrela en Empresa)');
+        }
+        if ($this->llavePrivada === '' || !self::llavePrivadaValida($this->llavePrivada)) {
+            throw new \RuntimeException('La empresa no tiene una llave privada válida para las credenciales de Lexflow (configúrela en Empresa)');
+        }
+        $clave = 'edapi_api_pjud_' . md5($this->apiKey . '|' . $this->clienteGuid . '|' . $this->baseUrl);
+        if (!array_key_exists($clave, $this->memoApiPjud)) {
+            $resumen = $this->cache->get($clave, function (ItemInterface $item): array {
+                $item->expiresAfter(self::API_PJUD_TTL);
+                return $this->pedirApiPjud();
+            });
+            $this->memoApiPjud[$clave] = $resumen['habilitado'] && is_string($resumen['sello']) && $resumen['sello'] !== ''
+                ? $this->abrirConexionApiPjud($resumen['sello'])
+                : null;
+        }
+
+        return $this->memoApiPjud[$clave];
+    }
+
+    /**
+     * Cuáles de las causas [rol, tribunal] existen en Lexflow (caché de 1 minuto). Clave = CausaRepository::claveRol().
+     *
+     * @param list<array{0:string,1:string}> $causas
+     * @return array<string,true>
+     * @throws \RuntimeException
+     */
+    public function causasExistentes(array $causas): array
+    {
+        $filtros = [];
+        foreach ($causas as [$rol, $tribunal]) {
+            // Mismo formato que credencialesPjud(): edapi compara el nombre exacto y usa "º".
+            $filtros[strtoupper($rol) . '|' . trim(str_replace([',', '°'], [' ', 'º'], $tribunal))] = true;
+        }
+        $filtros = array_keys($filtros);
+        sort($filtros);
+
+        return $this->cache->get('edapi_causas_' . md5($this->apiKey . '|' . $this->clienteGuid . '|' . implode(',', $filtros)), function (ItemInterface $item) use ($filtros): array {
+            $item->expiresAfter(60);
+            $presentes = [];
+            // roles viaja en la URL: se pide en tandas para no pasarse del largo permitido.
+            foreach (array_chunk($filtros, 40) as $tanda) {
+                $page = 1;
+                do {
+                    $data = $this->get('causas', ['roles' => implode(',', $tanda), 'page' => $page, 'limit' => 50]);
+                    foreach ($data['causas'] ?? [] as $c) {
+                        $presentes[CausaRepository::claveRol((string) ($c['rol'] ?? ''), (string) ($c['tribunal'] ?? ''))] = true;
+                    }
+                } while (++$page <= (int) ($data['total_pages'] ?? 1));
+            }
+
+            return $presentes;
+        });
+    }
+
+    /** @return array{habilitado:bool,sello:?string} */
+    private function pedirApiPjud(): array
+    {
+        $headers = ['X-API-Key' => $this->apiKey, 'Accept' => 'application/json'];
+        if ($this->clienteGuid !== '') {
+            $headers['X-Cliente-Guid'] = $this->clienteGuid;
+        }
+        try {
+            $resp = $this->http->get('api/v1/causas', [
+                'headers' => $headers,
+                'query' => ['incluir_credenciales' => 'true', 'limit' => 1],
+                'http_errors' => false,
+            ]);
+        } catch (GuzzleException $e) {
+            throw new \RuntimeException('No se pudo consultar la conexión PJUD en Lexflow: ' . $e->getMessage(), 0, $e);
+        }
+        $codigo = $resp->getStatusCode();
+        if ($codigo !== 200) {
+            throw new \RuntimeException($this->mensajeErrorCredenciales($codigo));
+        }
+        $data = json_decode((string) $resp->getBody(), true);
+        $data = is_array($data) ? $data : [];
+
+        return [
+            'habilitado' => ($data['pjud_habilitado'] ?? false) === true,
+            'sello' => is_string($data['api_pjud'] ?? null) ? $data['api_pjud'] : null,
+        ];
+    }
+
+    /** @return array{base_url:string,email:string,password:string,client_key:string} */
+    private function abrirConexionApiPjud(string $sello): array
+    {
+        $c = $this->abrirJson($sello);
+        foreach (['base_url', 'email', 'password', 'client_key'] as $k) {
+            if (!isset($c[$k]) || !is_string($c[$k]) || $c[$k] === '') {
+                throw new \RuntimeException('La conexión PJUD que entrega Lexflow está incompleta (falta ' . $k . ')');
+            }
+        }
+
+        return ['base_url' => $c['base_url'], 'email' => $c['email'], 'password' => $c['password'], 'client_key' => $c['client_key']];
+    }
+
+    private function mensajeErrorCredenciales(int $codigo): string
+    {
+        return match ($codigo) {
+            401 => 'Lexflow rechazó la API Key (inválida, revocada, vencida o IP del servidor no permitida)',
+            403 => 'La API Key de Lexflow no tiene permiso para entregar credenciales (faltan permiso, IPs o llave pública)',
+            429 => 'Lexflow limitó las consultas; reintente en unos segundos',
+            default => 'Lexflow respondió con error ' . $codigo . ' al pedir las credenciales',
+        };
+    }
+
+    /**
+     * Abre un sello de credenciales de un abogado: RSA-OAEP SHA-256 abre la llave AES-256 y AES-GCM abre el JSON
+     * {rut, clave, metodo_login}. Ver abrirJson() para el formato.
      *
      * @return array{rut:string,clave:string,metodo_login:int}
      */
     public function abrirSello(string $sello): array
+    {
+        $cred = $this->abrirJson($sello);
+        if (empty($cred['rut']) || empty($cred['clave'])) {
+            throw new \RuntimeException('No se pudo abrir la credencial de Lexflow (sello alterado)');
+        }
+
+        return ['rut' => (string) $cred['rut'], 'clave' => (string) $cred['clave'], 'metodo_login' => (int) ($cred['metodo_login'] ?? 1)];
+    }
+
+    /**
+     * Abre un sello v1.<llave AES>.<nonce>.<cifrado> (base64 URL-safe sin relleno): RSA-OAEP SHA-256 abre la
+     * llave AES-256 y AES-GCM (AAD fijo) abre el JSON.
+     *
+     * @return array<string,mixed>
+     */
+    private function abrirJson(string $sello): array
     {
         $partes = explode('.', $sello);
         if (count($partes) !== 4 || $partes[0] !== 'v1') {
@@ -218,11 +353,11 @@ class EdApiClient
             throw new \RuntimeException('No se pudo abrir la credencial de Lexflow: la llave privada no corresponde a la pública registrada en edapi');
         }
         $json = openssl_decrypt(substr($cifrado, 0, -16), 'aes-256-gcm', $dek, OPENSSL_RAW_DATA, $nonce, substr($cifrado, -16), self::AAD_CREDENCIALES);
-        $cred = $json === false ? null : json_decode($json, true);
-        if (!is_array($cred) || empty($cred['rut']) || empty($cred['clave'])) {
+        $datos = $json === false ? null : json_decode($json, true);
+        if (!is_array($datos)) {
             throw new \RuntimeException('No se pudo abrir la credencial de Lexflow (sello alterado)');
         }
 
-        return ['rut' => (string) $cred['rut'], 'clave' => (string) $cred['clave'], 'metodo_login' => (int) ($cred['metodo_login'] ?? 1)];
+        return $datos;
     }
 }
