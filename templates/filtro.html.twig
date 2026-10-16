@@ -1,6 +1,6 @@
 <div class="card bg-calipso">
     
-        <div class="card-header">
+        <div class="card-body">
             
             <div class="row">
                 
@@ -23,13 +23,3 @@
         
     </div>
     
-                    <select name="bCompania" class="form-control d-none">
-                        <option value="0">Todos</option>
-                        {% for compania in companias %}
-                            <option value="{{compania.id}}"
-                            {% if bCompania==compania.id %}
-                                selected
-                            {% endif %}
-                            >{{compania.nombre}}</option>
-                        {% endfor %}
-                    </select>
