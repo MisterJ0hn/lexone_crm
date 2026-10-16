@@ -51,6 +51,11 @@ class ContratoType extends AbstractType
                 'required' => false,
                 'data' => $cliente ? $cliente->getClaveUnica() : null,
             ])
+            ->add('pjudRut', TextType::class, [
+                'mapped' => false,
+                'required' => false,
+                'data' => $cliente ? $cliente->getPjudRut() : null,
+            ])
             ->add('pais')
             ->add('telefonoRecado', TextType::class, [
                 'mapped' => false,

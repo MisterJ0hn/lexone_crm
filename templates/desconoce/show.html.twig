@@ -88,14 +88,6 @@
             <h4>Datos Contrato</h4>
             <div class="row">
     
-                <div class="col-sm-12 col-md-4">
-                    <small class="text-muted">Estrategia Juridica</small>
-                    <p>{% for c in contrato.agenda.causas %}{{ c.servicio }}{% if not loop.last %}, {% endif %}{% endfor %}</p>   
-                </div>
-                <div class="col-sm-12 col-md-4">
-                    <small class="text-muted">Escritura</small>
-                    <p>{{contrato.escritura}}</p>   
-                </div>
                <!-- <div class="col-sm-12 col-md-3">
                     <small class="text-muted">Sucursal</small>
                     <p>{{contrato.sucursal?contrato.sucursal.nombre:''}}</p>   

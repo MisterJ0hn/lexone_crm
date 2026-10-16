@@ -64,6 +64,8 @@ class ClienteConvenioType extends AbstractType
             ->add('direccion', null, $obligatorio('Debe ingresar la dirección del cliente.'))
             // La Clave Única es opcional: si está, PjudController::credenciales() la usa para consultar api-pjud.
             ->add('claveUnica', null, ['required' => false])
+            // RUT con el que se ingresa a PJUD (distinto del RUT del cliente); junto a la clave única forma las "Credenciales PJUD".
+            ->add('pjudRut', null, ['required' => false])
             // Region/Ciudad/Comuna no tienen __toString(), a diferencia de EstadoCivil
             // y Reunion (que sí, y por eso se dejan con guessing automático de tipo);
             // hay que indicar explícitamente el campo a mostrar en el combo.

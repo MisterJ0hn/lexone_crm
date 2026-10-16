@@ -95,6 +95,7 @@
 
 <!-- Contenedor principal: menú lateral fijo + zona de contenido -->
 <div id="appShell" class="min-h-screen">
+  <script>try{if(localStorage.getItem('menuColapsado')==='1'){document.getElementById('appShell').classList.add('sidebar-colapsado');}}catch(e){}</script>
   <div id="appSidebarFondo" class="fixed inset-0 z-30 hidden bg-slate-900/40 lg:hidden"></div>
 
   <!-- Menú lateral -->
@@ -108,10 +109,10 @@
     </div>
   </aside>
 
-  <div class="flex min-h-screen min-w-0 flex-col lg:pl-64">
+  <div id="appContenido" class="flex min-h-screen min-w-0 flex-col lg:pl-64">
     <!-- Barra superior -->
     <header class="sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-slate-200 bg-white/90 px-4 backdrop-blur sm:px-6">
-      <button type="button" data-sidebar-toggle class="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 lg:hidden" aria-label="Abrir el menú">
+      <button type="button" data-sidebar-toggle class="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100" title="Mostrar/ocultar el menú" aria-label="Mostrar u ocultar el menú">
         <i class="fas fa-bars"></i>
       </button>
       <a href="{{ path('dashboard') }}" class="text-[13px] font-medium text-slate-600 no-underline hover:text-slate-900 hover:no-underline">Inicio</a>

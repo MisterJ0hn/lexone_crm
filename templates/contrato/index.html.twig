@@ -36,7 +36,7 @@
                     <tr>
                         <th>{{ knp_pagination_sortable(contratos, 'Cliente', 'agenda.tipoCliente') }} {% if contratos.isSorted('agenda.tipoCliente') %} <i class="fas fa-sort"></i>{% endif %}</th>
                        <th>{{ knp_pagination_sortable(contratos, 'Folio', 'folio') }} {% if contratos.isSorted('folio') %} <i class="fas fa-sort"></i>{% endif %}</th>
-                        <th>{{ knp_pagination_sortable(contratos, 'Cliente', 'cliente.nombre') }} {% if contratos.isSorted('cliente.nombre') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th>{{ knp_pagination_sortable(contratos, 'Nombre', 'cliente.nombre') }} {% if contratos.isSorted('cliente.nombre') %} <i class="fas fa-sort"></i>{% endif %}</th>
                        <!-- <th>{{ knp_pagination_sortable(contratos, 'Agendador', 'agenda.agendador') }} {% if contratos.isSorted('agenda.agendador') %} <i class="fas fa-sort"></i>{% endif %}</th>
                         <th>{{ knp_pagination_sortable(contratos, 'Abogado', 'agenda.abogado') }} {% if contratos.isSorted('agenda.abogado') %} <i class="fas fa-sort"></i>{% endif %}</th>
                         <th>{{ knp_pagination_sortable(contratos, 'Tramitador', 'tramitador') }} {% if contratos.isSorted('tramitador') %} <i class="fas fa-sort"></i>{% endif %}</th>

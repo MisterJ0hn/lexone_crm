@@ -384,6 +384,7 @@ class ContratoController extends AbstractController
                 $cliente->setTelefono($form->get('telefono')->getData());
                 $cliente->setRut($form->get('rut')->getData());
                 $cliente->setClaveUnica($form->get('claveUnica')->getData());
+                $cliente->setPjudRut($form->get('pjudRut')->getData());
                 $cliente->setDireccion($form->get('direccion')->getData());
                 $cliente->setTelefonoRecado($form->get('telefonoRecado')->getData());
                 $cliente->setSexo($request->request->get('cboSexo'));
@@ -1336,6 +1337,7 @@ class ContratoController extends AbstractController
                 $clienteExistente->setTelefono($cliente->getTelefono());
                 $clienteExistente->setDireccion($cliente->getDireccion());
                 $clienteExistente->setClaveUnica($cliente->getClaveUnica());
+                $clienteExistente->setPjudRut($cliente->getPjudRut());
                 $clienteExistente->setNacionalidad($cliente->getNacionalidad());
                 $clienteExistente->setRegion($cliente->getRegion());
                 $clienteExistente->setCiudad($cliente->getCiudad());

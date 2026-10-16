@@ -266,7 +266,11 @@ class PjudController extends AbstractController
                 }
             }
 
-            $rut = trim((string) $cliente?->getRut());
+            // El RUT de las credenciales PJUD puede ser distinto al del cliente; si no se cargó, se usa el del cliente.
+            $rut = trim((string) $cliente?->getPjudRut());
+            if ($rut === '') {
+                $rut = trim((string) $cliente?->getRut());
+            }
             $clave = (string) $cliente?->getClaveUnica();
             if ($rut !== '' && $clave !== '') {
                 return ['rut' => $rut, 'clave' => $clave, 'metodo_login' => 2];

@@ -3,11 +3,23 @@
 (function ($) {
   'use strict';
 
-  // Menú lateral en móvil: se abre con el botón de la barra superior y se cierra con el fondo o Esc.
-  var $sidebar = $('#appSidebar'), $fondo = $('#appSidebarFondo');
+  // Menú lateral: en móvil se abre con el botón de la barra superior y se cierra con el fondo o Esc;
+  // en escritorio el mismo botón lo colapsa/expande (se recuerda en localStorage, ver base.html.twig).
+  var $sidebar = $('#appSidebar'), $fondo = $('#appSidebarFondo'), $shell = $('#appShell');
+  var escritorio = window.matchMedia('(min-width: 1024px)');
   function abrirMenu() { $sidebar.removeClass('-translate-x-full'); $fondo.removeClass('hidden'); }
   function cerrarMenu() { $sidebar.addClass('-translate-x-full'); $fondo.addClass('hidden'); }
-  $(document).on('click', '[data-sidebar-toggle]', function (e) { e.preventDefault(); $sidebar.hasClass('-translate-x-full') ? abrirMenu() : cerrarMenu(); });
+  $(document).on('click', '[data-sidebar-toggle]', function (e) {
+    e.preventDefault();
+    if (escritorio.matches) {
+      var colapsado = $shell.toggleClass('sidebar-colapsado').hasClass('sidebar-colapsado');
+      try { localStorage.setItem('menuColapsado', colapsado ? '1' : '0'); } catch (err) {}
+      // Calendarios y gráficos recalculan su ancho al terminar la transición.
+      setTimeout(function () { window.dispatchEvent(new Event('resize')); }, 250);
+      return;
+    }
+    $sidebar.hasClass('-translate-x-full') ? abrirMenu() : cerrarMenu();
+  });
   $fondo.on('click', cerrarMenu);
   $(document).on('keydown', function (e) { if (e.key === 'Escape') { cerrarMenu(); } });
 

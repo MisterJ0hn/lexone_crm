@@ -505,11 +505,13 @@ class PanelAbogadoController extends AbstractController
             $cliente->setCorreo($form->get('email')->getData());
             $cliente->setTelefono($form->get('telefono')->getData());
             $cliente->setRut($form->get('rut')->getData());
-            $cliente->setClaveUnica($form->get('claveUnica')->getData());
             $cliente->setDireccion($form->get('direccion')->getData());
             $cliente->setTelefonoRecado($form->get('telefonoRecado')->getData());
             if ($esClientePersona) {
                 $cliente->setSexo($request->request->get('cboSexo'));
+                // Credenciales PJUD: solo Persona (en Empresa/Convenio van por cada cliente de la línea de tiempo).
+                $cliente->setClaveUnica($form->get('claveUnica')->getData());
+                $cliente->setPjudRut($form->get('pjudRut')->getData());
             } else {
                 $cliente->setRepLegalRut($form->get('repLegalRut')->getData());
                 $cliente->setRepLegalNombre($form->get('repLegalNombre')->getData());

@@ -61,6 +61,13 @@ class Cliente
     #[ORM\Column(type: "encrypted_string", length: 255, nullable: true)]
     private $claveUnica;
 
+    /**
+     * Credenciales PJUD: RUT con el que se inicia sesión en el Poder Judicial (distinto del RUT del
+     * cliente). La contraseña es la claveUnica. Cifrado igual que rut/claveUnica.
+     */
+    #[ORM\Column(type: "encrypted_string", length: 255, nullable: true)]
+    private $pjudRut;
+
     #[ORM\OneToMany(targetEntity: Contrato::class, mappedBy: "cliente")]
     private $contratos;
 
@@ -192,6 +199,18 @@ class Cliente
     public function setClaveUnica(?string $claveUnica): self
     {
         $this->claveUnica = $claveUnica;
+
+        return $this;
+    }
+
+    public function getPjudRut(): ?string
+    {
+        return $this->pjudRut;
+    }
+
+    public function setPjudRut(?string $pjudRut): self
+    {
+        $this->pjudRut = $pjudRut;
 
         return $this;
     }

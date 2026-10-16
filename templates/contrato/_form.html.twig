@@ -116,11 +116,17 @@
                 <small class="text-muted">Reunión</small>
                 {{form_row(form.reunion,{'label':false,'attr':{'class':'form-control'}})}}
             </div>
+         </div>
+        <h4>Credenciales PJUD</h4>
+        <div class="row">
+            <div class="col-sm-12 col-md-3">
+                <small class="text-muted">Rut</small><br>
+                {{form_row(form.pjudRut,{'label':false,'attr':{'class':'form-control format-rut-pjud','autocomplete':"ÑÖcompletes"}})}}
+            </div>
             <div class="col-sm-12 col-md-3">
                 <small class="text-muted">Clave única</small>
                 {{form_row(form.claveUnica,{'label':false,'attr':{'class':'form-control','autocomplete':"ÑÖcompletes"}})}}
             </div>
-
         </div>
         {% else %}
         {# Cliente Empresa/Convenio: estos campos no se muestran, pero deben seguir
@@ -133,6 +139,7 @@
             {{form_row(form.rut)}}
             {{form_row(form.direccion)}}
             {{form_row(form.claveUnica)}}
+            {{form_row(form.pjudRut)}}
             {{form_row(form.telefonoRecado)}}
             {{form_row(form.situacionLaboral)}}
             {{form_row(form.pais)}}
@@ -491,7 +498,7 @@
         $("#m-valor-cuota").html($.number( $('.valor-cuota').val(), 0, ',', '.' ));
     }
         
-    $(".format-rut").rut();
+    $(".format-rut, .format-rut-pjud").rut();
     $("#m-monto-contrato").html($.number( $('.monto-contrato').val(), 0, ',', '.' ));
     $("#m-primera-cuota").html($.number( $('.primera-cuota').val(), 0, ',', '.' ));
     $("#m-valor-cuota").html($.number( $('.valor-cuota').val(), 0, ',', '.' ));

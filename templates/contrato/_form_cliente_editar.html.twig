@@ -10,15 +10,6 @@
             {{ form_widget(form.rut, {'attr': {'class': 'form-control format-rut-edit'}}) }}
         </div>
         <div class="col-sm-12 col-md-4">
-            <small class="text-muted">Clave única</small>
-            <div class="input-group">
-                {{ form_widget(form.claveUnica, {'type': 'password', 'attr': {'class': 'form-control', 'autocomplete': 'new-password'}}) }}
-                <div class="input-group-append">
-                    <button type="button" class="btn btn-outline-secondary" onclick="toggleClaveUnica(this)" title="Mostrar/ocultar"><i class="fas fa-eye"></i></button>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-12 col-md-4">
             <small class="text-muted">Correo</small>
             {{ form_widget(form.correo, {'attr': {'class': 'form-control mail-format', 'data-validar-correo': ''}}) }}
         </div>
@@ -61,6 +52,23 @@
         <div class="col-sm-12 col-md-3">
             <small class="text-muted">Reunión</small>
             {{ form_widget(form.reunion, {'attr': {'class': 'form-control'}}) }}
+        </div>
+    </div>
+    <hr>
+    <h5>Credenciales PJUD</h5>
+    <div class="row">
+        <div class="col-sm-12 col-md-4">
+            <small class="text-muted">Rut</small>
+            {{ form_widget(form.pjudRut, {'attr': {'class': 'form-control format-rut-edit'}}) }}
+        </div>
+        <div class="col-sm-12 col-md-4">
+            <small class="text-muted">Clave única</small>
+            <div class="input-group">
+                {{ form_widget(form.claveUnica, {'type': 'password', 'attr': {'class': 'form-control', 'autocomplete': 'new-password'}}) }}
+                <div class="input-group-append">
+                    <button type="button" class="btn btn-outline-secondary" onclick="toggleClaveUnica(this)" title="Mostrar/ocultar"><i class="fas fa-eye"></i></button>
+                </div>
+            </div>
         </div>
     </div>
 </div>

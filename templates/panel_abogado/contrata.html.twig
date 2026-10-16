@@ -94,12 +94,28 @@
         <small class="text-muted">Reunión *</small>
 		{{form_row(form.reunion,{'label':false,'attr':{'class':'form-control','required':'required'}})}}
     </div>
+
+</div>
+{% if agenda.tipoCliente is null or agenda.tipoCliente.nombre == 'Persona' %}
+<hr class="card-outline card-info">
+<h4>Credenciales PJUD</h4>
+<div class="row">
+    <div class="col-sm-12 col-md-3">
+        <small class="text-muted">Rut</small>
+		{{form_row(form.pjudRut,{'label':false,'attr':{'class':'form-control format-rut-pjud','autocomplete':"ÑÖcompletes"}})}}
+    </div>
     <div class="col-sm-12 col-md-3">
         <small class="text-muted">Clave única</small>
 		{{form_row(form.claveUnica,{'label':false,'attr':{'class':'form-control','autocomplete':"ÑÖcompletes"}})}}
     </div>
-
 </div>
+{% else %}
+{# Empresa/Convenio: las credenciales PJUD se piden por cada cliente en la línea de tiempo; aquí no se muestran. #}
+<div style="display:none">
+    {{form_row(form.pjudRut)}}
+    {{form_row(form.claveUnica)}}
+</div>
+{% endif %}
 {% if agenda.tipoCliente is not null and agenda.tipoCliente.nombre != 'Persona' %}
 <hr class="card-outline card-info">
 <h4>Datos representante legal</h4>
@@ -1167,7 +1183,7 @@
         }
         }
     });
-    $(".format-rut, .format-rut-rep").inputmask({
+    $(".format-rut, .format-rut-rep, .format-rut-pjud").inputmask({
         mask:"9{1,2}.9{3}.9{3}-(9|k|K)",
         casing: 'upper',
         clearIncomplete: false,
