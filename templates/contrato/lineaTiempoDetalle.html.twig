@@ -104,13 +104,7 @@
                         </table>
 
                         {% if causa.estado and not causa.causaFinalizada %}
-                        <div class="mt-2">
-                            <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#nuevoEstadoProcesal" title="Agregar estado procesal"><i class="fas fa-plus"></i></button>
-                            <form method="post" action="{{ path('contrato_estado_procesal_finalizar', {'id': causa.id}) }}" class="d-inline" onsubmit="return confirm('¿Finalizar esta causa?');">
-                                <input type="hidden" name="_token" value="{{ csrf_token('estado_procesal' ~ causa.id) }}">
-                                <button type="submit" class="btn btn-success">Finalizar</button>
-                            </form>
-                        </div>
+                        
                         <div class="collapse mt-3" id="nuevoEstadoProcesal">
                             <form method="post" action="{{ path('contrato_estado_procesal_agregar', {'id': causa.id}) }}">
                                 <input type="hidden" name="_token" value="{{ csrf_token('estado_procesal' ~ causa.id) }}">
@@ -135,6 +129,13 @@
                                         <button type="submit" class="btn btn-primary">Agregar</button>
                                     </div>
                                 </div>
+                            </form>
+                        </div>
+                        <div class="mt-2">
+                            <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#nuevoEstadoProcesal" title="Agregar estado procesal"><i class="fas fa-plus"></i></button>
+                            <form method="post" action="{{ path('contrato_estado_procesal_finalizar', {'id': causa.id}) }}" class="d-inline" onsubmit="return confirm('¿Finalizar esta causa?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('estado_procesal' ~ causa.id) }}">
+                                <button type="submit" class="btn btn-success">Finalizar</button>
                             </form>
                         </div>
                         {% else %}
