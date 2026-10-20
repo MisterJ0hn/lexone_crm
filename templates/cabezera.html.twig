@@ -3,10 +3,10 @@
         <!--<h1>Folio: {{contrato.folio}}</h1>-->
         <h1 class="card-title"><strong>{{contrato.cliente.nombre}}\{{contrato.agenda.tipoCliente.nombre}}{% if causa is defined %}
             \{{causa.materia.nombre}}{% if causa.servicio %} - {{causa.servicio}}{% endif %}
-        {% endif %}  </strong></h1>
+        {% endif %}  </strong></h1>\<small class="text-muted"><strong>Folio: {{ contrato.folio }}</strong></small>
         <div class="card-tools">
            
-            </button>
+        </button>
             
         </div>
     </div>

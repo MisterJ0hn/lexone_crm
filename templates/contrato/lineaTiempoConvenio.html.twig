@@ -179,11 +179,12 @@
                     <thead>
                         <tr>
                             <th>Materia</th>
-                            <th>Caratulado</th>
+                            
                             <th>Servicio</th>
                             <th>Rit/Rol</th>
                             <th>Corte</th>
                             <th>Tribunal</th>
+                            <th>Caratulado</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -192,13 +193,14 @@
                     {% if causa.estado == true %}
                         <tr>
                             <td><strong>{{ causa.materia.nombre }}</strong></td>
-                            <td>{{ causa.causaNombre }}</td>
+                           
                             <td>                                
                                 {% if causa.servicio %}{{ causa.servicio }}{% endif %}
                             </td>
                             <td>{{ causa.letra }}-{{ causa.rol }}-{{ causa.anio }}</td>
                             <td>{{ causa.corte ? causa.corte.nombre : '' }}</td>
                             <td>{{ causa.juzgado is null ? '' : causa.juzgado }}</td>
+                             <td>{{ causa.causaNombre }}</td>
                             <td>
                                 <div class="btn-group btn-group-sm" role="group">
                                 {% if causa.causaFinalizada == true %}

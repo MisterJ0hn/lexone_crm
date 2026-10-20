@@ -74,11 +74,12 @@
                         <tr>
                             <!--<th>Id</th>-->
                             
-                            <th>Caratulado</th>
+                            
                             <th>Servicio</th>
                             <th>Rit/Rol</th>
                             <th>Corte</th>
                             <th>Tribunal</th>
+                            <th>Caratulado</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -90,9 +91,7 @@
                            <!-- <td>
                             {{causa.id}}
                             </td>-->
-                             <td>
-                                {{causa.causaNombre}}
-                            </td>
+                            
                             <td>
                                 <strong>{{causa.materia.nombre}}</strong>
                                 {% if causa.servicio %}<br><small>{{causa.servicio}}</small>{% endif %}
@@ -108,6 +107,9 @@
                             </td>
                             <td>
                                 {{causa.juzgado is null?'':causa.juzgado}}
+                            </td>
+                             <td>
+                                {{causa.causaNombre}}
                             </td>
                             <td>
                                 <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
