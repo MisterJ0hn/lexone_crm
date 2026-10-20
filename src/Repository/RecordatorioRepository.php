@@ -50,6 +50,44 @@ class RecordatorioRepository extends ServiceEntityRepository
         ->getOneOrNullResult();
     }
 
+    /**
+     * Recordatorios pendientes (del día y atrasados) de un usuario, acotados a la empresa indicada.
+     * @return Recordatorio[]
+     */
+    public function findCampana(int $usuario, \DateTimeInterface $hoy, $empresa, int $max = 10): array
+    {
+        return $this->campanaQb($usuario, $hoy, $empresa)
+            ->addSelect('c', 't')
+            ->orderBy('r.fechaAviso', 'ASC')
+            ->setMaxResults($max)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function countCampana(int $usuario, \DateTimeInterface $hoy, $empresa): int
+    {
+        return (int) $this->campanaQb($usuario, $hoy, $empresa)
+            ->select('count(r.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    private function campanaQb(int $usuario, \DateTimeInterface $hoy, $empresa)
+    {
+        return $this->createQueryBuilder('r')
+            ->join('r.contrato', 'c')
+            ->join('r.tipo', 't')
+            ->join('c.agenda', 'a')
+            ->join('a.cuenta', 'cu')
+            ->andWhere('r.usuarioRegistro = :usuario')
+            ->andWhere('r.fechaAviso <= :hoy')
+            ->andWhere('r.leido = false')
+            ->andWhere('cu.empresa = :empresa')
+            ->setParameter('usuario', $usuario)
+            ->setParameter('hoy', $hoy->format('Y-m-d'))
+            ->setParameter('empresa', $empresa);
+    }
+
     public function findByPers(array $criterio,array $orderBy=null, $limit=null,$offset=null, array $joins=null, array $criterio_personal=null, array $or_criterio_personal=null){
 
         $query=$this->createQueryBuilder('r');

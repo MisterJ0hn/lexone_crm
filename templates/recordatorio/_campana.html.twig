@@ -1,0 +1,30 @@
+<div class="relative">
+  <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="relative inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100" title="Recordatorios" aria-label="Recordatorios">
+    <i class="far fa-bell"></i>
+    {% if total > 0 %}
+      <span class="absolute -right-1 -top-1 inline-flex min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-semibold leading-4 text-white">{{ total > 99 ? '99+' : total }}</span>
+    {% endif %}
+  </button>
+  <div class="dropdown-menu dropdown-menu-right p-0" style="width:320px; max-width:90vw;">
+    <div class="border-bottom px-3 py-2 text-[13px] font-semibold text-slate-700">Recordatorios</div>
+    <div style="max-height:360px; overflow-y:auto;">
+      {% set seccion = null %}
+      {% for r in recordatorios %}
+        {% set fecha = r.fechaAviso|date('Y-m-d') %}
+        {% set s = (fecha == hoy) ? 'Hoy' : 'Atrasados' %}
+        {% if s != seccion %}
+          <div class="bg-slate-50 px-3 py-1 text-[11px] font-semibold uppercase text-slate-500">{{ s }}</div>
+          {% set seccion = s %}
+        {% endif %}
+        <a href="{{ path('recordatorio_show', {'id': r.id}) }}" class="dropdown-item border-bottom px-3 py-2" style="white-space:normal;">
+          <div class="text-[13px] font-medium text-slate-700">{{ r.tipo.nombre }} - {{ r.contrato.cliente.nombre }}</div>
+          {% if r.observacion %}<div class="text-[12px] text-slate-600">{{ r.observacion|length > 80 ? r.observacion|slice(0, 80) ~ '…' : r.observacion }}</div>{% endif %}
+          <div class="text-[11px] {{ s == 'Hoy' ? 'text-slate-400' : 'text-red-500' }}"><i class="far fa-clock mr-1"></i>{{ r.fechaAviso|date('d-m-Y') }}</div>
+        </a>
+      {% else %}
+        <div class="px-3 py-3 text-[13px] text-slate-500">No tienes recordatorios pendientes.</div>
+      {% endfor %}
+    </div>
+    <a href="{{ path('recordatorio_index') }}" class="dropdown-item px-3 py-2 text-center text-[13px] font-medium">Ver todos</a>
+  </div>
+</div>

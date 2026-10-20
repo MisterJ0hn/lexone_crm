@@ -98,10 +98,32 @@
                 {% endif %}
                 <div class="col-sm-12 col-md-3 ocultar-campo">
                     <small class="text-muted">Reunión</small>
-                    <p>{{contrato.reunion}}</p>   
+                    <p>{{contrato.reunion}}</p>
                 </div>
             </div>
-    
+
+            {% if contrato.agenda.tipoCliente and contrato.agenda.tipoCliente.nombre != 'Persona' %}
+            <h5>Representante legal</h5>
+            <div class="row">
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted">Rut</small>
+                    <p>{{contrato.cliente.repLegalRut}}</p>
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted">Nombre</small>
+                    <p>{{contrato.cliente.repLegalNombre}}</p>
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted">Estado civil</small>
+                    <p>{{contrato.cliente.repLegalEstadoCivil}}</p>
+                </div>
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted">Profesión u oficio</small>
+                    <p>{{contrato.cliente.repLegalProfesion}}</p>
+                </div>
+            </div>
+            {% endif %}
+
             <h4>Datos Contrato</h4>
             <div class="row">
     

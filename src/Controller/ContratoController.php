@@ -28,6 +28,7 @@ use App\Repository\DiasPagoRepository;
 use App\Repository\UsuarioRepository;
 use App\Repository\AgendaStatusRepository;
 use App\Repository\CausaObservacionRepository;
+use App\Repository\EstadoProcesalTipoRepository;
 use App\Repository\ModuloPerRepository;
 use App\Repository\CuotaRepository;
 use App\Repository\ConfiguracionRepository;
@@ -1506,7 +1507,8 @@ class ContratoController extends AbstractController
     #[Route("/{id}/linea_tiempo_detalle", name: "contrato_linea_tiempo_detalle", methods: ["GET","POST"])]
     function lineaTiempoDetalle(Causa $causa, 
     ModuloPerRepository $moduloPerRepository,
-    CausaObservacionRepository $causaObservacionRepository): Response
+    CausaObservacionRepository $causaObservacionRepository,
+    EstadoProcesalTipoRepository $estadoProcesalTipoRepository): Response
     {
         $this->denyAccessUnlessGranted('create','linea_tiempo');
         $user=$this->getUser();
@@ -1527,6 +1529,7 @@ class ContratoController extends AbstractController
             'pagina'=>$pagina->getNombre(),
             'observaciones'=>$causaObservacionRepository->findBy(['contrato'=>$contrato,'causa'=>$causa],['fechaRegistro'=>'Desc']),
             'fechaUltimoIngreso'=>$fechaUltimoIngreso
+            'tiposEstadoProcesal'=>$estadoProcesalTipoRepository->findBy(['empresa'=>$user->getEmpresaActual(),'estado'=>true],['nombre'=>'ASC']),
             
             
         ]);

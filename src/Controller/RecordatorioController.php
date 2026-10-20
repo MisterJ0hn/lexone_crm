@@ -97,6 +97,21 @@ class RecordatorioController extends AbstractController
         ]);
     }
 
+    /** Campana del nav superior; se incluye con render(controller()) desde base.html.twig. */
+    public function campana(RecordatorioRepository $recordatorioRepository): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
+        $user = $this->getUser();
+        $hoy = new DateTime('today');
+        $empresa = $user->getEmpresaActual();
+
+        return $this->render('recordatorio/_campana.html.twig', [
+            'recordatorios' => $recordatorioRepository->findCampana($user->getId(), $hoy, $empresa),
+            'total' => $recordatorioRepository->countCampana($user->getId(), $hoy, $empresa),
+            'hoy' => $hoy->format('Y-m-d'),
+        ]);
+    }
+
     #[Route("/agenda", name: "recordatorio_avisos", methods: ["GET","POST"])]
     public function avisos(RecordatorioRepository $recordatorioRepository): Response
     {
