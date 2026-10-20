@@ -134,9 +134,78 @@
     </div>
     <div class="col-sm-12 col-md-3">
         <small class="text-muted">Profesión u oficio</small>
-        {{form_row(form.repLegalProfesion,{'label':false,'attr':{'class':'form-control','autocomplete':"ÑÖcompletes"}})}}
+        {% set profActual = form.repLegalProfesion.vars.value %}
+        <div class="input-group">
+            <select name="{{ form.repLegalProfesion.vars.full_name }}" id="{{ form.repLegalProfesion.vars.id }}" class="form-control">
+                <option value="">Seleccione profesión u oficio</option>
+                {% set hayActual = false %}
+                {% for prof in profesiones %}
+                    {% if prof.nombre == profActual %}{% set hayActual = true %}{% endif %}
+                    <option value="{{ prof.nombre }}" {{ prof.nombre == profActual ? 'selected' : '' }}>{{ prof.nombre }}</option>
+                {% endfor %}
+                {% if profActual and not hayActual %}<option value="{{ profActual }}" selected>{{ profActual }}</option>{% endif %}
+            </select>
+            <div class="input-group-append">
+                <button type="button" class="btn btn-outline-primary" id="btnProfesionNueva" title="Agregar una profesión u oficio que no está en el listado"><i class="fas fa-plus"></i></button>
+            </div>
+        </div>
     </div>
 </div>
+<div class="modal fade" id="modalProfesionNueva" tabindex="-1" role="dialog" aria-hidden="true"
+     data-url="{{ path('profesion_rapido') }}"
+     data-csrf="{{ csrf_token('profesion_rapido') }}">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Nueva profesión u oficio</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                {# Sin atributo name: este campo no debe enviarse con el formulario del contrato. #}
+                <input type="text" id="profesionNuevaNombre" class="form-control" maxlength="255" placeholder="Profesión u oficio" autocomplete="off">
+                <div id="profesionNuevaError" class="text-danger small mt-1"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="profesionNuevaGuardar">Agregar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+// Este parcial puede cargarse por AJAX (DOMContentLoaded ya pasó): se ejecuta de inmediato y
+// el modal se mueve al <body> para que no quede bajo el fondo oscuro de un contenedor con z-index.
+(function () {
+    var $modal = $('#modalProfesionNueva').appendTo('body'), $select = $('#{{ form.repLegalProfesion.vars.id }}');
+    $('#btnProfesionNueva').on('click', function () {
+        $('#profesionNuevaError').text('');
+        $('#profesionNuevaNombre').val('');
+        $modal.modal('show');
+    });
+    $modal.on('shown.bs.modal', function () { $('#profesionNuevaNombre').trigger('focus'); });
+    $('#profesionNuevaNombre').on('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); $('#profesionNuevaGuardar').click(); } });
+    $('#profesionNuevaGuardar').on('click', function () {
+        var nombre = $.trim($('#profesionNuevaNombre').val());
+        if (!nombre) { $('#profesionNuevaError').text('Ingrese la profesión u oficio.'); return; }
+        var $btn = $(this).prop('disabled', true);
+        $.ajax({
+            url: $modal.data('url'),
+            type: 'post',
+            data: { nombre: nombre },
+            headers: { 'X-CSRF-Token': $modal.data('csrf') },
+            dataType: 'json'
+        }).done(function (r) {
+            if (!$select.find('option').filter(function () { return this.value === r.nombre; }).length) {
+                $select.append($('<option>').val(r.nombre).text(r.nombre));
+            }
+            $select.val(r.nombre).trigger('change');
+            $modal.modal('hide');
+        }).fail(function (xhr) {
+            $('#profesionNuevaError').text((xhr.responseJSON && xhr.responseJSON.detail) || 'No se pudo agregar la profesión.');
+        }).always(function () { $btn.prop('disabled', false); });
+    });
+})();
+</script>
 {% endif %}
 <hr class="card-outline card-info">
 <h4>Honorarios</h4>

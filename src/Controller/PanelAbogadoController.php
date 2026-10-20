@@ -336,14 +336,15 @@ class PanelAbogadoController extends AbstractController
                             ServicioRepository $servicioRepository,
                             MateriaRepository $materiaRepository,
                             ContratoTemplateRepository $contratoTemplateRepository,
-                            TipoClienteRepository $tipoClienteRepository
+                            TipoClienteRepository $tipoClienteRepository,
+                            \App\Repository\ProfesionRepository $profesionRepository
                             ):Response
     {
         $this->denyAccessUnlessGranted('create','panel_abogado');
 
         $user=$this->getUser();
-        
-        
+
+
         $juzgados=$juzgadoRepository->findAll();
         if(null != $request->request->get('chkStatus')){
             $agenda->setStatus($agendaStatusRepository->find($request->request->get('chkStatus')));
@@ -694,6 +695,7 @@ class PanelAbogadoController extends AbstractController
             'sucursales'=>$sucursalRepository->findBy(['cuenta'=>$agenda->getCuenta()->getId()]),
             'regiones'=>$regionRepository->findAll(),
             'materias'=>$materiaRepository->findBy([],['nombre'=>'ASC']),
+            'profesiones'=>$profesionRepository->findBy(['empresa'=>$user->getEmpresaActual(),'estado'=>true],['nombre'=>'ASC']),
         ] );
     }
     #[Route("/{id}/no_contrata", name: "panel_abogado_no_contrata", methods: ["GET","POST"])]
