@@ -227,7 +227,19 @@ class ContratoController extends AbstractController
         $this->denyAccessUnlessGranted('view','contrato');
         $user=$this->getUser();
         $pagina=$moduloPerRepository->findOneByName('contrato',$user->getEmpresaActual());
+
+        // Empresa/Convenio: credenciales PJUD de cada sub cliente (Causa::$cliente), sin repetir clientes.
+        $subclientes = [];
+        if (in_array($contrato->getAgenda()->getTipoClienteNombre(), ['Empresa', 'Convenio'], true)) {
+            foreach ($contrato->getAgenda()->getCausas() as $causa) {
+                $cliente = $causa->getCliente();
+                if ($cliente !== null) {
+                    $subclientes[$cliente->getId()] = $cliente;
+                }
+            }
+        }
         return $this->render('contrato/show.html.twig', [
+            'subclientes' => $subclientes,
             'contrato' => $contrato,
             'agenda'=>$contrato->getAgenda(),
             'pagina'=>$pagina->getNombre(),

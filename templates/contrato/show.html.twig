@@ -93,7 +93,7 @@
                 </div>
                 <div class="col-sm-12 col-md-3">
                     <small class="text-muted">Clave única</small>
-                    <p>{{contrato.cliente.claveUnica}}</p>   
+                    <p>{% if contrato.cliente.claveUnica %}<span class="clave-oculta" data-clave="{{ contrato.cliente.claveUnica }}">••••••••</span> <button type="button" class="btn btn-sm btn-link p-0 ml-1 btn-clave" title="Mostrar/ocultar clave"><i class="fas fa-eye"></i></button>{% endif %}</p>
                 </div>
                 {% endif %}
                 <div class="col-sm-12 col-md-3 ocultar-campo">
@@ -122,6 +122,22 @@
                     <p>{{contrato.cliente.repLegalProfesion}}</p>
                 </div>
             </div>
+
+            <h5>Credenciales PJUD</h5>
+            {% if subclientes is empty %}
+                <p class="text-muted">No hay sub clientes con causas registradas.</p>
+            {% else %}
+            <table class="table table-sm" style="max-width:700px">
+                <tr><th>Nombre / Razón social</th><th>Rut PJUD</th><th>Clave única</th></tr>
+                {% for sub in subclientes %}
+                <tr>
+                    <td>{{ sub.nombre }}</td>
+                    <td>{{ sub.pjudRut }}</td>
+                    <td>{% if sub.claveUnica %}<span class="clave-oculta" data-clave="{{ sub.claveUnica }}">••••••••</span> <button type="button" class="btn btn-sm btn-link p-0 ml-1 btn-clave" title="Mostrar/ocultar clave"><i class="fas fa-eye"></i></button>{% endif %}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% endif %}
             {% endif %}
 
             <h4>Datos Contrato</h4>
@@ -211,6 +227,16 @@
 
     </div>
 </div>
-    
 
+<script>
+document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.btn-clave');
+    if (!btn) { return; }
+    var span = btn.previousElementSibling;
+    var visible = span.dataset.visible === '1';
+    span.textContent = visible ? '••••••••' : span.dataset.clave;
+    span.dataset.visible = visible ? '0' : '1';
+    btn.querySelector('i').className = visible ? 'fas fa-eye' : 'fas fa-eye-slash';
+});
+</script>
 {% endblock %}
