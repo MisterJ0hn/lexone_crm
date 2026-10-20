@@ -5,6 +5,10 @@
 {% block title %}Estado Diario{% endblock %}
 
 {% block body %}
+{# "Leído" va en medio del grupo (detalle PJUD · leído · pendiente): al estar dentro de su propio form, el tema le redondea las esquinas. #}
+<style>
+    .btn-group > form.btn-group > .btn.btn-leido-centro { border-radius: 0; }
+</style>
 <div class="card">
     <div class="card-header">
         <h3 class="card-title">Estado Diario</h3>
@@ -84,6 +88,7 @@
                                 <div class="btn-group" role="group">
                                     
                                 {{ pjud.boton(r.crm_causa_id|default(r.pjud_token|default(null)), r.pjud_estado|default('nuevo')) }}
+                               
                                 {% if r.id is defined %}
                                     {% set accion = r.leido ? 'no_leido' : 'leido' %}
                                     <form method="post" action="{{ path('ed_estado_diario_' ~ accion, {id: r.id}) }}" class="btn-group">
@@ -96,11 +101,18 @@
                                                 <i class="fas fa-undo"></i>
                                             </button>
                                         {% else %}
-                                            <button type="submit" class="btn btn-outline-success btn-sm px-2" title="Marcar como leído">
+                                            <button type="submit" class="btn btn-outline-success btn-sm px-2 btn-leido-centro" title="Marcar como leído">
                                                 <i class="fas fa-check"></i>
                                             </button>
                                         {% endif %}
                                     </form>
+                                {% endif %}
+                                 {% if r.id is defined and not r.leido %}
+                                    <button type="button" class="btn btn-outline-warning btn-sm px-2 btn-pendiente" title="Marcar como pendiente"
+                                            data-action="{{ path('ed_estado_diario_pendiente', {id: r.id}) }}"
+                                            data-token="{{ csrf_token('ed_pendiente' ~ r.id) }}">
+                                        <i class="fas fa-clock"></i>
+                                    </button>
                                 {% endif %}
                                 </div>
                             </td>
@@ -111,6 +123,89 @@
                     </tbody>
                 </table>
             </div>
+            {# Popup "Marcar como pendiente": deja el registro pendiente con el nivel elegido y agenda el recordatorio. #}
+            <div class="modal fade" id="modalPendiente" tabindex="-1" role="dialog" aria-labelledby="modalPendienteLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <form method="post" class="modal-content" id="formPendiente">
+                        <input type="hidden" name="_token" id="pendienteToken">
+                        {% for k, v in app.request.query.all %}
+                            {% if v is not iterable %}<input type="hidden" name="query[{{ k }}]" value="{{ v }}">{% endif %}
+                        {% endfor %}
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalPendienteLabel">Marcar como pendiente</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
+                        </div>
+                        <div class="modal-body">
+                            <p class="small text-muted">El registro queda pendiente con el nivel de urgencia indicado y se agenda el recordatorio.</p>
+                            <div class="form-group">
+                                <label for="pendienteNivel">Nivel de urgencia</label>
+                                <select name="nivel" id="pendienteNivel" class="form-control">
+                                    <option value="bajo">Bajo</option>
+                                    <option value="medio">Medio</option>
+                                    <option value="alto">Alto</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="pendienteDetalle">Detalle</label>
+                                <textarea name="detalle" id="pendienteDetalle" class="form-control" rows="3" required placeholder="Descripción del recordatorio..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="pendienteFecha">Fecha del recordatorio</label>
+                                <input type="date" name="fecha" id="pendienteFecha" class="form-control" required>
+                                <small class="form-text text-muted">Se agrega como evento de todo el día en tu Google Calendar (si está conectado).</small>
+                            </div>
+                            {# El WhatsApp solo se ofrece en el nivel alto: la API lo rechaza en los demás. #}
+                            <div id="pendienteWhatsapp" style="display:none">
+                                <hr>
+                                <div class="custom-control custom-checkbox mb-2">
+                                    <input type="checkbox" class="custom-control-input" id="pendienteNotificar" name="notificar_whatsapp" value="1">
+                                    <label class="custom-control-label" for="pendienteNotificar">Notificar por WhatsApp</label>
+                                </div>
+                                <div class="form-row" id="pendienteWhatsappDatos" style="display:none">
+                                    <div class="col-md-6 form-group">
+                                        <label for="pendienteTelefono">Teléfono</label>
+                                        <input type="text" name="whatsapp_telefono" id="pendienteTelefono" class="form-control" placeholder="+56912345678" value="{{ app.user.telefono|default('') }}">
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label for="pendienteHora">Hora de envío</label>
+                                        <input type="time" name="whatsapp_hora" id="pendienteHora" class="form-control" value="09:00">
+                                        <small class="form-text text-muted">Se enviará el día del recordatorio.</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <script>
+                $(function () {
+                    var $modal = $('#modalPendiente');
+                    var $nivel = $('#pendienteNivel');
+                    var $notificar = $('#pendienteNotificar');
+                    function sincronizar() {
+                        var alto = $nivel.val() === 'alto';
+                        $('#pendienteWhatsapp').toggle(alto);
+                        if (!alto) { $notificar.prop('checked', false); }
+                        $('#pendienteWhatsappDatos').toggle(alto && $notificar.is(':checked'));
+                    }
+                    $nivel.on('change', sincronizar);
+                    $notificar.on('change', sincronizar);
+                    $('.btn-pendiente').on('click', function () {
+                        $('#formPendiente').attr('action', $(this).data('action'));
+                        $('#pendienteToken').val($(this).data('token'));
+                        $nivel.val('bajo');
+                        $('#pendienteDetalle, #pendienteFecha').val('');
+                        $notificar.prop('checked', false);
+                        sincronizar();
+                        $modal.modal('show');
+                    });
+                });
+            </script>
+
             {# Diagnóstico del botón "Detalle PJUD" (martillo): por qué aparece o no. #}
             <p class="small text-muted mb-0">
                 {% if not pjud_info.configurado %}

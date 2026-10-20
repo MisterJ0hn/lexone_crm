@@ -245,7 +245,10 @@ class PjudController extends AbstractController
             'tipo_causa' => isset($d['c']) ? (string) $d['c'] : null,
         ];
 
-        $this->api->paraEmpresa($empresa);
+        // Fila de Lexflow: su `pjud_habilitado` manda sobre la configuración de la Empresa.
+        if (!$this->api->paraCausaLexflow($empresa, $datos['tipo'] . '-' . $datos['rol'] . '-' . $datos['anio'], $datos['tribunal'])->configurado()) {
+            return new JsonResponse(['detail' => 'El detalle PJUD no está habilitado para esta causa'], 404);
+        }
         $cuaderno = $request->query->get('cuaderno');
         try {
             $res = $this->api->detalle($d['m'], $datos, $forzar, $cuaderno !== null ? (int) $cuaderno : null, $this->credenciales($empresa, $datos), !$forzar && $request->query->getBoolean('solo_estado'));

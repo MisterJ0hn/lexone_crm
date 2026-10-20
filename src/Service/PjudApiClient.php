@@ -61,7 +61,7 @@ class PjudApiClient
 
     private readonly string $baseDefecto;
 
-    public function __construct(string $baseUrl, private readonly CacheInterface $cache, private readonly EdApiClient $edapi, bool $verifySsl = true)
+    public function __construct(string $baseUrl, private readonly CacheInterface $cache, private readonly EdApiClient $edapi, bool $verifySsl = true, private readonly ?\Psr\Log\LoggerInterface $logger = null)
     {
         $this->baseDefecto = $this->base = rtrim($baseUrl, '/');
         $this->http = new Client(['timeout' => 25, 'http_errors' => false, 'verify' => $verifySsl]);
@@ -70,20 +70,23 @@ class PjudApiClient
     /**
      * Con Lexflow habilitado (y llave privada cargada) la conexión a api-pjud la entrega Lexflow (`api_pjud`) y su
      * `pjud_habilitado` manda; si no, o si Lexflow no responde, se usan los datos guardados en la Empresa.
+     * `$flagLexflow` es el `pjud_habilitado` de la causa en Lexflow: false la deshabilita y true la habilita, en ambos
+     * casos sin mirar la configuración de la Empresa; null = sin dato, se decide como arriba.
      */
-    public function paraEmpresa(?Empresa $empresa, bool $soloEmpresa = false): self
+    public function paraEmpresa(?Empresa $empresa, bool $soloEmpresa = false, ?bool $flagLexflow = null): self
     {
         $this->empresaId = (int) $empresa?->getId();
         $this->base = $this->baseDefecto;
         $this->habilitado = false;
         $this->clientKey = $this->email = $this->password = '';
-        if ($empresa === null) {
+        $this->logger?->info('PJUD trace: paraEmpresa', ['empresa' => $this->empresaId, 'flagLexflow' => $flagLexflow, 'soloEmpresa' => $soloEmpresa]);
+        if ($empresa === null || $flagLexflow === false) {
             return $this;
         }
 
         if (!$soloEmpresa && $empresa->isLexflowHabilitado() && trim((string) $empresa->getEdapiLlavePrivada()) !== '') {
             try {
-                $conexion = $this->edapi->paraEmpresa($empresa)->conexionApiPjud();
+                $conexion = $this->edapi->paraEmpresa($empresa)->conexionApiPjud($flagLexflow === true);
                 if ($conexion !== null) {
                     $this->habilitado = true;
                     $this->base = rtrim($conexion['base_url'], '/');
@@ -92,13 +95,16 @@ class PjudApiClient
                     $this->password = $conexion['password'];
                 }
 
-                return $this;
+                if ($flagLexflow !== true || $conexion !== null) {
+                    return $this;
+                }
             } catch (\RuntimeException) {
                 // Lexflow no respondió o no se pudo abrir el sello: se prueba con lo guardado en la Empresa.
             }
         }
 
-        $this->habilitado = $empresa->isPjudHabilitado();
+        $this->habilitado = $flagLexflow === true || $empresa->isPjudHabilitado();
+        $this->logger?->info('PJUD trace: paraEmpresa usa datos de Empresa', ['flagLexflow' => $flagLexflow, 'lexflow_habilitado' => $empresa->isLexflowHabilitado(), 'habilitado' => $this->habilitado]);
         $this->clientKey = trim((string) $empresa->getPjudClientKey());
         $this->email = trim((string) $empresa->getPjudEmail());
         $this->password = (string) $empresa->getPjudPassword();
@@ -113,14 +119,17 @@ class PjudApiClient
     {
         $enLexflow = $this->causasEnLexflow($empresa, [[$rol, $tribunal]]);
 
-        return $this->paraEmpresa($empresa, !isset($enLexflow[CausaRepository::claveRol($rol, $tribunal)]));
+        $clave = CausaRepository::claveRol($rol, $tribunal);
+
+        return $this->paraEmpresa($empresa, !array_key_exists($clave, $enLexflow), $enLexflow[$clave] ?? null);
     }
 
     /**
-     * Cuáles de las causas [rol, tribunal] existen en Lexflow. Clave = CausaRepository::claveRol().
+     * Cuáles de las causas [rol, tribunal] existen en Lexflow y su `pjud_habilitado` (null = Lexflow no lo informa
+     * para esa causa). Clave = CausaRepository::claveRol().
      *
      * @param list<array{0:string,1:string}> $causas
-     * @return array<string,true>
+     * @return array<string,?bool>
      */
     public function causasEnLexflow(Empresa $empresa, array $causas): array
     {
@@ -132,6 +141,17 @@ class PjudApiClient
         } catch (\RuntimeException) {
             return [];
         }
+    }
+
+    /**
+     * Causa que viene de una lista de Lexflow (puede no estar en el CRM): su `pjud_habilitado` manda si Lexflow lo
+     * informa; si no, se decide como en paraEmpresa().
+     */
+    public function paraCausaLexflow(Empresa $empresa, string $rol, string $tribunal): self
+    {
+        $enLexflow = $this->causasEnLexflow($empresa, [[$rol, $tribunal]]);
+
+        return $this->paraEmpresa($empresa, false, $enLexflow[CausaRepository::claveRol($rol, $tribunal)] ?? null);
     }
 
     public function configurado(): bool

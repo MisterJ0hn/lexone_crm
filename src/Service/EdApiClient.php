@@ -9,6 +9,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use phpseclib3\Crypt\PublicKeyLoader;
 use phpseclib3\Crypt\RSA;
 use phpseclib3\Crypt\RSA\PrivateKey;
+use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
@@ -32,7 +33,7 @@ class EdApiClient
     /** @var array<string,array{base_url:string,email:string,password:string,client_key:string}|null> */
     private array $memoApiPjud = [];
 
-    public function __construct(private readonly string $baseUrl, private readonly CacheInterface $cache)
+    public function __construct(private readonly string $baseUrl, private readonly CacheInterface $cache, private readonly ?LoggerInterface $logger = null)
     {
         $this->http = new Client(['base_uri' => rtrim($baseUrl, '/') . '/', 'timeout' => 30]);
     }
@@ -132,11 +133,34 @@ class EdApiClient
     /** True si el texto es un PEM RSA privado que phpseclib puede cargar. */
     public static function llavePrivadaValida(string $pem): bool
     {
-        try {
-            return PublicKeyLoader::load($pem) instanceof PrivateKey;
-        } catch (\Throwable) {
-            return false;
+        return self::errorLlavePrivada($pem) === null;
+    }
+
+    /** Deja el PEM con saltos de línea \n reales (acepta "\n" literales, CRLF y texto antes/después del bloque). */
+    public static function normalizarLlavePrivada(string $pem): string
+    {
+        $pem = str_replace(['\\r\\n', '\\n'], "\n", $pem);
+        $pem = str_replace(["\r\n", "\r"], "\n", $pem);
+        if (preg_match('/-----BEGIN [A-Z ]*PRIVATE KEY-----.*?-----END [A-Z ]*PRIVATE KEY-----/s', $pem, $m)) {
+            $pem = $m[0];
         }
+
+        return trim($pem);
+    }
+
+    /** Motivo por el que el PEM no sirve, o null si es una llave RSA privada cargable. */
+    public static function errorLlavePrivada(string $pem): ?string
+    {
+        if (!str_contains($pem, 'PRIVATE KEY')) {
+            return 'no se encontró un bloque "-----BEGIN ... PRIVATE KEY-----" (¿pegó la llave pública?)';
+        }
+        try {
+            $llave = PublicKeyLoader::load($pem);
+        } catch (\Throwable $e) {
+            return 'no se pudo leer: ' . mb_substr($e->getMessage(), 0, 120);
+        }
+
+        return $llave instanceof PrivateKey ? null : 'la llave no es RSA privada (' . $llave::class . ')';
     }
 
     /**
@@ -201,7 +225,7 @@ class EdApiClient
      *         PJUD habilitado en Lexflow o la plataforma no tiene api-pjud configurada
      * @throws \RuntimeException con un mensaje apto para mostrar al usuario
      */
-    public function conexionApiPjud(): ?array
+    public function conexionApiPjud(bool $ignorarHabilitado = false): ?array
     {
         if (!$this->configurado()) {
             throw new \RuntimeException('La empresa no tiene API Key de Estado Diario (configúrela en Empresa)');
@@ -215,19 +239,20 @@ class EdApiClient
                 $item->expiresAfter(self::API_PJUD_TTL);
                 return $this->pedirApiPjud();
             });
-            $this->memoApiPjud[$clave] = $resumen['habilitado'] && is_string($resumen['sello']) && $resumen['sello'] !== ''
-                ? $this->abrirConexionApiPjud($resumen['sello'])
-                : null;
+            $this->memoApiPjud[$clave] = $resumen;
         }
+        $resumen = $this->memoApiPjud[$clave];
 
-        return $this->memoApiPjud[$clave];
+        return ($resumen['habilitado'] || $ignorarHabilitado) && is_string($resumen['sello']) && $resumen['sello'] !== ''
+            ? $this->abrirConexionApiPjud($resumen['sello'])
+            : null;
     }
 
     /**
      * Cuáles de las causas [rol, tribunal] existen en Lexflow (caché de 1 minuto). Clave = CausaRepository::claveRol().
      *
      * @param list<array{0:string,1:string}> $causas
-     * @return array<string,true>
+     * @return array<string,?bool> valor = `pjud_habilitado` de la causa (null si Lexflow no lo informa)
      * @throws \RuntimeException
      */
     public function causasExistentes(array $causas): array
@@ -249,7 +274,8 @@ class EdApiClient
                 do {
                     $data = $this->get('causas', ['roles' => implode(',', $tanda), 'page' => $page, 'limit' => 50]);
                     foreach ($data['causas'] ?? [] as $c) {
-                        $presentes[CausaRepository::claveRol((string) ($c['rol'] ?? ''), (string) ($c['tribunal'] ?? ''))] = true;
+                        $this->logger?->info('PJUD trace: causa en Lexflow', ['rol' => $c['rol'] ?? null, 'tribunal' => $c['tribunal'] ?? null, 'pjud_habilitado' => $c['pjud_habilitado'] ?? '(ausente)']);
+                        $presentes[CausaRepository::claveRol((string) ($c['rol'] ?? ''), (string) ($c['tribunal'] ?? ''))] = is_bool($c['pjud_habilitado'] ?? null) ? $c['pjud_habilitado'] : null;
                     }
                 } while (++$page <= (int) ($data['total_pages'] ?? 1));
             }
@@ -280,6 +306,14 @@ class EdApiClient
         }
         $data = json_decode((string) $resp->getBody(), true);
         $data = is_array($data) ? $data : [];
+
+        $this->logger?->info('PJUD trace: respuesta api/v1/causas (raíz)', [
+            'pjud_habilitado_raiz' => $data['pjud_habilitado'] ?? '(ausente)',
+            'trae_api_pjud' => is_string($data['api_pjud'] ?? null) && $data['api_pjud'] !== '',
+            'claves_raiz' => array_keys($data),
+            'claves_primera_causa' => array_keys($data['causas'][0] ?? []),
+            'pjud_habilitado_primera_causa' => $data['causas'][0]['pjud_habilitado'] ?? '(ausente)',
+        ]);
 
         return [
             'habilitado' => ($data['pjud_habilitado'] ?? false) === true,

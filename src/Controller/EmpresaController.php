@@ -87,12 +87,13 @@ class EmpresaController extends AbstractController
             }
 
             // Llave privada RSA de edapi: no se muestra; vacío = conservar la actual.
-            $llave = trim((string) $form->get('edapiLlavePrivada')->getData());
+            $llave = \App\Service\EdApiClient::normalizarLlavePrivada((string) $form->get('edapiLlavePrivada')->getData());
             if ($llave !== '') {
-                if (\App\Service\EdApiClient::llavePrivadaValida($llave)) {
+                $motivo = \App\Service\EdApiClient::errorLlavePrivada($llave);
+                if ($motivo === null) {
                     $empresa->setEdapiLlavePrivada($llave);
                 } else {
-                    $this->addFlash('error', 'La llave privada de Estado Diario no es un PEM RSA privado válido; se conservó la anterior.');
+                    $this->addFlash('error', 'La llave privada de Estado Diario no es un PEM RSA privado válido (' . $motivo . '); se conservó la anterior.');
                 }
             }
 
@@ -202,12 +203,13 @@ class EmpresaController extends AbstractController
             }
 
             // Llave privada RSA de edapi: no se muestra; vacío = conservar la actual.
-            $llave = trim((string) $form->get('edapiLlavePrivada')->getData());
+            $llave = \App\Service\EdApiClient::normalizarLlavePrivada((string) $form->get('edapiLlavePrivada')->getData());
             if ($llave !== '') {
-                if (\App\Service\EdApiClient::llavePrivadaValida($llave)) {
+                $motivo = \App\Service\EdApiClient::errorLlavePrivada($llave);
+                if ($motivo === null) {
                     $empresa->setEdapiLlavePrivada($llave);
                 } else {
-                    $this->addFlash('error', 'La llave privada de Estado Diario no es un PEM RSA privado válido; se conservó la anterior.');
+                    $this->addFlash('error', 'La llave privada de Estado Diario no es un PEM RSA privado válido (' . $motivo . '); se conservó la anterior.');
                 }
             }
 

@@ -18,8 +18,8 @@
                                 <i class="fas fa-sort"></i>
                             {% endif %}
                         </th>
-                        <th>{{ knp_pagination_sortable(recordatorios, 'Cliente', 'contrato.nombre') }} 
-                            {% if recordatorios.isSorted('contrato.nombre') %} 
+                        <th>{{ knp_pagination_sortable(recordatorios, 'Cliente', 'contrato.cliente.nombre') }} 
+                            {% if recordatorios.isSorted('contrato.cliente.nombre') %} 
                                 <i class="fas fa-sort"></i>
                             {% endif %}
                         </th>
@@ -46,7 +46,7 @@
                 {% for recordatorio in recordatorios %}
                     <tr>
                         <td>{{recordatorio.contrato.agenda.cuenta.nombre}}</td>
-                        <td>{{recordatorio.contrato.nombre}}</td>
+                        <td>{{recordatorio.contrato.cliente.nombre}}</td>
                         <td>{{recordatorio.tipo}}</td>
                         <td>{{recordatorio.fechaAviso|date("Y-m-d")}}</td>
                         <td>{{recordatorio.leido?'Leído':'No leído'}}</td>

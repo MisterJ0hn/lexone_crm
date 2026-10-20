@@ -1137,13 +1137,16 @@ class ContratoController extends AbstractController
 
         // Las causas que están en Lexflow usan su conexión PJUD (y su habilitación); las demás, la de la Empresa.
         $enLexflow = $pjudApi->causasEnLexflow($empresa, $pares);
-        $grupos = [true => [], false => []];
+        // El `pjud_habilitado` de la causa en Lexflow (true/false) manda sobre la configuración de la Empresa.
+        $grupos = [];
         foreach ($specs as $id => $spec) {
-            $grupos[isset($enLexflow[\App\Repository\CausaRepository::claveRol(self::rolDeSpec($spec), $spec['causa']['tribunal'])])][$id] = $spec;
+            $clave = \App\Repository\CausaRepository::claveRol(self::rolDeSpec($spec), $spec['causa']['tribunal']);
+            $grupos[array_key_exists($clave, $enLexflow) ? json_encode($enLexflow[$clave]) : 'empresa'][$id] = $spec;
         }
         $estados = [];
-        foreach ($grupos as $esLexflow => $grupo) {
-            if ($grupo && $pjudApi->paraEmpresa($empresa, !$esLexflow)->configurado()) {
+        foreach ($grupos as $modo => $grupo) {
+            $flag = $modo === 'empresa' ? null : json_decode($modo);
+            if ($flag !== false && $pjudApi->paraEmpresa($empresa, $modo === 'empresa', $flag)->configurado()) {
                 $estados += $pjudApi->estadosIniciales($grupo);
             }
         }
@@ -1526,10 +1529,10 @@ class ContratoController extends AbstractController
             'causa' => $causa,
             'contrato'=>$contrato,
             'estadosProcesales'=>$causa->getEstadosProcesales(),
+            'tiposEstadoProcesal'=>$estadoProcesalTipoRepository->findBy(['empresa'=>$user->getEmpresaActual(),'estado'=>true],['nombre'=>'ASC']),
             'pagina'=>$pagina->getNombre(),
             'observaciones'=>$causaObservacionRepository->findBy(['contrato'=>$contrato,'causa'=>$causa],['fechaRegistro'=>'Desc']),
             'fechaUltimoIngreso'=>$fechaUltimoIngreso
-            'tiposEstadoProcesal'=>$estadoProcesalTipoRepository->findBy(['empresa'=>$user->getEmpresaActual(),'estado'=>true],['nombre'=>'ASC']),
             
             
         ]);

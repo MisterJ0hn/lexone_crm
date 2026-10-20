@@ -28,6 +28,7 @@ class LexflowController extends AbstractController
         private readonly PjudApiClient $pjud,
         private readonly EmpresaRepository $empresas,
         private readonly CausaRepository $causas,
+        private readonly \Psr\Log\LoggerInterface $logger,
     ) {
     }
 
@@ -89,11 +90,16 @@ class LexflowController extends AbstractController
         }
 
         // Botón "Detalle PJUD": solo para filas que calzan con una Causa del CRM de materia soportada.
-        $pjudInfo = ['configurado' => $this->pjud->paraEmpresa($empresa)->configurado(), 'crm' => 0, 'coinciden' => 0, 'externas' => 0, 'sin_soporte' => 0];
+        // El `pjud_habilitado` de cada fila (Lexflow) manda sobre la configuración de la Empresa: true muestra el botón, false lo oculta.
+        $pjudEmpresa = $this->pjud->paraEmpresa($empresa)->configurado();
+        $pjudInfo = ['configurado' => $pjudEmpresa || $this->algunaHabilitada($datos['movimientos'] ?? []), 'crm' => 0, 'coinciden' => 0, 'externas' => 0, 'sin_soporte' => 0];
         if ($tab === 'materias' && $pjudInfo['configurado'] && !empty($datos['movimientos'])) {
             $mapa = $this->causas->mapaPorRol($empresa->getId());
             $pjudInfo['crm'] = count($mapa);
             foreach ($datos['movimientos'] as &$fila) {
+                if (!$this->botonPjudVisible($fila, $pjudEmpresa)) {
+                    continue;
+                }
                 $causa = $mapa[CausaRepository::claveRol((string) ($fila['rol'] ?? ''), (string) ($fila['tribunal'] ?? ''))] ?? null;
                 if ($causa && PjudController::competencia($causa['materia'])) {
                     $fila['crm_causa_id'] = $causa['id'];
@@ -137,6 +143,56 @@ class LexflowController extends AbstractController
     {
         $this->denyAccessUnlessGranted('edit','ed_estado_diario');
         return $this->cambiarLectura($id, $request, 'no-leido', 'Registro marcado como no leído');
+    }
+
+    /** Marca el registro como pendiente y agenda el recordatorio (mismo popup que Estado Diario de Lexflow). */
+    #[Route('/estado-diario/{id}/pendiente', name: 'ed_estado_diario_pendiente', requirements: ['id' => '\d+'], methods: ['POST'])]
+    public function marcarPendiente(int $id, Request $request): Response
+    {
+        $this->denyAccessUnlessGranted('edit', 'ed_estado_diario');
+        $volver = $this->redirectToRoute('ed_estado_diario_index', $request->request->all('query'));
+        if (!$this->isCsrfTokenValid('ed_pendiente' . $id, (string) $request->request->get('_token'))) {
+            $this->addFlash('error', 'Token inválido, intente nuevamente');
+            return $volver;
+        }
+
+        $nivel = (string) $request->request->get('nivel');
+        $detalle = trim((string) $request->request->get('detalle'));
+        $fecha = (string) $request->request->get('fecha');
+        if (!in_array($nivel, ['bajo', 'medio', 'alto'], true) || $detalle === '' || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha)) {
+            $this->addFlash('error', 'Complete el nivel, el detalle y la fecha del recordatorio');
+            return $volver;
+        }
+
+        $payload = [
+            'nivel' => $nivel,
+            'username' => $this->getUser()->getUsername(),
+            'mensaje' => $detalle,
+            'fecha_hora' => $fecha . ' 00:00:00',
+        ];
+        // El WhatsApp solo existe en los pendientes de nivel alto (lo exige la API).
+        if ($nivel === 'alto' && $request->request->getBoolean('notificar_whatsapp')) {
+            $telefono = trim((string) $request->request->get('whatsapp_telefono'));
+            $hora = (string) $request->request->get('whatsapp_hora');
+            if ($telefono === '' || !preg_match('/^\d{2}:\d{2}$/', $hora)) {
+                $this->addFlash('error', 'Para notificar por WhatsApp indique teléfono y hora de envío');
+                return $volver;
+            }
+            $payload += [
+                'notificar_whatsapp' => true,
+                'whatsapp_telefono' => $telefono,
+                'fecha_hora_whatsapp' => $fecha . ' ' . $hora . ':00',
+            ];
+        }
+
+        $this->usarEmpresa();
+        try {
+            $this->api->post('estado-diario/' . $id . '/pendiente', $payload);
+            $this->addFlash('success', 'Registro marcado como pendiente');
+        } catch (\RuntimeException $e) {
+            $this->addFlash('error', $e->getMessage());
+        }
+        return $volver;
     }
 
     private function cambiarLectura(int $id, Request $request, string $accion, string $mensaje): Response
@@ -244,10 +300,14 @@ class LexflowController extends AbstractController
         }
 
         // Botón "Detalle PJUD": igual que en Estado Diario, por causa del CRM o por token externo.
-        $pjudInfo = ['configurado' => $this->pjud->paraEmpresa($empresa)->configurado()];
+        $pjudEmpresa = $this->pjud->paraEmpresa($empresa)->configurado();
+        $pjudInfo = ['configurado' => $pjudEmpresa || $this->algunaHabilitada($datos['causas'] ?? [])];
         if ($tab === 'materias' && $pjudInfo['configurado'] && !empty($datos['causas'])) {
             $mapa = $this->causas->mapaPorRol($empresa->getId());
             foreach ($datos['causas'] as &$fila) {
+                if (!$this->botonPjudVisible($fila, $pjudEmpresa)) {
+                    continue;
+                }
                 $crm = $mapa[CausaRepository::claveRol((string) ($fila['rol'] ?? ''), (string) ($fila['tribunal'] ?? ''))] ?? null;
                 if ($crm && PjudController::competencia($crm['materia'])) {
                     $fila['crm_causa_id'] = $crm['id'];
@@ -353,9 +413,44 @@ class LexflowController extends AbstractController
                 $specs[$i] = $spec;
             }
         }
-        foreach ($this->pjud->paraEmpresa($empresa)->estadosIniciales($specs) as $i => $estado) {
-            $filas[$i]['pjud_estado'] = $estado;
+        // Filas con `pjud_habilitado` true van por la conexión de Lexflow; el resto, por la configuración habitual.
+        $porFlag = [true => [], false => []];
+        foreach ($specs as $i => $spec) {
+            $porFlag[($filas[$i]['pjud_habilitado'] ?? null) === true][$i] = $spec;
         }
+        foreach ($porFlag as $habilitadaLexflow => $grupo) {
+            if (!$grupo) {
+                continue;
+            }
+            foreach ($this->pjud->paraEmpresa($empresa, false, $habilitadaLexflow ? true : null)->estadosIniciales($grupo) as $i => $estado) {
+                $filas[$i]['pjud_estado'] = $estado;
+            }
+        }
+    }
+
+    /** `pjud_habilitado` que Lexflow informa para la fila: true/false, o null si no viene. */
+    private function flagPjud(array $fila): ?bool
+    {
+        return is_bool($fila['pjud_habilitado'] ?? null) ? $fila['pjud_habilitado'] : null;
+    }
+
+    /** Lexflow manda sobre la Empresa: true muestra el botón, false lo oculta; sin dato, decide la Empresa. */
+    private function botonPjudVisible(array $fila, bool $configuradoEmpresa): bool
+    {
+        return $this->flagPjud($fila) ?? $configuradoEmpresa;
+    }
+
+    /** @param list<array<string,mixed>> $filas */
+    private function algunaHabilitada(array $filas): bool
+    {
+        foreach ($filas as $fila) {
+            $this->logger->info('PJUD trace: fila Lexflow', ['rol' => $fila['rol'] ?? null, 'pjud_habilitado' => $fila['pjud_habilitado'] ?? '(ausente)', 'claves_fila' => array_keys($fila)]);
+            if (is_array($fila) && $this->flagPjud($fila) === true) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /** Toma del querystring solo los filtros permitidos y no vacíos. */
