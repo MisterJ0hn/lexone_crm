@@ -47,14 +47,63 @@ class CausaRepository extends ServiceEntityRepository
         }
     }
 
+    /** Materias cuyas causas son apelaciones (Corte de Apelaciones / Corte Suprema). */
+    public const MATERIAS_APELACION = [9, 10];
+
+    /**
+     * Parámetros `roles` y `roles_origen` de los cortes de edapi (causas/cortes y estado-diario/cortes).
+     * - roles: causas de materia apelación, "libro-rol-era|corte" (máx. 300).
+     * - roles_origen: causas de las demás materias (origen de las apelaciones), "rol|tribunal".
+     *
+     * @return array{roles:string,roles_origen:string}
+     */
+    public function rolesCortesParaEdapi(int $empresaId): array
+    {
+        $apelaciones = [];
+        foreach ($this->causasActivas($empresaId, true) as $f) {
+            if (trim((string) $f['letra']) === '' || trim((string) $f['rol']) === '' || !$f['anio']) {
+                continue;
+            }
+            $clave = trim($f['letra']) . '-' . trim($f['rol']) . '-' . $f['anio'];
+            $corte = trim(str_replace(',', ' ', (string) $f['corte']));
+            $apelaciones[$clave . ($corte !== '' ? '|' . $corte : '')] = true;
+        }
+
+        return [
+            'roles' => implode(',', array_slice(array_keys($apelaciones), 0, 300)),
+            'roles_origen' => $this->rolesParaEdapi($empresaId, false),
+        ];
+    }
+
+    /** @return list<array{letra:?string,rol:?string,anio:?int,corte:?string}> */
+    private function causasActivas(int $empresaId, bool $apelacion): array
+    {
+        return $this->createQueryBuilder('c')
+            ->select('c.letra, c.rol, c.anio, k.nombre AS corte')
+            ->join('c.agenda', 'a')
+            ->leftJoin('c.corte', 'k')
+            ->andWhere('a.empresa = :empresa')
+            ->andWhere('c.estado = 1')
+            ->andWhere('IDENTITY(c.materia) ' . ($apelacion ? 'IN' : 'NOT IN') . ' (:apelacion)')
+            ->setParameter('empresa', $empresaId)
+            ->setParameter('apelacion', self::MATERIAS_APELACION)
+            ->getQuery()
+            ->getArrayResult();
+    }
+
     /**
      * Roles de las causas activas del CRM de la empresa, en el formato que espera
      * edapi (parametro roles): "C-1234-2020|1° Juzgado Civil de Santiago,F-5-2024|...".
      * Se omiten las causas sin letra, rol, año o juzgado porque no se pueden cruzar.
      */
-    public function rolesParaEdapi(int $empresaId): string
+    public function rolesParaEdapi(int $empresaId, ?bool $apelaciones = null): string
     {
-        $filas = $this->createQueryBuilder('c')
+        $qb = $this->createQueryBuilder('c');
+        if ($apelaciones !== null) {
+            $qb->andWhere('IDENTITY(c.materia) ' . ($apelaciones ? 'IN' : 'NOT IN') . ' (:apelacion)')
+                ->setParameter('apelacion', self::MATERIAS_APELACION);
+        }
+        $filas = $qb
             ->select('c.letra, c.rol, c.anio, j.nombre AS juzgado')
             ->join('c.agenda', 'a')
             ->join('c.juzgado', 'j')

@@ -18,6 +18,10 @@ class Materia
     #[ORM\Column(type: "string", length: 50)]
     private $nombre;
 
+    /** Posición en que se listan las materias (pantallas de causas); menor primero. */
+    #[ORM\Column(type: "integer", options: ["default" => 0])]
+    private $orden = 0;
+
     #[ORM\ManyToOne(targetEntity: Empresa::class)]
     #[ORM\JoinColumn(nullable: false)]
     private $empresa;
@@ -47,6 +51,18 @@ class Materia
     public function setNombre(string $nombre): self
     {
         $this->nombre = $nombre;
+
+        return $this;
+    }
+
+    public function getOrden(): int
+    {
+        return (int) $this->orden;
+    }
+
+    public function setOrden(?int $orden): self
+    {
+        $this->orden = $orden ?? 0;
 
         return $this;
     }

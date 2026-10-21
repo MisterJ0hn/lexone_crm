@@ -31,7 +31,7 @@ class MateriaController extends AbstractController
          $this->denyAccessUnlessGranted('create','materia_index');
         // Materia es un catálogo global: mismo listado para todas las empresas.
         return $this->render('materia/index.html.twig', [
-            'materias' => $materiaRepository->findBy([], ['nombre' => 'ASC']),
+            'materias' => $materiaRepository->findBy([], ['orden' => 'ASC', 'nombre' => 'ASC']),
         ]);
     }
 
@@ -114,7 +114,7 @@ class MateriaController extends AbstractController
     {
         // Materia es un catálogo global: mismo listado para todas las empresas.
         return $this->render('materia/combo.html.twig', [
-            'materias' => $materiaRepository->findBy([], ['nombre' => 'ASC']),
+            'materias' => $materiaRepository->findBy([], ['orden' => 'ASC', 'nombre' => 'ASC']),
         ]);
     }
 

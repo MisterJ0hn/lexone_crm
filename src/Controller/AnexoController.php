@@ -232,7 +232,7 @@ class AnexoController extends AbstractController
             'juzgados'=>$juzgados,
             'diasPagos'=>$diasPagoRepository->findAll(),
             'contrato_causas'=>$causaRepository->findBy(['agenda'=>$contrato->getAgenda(),'estado'=>1]),
-            'materias'=>$materiaRepository->findBy([],['nombre'=>'ASC']),
+            'materias'=>$materiaRepository->findBy([], ['orden' => 'ASC', 'nombre' => 'ASC']),
         ]);
 
     }

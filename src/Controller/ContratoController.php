@@ -546,7 +546,7 @@ class ContratoController extends AbstractController
             'diasPagos'=>$diasPagoRepository->findAll(),
             'sucursales'=>$sucursalRepository->findBy(['cuenta'=>$contrato->getAgenda()->getCuenta()->getId()]),
             'regiones'=>$regionRepository->findAll(),
-            'materias'=>$materiaRepository->findBy([],['nombre'=>'ASC']),
+            'materias'=>$materiaRepository->findBy([], ['orden' => 'ASC', 'nombre' => 'ASC']),
 
         ]);
     }
@@ -792,7 +792,7 @@ class ContratoController extends AbstractController
             'diasPagos'=>$diasPagoRepository->findAll(),
             'sucursales'=>$sucursalRepository->findBy(['cuenta'=>$contrato->getAgenda()->getCuenta()->getId()]),
             'regiones'=>$regionRepository->findAll(),
-            'materias'=>$materiaRepository->findBy([],['nombre'=>'ASC']),
+            'materias'=>$materiaRepository->findBy([], ['orden' => 'ASC', 'nombre' => 'ASC']),
 
         ]);
     }
@@ -1109,7 +1109,7 @@ class ContratoController extends AbstractController
                 'pjud_botones' => $pjudBotones,
                 'formNuevoCliente' => $formNuevoCliente->createView(),
                 // Materia es un catálogo global: mismo listado para todas las empresas.
-                'materias' => $materiaRepository->findBy([], ['nombre' => 'ASC']),
+                'materias' => $materiaRepository->findBy([], ['orden' => 'ASC', 'nombre' => 'ASC']),
                 'notas' => $this->notasDelContrato($contrato),
                 // Cada sub cliente tiene su propio historial de observaciones.
                 'notasPorCliente' => array_map(fn (array $grupo) => $this->notasDelContrato($contrato, $grupo['cliente']), $clientes),
@@ -1121,7 +1121,7 @@ class ContratoController extends AbstractController
             'pagina'=>$pagina->getNombre(),
             'juzgados' => $cuenta->getJuzgadoCuentas(),
             'pjud_botones' => $pjudBotones,
-            'materias' => $materiaRepository->findBy([], ['nombre' => 'ASC']),
+            'materias' => $materiaRepository->findBy([], ['orden' => 'ASC', 'nombre' => 'ASC']),
             'notas' => $this->notasDelContrato($contrato),
         ]);
     }

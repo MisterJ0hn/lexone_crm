@@ -694,7 +694,7 @@ class PanelAbogadoController extends AbstractController
             'diasPagos'=>$diasPagoRepository->findAll(),
             'sucursales'=>$sucursalRepository->findBy(['cuenta'=>$agenda->getCuenta()->getId()]),
             'regiones'=>$regionRepository->findAll(),
-            'materias'=>$materiaRepository->findBy([],['nombre'=>'ASC']),
+            'materias'=>$materiaRepository->findBy([], ['orden' => 'ASC', 'nombre' => 'ASC']),
             'profesiones'=>$profesionRepository->findBy(['empresa'=>$user->getEmpresaActual(),'estado'=>true],['nombre'=>'ASC']),
         ] );
     }

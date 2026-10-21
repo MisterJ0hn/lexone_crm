@@ -67,7 +67,10 @@ class LexflowController extends AbstractController
         try {
             if ($tab === 'cortes') {
                 $filtros = $this->filtros($request, ['busqueda', 'tipo', 'corte']);
-                $datos = $this->api->get('estado-diario/cortes', $filtros + ['page' => $page, 'limit' => 50]);
+                $restriccion = $this->rolesCortes($empresa);
+                if ($restriccion !== []) {
+                    $datos = $this->api->get('estado-diario/cortes', $filtros + ($restriccion ?? []) + ['page' => $page, 'limit' => 50]);
+                }
             } else {
                 $filtros = $this->filtros($request, ['jurisdiccion', 'fecha_desde', 'fecha_hasta', 'rut']);
                 $jurisdicciones = $this->api->get('jurisdicciones', ['excluir_corte' => 'true'])['jurisdicciones'] ?? [];
@@ -285,8 +288,9 @@ class LexflowController extends AbstractController
             $roles = $this->rolesCrm($empresa);
             if ($tab === 'cortes') {
                 // Cortes de Mis causas, limitado a las causas del CRM si corresponde.
-                if ($roles !== '') {
-                    $datos = $this->api->get('causas/cortes', $filtros + ($roles !== null ? ['roles' => $roles] : []) + ['vigencia' => $vigencia, 'page' => $page, 'limit' => 50]);
+                $restriccion = $this->rolesCortes($empresa);
+                if ($restriccion !== []) {
+                    $datos = $this->api->get('causas/cortes', $filtros + ($restriccion ?? []) + ['vigencia' => $vigencia, 'page' => $page, 'limit' => 50]);
                 }
             } elseif ($roles !== '') {
                 $restriccion = $roles !== null ? ['roles' => $roles] : [];
@@ -393,6 +397,21 @@ class LexflowController extends AbstractController
     private function rolesCrm(Empresa $empresa): ?string
     {
         return $empresa->isLexflowSoloCrm() ? $this->causas->rolesParaEdapi($empresa->getId()) : null;
+    }
+
+    /**
+     * `roles` / `roles_origen` para los cortes cuando "solo causas del CRM" está activo. null = sin
+     * restricción; [] = restringido pero sin causas cruzables (no hay que consultar, edapi devolvería todo).
+     *
+     * @return array<string,string>|null
+     */
+    private function rolesCortes(Empresa $empresa): ?array
+    {
+        if (!$empresa->isLexflowSoloCrm()) {
+            return null;
+        }
+
+        return array_filter($this->causas->rolesCortesParaEdapi($empresa->getId()), static fn (string $v) => $v !== '');
     }
 
     /**
