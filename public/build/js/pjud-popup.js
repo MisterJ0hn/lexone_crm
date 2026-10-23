@@ -496,8 +496,36 @@
         }, POLL_MS);
     }
 
+    /** Consulta el estado real (sin scrape) de una causa y repinta su botón; si sigue sincronizando, queda en polling. */
+    function consultarEstadoBoton(causaId) {
+        return fetch(URL_DETALLE.replace('__ID__', causaId) + '?solo_estado=1', { credentials: 'same-origin', headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+            .then(function (res) {
+                // Si mientras tanto el usuario hizo clic (ya no está en "nuevo"), no se pisa su estado.
+                if (!res.ok || estadoBoton(causaId) !== 'nuevo') { return; }
+                pintarBoton(causaId, res.j.estado);
+                if (res.j.estado === 'sincronizando') { pollingBoton(causaId); }
+            })
+            .catch(function () { /* sin respuesta: el botón queda en "nuevo" */ });
+    }
+
+    /** Botones con data-pjud-consultar: de a pocos a la vez para no saturar a api-pjud. */
+    function consultarBotonesNuevos() {
+        var ids = [];
+        Array.prototype.forEach.call(document.querySelectorAll('[data-pjud-consultar][data-pjud-estado="nuevo"]'), function (b) {
+            var id = b.getAttribute('data-pjud-causa');
+            if (ids.indexOf(id) === -1) { ids.push(id); }
+        });
+        function siguiente() {
+            if (!ids.length) { return; }
+            consultarEstadoBoton(ids.shift()).then(siguiente);
+        }
+        for (var i = 0; i < 4; i++) { siguiente(); }
+    }
+
     // Botones que la lista ya trae en "sincronizando": se actualizan solos sin abrir el popup.
     function iniciarBotones() {
+        consultarBotonesNuevos();
         Array.prototype.forEach.call(document.querySelectorAll('[data-pjud-causa][data-pjud-estado="sincronizando"]'), function (b) {
             pollingBoton(b.getAttribute('data-pjud-causa'));
         });

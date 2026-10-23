@@ -134,7 +134,7 @@
                                         data-nombre-materia="{{causa.materia.nombre}}"
                                         ><i class="fas fa-edit"></i></button>
                                     <a href="{{ path('contrato_linea_tiempo_detalle', {'id': causa.id}) }}" class="btn  btn-sm text-white bg-dark">LT</a>
-                                    {% if pjud_botones[causa.id] is defined %}{{ pjud.boton(causa.id, pjud_botones[causa.id]) }}{% endif %}
+                                    {% if pjud_botones[causa.id] is defined %}{{ pjud.boton(causa.id, pjud_botones[causa.id], true) }}{% endif %}
                                 </div>                        
                             </td>
                         </tr>
