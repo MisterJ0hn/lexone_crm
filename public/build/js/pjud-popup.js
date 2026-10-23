@@ -281,9 +281,11 @@
         return '<svg class="pjud-spin" width="' + (g || 20) + '" height="' + (g || 20) + '" viewBox="0 0 24 24" fill="none"><circle opacity=".25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path opacity=".75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>';
     }
 
-    /** `fecha_ultima_sincronizacion` de api-pjud -> "dd-mm-aaaa hh:mm" en hora de Chile; si no se puede interpretar, el texto tal cual. */
+    /** `fecha_ultima_sincronizacion` de api-pjud ("aaaa-mm-dd") -> "dd-mm-aaaa", sin pasar por Date (evita el corrimiento de zona horaria). Si trae hora, "dd-mm-aaaa hh:mm" en hora de Chile; si no se puede interpretar, el texto tal cual. */
     function fechaSincronizacion(v) {
         if (!v) { return ''; }
+        var solo = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(v).trim());
+        if (solo) { return solo[3] + '-' + solo[2] + '-' + solo[1]; }
         var t = new Date(v);
         if (isNaN(t.getTime())) { return String(v); }
         var p = {};
