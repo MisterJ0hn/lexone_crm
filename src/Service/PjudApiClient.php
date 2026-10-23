@@ -337,7 +337,8 @@ class PjudApiClient
             || ($cfg['cuadernos'] && !$cuadernos);
 
         if ($soloEstado) {
-            return ['estado' => $sincronizando ? 'sincronizando' : 'listo', 'detalle_estado' => $detalleEstado];
+            // El PJUD aún no la tiene (404): nunca se ha sincronizado, no es "sincronizando".
+            return ['estado' => $detalle === null ? 'nuevo' : ($sincronizando ? 'sincronizando' : 'listo'), 'detalle_estado' => $detalleEstado];
         }
         if ($sincronizando) {
             // Sin credenciales (ni del abogado ni del cliente) igual se sincroniza: scrape sin clave.

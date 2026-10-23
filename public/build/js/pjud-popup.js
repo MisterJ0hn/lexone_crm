@@ -474,7 +474,8 @@
             b.setAttribute('data-pjud-estado', v);
             b.className = b.className.replace(/\bpjud-e-\w+\b/g, '').replace(/\s+/g, ' ').trim() + ' pjud-e-' + v;
             b.title = TITULOS_BOTON[v];
-            b.innerHTML = v === 'sincronizando' ? ICONO_SYNC.replace('__TACHE__', '') : iconoImg(v);
+            // nuevo y sincronizando comparten icono; solo este último gira (CSS).
+            b.innerHTML = (v === 'sincronizando' || v === 'nuevo') ? ICONO_SYNC.replace('__TACHE__', '') : iconoImg(v);
         });
     }
 
@@ -488,7 +489,8 @@
             fetch(URL_DETALLE.replace('__ID__', causaId) + '?solo_estado=1', { credentials: 'same-origin', headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } })
                 .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
                 .then(function (res) {
-                    if (!res.ok || res.j.estado === 'sincronizando') { return; }
+                    // "nuevo" tras el clic es el PJUD aún sin registrar la causa: se sigue esperando.
+                    if (!res.ok || res.j.estado === 'sincronizando' || res.j.estado === 'nuevo') { return; }
                     detenerPollingBoton(causaId);
                     pintarBoton(causaId, res.j.estado);
                 })
