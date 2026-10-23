@@ -555,8 +555,9 @@
             estado.cargando = false;
             if (!res.ok) {
                 estado.error = res.j.detail || 'No se pudo consultar el detalle PJUD';
-                // El clic lo dejó en "sincronizando" de forma optimista; si no se pudo consultar, vuelve a "sin sincronizar".
-                if (estadoBoton(estado.causaId) === 'sincronizando') { pintarBoton(estado.causaId, 'nuevo'); }
+                // El clic lo dejó en "sincronizando" de forma optimista; si no se pudo consultar, vuelve al estado previo
+                // (sin sincronizar, o el martillo si ya estaba listo).
+                if (estadoBoton(estado.causaId) === 'sincronizando') { pintarBoton(estado.causaId, estado.previo); }
                 render();
                 return;
             }
@@ -581,15 +582,16 @@
     }
 
     var sesionSeq = 0;
-    function abrir(causaId) {
+    /** `sincronizar` = true: antes de mostrar la causa se pide una sincronización para bajar los movimientos nuevos. */
+    function abrir(causaId, sincronizar) {
         cerrar();
-        estado = { causaId: causaId, datos: null, tab: null, cuaderno: null, verAnexos: false, verReceptor: false, verExtra: null, cargando: true, error: null, timer: null, sesion: ++sesionSeq };
+        estado = { causaId: causaId, datos: null, tab: null, cuaderno: null, verAnexos: false, verReceptor: false, verExtra: null, cargando: true, error: null, timer: null, sesion: ++sesionSeq, previo: sincronizar ? 'listo' : 'nuevo' };
         el.titulo.textContent = 'Detalle PJUD';
         el.subtitulo.textContent = '';
         el.overlay.style.display = 'flex';
         document.body.classList.add('pjud-abierto');
         detenerPollingBoton(causaId); // mientras el popup está abierto, él mismo consulta
-        pedir('GET');
+        if (sincronizar) { pedir('POST', true); } else { pedir('GET'); }
     }
     function cerrar() {
         if (estado) {
@@ -611,8 +613,11 @@
             e.preventDefault();
             var id = b.getAttribute('data-pjud-causa');
             // Optimista: abrir el popup es lo que dispara el scrape de una causa nunca sincronizada.
-            if (estadoBoton(id) === 'nuevo') { pintarBoton(id, 'sincronizando'); }
-            abrir(id);
+            var previo = estadoBoton(id);
+            if (previo === 'nuevo') { pintarBoton(id, 'sincronizando'); }
+            // Con el martillo (listo) el PJUD pudo tener movimientos nuevos desde la última vez: se sincroniza primero.
+            if (previo === 'listo') { pintarBoton(id, 'sincronizando'); }
+            abrir(id, previo === 'listo');
             return;
         }
 
