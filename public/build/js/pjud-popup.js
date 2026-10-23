@@ -281,6 +281,17 @@
         return '<svg class="pjud-spin" width="' + (g || 20) + '" height="' + (g || 20) + '" viewBox="0 0 24 24" fill="none"><circle opacity=".25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path opacity=".75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>';
     }
 
+    /** `fecha_ultima_sincronizacion` de api-pjud -> "dd-mm-aaaa hh:mm" en hora de Chile; si no se puede interpretar, el texto tal cual. */
+    function fechaSincronizacion(v) {
+        if (!v) { return ''; }
+        var t = new Date(v);
+        if (isNaN(t.getTime())) { return String(v); }
+        var p = {};
+        new Intl.DateTimeFormat('es-CL', { timeZone: 'America/Santiago', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false })
+            .formatToParts(t).forEach(function (x) { p[x.type] = x.value; });
+        return p.day + '-' + p.month + '-' + p.year + ' ' + p.hour + ':' + p.minute;
+    }
+
     function render() {
         var s = estado;
         if (!s) { return; }
@@ -299,7 +310,8 @@
 
         var cfg = MATERIAS[d.materia];
         if (cfg) { el.titulo.textContent = cfg.titulo; }
-        el.subtitulo.textContent = d.crm.rol + ' — ' + d.crm.tribunal;
+        var ultimaSync = fechaSincronizacion(d.causa && d.causa.fecha_ultima_sincronizacion);
+        el.subtitulo.textContent = d.crm.rol + ' — ' + d.crm.tribunal + (ultimaSync ? ' · Última sincronización: ' + ultimaSync : '');
 
         if (d.estado === 'sincronizando') {
             h += '<div class="alert alert-info"><strong>El Poder Judicial está sincronizando esta causa</strong><br>' +
