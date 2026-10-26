@@ -82,11 +82,12 @@ class ClienteConvenioType extends AbstractType
                 'choice_label' => 'nombre',
             ] + $obligatorioEntidad('Debe seleccionar la comuna.'))
             ->add('reunion', null, $obligatorioEntidad('Debe seleccionar la reunión.'))
-            // Representante legal (Convenio/Empresa).
-            /*->add('repLegalRut', null, ['required' => false])
+            // Representante legal (solo aplica a clientes Empresa; las plantillas lo ocultan en Convenio/Persona).
+            // La profesión se muestra como select (catálogo Profesion) pero se guarda como texto.
+            ->add('repLegalRut', null, ['required' => false])
             ->add('repLegalNombre', null, ['required' => false])
             ->add('repLegalEstadoCivil', null, ['required' => false])
-            ->add('repLegalProfesion', null, ['required' => false])*/
+            ->add('repLegalProfesion', null, ['required' => false])
         ;
     }
     public function configureOptions(OptionsResolver $resolver)

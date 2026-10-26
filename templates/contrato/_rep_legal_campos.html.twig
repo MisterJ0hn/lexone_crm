@@ -1,0 +1,37 @@
+{#
+  Campos del representante legal de un cliente Empresa (nuevo y edición en la línea de tiempo).
+  Parámetros: form, profesiones, rutClass (clase del rut para el formato).
+  La profesión es un select con botón "+" (data-profesion-nueva), que abre el modal de profesion/_modal_nueva.html.twig.
+#}
+{% set profActual = form.repLegalProfesion.vars.value %}
+<div class="row">
+    <div class="col-sm-12 col-md-3">
+        <small class="text-muted">Nombre</small>
+        {{ form_widget(form.repLegalNombre, {'attr': {'class': 'form-control', 'autocomplete': 'off'}}) }}
+    </div>
+    <div class="col-sm-12 col-md-3">
+        <small class="text-muted">Rut</small>
+        {{ form_widget(form.repLegalRut, {'attr': {'class': 'form-control ' ~ rutClass, 'autocomplete': 'off'}}) }}
+    </div>
+    <div class="col-sm-12 col-md-3">
+        <small class="text-muted">Estado civil</small>
+        {{ form_widget(form.repLegalEstadoCivil, {'attr': {'class': 'form-control'}}) }}
+    </div>
+    <div class="col-sm-12 col-md-3">
+        <small class="text-muted">Profesión u oficio</small>
+        <div class="input-group">
+            <select name="{{ form.repLegalProfesion.vars.full_name }}" id="{{ form.repLegalProfesion.vars.id }}" class="form-control">
+                <option value="">Seleccione profesión u oficio</option>
+                {% set hayActual = false %}
+                {% for prof in profesiones %}
+                    {% if prof.nombre == profActual %}{% set hayActual = true %}{% endif %}
+                    <option value="{{ prof.nombre }}" {{ prof.nombre == profActual ? 'selected' : '' }}>{{ prof.nombre }}</option>
+                {% endfor %}
+                {% if profActual and not hayActual %}<option value="{{ profActual }}" selected>{{ profActual }}</option>{% endif %}
+            </select>
+            <div class="input-group-append">
+                <button type="button" class="btn btn-outline-primary" data-profesion-nueva title="Agregar una profesión u oficio que no está en el listado"><i class="fas fa-plus"></i></button>
+            </div>
+        </div>
+    </div>
+</div>

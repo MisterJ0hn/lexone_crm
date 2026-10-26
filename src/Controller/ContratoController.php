@@ -114,7 +114,10 @@ class ContratoController extends AbstractController
             }
             $fecha="c.fechaCreacion between '$dateInicio' and '$dateFin 23:59:59' and a.status in (7,14)" ;
         }
-      
+        if($condTipoCliente=\App\Service\FiltroTipoCliente::condicion(\App\Service\FiltroTipoCliente::desdeRequest($request))){
+            $fecha.=" and ".$condTipoCliente;
+        }
+
         switch($user->getUsuarioTipo()->getId()){
             case 3:
             case 4:
@@ -1054,7 +1057,8 @@ class ContratoController extends AbstractController
                         ModuloPerRepository $moduloPerRepository,
                         MateriaRepository $materiaRepository,
                         PaisRepository $paisRepository,
-                        \App\Service\PjudApiClient $pjudApi): Response
+                        \App\Service\PjudApiClient $pjudApi,
+                        \App\Repository\ProfesionRepository $profesionRepository): Response
     {
         $this->denyAccessUnlessGranted('create','linea_tiempo');
         $user=$this->getUser();
@@ -1108,6 +1112,7 @@ class ContratoController extends AbstractController
                 'tipoCliente' => $tipoCliente,
                 'pjud_botones' => $pjudBotones,
                 'formNuevoCliente' => $formNuevoCliente->createView(),
+                'profesiones' => $profesionRepository->findBy(['empresa' => $user->getEmpresaActual(), 'estado' => true], ['nombre' => 'ASC']),
                 // Materia es un catálogo global: mismo listado para todas las empresas.
                 'materias' => $materiaRepository->findBy([], ['orden' => 'ASC', 'nombre' => 'ASC']),
                 'notas' => $this->notasDelContrato($contrato),
@@ -1382,6 +1387,11 @@ class ContratoController extends AbstractController
                 $clienteExistente->setReunion($cliente->getReunion());
                 if ($esPersona) {
                     $clienteExistente->setSexo($form->has('sexo') ? $form->get('sexo')->getData() : null);
+                } else {
+                    $clienteExistente->setRepLegalRut($cliente->getRepLegalRut());
+                    $clienteExistente->setRepLegalNombre($cliente->getRepLegalNombre());
+                    $clienteExistente->setRepLegalEstadoCivil($cliente->getRepLegalEstadoCivil());
+                    $clienteExistente->setRepLegalProfesion($cliente->getRepLegalProfesion());
                 }
                 $cliente = $clienteExistente;
             } elseif ($esPersona) {
@@ -1458,7 +1468,8 @@ class ContratoController extends AbstractController
                                 Cliente $cliente,
                                 Request $request,
                                 ClienteRepository $clienteRepository,
-                                PaisRepository $paisRepository): Response
+                                PaisRepository $paisRepository,
+                                \App\Repository\ProfesionRepository $profesionRepository): Response
     {
         $this->denyAccessUnlessGranted('create','linea_tiempo');
         $agenda = $contrato->getAgenda();
@@ -1495,6 +1506,12 @@ class ContratoController extends AbstractController
             ]);
             $form->add('estadoCivil', null, ['required' => false]);
         }
+        // El representante legal solo aplica a clientes Empresa (no a Convenio ni a personas dentro de una Empresa).
+        if ($tipoCliente !== 'Empresa' || $form->has('sexo')) {
+            foreach (['repLegalRut', 'repLegalNombre', 'repLegalEstadoCivil', 'repLegalProfesion'] as $campo) {
+                $form->remove($campo);
+            }
+        }
 
         $form->handleRequest($request);
 
@@ -1516,6 +1533,7 @@ class ContratoController extends AbstractController
         return $this->render('contrato/_form_cliente_editar.html.twig', [
             'form' => $form->createView(),
             'contrato' => $contrato,
+            'profesiones' => $profesionRepository->findBy(['empresa' => $this->getUser()->getEmpresaActual(), 'estado' => true], ['nombre' => 'ASC']),
         ]);
     }
 

@@ -26,7 +26,10 @@ class ProfesionController extends AbstractController
     #[Route("/rapido", name: "profesion_rapido", methods: ["POST"])]
     public function rapido(Request $request, ProfesionRepository $profesionRepository, EmpresaRepository $empresaRepository): JsonResponse
     {
-        $this->denyAccessUnlessGranted('create', 'panel_abogado');
+        // Se usa al contratar (panel_abogado) y desde la línea de tiempo del contrato.
+        if (!$this->isGranted('create', 'panel_abogado') && !$this->isGranted('create', 'linea_tiempo')) {
+            throw $this->createAccessDeniedException();
+        }
         if (!$this->isCsrfTokenValid('profesion_rapido', (string) $request->headers->get('X-CSRF-Token'))) {
             return new JsonResponse(['detail' => 'Token inválido, recargue la página.'], 400);
         }

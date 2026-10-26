@@ -99,6 +99,9 @@ class TicketController extends AbstractController
                 break;
         }
         $otros.=$fecha;
+        if($condTipoCliente=\App\Service\FiltroTipoCliente::condicion(\App\Service\FiltroTipoCliente::desdeRequest($request),'c.agenda')){
+            $otros.=" and ".$condTipoCliente;
+        }
 
         switch($user->getUsuarioTipo()->getId()){
             case 3:

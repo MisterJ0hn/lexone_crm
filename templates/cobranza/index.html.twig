@@ -36,6 +36,7 @@
                 <div class="info-box-content">
                 <span class="info-box-text">{{vencimiento.nombre}}</span>
                 <span class="info-box-number">{{vencimiento.valMin}} -  {{vencimiento.valMax}} </span>
+                <span class="info-box-text">{{ clientesPorSegmento[vencimiento.id]|default(0) }} cliente{{ clientesPorSegmento[vencimiento.id]|default(0) == 1 ? '' : 's' }}</span>
             
                 <a href="#" class="small-box-footer" onclick="javascript:buscar({{vencimiento.id}})">
                     Ver mas <i class="fas fa-arrow-circle-right"></i>
@@ -129,7 +130,7 @@
                         </td>
                         {% if finalizado is null or not finalizado %}
                         <td>
-                           {{semaforo(cuota.fechaPago|date('Y-m-d'))|raw}}
+                           {{semaforoCobranza(contrato, cuota.monto)|raw}}
                         </td>
                         {% endif %}  
                         <td>

@@ -40,6 +40,7 @@ class AppExtension extends AbstractExtension
             new TwigFunction('special_chars_func', [$this, 'decode_utf8']),
             new TwigFunction('suma_mes',[$this,'suma_mes']),
             new TwigFunction('semaforo',[$this,'semaforo']),
+            new TwigFunction('semaforoCobranza',[$this,'semaforoCobranza']),
             new TwigFunction('semaforoContrato',[$this,'semaforoContrato']),
             new TwigFunction('ultimoPago',[$this,'ultimoPago']),
             new TwigFunction('proximoPago',[$this,'proximoPago']),
@@ -71,6 +72,40 @@ class AppExtension extends AbstractExtension
         }
         
         return date("d-m-Y", mktime(0,0,0,$mes+$suma,$dia,$anio));
+    }
+
+    /**
+     * Semáforo de cobranza: misma regla que usa el listado para armar los segmentos
+     * (DATEDIFF(now, contrato.proximoVencimiento) dentro del rango y cuota.monto >= montoMax),
+     * limitado a los vencimientos de la empresa del contrato.
+     */
+    public function semaforoCobranza(Contrato $contrato, $montoCuota)
+    {
+        $color = 'success';
+        $icono = 'fas fa-circle';
+        $proximo = $contrato->getProximoVencimiento();
+        $dif = $proximo ? (int) (new DateTime('today'))->diff(new DateTime($proximo->format('Y-m-d')))->format('%r%a') * -1 : 0;
+        $empresa = $contrato->getAgenda()->getEmpresa();
+
+        $vencimientos = $this->container->get('doctrine')->getRepository(Vencimiento::class)
+            ->findBy(['empresa' => $empresa], ['valMin' => 'ASC']);
+        foreach ($vencimientos as $v) {
+            $min = (int) $v->getValMin();
+            $max = $v->getValMax();
+            if ($max !== null && $min > 0) {
+                $coincide = $dif >= $min && $dif <= $max;
+            } elseif ($min == 0) {
+                $coincide = $dif <= (int) $max;
+            } else {
+                $coincide = $dif >= $min;
+            }
+            if ($coincide && $montoCuota >= (int) $v->getMontoMax()) {
+                $color = $v->getColor();
+                $icono = $v->getIcono();
+            }
+        }
+
+        return "<p class='text-$color' ><i class='$icono' ></i></p>";
     }
 
     /**

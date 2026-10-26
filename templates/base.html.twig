@@ -120,6 +120,14 @@
         <button type="button" id="btnTema" class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100" title="Cambiar tema claro/oscuro" aria-label="Cambiar tema" data-url="{{ path('tema_guardar') }}" data-token="{{ csrf_token('tema') }}">
           <i class="fas {{ (app.user and app.user.tema == 'oscuro') ? 'fa-sun' : 'fa-moon' }}"></i>
         </button>
+        <select id="selInactividad" class="h-8 rounded-lg border border-slate-200 bg-transparent px-1 text-xs text-slate-500" title="Cerrar la sesión por inactividad" data-logout="{{ path('app_logout') }}">
+          <option value="0">Sesión sin límite</option>
+          <option value="5">Cerrar a los 5 min</option>
+          <option value="15">Cerrar a los 15 min</option>
+          <option value="30">Cerrar a los 30 min</option>
+          <option value="60">Cerrar a los 60 min</option>
+          <option value="120">Cerrar a los 2 h</option>
+        </select>
         {{ render(controller('App\\Controller\\RecordatorioController::campana')) }}
         {{ render(controller('App\\Controller\\ChangecompController::index', {'route_name': app.request.attributes.get('_route')|default('/')})) }}
         <span class="hidden items-center gap-2 sm:inline-flex"><i class="far fa-user-circle text-slate-400"></i>{{ sesion.getSesion.nombre }}</span>
@@ -198,6 +206,34 @@
             <script type="text/javascript">
 
                 $(".ocultar-campo").hide();
+
+                // Cierre de sesión por inactividad: el tiempo elegido se recuerda en este navegador.
+                (function () {
+                    var sel = document.getElementById('selInactividad');
+                    if (!sel) { return; }
+                    var clave = 'lexone_inactividad_min';
+                    var timer = null;
+                    var minutos = 0;
+                    try { minutos = parseInt(localStorage.getItem(clave), 10) || 0; } catch (e) {}
+                    sel.value = String(minutos);
+                    if (sel.value !== String(minutos)) { sel.value = '0'; minutos = 0; }
+
+                    function reiniciar() {
+                        clearTimeout(timer);
+                        if (minutos > 0) {
+                            timer = setTimeout(function () { window.location.href = sel.dataset.logout; }, minutos * 60000);
+                        }
+                    }
+                    sel.addEventListener('change', function () {
+                        minutos = parseInt(sel.value, 10) || 0;
+                        try { localStorage.setItem(clave, String(minutos)); } catch (e) {}
+                        reiniciar();
+                    });
+                    ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(function (ev) {
+                        document.addEventListener(ev, reiniciar, { passive: true });
+                    });
+                    reiniciar();
+                })();
                 $( "form" ).submit(function( event ) {
                     // Formularios que abren en otra pestaña (p.ej. previsualizar PDF) no deben bloquear la página.
                     if ($(this).attr('target') === '_blank') { return; }

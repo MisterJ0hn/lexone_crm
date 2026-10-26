@@ -107,6 +107,10 @@ class DesconoceController  extends AbstractController{
         //$fecha.=$otros;
         $str_query=$str_status.$fecha.$str_folio;
         $str_resumen=$fecha_resumen.$str_folio;
+        if($condTipoCliente=\App\Service\FiltroTipoCliente::condicion(\App\Service\FiltroTipoCliente::desdeRequest($request))){
+            $str_query.=" and ".$condTipoCliente;
+            $str_resumen.=" and ".$condTipoCliente;
+        }
 
     
         switch($user->getUsuarioTipo()->getId()){

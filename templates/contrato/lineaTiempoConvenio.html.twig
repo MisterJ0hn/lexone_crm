@@ -312,6 +312,13 @@
                     </div>
                 </div>
 
+                {# Representante legal: solo para una empresa (se oculta y deshabilita al crear una persona). #}
+                <div class="solo-empresa">
+                    <hr>
+                    <h5>Representante legal</h5>
+                    {{ include('contrato/_rep_legal_campos.html.twig', {form: formNuevoCliente, profesiones: profesiones, rutClass: 'format-rut'}) }}
+                </div>
+
                 <hr>
                 <h5>Credenciales PJUD</h5>
                 <div class="row">
@@ -497,6 +504,8 @@
         </div>
     </div>
 </div>
+
+{{ include('profesion/_modal_nueva.html.twig') }}
 
 <script>
     $(".format-rut").rut();
@@ -689,6 +698,7 @@
         var enEmpresa = $titulo.data('convenio') != 1;
         $('#esPersonaNuevoCliente').val(persona ? 1 : 0);
         $('#modalNuevoCliente .solo-persona').toggle(persona).find('select, input').prop('disabled', !persona);
+        $('#modalNuevoCliente .solo-empresa').toggle(!persona).find('select, input, button').prop('disabled', persona);
         if(enEmpresa){
             $titulo.text(persona ? 'Datos nueva persona' : 'Datos nueva empresa');
             $('#lblNombreNuevoCliente').text(persona ? 'Nombre' : 'Razón social');

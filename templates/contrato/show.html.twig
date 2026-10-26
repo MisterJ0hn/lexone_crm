@@ -9,6 +9,7 @@
         <div class="card-body table-responsive pad">
            
             <h4>Datos Cliente</h4>
+            {% set esPersonaCli = contrato.agenda.tipoCliente is null or contrato.agenda.tipoCliente.nombre == 'Persona' %}
             <div class="row">
                 <div class="col-sm-12 col-md-3">
                     <small class="text-muted">{{ (contrato.agenda.tipoCliente is not null and contrato.agenda.tipoCliente.nombre == 'Empresa') ? 'Razón social' : 'Nombre' }}</small><br>
@@ -24,11 +25,13 @@
                    
                     <p>{{contrato.cliente.correo}}</p>   
                 </div>
-                 <div class="col-sm-12 col-md-3">
+                {% if esPersonaCli %}
+                <div class="col-sm-12 col-md-3">
                 <small class="text-muted">Sexo</small><br>
-                <p>{{contrato.cliente.sexo}}</p>   
+                <p>{{contrato.cliente.sexo}}</p>
 
                 </div>
+                {% endif %}
                 <div class="col-sm-12 col-md-3">
                     <small class="text-muted">Nacionalidad</small><br>
                     
@@ -65,11 +68,13 @@
                    
                     <p>{{contrato.cliente.telefonoRecado}}</p>   
                 </div>
+                {% if esPersonaCli %}
                 <div class="col-sm-12 col-md-3">
                     <small class="text-muted">Estado Civil</small><br>
-                  
-                    <p>{{contrato.estadoCivil}}</p>   
+
+                    <p>{{contrato.estadoCivil}}</p>
                 </div>
+                {% endif %}
                 <div class="col-sm-12 col-md-3 ocultar-campo">
                     <small class="text-muted">Vivienda</small>
                    
@@ -80,11 +85,13 @@
                   
                     <p>{{contrato.vehiculo}}</p>   
                 </div>
+                {% if esPersonaCli %}
                 <div class="col-sm-12 col-md-3">
                     <small class="text-muted">Situación Laboral</small><br>
-                    
-                    <p>{{contrato.situacionLaboral}}</p>   
+
+                    <p>{{contrato.situacionLaboral}}</p>
                 </div>
+                {% endif %}
                
                 {% if contrato.agenda.tipoCliente is null or contrato.agenda.tipoCliente.nombre == 'Persona' %}
                 <div class="col-sm-12 col-md-3">
@@ -96,7 +103,7 @@
                     <p>{% if contrato.cliente.claveUnica %}<span class="clave-oculta" data-clave="{{ contrato.cliente.claveUnica }}">••••••••</span> <button type="button" class="btn btn-sm btn-link p-0 ml-1 btn-clave" title="Mostrar/ocultar clave"><i class="fas fa-eye"></i></button>{% endif %}</p>
                 </div>
                 {% endif %}
-                <div class="col-sm-12 col-md-3 ocultar-campo">
+                <div class="col-sm-12 col-md-3{{ esPersonaCli ? ' ocultar-campo' : '' }}">
                     <small class="text-muted">Reunión</small>
                     <p>{{contrato.reunion}}</p>
                 </div>

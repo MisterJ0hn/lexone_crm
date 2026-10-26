@@ -59,6 +59,9 @@ class RecordatorioController extends AbstractController
 
 
         }
+        if($condTipoCliente=\App\Service\FiltroTipoCliente::condicion(\App\Service\FiltroTipoCliente::desdeRequest($request))){
+            array_push($criteriosPersonalizado,[$condTipoCliente,'','']);
+        }
         if(null !== $request->query->get('bFecha')){
             $aux_fecha=explode(" - ",$request->query->get('bFecha'));
             $dateInicio=$aux_fecha[0];

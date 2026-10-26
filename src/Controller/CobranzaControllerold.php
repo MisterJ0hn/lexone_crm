@@ -72,6 +72,19 @@ class CobranzaControllerold extends AbstractController
         }
         $primerVencimiento=$vencimientoRepository->findOneBy(['empresa'=>$user->getEmpresaActual(),'soloPorAdmin'=>false],['valMin'=>'ASC']);
 
+        $condicionSegmento=function($v){
+            if($v->getValMax() !== null && $v->getValMin() > 0){
+                return ' DATEDIFF(now(),co.proximoVencimiento) >= '.$v->getValMin().' and DATEDIFF(now(),co.proximoVencimiento) <= '.$v->getValMax().' and c.monto>='.$v->getMontoMax();
+            }else if($v->getValMin()==0){
+                return ' DATEDIFF(now(),co.proximoVencimiento) <= '.$v->getValMax().' and c.monto>='.$v->getMontoMax();
+            }
+            return ' DATEDIFF(now(),co.proximoVencimiento) >= '.$v->getValMin().' and c.monto>='.$v->getMontoMax();
+        };
+        // Parámetros con que cada rol consulta las cuotas; se reutilizan para contar clientes por segmento.
+        $segUsuario=null;
+        $segTipo=null;
+        $segCompania=null;
+        $segLote='';
         $fecha=null;
         $error='';
         $status=$primerVencimiento->getId();
@@ -99,15 +112,8 @@ class CobranzaControllerold extends AbstractController
                     $status=$request->query->get('bStatus');
                 }
                 $vencimiento=$vencimientoRepository->find($status);
-                if($vencimiento->getValMax() !== null && $vencimiento->getValMin() > 0){
-                    $otros=' DATEDIFF(now(),co.proximoVencimiento) >= '.$vencimiento->getValMin().' and DATEDIFF(now(),co.proximoVencimiento) <= '.$vencimiento->getValMax().' and c.monto>='.$vencimiento->getMontoMax();
-                }else if($vencimiento->getValMin()==0){
-                    $otros=' DATEDIFF(now(),co.proximoVencimiento) <= '.$vencimiento->getValMax().' and c.monto>='.$vencimiento->getMontoMax();
-                }else{
-                    $otros=' DATEDIFF(now(),co.proximoVencimiento) >= '.$vencimiento->getValMin().' and c.monto>='.$vencimiento->getMontoMax();
-                        
-                }
-             
+                $otros=$condicionSegmento($vencimiento);
+
                 
             }
             if(null !== $request->query->get('bFiltro') && $request->query->get('bFiltro')!=''){
@@ -129,7 +135,12 @@ class CobranzaControllerold extends AbstractController
             
         }
         $fecha.=$otros." and a.status != 13";
-        
+        $condTipoCliente=\App\Service\FiltroTipoCliente::condicion(\App\Service\FiltroTipoCliente::desdeRequest($request));
+        if($condTipoCliente){
+            $fecha.=" and ".$condTipoCliente;
+        }
+        $segCompania=$compania;
+
         switch($user->getUsuarioTipo()->getId()){
             
             
@@ -141,10 +152,14 @@ class CobranzaControllerold extends AbstractController
                 $companias=$cuentaRepository->findByPers(null);
                 break;
             case 7://tramitador
+                $segUsuario=$user->getId();
+                $segTipo=7;
                 $query=$cuotaRepository->findVencimiento($user->getId(),$user->getEmpresaActual(),$compania,$filtro,7,true,$fecha,true,true);
                 $companias=$cuentaRepository->findByPers(null);
                 break;
             case 6: //abogado
+                $segUsuario=$user->getId();
+                $segTipo=6;
                 $query=$cuotaRepository->findVencimiento($user->getId(),$user->getEmpresaActual(),$compania,$filtro,6,true,$fecha, true,true);
                 $companias=$cuentaRepository->findByPers(null);
                 break;
@@ -164,11 +179,13 @@ class CobranzaControllerold extends AbstractController
                 
                 if(count($lotes)>0){
 
-                    $fecha.="$and co.idLote in (".implode(",",$lotes).") ";
+                    $segLote="$and co.idLote in (".implode(",",$lotes).") ";
                 }else{
-                    $fecha.="$and co.idLote is null ";
+                    $segLote="$and co.idLote is null ";
                 }
-                
+                $fecha.=$segLote;
+                $segCompania=null;
+
                 $query=$cuotaRepository->findVencimiento(null,$user->getEmpresaActual(),null,$filtro,null,true,$fecha,true,true);
                 $companias=$cuentaRepository->findByPers(null);
                 break;
@@ -183,10 +200,26 @@ class CobranzaControllerold extends AbstractController
                 break;
             default:
                 //$query=$contratoRepository->findByPers(null,null,$compania,$filtro,null,$fecha,true);
+                $segCompania=null;
                 $query=$cuotaRepository->findVencimiento(null,$user->getEmpresaActual(),null,$filtro,null,true,$fecha,true,true);
                 $companias=$cuentaRepository->findByPers(null);
-                
+
             break;
+        }
+
+        // Clientes distintos con cuotas en cada segmento de vencimiento (mismos filtros que el listado).
+        $clientesPorSegmento=[];
+        foreach($vencimientos as $v){
+            $fechaSeg=$condicionSegmento($v)." and a.status != 13".$segLote;
+            if($condTipoCliente){
+                $fechaSeg.=" and ".$condTipoCliente;
+            }
+            $clientes=[];
+            foreach($cuotaRepository->findVencimiento($segUsuario,$user->getEmpresaActual(),$segCompania,$filtro,$segTipo,true,$fechaSeg,true,true) as $cuotaSeg){
+                $contratoSeg=$cuotaSeg->getContrato();
+                $clientes[$contratoSeg->getCliente() ? 'c'.$contratoSeg->getCliente()->getId() : 'k'.$contratoSeg->getId()]=true;
+            }
+            $clientesPorSegmento[$v->getId()]=count($clientes);
         }
         //$companias=$cuentaRepository->findByPers($user->getId());
         //$query=$contratoRepository->findAll();
@@ -211,6 +244,7 @@ class CobranzaControllerold extends AbstractController
             'error'=>$error,
             'error_toast'=>$error_toast,
             'vencimientos'=>$vencimientos,
+            'clientesPorSegmento'=>$clientesPorSegmento,
             'vencimientoSeleccionado'=>$vencimiento,
             'queryTotales'=>$queryTotales
         ]);

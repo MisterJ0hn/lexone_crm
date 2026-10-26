@@ -246,8 +246,10 @@ class PanelAgendadorController extends AbstractController
 
         $fecha="(a.fechaCarga between '$dateInicio' and '$dateFin 23:59:59')
                " ;
-        
-       
+        if($condTipoCliente=\App\Service\FiltroTipoCliente::condicion(\App\Service\FiltroTipoCliente::desdeRequest($request))){
+            $fecha.=" and ".$condTipoCliente;
+        }
+
         if(null !== $request->query->get('bStatus') && trim($request->query->get('bStatus')!='')){
             $status=$request->query->get('bStatus');
             $statues=$status;

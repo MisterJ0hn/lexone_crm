@@ -54,6 +54,11 @@
             {{ form_widget(form.reunion, {'attr': {'class': 'form-control'}}) }}
         </div>
     </div>
+    {% if form.sexo is not defined and contrato.agenda.tipoCliente is not null and contrato.agenda.tipoCliente.nombre == 'Empresa' %}
+    <hr>
+    <h5>Representante legal</h5>
+    {{ include('contrato/_rep_legal_campos.html.twig', {form: form, profesiones: profesiones, rutClass: 'format-rut-edit'}) }}
+    {% endif %}
     <hr>
     <h5>Credenciales PJUD</h5>
     <div class="row">

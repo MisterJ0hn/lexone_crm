@@ -86,7 +86,10 @@ class PagoController extends AbstractController
             }
             $fecha="co.fechaCreacion between '$dateInicio' and '$dateFin 23:59:59' ";
         }
-      
+        if($condTipoCliente=\App\Service\FiltroTipoCliente::condicion(\App\Service\FiltroTipoCliente::desdeRequest($request))){
+            $fecha.=" and ".$condTipoCliente;
+        }
+
         switch($user->getUsuarioTipo()->getId()){
             case 1://tramitador
             case 3:
@@ -496,7 +499,15 @@ class PagoController extends AbstractController
                 $fecha="p.fechaRegistro between '$dateInicio' and '$dateFin 23:59:59'" ;
                 break;
         }
-        
+        if(null !== $request->query->get('bFolio') && trim($request->query->get('bFolio'))!=''){
+            $folio=(int) $request->query->get('bFolio');
+            $fecha.=" and co.folio = $folio";
+        }
+        $tipoCliente=\App\Service\FiltroTipoCliente::desdeRequest($request);
+        if($condTipoCliente=\App\Service\FiltroTipoCliente::condicion($tipoCliente)){
+            $fecha.=" and ".$condTipoCliente;
+        }
+
         switch($user->getUsuarioTipo()->getId()){
             case 1://tramitador
             case 3:
@@ -540,6 +551,8 @@ class PagoController extends AbstractController
             'total'=>$total[1],
             'pagina'=>$pagina->getNombre(),
             'tipoFecha'=>$tipo_fecha,
+            'bFolio'=>$folio,
+            'bTipoCliente'=>$tipoCliente,
         ]);
     }
 
