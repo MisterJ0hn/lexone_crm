@@ -405,19 +405,52 @@ class EdApiClient
         if ($this->llavePrivada === '' || !self::llavePrivadaValida($this->llavePrivada)) {
             throw new \RuntimeException('La empresa no tiene una llave privada válida para las credenciales de Lexflow (configúrela en Empresa)');
         }
-        $clave = 'edapi_api_pjud_' . md5($this->apiKey . '|' . $this->clienteGuid . '|' . $this->baseUrl);
-        if (!array_key_exists($clave, $this->memoApiPjud)) {
-            $resumen = $this->cache->get($clave, function (ItemInterface $item): array {
-                $item->expiresAfter(self::API_PJUD_TTL);
-                return $this->pedirApiPjud();
-            });
-            $this->memoApiPjud[$clave] = $resumen;
-        }
-        $resumen = $this->memoApiPjud[$clave];
+        $resumen = $this->resumenApiPjud();
 
         return ($resumen['habilitado'] || $ignorarHabilitado) && is_string($resumen['sello']) && $resumen['sello'] !== ''
             ? $this->abrirConexionApiPjud($resumen['sello'])
             : null;
+    }
+
+    /** @return array{habilitado:bool,sello:?string} */
+    private function resumenApiPjud(): array
+    {
+        $clave = 'edapi_api_pjud_' . md5($this->apiKey . '|' . $this->clienteGuid . '|' . $this->baseUrl);
+        if (!array_key_exists($clave, $this->memoApiPjud)) {
+            $this->memoApiPjud[$clave] = $this->cache->get($clave, function (ItemInterface $item): array {
+                $item->expiresAfter(self::API_PJUD_TTL);
+                return $this->pedirApiPjud();
+            });
+        }
+
+        return $this->memoApiPjud[$clave];
+    }
+
+    /**
+     * True si el cliente tiene PJUD habilitado en Lexflow (caché de unos minutos). No necesita la llave privada.
+     *
+     * @throws \RuntimeException
+     */
+    public function pjudHabilitado(): bool
+    {
+        return $this->configurado() && $this->resumenApiPjud()['habilitado'];
+    }
+
+    /** Base del espejo de api-pjud de edapi: mismas rutas y JSON, autenticado con X-API-Key. */
+    public function urlPjud(): string
+    {
+        return rtrim($this->baseUrl, '/') . '/api/v1/pjud';
+    }
+
+    /** @return array<string,string> */
+    public function cabecerasApi(): array
+    {
+        $headers = ['X-API-Key' => $this->apiKey, 'Accept' => 'application/json'];
+        if ($this->clienteGuid !== '') {
+            $headers['X-Cliente-Guid'] = $this->clienteGuid;
+        }
+
+        return $headers;
     }
 
     /**

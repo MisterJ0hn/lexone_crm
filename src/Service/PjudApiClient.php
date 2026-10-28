@@ -54,6 +54,8 @@ class PjudApiClient
     private Client $http;
     private string $base;
     private bool $habilitado = false;
+    /** true = se consulta el espejo de api-pjud de edapi (X-API-Key) en vez de api-pjud directo. */
+    private bool $modoEdapi = false;
     private string $clientKey = '';
     private string $email = '';
     private string $password = '';
@@ -77,11 +79,24 @@ class PjudApiClient
     {
         $this->empresaId = (int) $empresa?->getId();
         $this->base = $this->baseDefecto;
-        $this->habilitado = false;
+        $this->habilitado = $this->modoEdapi = false;
         $this->clientKey = $this->email = $this->password = '';
         $this->logger?->info('PJUD trace: paraEmpresa', ['empresa' => $this->empresaId, 'flagLexflow' => $flagLexflow, 'soloEmpresa' => $soloEmpresa]);
         if ($empresa === null || $flagLexflow === false) {
             return $this;
+        }
+
+        // Con Lexflow habilitado todo pasa por el espejo de api-pjud de edapi: solo X-API-Key, sin login ni sello.
+        if (!$soloEmpresa && $empresa->isLexflowHabilitado() && $this->edapi->paraEmpresa($empresa)->configurado()) {
+            try {
+                $this->habilitado = $flagLexflow === true || $this->edapi->pjudHabilitado();
+                $this->modoEdapi = true;
+                $this->base = $this->edapi->urlPjud();
+
+                return $this;
+            } catch (\RuntimeException) {
+                // Lexflow no respondió: se prueba con la conexión sellada o lo guardado en la Empresa.
+            }
         }
 
         if (!$soloEmpresa && $empresa->isLexflowHabilitado() && trim((string) $empresa->getEdapiLlavePrivada()) !== '') {
@@ -156,7 +171,7 @@ class PjudApiClient
 
     public function configurado(): bool
     {
-        return $this->habilitado && $this->email !== '' && $this->password !== '';
+        return $this->habilitado && ($this->modoEdapi || ($this->email !== '' && $this->password !== ''));
     }
 
     // ───────────────────────── HTTP ─────────────────────────
@@ -194,6 +209,9 @@ class PjudApiClient
 
     private function cabeceras(bool $conToken): array
     {
+        if ($this->modoEdapi) {
+            return $this->edapi->cabecerasApi();
+        }
         $h = ['Accept' => 'application/json'];
         if ($this->clientKey !== '') {
             $h['x-client-key'] = $this->clientKey;
@@ -217,6 +235,14 @@ class PjudApiClient
             throw new PjudApiException('No se pudo conectar con el servicio de detalle PJUD: ' . mb_substr($e->getMessage(), 0, 220), 0, $e);
         }
         $codigo = $resp->getStatusCode();
+        if ($this->modoEdapi) {
+            match ($codigo) {
+                401 => throw new PjudApiException('Lexflow rechazó la API Key (inválida, revocada, vencida o IP del servidor no permitida).'),
+                403 => throw new PjudApiException('La API Key de Lexflow no tiene permiso para esta consulta o el cliente no tiene PJUD habilitado.'),
+                429 => throw new PjudApiException('Lexflow limitó las consultas; reintente en ' . ((int) $resp->getHeaderLine('Retry-After') ?: 'unos') . ' segundos.'),
+                default => null,
+            };
+        }
         if ($codigo === 401 && $conToken && $reintento) {
             $this->token(true);
             return $this->peticion($metodo, $ruta, $opciones, true, false);
@@ -690,17 +716,21 @@ class PjudApiClient
         $base = parse_url($this->base);
         $pedido = parse_url(trim($url));
         $ruta = $pedido['path'] ?? '';
+        // El espejo de edapi sirve los documentos bajo su propio prefijo (/api/v1/pjud/public/...).
+        $prefijo = rtrim($base['path'] ?? '', '/') . '/public/';
         if (
             !in_array($pedido['scheme'] ?? '', ['http', 'https'], true)
             || ($pedido['host'] ?? null) !== ($base['host'] ?? '')
-            || !str_starts_with($ruta, '/public/')
+            || ($pedido['port'] ?? null) !== ($base['port'] ?? null)
+            || !str_starts_with($ruta, $prefijo)
             || str_contains($ruta, '..')
         ) {
             throw new PjudApiException('La URL no corresponde a un documento del PJUD.');
         }
-        $destino = $this->base . $ruta . (isset($pedido['query']) ? '?' . $pedido['query'] : '');
+        $destino = $base['scheme'] . '://' . $base['host'] . (isset($base['port']) ? ':' . $base['port'] : '') . $ruta . (isset($pedido['query']) ? '?' . $pedido['query'] : '');
         try {
-            $resp = $this->http->get($destino, ['headers' => $this->clientKey !== '' ? ['x-client-key' => $this->clientKey] : [], 'stream' => true]);
+            $cabeceras = $this->modoEdapi ? $this->edapi->cabecerasApi() : ($this->clientKey !== '' ? ['x-client-key' => $this->clientKey] : []);
+            $resp = $this->http->get($destino, ['headers' => $cabeceras, 'stream' => true]);
         } catch (GuzzleException $e) {
             throw new PjudApiException('No se pudo conectar con el PJUD para traer el documento.', 0, $e);
         }
