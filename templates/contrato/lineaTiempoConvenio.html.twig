@@ -98,6 +98,28 @@
                                 <label>{{ grupo.cliente.reunion }}</label>
                             </div>
                         </div>
+                        {% if not esPersona %}
+                        <hr>
+                        <h6>Representante legal</h6>
+                        <div class="row">
+                            <div class="col-sm-12 col-md-3">
+                                <small class="text-muted">Nombre</small><br>
+                                <label>{{ grupo.cliente.repLegalNombre }}</label>
+                            </div>
+                            <div class="col-sm-12 col-md-3">
+                                <small class="text-muted">Rut</small><br>
+                                <label>{{ grupo.cliente.repLegalRut }}</label>
+                            </div>
+                            <div class="col-sm-12 col-md-3">
+                                <small class="text-muted">Estado civil</small><br>
+                                <label>{{ grupo.cliente.repLegalEstadoCivil }}</label>
+                            </div>
+                            <div class="col-sm-12 col-md-3">
+                                <small class="text-muted">Profesión u oficio</small><br>
+                                <label>{{ grupo.cliente.repLegalProfesion }}</label>
+                            </div>
+                        </div>
+                        {% endif %}
                         <hr>
                         <h6>Credenciales PJUD</h6>
                         <div class="row">
