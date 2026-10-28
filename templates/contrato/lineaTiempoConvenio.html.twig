@@ -73,7 +73,7 @@
                                 <small class="text-muted">Dirección</small><br>
                                 <label>{{ grupo.cliente.direccion }}</label>
                             </div>
-                            {% if not esPersona and grupo.cliente.giro %}
+                            {% if not esPersona or grupo.cliente.giro %}
                             <div class="col-sm-12 col-md-3">
                                 <small class="text-muted">Giro</small><br>
                                 <label>{{ grupo.cliente.giro }}</label>

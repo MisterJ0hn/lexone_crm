@@ -110,6 +110,12 @@
             </div>
 
             {% if contrato.agenda.tipoCliente and contrato.agenda.tipoCliente.nombre != 'Persona' %}
+            <div class="row">
+                <div class="col-sm-12 col-md-3">
+                    <small class="text-muted">Giro</small>
+                    <p>{{contrato.cliente.giro}}</p>
+                </div>
+            </div>
             <h5>Representante legal</h5>
             <div class="row">
                 <div class="col-sm-12 col-md-3">
