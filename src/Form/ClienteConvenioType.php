@@ -84,6 +84,7 @@ class ClienteConvenioType extends AbstractType
             ->add('reunion', null, $obligatorioEntidad('Debe seleccionar la reunión.'))
             // Representante legal (solo aplica a clientes Empresa; las plantillas lo ocultan en Convenio/Persona).
             // La profesión se muestra como select (catálogo Profesion) pero se guarda como texto.
+            ->add('giro', null, ['required' => false])
             ->add('repLegalRut', null, ['required' => false])
             ->add('repLegalNombre', null, ['required' => false])
             ->add('repLegalEstadoCivil', null, ['required' => false])

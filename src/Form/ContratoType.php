@@ -43,6 +43,7 @@ class ContratoType extends AbstractType
             ->add('primeraCuota')
             ->add('isAbono')
             ->add('isTotal')
+            ->add('isProBono')
             ->add('cuotas')
             ->add('valorCuota')
             ->add('situacionLaboral')

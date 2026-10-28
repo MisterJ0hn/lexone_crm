@@ -1399,6 +1399,7 @@ class ContratoController extends AbstractController
                 if ($esPersona) {
                     $clienteExistente->setSexo($form->has('sexo') ? $form->get('sexo')->getData() : null);
                 } else {
+                    $clienteExistente->setGiro($cliente->getGiro());
                     $clienteExistente->setRepLegalRut($cliente->getRepLegalRut());
                     $clienteExistente->setRepLegalNombre($cliente->getRepLegalNombre());
                     $clienteExistente->setRepLegalEstadoCivil($cliente->getRepLegalEstadoCivil());
@@ -1519,7 +1520,7 @@ class ContratoController extends AbstractController
         }
         // El representante legal solo aplica a clientes Empresa (no a Convenio ni a personas dentro de una Empresa).
         if ($tipoCliente !== 'Empresa' || $form->has('sexo')) {
-            foreach (['repLegalRut', 'repLegalNombre', 'repLegalEstadoCivil', 'repLegalProfesion'] as $campo) {
+            foreach (['giro', 'repLegalRut', 'repLegalNombre', 'repLegalEstadoCivil', 'repLegalProfesion'] as $campo) {
                 $form->remove($campo);
             }
         }

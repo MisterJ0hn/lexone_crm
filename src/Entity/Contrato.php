@@ -190,6 +190,10 @@ class Contrato
     #[ORM\Column(type: "boolean", nullable: true)]
     private $isTotal;
 
+    // Contrato gratuito (Pro-bono): monto 0 y sin cuotas.
+    #[ORM\Column(type: "boolean", nullable: true)]
+    private $isProBono;
+
 
     #[ORM\OneToMany(targetEntity: CausaObservacion::class, mappedBy: "contrato")]
     private $causaObservacions;
@@ -958,6 +962,18 @@ class Contrato
     public function setIsTotal(?bool $isTotal): self
     {
         $this->isTotal = $isTotal;
+
+        return $this;
+    }
+
+    public function getIsProBono(): ?bool
+    {
+        return $this->isProBono;
+    }
+
+    public function setIsProBono(?bool $isProBono): self
+    {
+        $this->isProBono = $isProBono;
 
         return $this;
     }

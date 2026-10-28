@@ -27,6 +27,12 @@
         <small class="text-muted">Email *</small>
 		{{form_row(form.email,{'label':false,'attr':{'class':'form-control emailCliente','autocomplete':"ÑÖcompletes",'required':true,'data-validar-correo':''}})}}
     </div>
+    {% if agenda.tipoCliente is not null and agenda.tipoCliente.nombre != 'Persona' %}
+    <div class="col-sm-12 col-md-3">
+        <small class="text-muted">Giro</small>
+		{{form_row(form.giro,{'label':false,'attr':{'class':'form-control','maxlength':255,'autocomplete':"ÑÖcompletes"}})}}
+    </div>
+    {% endif %}
     {% if agenda.tipoCliente is null or agenda.tipoCliente.nombre == 'Persona' %}
     <div class="col-sm-12 col-md-3">
         <small class="text-muted">Sexo *</small>
@@ -252,6 +258,8 @@
             <div class="col">{{form_row(form.isAbono,{'label':false,'attr':{'class':' chk-bono'}})}}</div>
             <small class="text-muted textTotal">Paga el total *</small>
             <div class="col divTotal">{{form_row(form.isTotal,{'label':false,'attr':{'class':' chk-total'}})}}</div>
+            <small class="text-muted textProBono">Pro-bono (gratis)</small>
+            <div class="col divProBono">{{form_row(form.isProBono,{'label':false,'attr':{'class':' chk-probono'}})}}</div>
         </div>
         <div class="row">
             <div class="col">
@@ -771,14 +779,15 @@
         }
 
         var monto = parseInt(String($(".monto-contrato").val()).replace(/\D/g, ''), 10) || 0;
-        if(monto <= 0){
+        var esProBono = $('.chk-probono').prop('checked');
+        if(!esProBono && monto <= 0){
             return falla('Debe ingresar un monto de contrato', $(".monto-contrato"));
         }
         var $valorCuota = $('.valor-cuota').first();
         if($valorCuota.is(':visible') && (parseInt(String($valorCuota.val()).replace(/\D/g, ''), 10) || 0) <= 0){
             return falla('Debe ingresar el valor de la cuota', $valorCuota);
         }
-        if($('input[name="chkDiasPago"]').length && !$('input[name="chkDiasPago"]:checked').length){
+        if(!esProBono && $('input[name="chkDiasPago"]').length && !$('input[name="chkDiasPago"]:checked').length){
             return falla('Debe seleccionar un día de pago', $('.diasPago'));
         }
 
@@ -1055,6 +1064,38 @@
             $('.isIncorporacion').show();
             $('.fecha-incorporacion').show();
             $('.chk-incorporacion').show();
+        }
+    });
+    // Pro-bono: contrato gratis, monto 0 y sin cuotas.
+    $(".chk-probono").change(function(){
+        if($(this).prop('checked')){
+            // Restablece Abono / Paga el total antes de ocultar los campos de cuotas.
+            $(".chk-bono").prop('checked',true).trigger('change').prop('checked',false).trigger('change');
+            $(".chk-total").prop('checked',false);
+
+            $('.monto-contrato').val(0).prop('readonly',true);
+            $("#m-monto-contrato").html('');
+            $('.cuotas').val(0).hide();
+            $('.valor-cuota').val(0).hide();
+            $('.primera-cuota').val(0).css("visibility", "hidden");
+            $('#m-valor-cuota').hide();
+            $('#m-primera-cuota').html('');
+
+            $(".chk-bono, .chk-total").hide();
+            $('.isAbono, .textTotal, .t-cuotas, .t-valor-cuota').hide();
+            $('.diasPago, .mesPrimerPago, .vigenciaMeses').hide();
+            $('.chkDiasPago').prop('required',false);
+        }else{
+            $('.monto-contrato').prop('readonly',false);
+            $('.cuotas').val(1).show();
+            $('.valor-cuota').show();
+            $('#m-valor-cuota').show();
+
+            $(".chk-bono, .chk-total").show();
+            $('.isAbono, .textTotal, .t-cuotas, .t-valor-cuota').show();
+            $('.diasPago, .mesPrimerPago, .vigenciaMeses').show();
+            $('.chkDiasPago').prop('required',true);
+            recalcula();
         }
     });
     $(".chk-incorporacion").change(function(){

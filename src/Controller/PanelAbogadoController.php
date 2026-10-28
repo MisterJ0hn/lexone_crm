@@ -411,6 +411,7 @@ class PanelAbogadoController extends AbstractController
 
         } else {
             // Convenio/Empresa: datos del representante legal (se guardan en el Cliente).
+            $form->add('giro', \Symfony\Component\Form\Extension\Core\Type\TextType::class, ['mapped' => false, 'required' => false, 'data' => $contrato->getCliente()?->getGiro()]);
             $form->add('repLegalRut', \Symfony\Component\Form\Extension\Core\Type\TextType::class, ['mapped' => false, 'required' => false]);
             $form->add('repLegalNombre', \Symfony\Component\Form\Extension\Core\Type\TextType::class, ['mapped' => false, 'required' => false]);
             $form->add('repLegalEstadoCivil', EntityType::class, [
@@ -514,6 +515,7 @@ class PanelAbogadoController extends AbstractController
                 $cliente->setClaveUnica($form->get('claveUnica')->getData());
                 $cliente->setPjudRut($form->get('pjudRut')->getData());
             } else {
+                $cliente->setGiro($form->get('giro')->getData());
                 $cliente->setRepLegalRut($form->get('repLegalRut')->getData());
                 $cliente->setRepLegalNombre($form->get('repLegalNombre')->getData());
                 $cliente->setRepLegalEstadoCivil($form->get('repLegalEstadoCivil')->getData());
@@ -526,6 +528,21 @@ class PanelAbogadoController extends AbstractController
             $agenda->setStatus($agendaStatusRepository->find('7'));
             $contrato->setDiaPago($request->request->get('chkDiasPago'));
             $contrato->setFechaCreacion(new \DateTime(date("Y-m-d H:i:s")));
+
+            // Pro-bono: contrato gratuito, no genera cuotas (la generación en
+            // ContratoController no crea ninguna sin abono/total y con valor cuota 0).
+            if ($contrato->getIsProBono()) {
+                $contrato->setMontoContrato('0');
+                $contrato->setPrimeraCuota(0);
+                $contrato->setCuotas(0);
+                $contrato->setValorCuota('0');
+                $contrato->setIsAbono(false);
+                $contrato->setIsTotal(false);
+                $contrato->setIsIncorporacion(false);
+                if (!$contrato->getDiaPago()) {
+                    $contrato->setDiaPago(1);
+                }
+            }
 
 
             foreach ($agenda->getCuenta()->getSucursals() as $sucursal) {

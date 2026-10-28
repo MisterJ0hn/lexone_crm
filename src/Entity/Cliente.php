@@ -119,6 +119,12 @@ class Cliente
     #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $repLegalProfesion;
 
+    /**
+     * Giro comercial (solo Convenio/Empresa).
+     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private $giro;
+
 
     public function __construct()
     {
@@ -421,6 +427,18 @@ class Cliente
     public function setRepLegalProfesion(?string $repLegalProfesion): self
     {
         $this->repLegalProfesion = $repLegalProfesion;
+
+        return $this;
+    }
+
+    public function getGiro(): ?string
+    {
+        return $this->giro;
+    }
+
+    public function setGiro(?string $giro): self
+    {
+        $this->giro = $giro;
 
         return $this;
     }

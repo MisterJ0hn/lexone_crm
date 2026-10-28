@@ -73,6 +73,12 @@
                                 <small class="text-muted">Dirección</small><br>
                                 <label>{{ grupo.cliente.direccion }}</label>
                             </div>
+                            {% if not esPersona and grupo.cliente.giro %}
+                            <div class="col-sm-12 col-md-3">
+                                <small class="text-muted">Giro</small><br>
+                                <label>{{ grupo.cliente.giro }}</label>
+                            </div>
+                            {% endif %}
                             {% if esPersona %}
                             <div class="col-sm-12 col-md-3">
                                 <small class="text-muted">Sexo</small><br>
@@ -336,6 +342,13 @@
 
                 {# Representante legal: solo para una empresa (se oculta y deshabilita al crear una persona). #}
                 <div class="solo-empresa">
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-12 col-md-4">
+                            <small class="text-muted">Giro</small>
+                            {{ form_widget(formNuevoCliente.giro, {'attr': {'class': 'form-control', 'maxlength': 255}}) }}
+                        </div>
+                    </div>
                     <hr>
                     <h5>Representante legal</h5>
                     {{ include('contrato/_rep_legal_campos.html.twig', {form: formNuevoCliente, profesiones: profesiones, rutClass: 'format-rut'}) }}

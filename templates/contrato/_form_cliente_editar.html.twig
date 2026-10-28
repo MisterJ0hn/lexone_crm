@@ -17,6 +17,12 @@
             <small class="text-muted">Teléfono</small>
             {{ form_widget(form.telefono, {'attr': {'class': 'form-control telefonoCliente'}}) }}
         </div>
+        {% if form.giro is defined %}
+        <div class="col-sm-12 col-md-4">
+            <small class="text-muted">Giro</small>
+            {{ form_widget(form.giro, {'attr': {'class': 'form-control', 'maxlength': 255}}) }}
+        </div>
+        {% endif %}
         {% if form.sexo is defined %}
         <div class="col-sm-12 col-md-4">
             <small class="text-muted">Sexo</small>
