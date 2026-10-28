@@ -406,6 +406,40 @@ class PjudApiClient
     }
 
     /**
+     * Pide `sincronizar_<materia>` (con las credenciales OJV si las hay) y falla si el proveedor no lo acepta. Un 409
+     * ("ya en curso") no es error. A diferencia del sincronizar interno de detalle(), que es best-effort.
+     *
+     * @param array{tipo:string,rol:int,anio:int,tribunal:string,tipo_causa?:?string} $causa
+     * @param array{rut?:?string,clave?:?string,metodo_login?:int}|\Closure|null $credenciales
+     * @throws PjudApiException
+     */
+    public function sincronizarCausa(string $materia, array $causa, array|\Closure|null $credenciales = null): void
+    {
+        $cfg = self::CONFIG[$materia] ?? throw new PjudApiException('Materia no soportada por el detalle PJUD.');
+        $cuerpo = ['corte' => 0, 'tribunal' => 0, 'tipo' => $causa['tipo'], 'rol' => $causa['rol'], 'anio' => $causa['anio']];
+        if ($materia === 'penal') {
+            $cuerpo['tipo'] = $this->tipoPenal($causa['tipo_causa'] ?? null);
+        }
+        if ($cfg['catalogo']) {
+            [$cuerpo['corte'], $cuerpo['tribunal']] = $this->resolverTribunal($causa['tribunal'], $materia);
+        }
+        if ($credenciales instanceof \Closure) {
+            try {
+                $credenciales = $credenciales();
+            } catch (\RuntimeException) {
+                $credenciales = null;
+            }
+        }
+        $cuerpo += $this->credencialesCuerpo($credenciales);
+        $this->cache->delete($this->claveEstado($materia, $causa));
+        try {
+            $this->peticion('POST', '/sincronizar_' . $materia, ['json' => $cuerpo]);
+        } catch (PjudConflicto) {
+            // Ya hay una sincronización en curso: se espera su resultado.
+        }
+    }
+
+    /**
      * Estado inicial del botón "Detalle PJUD" de varias causas a la vez: un consultar_<materia> por causa, en
      * paralelo y sin credenciales. Es solo lectura (no sincroniza). Cualquier falla, causa no registrada en el
      * PJUD o tribunal fuera del catálogo = 'nuevo' (sin sincronizar); nunca lanza.

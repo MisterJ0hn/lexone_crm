@@ -181,13 +181,14 @@ class PjudController extends AbstractController
         }
 
         try {
+            // La sincronización se pide con sincronizar_<materia> (lleva las credenciales OJV); el estado se lee de edapi.
             if ($forzar) {
-                $this->edapi->pjudSincronizar($edId);
+                $this->api->sincronizarCausa($materia, $datos, $credenciales);
             }
             $ed = $this->edapi->pjudEstado($edId);
             // Primera consulta de una causa nunca sincronizada: abrir el detalle la sincroniza, como antes.
             if (!$soloEstado && ($ed['estado'] ?? null) === 'sin_sincronizar') {
-                $this->edapi->pjudSincronizar($edId);
+                $this->api->sincronizarCausa($materia, $datos, $credenciales);
                 $ed['estado'] = 'sincronizando';
             }
         } catch (\RuntimeException $e) {
