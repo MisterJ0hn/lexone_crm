@@ -1636,6 +1636,13 @@ class ContratoController extends AbstractController
         $this->denyAccessUnlessGranted('create','linea_tiempo');
         $this->verificarCausaDeEmpresa($causa);
         if ($this->isCsrfTokenValid('estado_procesal'.$causa->getId(), (string) $request->request->get('_token')) && $causa->getEstado()) {
+            // Para finalizar deben estar completados todos los estados procesales.
+            foreach ($causa->getEstadosProcesales() as $pendiente) {
+                if (!$pendiente->isCompletado()) {
+                    $this->addFlash('error', 'No se puede finalizar la causa: debe completar todos los estados procesales.');
+                    return $this->redirectToRoute('contrato_linea_tiempo_detalle', ['id' => $causa->getId()]);
+                }
+            }
             $final = (new EstadoProcesal())
                 ->setEmpresa($causa->getAgenda()->getEmpresa())
                 ->setCausa($causa)

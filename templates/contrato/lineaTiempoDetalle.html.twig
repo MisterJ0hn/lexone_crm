@@ -103,8 +103,10 @@
                         {% endfor %}
                         </table>
 
+                        {% set hayPendientes = false %}
+                        {% for e in estadosProcesales %}{% if not e.completado %}{% set hayPendientes = true %}{% endif %}{% endfor %}
                         {% if causa.estado and not causa.causaFinalizada %}
-                        
+
                         <div class="collapse mt-3" id="nuevoEstadoProcesal">
                             <form method="post" action="{{ path('contrato_estado_procesal_agregar', {'id': causa.id}) }}">
                                 <input type="hidden" name="_token" value="{{ csrf_token('estado_procesal' ~ causa.id) }}">
@@ -133,7 +135,7 @@
                             <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#nuevoEstadoProcesal" title="Agregar estado procesal"><i class="fas fa-plus"></i></button>
                             <form method="post" action="{{ path('contrato_estado_procesal_finalizar', {'id': causa.id}) }}" class="d-inline" onsubmit="return confirm('¿Finalizar esta causa?');">
                                 <input type="hidden" name="_token" value="{{ csrf_token('estado_procesal' ~ causa.id) }}">
-                                <button type="submit" class="btn btn-success">Finalizar</button>
+                                <button type="submit" class="btn btn-success"{% if hayPendientes %} disabled title="Debe completar todos los estados procesales para finalizar"{% endif %}>Finalizar</button>
                             </form>
                         </div>
                         {% else %}
