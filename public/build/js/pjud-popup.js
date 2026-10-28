@@ -312,7 +312,7 @@
 
         var cfg = MATERIAS[d.materia];
         if (cfg) { el.titulo.textContent = cfg.titulo; }
-        var ultimaSync = fechaSincronizacion(d.causa && d.causa.fecha_ultima_sincronizacion);
+        var ultimaSync = fechaSincronizacion(d.ultima_sincronizacion || (d.causa && d.causa.fecha_ultima_sincronizacion));
         el.subtitulo.textContent = d.crm.rol + ' — ' + d.crm.tribunal + (ultimaSync ? ' · Última sincronización: ' + ultimaSync : '');
 
         if (d.estado === 'sincronizando') {

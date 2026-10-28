@@ -210,6 +210,8 @@ class PjudController extends AbstractController
         }
 
         $res = $this->api->detalle($materia, $datos, false, $cuaderno, $credenciales, false, false);
+        // Fecha de la última sincronización hecha por edapi (el popup la prefiere a la que informa api-pjud).
+        $res['ultima_sincronizacion'] = $estado === 'listo' ? ($ed['actualizado_en'] ?? null) : null;
         if ($estado === 'error') {
             $res['estado'] = 'error';
             $res['mensaje'] = 'La sincronización de esta causa con el Poder Judicial falló. Puedes reintentarla.';
