@@ -276,8 +276,9 @@ class PjudApiClient
      *        resuelve solo si hay que sincronizar y puede lanzar \RuntimeException con el motivo de que no haya
      * @param bool $soloEstado solo pregunta el estado (consultar_*, con credenciales: una causa privada no responde sin ellas), sin sincronizar_* y sin movimientos;
      *        es lo que usa el botón mientras espera que termine una sincronización
+     * @param bool $permitirSync false = nunca encola sincronizar_*: la sincronización la pide edapi y aquí solo se leen datos
      */
-    public function detalle(string $materia, array $causa, bool $forzar = false, ?int $cuaderno = null, array|\Closure|null $credenciales = null, bool $soloEstado = false): array
+    public function detalle(string $materia, array $causa, bool $forzar = false, ?int $cuaderno = null, array|\Closure|null $credenciales = null, bool $soloEstado = false, bool $permitirSync = true): array
     {
         $resuelto = false;
         $obtener = function () use (&$credenciales, &$resuelto): ?array {
@@ -312,7 +313,7 @@ class PjudApiClient
             }
         }
 
-        if ($forzar) {
+        if ($forzar && $permitirSync) {
             $this->sincronizar($materia, $cuerpo, $obtener());
         }
 
@@ -342,7 +343,7 @@ class PjudApiClient
         }
         if ($sincronizando) {
             // Sin credenciales (ni del abogado ni del cliente) igual se sincroniza: scrape sin clave.
-            if (!$forzar) {
+            if (!$forzar && $permitirSync) {
                 $this->sincronizar($materia, $cuerpo, $obtener());
             }
         }

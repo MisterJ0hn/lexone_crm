@@ -147,7 +147,7 @@ class PjudController extends AbstractController
         }
         $cuaderno = $request->query->get('cuaderno');
         try {
-            $res = $this->api->detalle($competencia, $datos, $forzar, $cuaderno !== null ? (int) $cuaderno : null, $this->credenciales($empresa, $datos, $causa->getCliente() ?? $causa->getAgenda()?->getContrato()?->getCliente()), !$forzar && $request->query->getBoolean('solo_estado'));
+            $res = $this->detalleVia($empresa, $competencia, $datos, $forzar, $cuaderno !== null ? (int) $cuaderno : null, $this->credenciales($empresa, $datos, $causa->getCliente() ?? $causa->getAgenda()?->getContrato()?->getCliente()), !$forzar && $request->query->getBoolean('solo_estado'));
         } catch (PjudApiException $e) {
             return new JsonResponse(['detail' => $e->getMessage()], 502);
         }
@@ -155,6 +155,71 @@ class PjudController extends AbstractController
         $res['materia'] = $competencia;
         $res['crm'] = ['rol' => $datos['tipo'] . '-' . $datos['rol'] . '-' . $datos['anio'], 'tribunal' => $datos['tribunal']];
         return new JsonResponse($res);
+    }
+
+    /**
+     * Sincronización y estado por edapi (POST/GET causas/{id}/pjud/sincronizar|estado); el detalle sigue saliendo de
+     * api-pjud. Si la causa no existe en Lexflow (o edapi no responde al consultar el estado) se usa el flujo directo
+     * de api-pjud. Un fallo al pedir la sincronización sí se informa al usuario.
+     *
+     * @param array{tipo:string,rol:int,anio:int,tribunal:string,tipo_causa:?string} $datos
+     * @throws PjudApiException
+     */
+    private function detalleVia(\App\Entity\Empresa $empresa, string $materia, array $datos, bool $forzar, ?int $cuaderno, \Closure $credenciales, bool $soloEstado): array
+    {
+        $legacy = fn () => $this->api->detalle($materia, $datos, $forzar, $cuaderno, $credenciales, $soloEstado);
+        $edId = null;
+        if ($empresa->isLexflowHabilitado() && $this->edapi->paraEmpresa($empresa)->configurado()) {
+            try {
+                $edId = $this->edapi->idCausa($datos['tipo'] . '-' . $datos['rol'] . '-' . $datos['anio'], $datos['tribunal']);
+            } catch (\RuntimeException $e) {
+                $this->logger->info('Detalle PJUD: no se pudo buscar la causa en edapi: ' . $e->getMessage());
+            }
+        }
+        if ($edId === null) {
+            return $legacy();
+        }
+
+        try {
+            if ($forzar) {
+                $this->edapi->pjudSincronizar($edId);
+            }
+            $ed = $this->edapi->pjudEstado($edId);
+            // Primera consulta de una causa nunca sincronizada: abrir el detalle la sincroniza, como antes.
+            if (!$soloEstado && ($ed['estado'] ?? null) === 'sin_sincronizar') {
+                $this->edapi->pjudSincronizar($edId);
+                $ed['estado'] = 'sincronizando';
+            }
+        } catch (\RuntimeException $e) {
+            if ($forzar) {
+                throw new PjudApiException($e->getMessage(), 0, $e);
+            }
+            $this->logger->info('Detalle PJUD: estado por edapi no disponible, se usa api-pjud: ' . $e->getMessage());
+
+            return $legacy();
+        }
+
+        $estado = match ($ed['estado'] ?? null) {
+            'sincronizando' => 'sincronizando',
+            'listo' => 'listo',
+            'error' => 'error',
+            default => 'nuevo', // sin_sincronizar
+        };
+        if ($soloEstado) {
+            return ['estado' => $estado, 'detalle_estado' => null];
+        }
+
+        $res = $this->api->detalle($materia, $datos, false, $cuaderno, $credenciales, false, false);
+        if ($estado === 'error') {
+            $res['estado'] = 'error';
+            $res['mensaje'] = 'La sincronización de esta causa con el Poder Judicial falló. Puedes reintentarla.';
+            $res['ultimo_error'] = $ed['mensaje_error'] ?? $res['ultimo_error'] ?? null;
+        } elseif ($estado === 'sincronizando') {
+            $res['estado'] = 'sincronizando';
+            $res['mensaje'] = 'La primera consulta puede tardar varios minutos.';
+        }
+
+        return $res;
     }
 
     /**
@@ -251,7 +316,7 @@ class PjudController extends AbstractController
         }
         $cuaderno = $request->query->get('cuaderno');
         try {
-            $res = $this->api->detalle($d['m'], $datos, $forzar, $cuaderno !== null ? (int) $cuaderno : null, $this->credenciales($empresa, $datos), !$forzar && $request->query->getBoolean('solo_estado'));
+            $res = $this->detalleVia($empresa, $d['m'], $datos, $forzar, $cuaderno !== null ? (int) $cuaderno : null, $this->credenciales($empresa, $datos), !$forzar && $request->query->getBoolean('solo_estado'));
         } catch (PjudApiException $e) {
             return new JsonResponse(['detail' => $e->getMessage()], 502);
         }

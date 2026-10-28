@@ -130,6 +130,89 @@ class EdApiClient
         }];
     }
 
+    /**
+     * Id con que edapi conoce la causa `rol` del `tribunal` (caché de 1 minuto), o null si no existe en Lexflow.
+     *
+     * @throws \RuntimeException
+     */
+    public function idCausa(string $rol, string $tribunal): ?int
+    {
+        // Mismo formato que credencialesPjud(): edapi compara el nombre exacto y usa "º".
+        $filtro = strtoupper($rol) . '|' . trim(str_replace([',', '°'], [' ', 'º'], $tribunal));
+        $objetivo = CausaRepository::claveRol($rol, $tribunal);
+
+        $id = $this->cache->get('edapi_causa_id_' . md5($this->apiKey . '|' . $this->clienteGuid . '|' . $filtro), function (ItemInterface $item) use ($filtro, $objetivo): int {
+            $item->expiresAfter(60);
+            $data = $this->get('causas', ['roles' => $filtro, 'limit' => 50]);
+            foreach ($data['causas'] ?? [] as $c) {
+                if (CausaRepository::claveRol((string) ($c['rol'] ?? ''), (string) ($c['tribunal'] ?? '')) === $objetivo) {
+                    return (int) ($c['id'] ?? $c['causa_id'] ?? 0);
+                }
+            }
+
+            return 0;
+        });
+
+        return $id > 0 ? $id : null;
+    }
+
+    /**
+     * Pide a edapi que sincronice la causa con el PJUD (POST causas/{id}/pjud/sincronizar). Responde de inmediato;
+     * si ya había una en curso devuelve el mismo job con `ya_en_curso`. Requiere API key con permite_escritura.
+     *
+     * @return array<string,mixed>
+     * @throws \RuntimeException con un mensaje apto para mostrar al usuario
+     */
+    public function pjudSincronizar(int $causaId): array
+    {
+        return $this->pjud('POST', 'causas/' . $causaId . '/pjud/sincronizar');
+    }
+
+    /**
+     * Estado de la última sincronización (GET causas/{id}/pjud/estado): sin_sincronizar | sincronizando | listo | error
+     * (el motivo viene en `mensaje_error`). No llama a api-pjud, se puede consultar seguido.
+     *
+     * @return array<string,mixed>
+     * @throws \RuntimeException
+     */
+    public function pjudEstado(int $causaId): array
+    {
+        return $this->pjud('GET', 'causas/' . $causaId . '/pjud/estado');
+    }
+
+    /** @return array<string,mixed> */
+    private function pjud(string $metodo, string $ruta): array
+    {
+        if (!$this->configurado()) {
+            throw new \RuntimeException('La empresa no tiene API Key de Estado Diario (configúrela en Empresa)');
+        }
+        $headers = ['X-API-Key' => $this->apiKey, 'Accept' => 'application/json'];
+        if ($this->clienteGuid !== '') {
+            $headers['X-Cliente-Guid'] = $this->clienteGuid;
+        }
+        try {
+            $resp = $this->http->request($metodo, 'api/v1/' . $ruta, ['headers' => $headers, 'http_errors' => false, 'timeout' => 10]);
+        } catch (GuzzleException $e) {
+            throw new \RuntimeException('No se pudo conectar con Lexflow: ' . mb_substr($e->getMessage(), 0, 160), 0, $e);
+        }
+        $codigo = $resp->getStatusCode();
+        if ($codigo >= 200 && $codigo < 300) {
+            $data = json_decode((string) $resp->getBody(), true);
+
+            return is_array($data) ? $data : [];
+        }
+
+        throw new \RuntimeException(match ($codigo) {
+            401 => 'Lexflow rechazó la API Key (inválida, revocada, vencida o IP del servidor no permitida)',
+            403 => 'La API Key de Lexflow no permite sincronizar (requiere permiso de escritura) o el cliente no tiene PJUD habilitado',
+            404 => 'La causa no existe en Lexflow',
+            422 => 'La materia de la causa no se puede sincronizar con el PJUD',
+            429 => 'Lexflow limitó las consultas; reintente en ' . ((int) $resp->getHeaderLine('Retry-After') ?: 'unos') . ' segundos',
+            502 => 'Lexflow no pudo comunicarse con el PJUD',
+            default => 'Lexflow respondió con error ' . $codigo,
+        });
+    }
+
     /** True si el texto es un PEM RSA privado que phpseclib puede cargar. */
     public static function llavePrivadaValida(string $pem): bool
     {
