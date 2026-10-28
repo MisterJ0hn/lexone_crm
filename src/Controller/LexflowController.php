@@ -22,6 +22,8 @@ class LexflowController extends AbstractController
     private const TABS_ESTADO = ['no-leidos' => 'No Leídos', 'leidos' => 'Resueltos', 'pendientes' => 'Pendientes'];
     private const TIPOS_CORTE = ['' => 'Todas', 'suprema' => 'Corte Suprema', 'apelaciones' => 'Corte de Apelaciones'];
     private const VIGENCIAS = ['vigentes' => 'Vigentes', 'finalizadas' => 'No vigentes'];
+    // Mis causas agrega "Todos" (sin filtrar por vigencia) y es el valor por defecto.
+    private const VIGENCIAS_CAUSAS = ['todas' => 'Todos'] + self::VIGENCIAS;
 
     public function __construct(
         private readonly EdApiClient $api,
@@ -273,8 +275,10 @@ class LexflowController extends AbstractController
         $this->denyAccessUnlessGranted('view', 'ed_causas');
         $empresa = $this->usarEmpresa();
         $page = max(1, $request->query->getInt('page', 1));
-        $vigencia = array_key_exists((string) $request->query->get('vigencia'), self::VIGENCIAS)
-            ? $request->query->get('vigencia') : 'vigentes';
+        $vigencia = array_key_exists((string) $request->query->get('vigencia'), self::VIGENCIAS_CAUSAS)
+            ? $request->query->get('vigencia') : 'todas';
+        // "Todos" no envía el filtro a edapi.
+        $vigenciaApi = $vigencia === 'todas' ? null : $vigencia;
         $materia = $request->query->get('materia');
         $tab = $request->query->get('tab') === 'cortes' ? 'cortes' : 'materias';
         $filtros = $tab === 'cortes'
@@ -290,14 +294,14 @@ class LexflowController extends AbstractController
                 // Cortes de Mis causas, limitado a las causas del CRM si corresponde.
                 $restriccion = $this->rolesCortes($empresa);
                 if ($restriccion !== []) {
-                    $datos = $this->api->get('causas/cortes', $filtros + ($restriccion ?? []) + ['vigencia' => $vigencia, 'page' => $page, 'limit' => 50]);
+                    $datos = $this->api->get('causas/cortes', $filtros + ($restriccion ?? []) + ['vigencia' => $vigenciaApi, 'page' => $page, 'limit' => 50]);
                 }
             } elseif ($roles !== '') {
                 $restriccion = $roles !== null ? ['roles' => $roles] : [];
                 $datos = $this->api->get('causas', $filtros + $restriccion + [
-                    'materia' => $materia, 'vigencia' => $vigencia, 'page' => $page, 'limit' => 20,
+                    'materia' => $materia, 'vigencia' => $vigenciaApi, 'page' => $page, 'limit' => 20,
                 ]);
-                $resumen = $this->api->get('causas/resumen', array_intersect_key($filtros, array_flip(['busqueda', 'estado_causa', 'tribunal'])) + $restriccion + ['vigencia' => $vigencia]);
+                $resumen = $this->api->get('causas/resumen', array_intersect_key($filtros, array_flip(['busqueda', 'estado_causa', 'tribunal'])) + $restriccion + ['vigencia' => $vigenciaApi]);
             }
         } catch (\RuntimeException $e) {
             $error = $e->getMessage();
@@ -331,7 +335,7 @@ class LexflowController extends AbstractController
             'tab' => $tab,
             'tipos_corte' => self::TIPOS_CORTE,
             'vigencia' => $vigencia,
-            'vigencias' => self::VIGENCIAS,
+            'vigencias' => self::VIGENCIAS_CAUSAS,
             'materia' => $materia,
             'resumen' => $resumen,
             'datos' => $datos,

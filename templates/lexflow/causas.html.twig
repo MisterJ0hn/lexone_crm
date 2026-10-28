@@ -7,7 +7,7 @@
 {% block body %}
 <div class="card">
     <div class="card-header">
-        <h3 class="card-title">{{ vigencia == 'vigentes' ? 'Cartera cliente Vigentes' : 'Cartera cliente Finalizada' }}</h3>
+        <h3 class="card-title">{{ vigencia == 'vigentes' ? 'Cartera cliente Vigentes' : (vigencia == 'finalizadas' ? 'Cartera cliente Finalizada' : 'Cartera cliente') }}</h3>
         <div class="card-tools text-muted">{{ datos.total|default(0) }} causas encontradas</div>
     </div>
     <div class="card-body">
