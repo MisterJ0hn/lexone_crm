@@ -62,8 +62,9 @@ class EdApiClient
         if ($this->clienteGuid !== '') {
             $headers['X-Cliente-Guid'] = $this->clienteGuid;
         }
-        // Se omiten vacíos para no ensuciar la consulta.
-        $query = array_filter($query, static fn($v) => $v !== null && $v !== '' && $v !== false);
+        // Se omiten vacíos para no ensuciar la consulta. Excepción: `vigencia` vacía = todas las causas (si se omite,
+        // edapi asume "vigentes").
+        $query = array_filter($query, static fn($v, $k) => $k === 'vigencia' ? $v !== null : ($v !== null && $v !== '' && $v !== false), ARRAY_FILTER_USE_BOTH);
         try {
             $resp = $this->http->get('api/v1/' . ltrim($ruta, '/'), ['headers' => $headers, 'query' => $query]);
         } catch (GuzzleException $e) {
@@ -205,7 +206,7 @@ class EdApiClient
             foreach (array_chunk($filtros, 40) as $tanda) {
                 $page = 1;
                 do {
-                    $data = $this->get('causas', ['roles' => implode(',', $tanda), 'page' => $page, 'limit' => 50]);
+                    $data = $this->get('causas', ['roles' => implode(',', $tanda), 'vigencia' => '', 'page' => $page, 'limit' => 50]);
                     foreach ($data['causas'] ?? [] as $c) {
                         $id = (int) ($c['id'] ?? $c['causa_id'] ?? 0);
                         if ($id > 0) {
@@ -232,7 +233,7 @@ class EdApiClient
 
         $id = $this->cache->get('edapi_causa_id_' . md5($this->apiKey . '|' . $this->clienteGuid . '|' . $filtro), function (ItemInterface $item) use ($filtro, $objetivo): int {
             $item->expiresAfter(60);
-            $data = $this->get('causas', ['roles' => $filtro, 'limit' => 50]);
+            $data = $this->get('causas', ['roles' => $filtro, 'vigencia' => '', 'limit' => 50]);
             foreach ($data['causas'] ?? [] as $c) {
                 if (CausaRepository::claveRol((string) ($c['rol'] ?? ''), (string) ($c['tribunal'] ?? '')) === $objetivo) {
                     return (int) ($c['id'] ?? $c['causa_id'] ?? 0);
@@ -360,7 +361,7 @@ class EdApiClient
         try {
             $resp = $this->http->get('api/v1/causas', [
                 'headers' => $headers,
-                'query' => ['incluir_credenciales' => 'true', 'roles' => $filtro, 'limit' => 50],
+                'query' => ['incluir_credenciales' => 'true', 'roles' => $filtro, 'vigencia' => '', 'limit' => 50],
                 'http_errors' => false,
             ]);
         } catch (GuzzleException $e) {
@@ -477,7 +478,7 @@ class EdApiClient
             foreach (array_chunk($filtros, 40) as $tanda) {
                 $page = 1;
                 do {
-                    $data = $this->get('causas', ['roles' => implode(',', $tanda), 'page' => $page, 'limit' => 50]);
+                    $data = $this->get('causas', ['roles' => implode(',', $tanda), 'vigencia' => '', 'page' => $page, 'limit' => 50]);
                     foreach ($data['causas'] ?? [] as $c) {
                         $this->logger?->info('PJUD trace: causa en Lexflow', ['rol' => $c['rol'] ?? null, 'tribunal' => $c['tribunal'] ?? null, 'pjud_habilitado' => $c['pjud_habilitado'] ?? '(ausente)']);
                         $presentes[CausaRepository::claveRol((string) ($c['rol'] ?? ''), (string) ($c['tribunal'] ?? ''))] = is_bool($c['pjud_habilitado'] ?? null) ? $c['pjud_habilitado'] : null;

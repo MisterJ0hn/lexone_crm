@@ -277,8 +277,8 @@ class LexflowController extends AbstractController
         $page = max(1, $request->query->getInt('page', 1));
         $vigencia = array_key_exists((string) $request->query->get('vigencia'), self::VIGENCIAS_CAUSAS)
             ? $request->query->get('vigencia') : 'todas';
-        // "Todos" no envía el filtro a edapi.
-        $vigenciaApi = $vigencia === 'todas' ? null : $vigencia;
+        // "Todos" = vigencia vacía en edapi (si se omite, asume vigentes).
+        $vigenciaApi = $vigencia === 'todas' ? '' : $vigencia;
         $materia = $request->query->get('materia');
         $tab = $request->query->get('tab') === 'cortes' ? 'cortes' : 'materias';
         $filtros = $tab === 'cortes'
