@@ -1058,6 +1058,7 @@ class ContratoController extends AbstractController
                         MateriaRepository $materiaRepository,
                         PaisRepository $paisRepository,
                         \App\Service\PjudApiClient $pjudApi,
+                        \App\Service\EdApiClient $edapi,
                         \App\Repository\ProfesionRepository $profesionRepository): Response
     {
         $this->denyAccessUnlessGranted('create','linea_tiempo');
@@ -1068,7 +1069,7 @@ class ContratoController extends AbstractController
 
         $tipoCliente = $contrato->getAgenda()->getTipoClienteNombre();
 
-        $pjudBotones = $this->botonesPjud($contrato, $pjudApi);
+        $pjudBotones = $this->botonesPjud($contrato, $pjudApi, $edapi);
 
         // Cada causa lleva su propia materia; los combos de servicio/corte/letras del
         // modal de edición se cargan por AJAX según la materia de la causa editada.
@@ -1138,7 +1139,7 @@ class ContratoController extends AbstractController
      *
      * @return array<int,string>
      */
-    private function botonesPjud(Contrato $contrato, \App\Service\PjudApiClient $pjudApi): array
+    private function botonesPjud(Contrato $contrato, \App\Service\PjudApiClient $pjudApi, \App\Service\EdApiClient $edapi): array
     {
         $empresa = $contrato->getAgenda()->getEmpresa();
         $specs = $pares = [];
@@ -1152,6 +1153,17 @@ class ContratoController extends AbstractController
             return [];
         }
 
+        // Las causas que existen en Lexflow se consultan por edapi (pjud/estado); el resto, directo a api-pjud.
+        $estados = [];
+        if ($empresa->isLexflowHabilitado()) {
+            $estados = $edapi->paraEmpresa($empresa)->estadosPjud($specs);
+            $specs = array_diff_key($specs, $estados);
+            $pares = array_map(static fn (array $s) => [self::rolDeSpec($s), $s['causa']['tribunal']], array_values($specs));
+            if (!$specs) {
+                return $estados;
+            }
+        }
+
         // Las causas que están en Lexflow usan su conexión PJUD (y su habilitación); las demás, la de la Empresa.
         $enLexflow = $pjudApi->causasEnLexflow($empresa, $pares);
         // El `pjud_habilitado` de la causa en Lexflow (true/false) manda sobre la configuración de la Empresa.
@@ -1160,7 +1172,6 @@ class ContratoController extends AbstractController
             $clave = \App\Repository\CausaRepository::claveRol(self::rolDeSpec($spec), $spec['causa']['tribunal']);
             $grupos[array_key_exists($clave, $enLexflow) ? json_encode($enLexflow[$clave]) : 'empresa'][$id] = $spec;
         }
-        $estados = [];
         foreach ($grupos as $modo => $grupo) {
             $flag = $modo === 'empresa' ? null : json_decode($modo);
             if ($flag !== false && $pjudApi->paraEmpresa($empresa, $modo === 'empresa', $flag)->configurado()) {

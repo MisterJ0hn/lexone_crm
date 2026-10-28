@@ -131,6 +131,95 @@ class EdApiClient
     }
 
     /**
+     * Estado inicial del botón "Detalle PJUD" de varias causas por edapi: busca el id de cada una en Lexflow y pide
+     * `pjud/estado` en paralelo (no llama a api-pjud). Las que no existen en Lexflow o fallan no vienen en el
+     * resultado: quedan para el flujo directo de api-pjud. Nunca lanza.
+     *
+     * @param array<int|string,array{causa:array{tipo:string,rol:int,anio:int,tribunal:string}}> $specs
+     * @return array<int|string,string> misma clave -> nuevo|sincronizando|error|listo
+     */
+    public function estadosPjud(array $specs): array
+    {
+        if (!$specs || !$this->configurado()) {
+            return [];
+        }
+        $rolDe = static fn (array $s): string => $s['causa']['tipo'] . '-' . $s['causa']['rol'] . '-' . $s['causa']['anio'];
+        try {
+            $ids = $this->idsCausas(array_map(static fn (array $s) => [$rolDe($s), $s['causa']['tribunal']], array_values($specs)));
+        } catch (\RuntimeException $e) {
+            $this->logger?->info('PJUD edapi: no se pudo buscar las causas: ' . $e->getMessage());
+
+            return [];
+        }
+
+        $headers = ['X-API-Key' => $this->apiKey, 'Accept' => 'application/json'];
+        if ($this->clienteGuid !== '') {
+            $headers['X-Cliente-Guid'] = $this->clienteGuid;
+        }
+        $promesas = [];
+        foreach ($specs as $k => $s) {
+            $id = $ids[CausaRepository::claveRol($rolDe($s), $s['causa']['tribunal'])] ?? null;
+            if ($id !== null) {
+                $promesas[$k] = $this->http->requestAsync('GET', 'api/v1/causas/' . $id . '/pjud/estado', ['headers' => $headers, 'http_errors' => false, 'timeout' => 8]);
+            }
+        }
+
+        $estados = [];
+        foreach (\GuzzleHttp\Promise\Utils::settle($promesas)->wait() as $k => $r) {
+            if ($r['state'] !== 'fulfilled' || $r['value']->getStatusCode() !== 200) {
+                continue;
+            }
+            $data = json_decode((string) $r['value']->getBody(), true);
+            if (is_array($data)) {
+                $estados[$k] = match ($data['estado'] ?? null) {
+                    'sincronizando' => 'sincronizando',
+                    'listo' => 'listo',
+                    'error' => 'error',
+                    default => 'nuevo', // sin_sincronizar
+                };
+            }
+        }
+
+        return $estados;
+    }
+
+    /**
+     * Ids de edapi de las causas [rol, tribunal] que existen en Lexflow (caché de 1 minuto).
+     *
+     * @param list<array{0:string,1:string}> $causas
+     * @return array<string,int> clave = CausaRepository::claveRol()
+     * @throws \RuntimeException
+     */
+    public function idsCausas(array $causas): array
+    {
+        $filtros = [];
+        foreach ($causas as [$rol, $tribunal]) {
+            $filtros[strtoupper($rol) . '|' . trim(str_replace([',', '°'], [' ', 'º'], $tribunal))] = true;
+        }
+        $filtros = array_keys($filtros);
+        sort($filtros);
+
+        return $this->cache->get('edapi_causas_ids_' . md5($this->apiKey . '|' . $this->clienteGuid . '|' . implode(',', $filtros)), function (ItemInterface $item) use ($filtros): array {
+            $item->expiresAfter(60);
+            $ids = [];
+            foreach (array_chunk($filtros, 40) as $tanda) {
+                $page = 1;
+                do {
+                    $data = $this->get('causas', ['roles' => implode(',', $tanda), 'page' => $page, 'limit' => 50]);
+                    foreach ($data['causas'] ?? [] as $c) {
+                        $id = (int) ($c['id'] ?? $c['causa_id'] ?? 0);
+                        if ($id > 0) {
+                            $ids[CausaRepository::claveRol((string) ($c['rol'] ?? ''), (string) ($c['tribunal'] ?? ''))] = $id;
+                        }
+                    }
+                } while (++$page <= (int) ($data['total_pages'] ?? 1));
+            }
+
+            return $ids;
+        });
+    }
+
+    /**
      * Id con que edapi conoce la causa `rol` del `tribunal` (caché de 1 minuto), o null si no existe en Lexflow.
      *
      * @throws \RuntimeException
