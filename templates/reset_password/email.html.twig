@@ -51,7 +51,7 @@
                                 <tr>
                                     <td align="center" bgcolor="#2563eb"
                                         style="border-radius:6px;">
-                                        <a href="http://lexonetest.codifica.cl/reset-password/reset/RnoA90FahYeJkWGk2KOZbo3yUjTZ9AcVGbFFQzgK"
+                                        <a href="{{ url('app_reset_password', {token: resetToken.token}) }}"
                                            target="_blank"
                                            style="display:inline-block; padding:15px 28px;
                                            font-size:15px; font-weight:bold;
@@ -66,7 +66,7 @@
                             <p style="margin:0 0 15px; font-size:13px; line-height:1.7;
                                       color:#64748b;">
                                 <strong>Importante:</strong> este enlace expirará en
-                                10 horas.
+                                {{ tokenLifetime|date('g') }} horas.
                             </p>
 
                             <p style="margin:0; font-size:13px; line-height:1.7;
