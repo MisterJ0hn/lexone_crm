@@ -1,38 +1,110 @@
+
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-        <title>{% block title %}Reset password!{% endblock %}</title>
-        {% block stylesheets %}
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restablecer contraseña - Lexone</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f3f5f9; font-family:Arial,Helvetica,sans-serif; color:#334155;">
 
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-        <link rel="stylesheet" type="text/css" href="/build/css/style.css">
-        <link rel="stylesheet" type="text/css" href="/build/fontawesome/css/all.css">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0"
+           border="0" style="background-color:#f3f5f9; padding:30px 12px;">
+        <tr>
+            <td align="center">
 
-        {% endblock %}
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-        
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-    
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0"
+                       border="0" style="max-width:560px; background-color:#ffffff;
+                       border-radius:10px; overflow:hidden;">
 
-    </head>
-    <body class="fondo">
-        <div class="container">
-            <div class="row text-center login-page">
-                <div class="col-md-12 login-form">
-                    <h1>Hola!</h1>
-                    <p>
-                        Para resetear tu password ingresa al link
-                        <a href="{{ url('app_reset_password', {token: resetToken.token}) }}">Aqui</a>
-                        Este link expirará en {{ tokenLifetime|date('g') }} hour(s)..
-                    </p>
-                    <p>
-                        Saludos
-                        </p>
-                </div>
-            </div>
-        </div>
-    </body>
+                    <!-- Encabezado -->
+                    <tr>
+                        <td align="center" style="background-color:#243b64; padding:28px 20px;">
+                            <h1 style="margin:0; color:#ffffff; font-size:27px;
+                                       letter-spacing:1px;">LEXONE</h1>
+                            <p style="margin:8px 0 0; color:#dbeafe; font-size:12px;
+                                      letter-spacing:1px;">
+                                RECUPERACIÓN DE CONTRASEÑA
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Contenido -->
+                    <tr>
+                        <td style="padding:35px 30px;">
+
+                            <h2 style="margin:0 0 20px; color:#1e293b; font-size:23px;">
+                                ¡Hola!
+                            </h2>
+
+                            <p style="margin:0 0 16px; font-size:15px; line-height:1.7;">
+                                Recibimos una solicitud para restablecer tu contraseña.
+                            </p>
+
+                            <p style="margin:0 0 25px; font-size:15px; line-height:1.7;">
+                                Para crear una nueva contraseña, haz clic en el siguiente botón:
+                            </p>
+
+                            <!-- Botón de recuperación -->
+                            <table role="presentation" cellspacing="0" cellpadding="0"
+                                   border="0" align="center" style="margin:0 auto 25px;">
+                                <tr>
+                                    <td align="center" bgcolor="#2563eb"
+                                        style="border-radius:6px;">
+                                        <a href="http://lexonetest.codifica.cl/reset-password/reset/RnoA90FahYeJkWGk2KOZbo3yUjTZ9AcVGbFFQzgK"
+                                           target="_blank"
+                                           style="display:inline-block; padding:15px 28px;
+                                           font-size:15px; font-weight:bold;
+                                           color:#ffffff; text-decoration:none;
+                                           border-radius:6px;">
+                                            Restablecer mi contraseña
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <p style="margin:0 0 15px; font-size:13px; line-height:1.7;
+                                      color:#64748b;">
+                                <strong>Importante:</strong> este enlace expirará en
+                                10 horas.
+                            </p>
+
+                            <p style="margin:0; font-size:13px; line-height:1.7;
+                                      color:#64748b;">
+                                Si no solicitaste restablecer tu contraseña, puedes
+                                ignorar este correo. Tu contraseña actual seguirá siendo
+                                válida.
+                            </p>
+
+                            <hr style="border:0; border-top:1px solid #e2e8f0;
+                                       margin:28px 0 22px;">
+
+                            <p style="margin:0; font-size:14px; line-height:1.7;">
+                                Saludos cordiales,<br>
+                                <strong style="color:#243b64;">Equipo Lexone</strong>
+                            </p>
+
+                        </td>
+                    </tr>
+
+                    <!-- Pie de correo -->
+                    <tr>
+                        <td align="center"
+                            style="background-color:#f8fafc; padding:20px 25px;
+                                   border-top:1px solid #e2e8f0;">
+                            <p style="margin:0; font-size:11px; line-height:1.6;
+                                      color:#94a3b8;">
+                                Este es un correo automático. Por favor, no respondas
+                                a este mensaje.
+                            </p>
+                        </td>
+                    </tr>
+
+                </table>
+
+            </td>
+        </tr>
+    </table>
+
+</body>
 </html>
