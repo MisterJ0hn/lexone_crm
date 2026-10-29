@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 
+use App\Entity\Empresa;
 use App\Entity\Usuario;
 use App\Form\ChangePasswordFormType;
 use App\Form\ResetPasswordRequestFormType;
@@ -182,17 +183,20 @@ class ResetPasswordController extends AbstractController
             return null;
         }
 
-        return $this->entityManager->createQueryBuilder()
-            ->select('u')
-            ->from(Usuario::class, 'u')
-            ->join('u.empresa', 'e')
-            ->where('u.username = :username')
-            ->andWhere("UPPER(REPLACE(REPLACE(REPLACE(e.rut, '.', ''), '-', ''), ' ', '')) = :rut")
-            ->setParameter('username', $username)
-            ->setParameter('rut', $rut)
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult();
+        // DQL no tiene REPLACE, por eso la empresa se busca con SQL nativo.
+        $tabla = $this->entityManager->getClassMetadata(Empresa::class)->getTableName();
+        $empresaId = $this->entityManager->getConnection()->fetchOne(
+            "SELECT id FROM $tabla WHERE UPPER(REPLACE(REPLACE(REPLACE(rut, '.', ''), '-', ''), ' ', '')) = :rut LIMIT 1",
+            ['rut' => $rut]
+        );
+        if ($empresaId === false) {
+            return null;
+        }
+
+        return $this->entityManager->getRepository(Usuario::class)->findOneBy([
+            'username' => $username,
+            'empresa' => $empresaId,
+        ]);
     }
 
     /** jromero@x.cl => jro***@x.cl */
