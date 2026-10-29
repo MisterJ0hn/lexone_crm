@@ -62,17 +62,18 @@
                 <table class="table table-sm table-striped text-nowrap">
                     <thead>
                         <tr>
-                            <th>Dia</th><th>Rit/Rol</th><th>Ruc/RolUnico</th><th>FechaIngreso</th><th>Caratulado</th>
+                            <th>Dia</th><th>Rit/Rol</th><th>Ruc/RolUnico</th><th>FechaIngreso</th><th>FechaPendiente</th><th>Caratulado</th>
                             <th>Tribunal</th><th>TipoCausa</th><th>Estado</th><th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                     {% for r in datos.movimientos|default([]) %}
                         <tr>
-                            <td class="text-nowrap">{{ m.dato(r.fecha_estado_diario) }}</td>
+                            <td class="text-nowrap">{{ m.fecha(r.fecha_estado_diario) }}</td>
                             <td class="font-weight-bold">{{ m.dato(r.rol) }}</td>
                             <td>{{ m.dato(r.rol_unico) }}</td>
-                            <td class="text-nowrap">{{ m.dato(r.fecha_ingreso) }}</td>
+                            <td class="text-nowrap">{{ m.fecha(r.fecha_ingreso) }}</td>
+                             <td class="text-nowrap">{{ m.fecha(r.fecha_pendiente) }}</td>
                             <td title="{{ r.caratulado }}">{{ m.dato(r.caratulado) }}</td>
                             <td>{{ m.dato(r.tribunal) }}</td>
                             <td>{{ m.dato(r.tipo_causa) }}</td>
@@ -88,7 +89,7 @@
                             <td class="text-nowrap text-right">
                                 <div class="btn-group" role="group">
                                     
-                                {{ pjud.boton(r.crm_causa_id|default(r.pjud_token|default(null)), r.pjud_estado|default('nuevo')) }}
+                                {{ pjud.boton(r.crm_causa_id|default(r.pjud_token|default(null)), r.pjud_estado|default('nuevo'), false, true) }}
                                
                                 {% if r.id is defined %}
                                     {% set accion = r.leido ? 'no_leido' : 'leido' %}

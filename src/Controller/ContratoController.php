@@ -1171,10 +1171,10 @@ class ContratoController extends AbstractController
         return $estados;
     }
 
-    /** @param array{causa:array{tipo:string,rol:int,anio:int}} $spec */
+    /** @param array{materia?:string,causa:array{tipo:string,rol:int,anio:int}} $spec */
     private static function rolDeSpec(array $spec): string
     {
-        return $spec['causa']['tipo'] . '-' . $spec['causa']['rol'] . '-' . $spec['causa']['anio'];
+        return \App\Repository\CausaRepository::rolParaEdapi($spec['causa']['tipo'], $spec['causa']['rol'], $spec['causa']['anio'], ($spec['materia'] ?? null) === 'penal');
     }
 
     private const NOTA_EXTENSIONES = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'jpg', 'jpeg', 'png', 'gif', 'zip'];

@@ -142,12 +142,12 @@ class PjudController extends AbstractController
         }
 
         // Causa del CRM: si está en Lexflow manda su conexión PJUD; si no, la configuración de la Empresa.
-        if (!$this->api->paraCausaCrm($empresa, $datos['tipo'] . '-' . $datos['rol'] . '-' . $datos['anio'], $datos['tribunal'])->configurado()) {
+        if (!$this->api->paraCausaCrm($empresa, self::rolLexflow($datos, $competencia), $datos['tribunal'])->configurado()) {
             return new JsonResponse(['detail' => 'La empresa no tiene configurada la API PJUD'], 404);
         }
         $cuaderno = $request->query->get('cuaderno');
         try {
-            $res = $this->detalleVia($empresa, $competencia, $datos, $forzar, $cuaderno !== null ? (int) $cuaderno : null, $this->credenciales($empresa, $datos, $causa->getCliente() ?? $causa->getAgenda()?->getContrato()?->getCliente()), !$forzar && $request->query->getBoolean('solo_estado'));
+            $res = $this->detalleVia($empresa, $competencia, $datos, $forzar, $cuaderno !== null ? (int) $cuaderno : null, $this->credenciales($empresa, $datos, $competencia, $causa->getCliente() ?? $causa->getAgenda()?->getContrato()?->getCliente()), !$forzar && $request->query->getBoolean('solo_estado'));
         } catch (PjudApiException $e) {
             return new JsonResponse(['detail' => $e->getMessage()], 502);
         }
@@ -259,12 +259,12 @@ class PjudController extends AbstractController
         ];
 
         // Fila de Lexflow: su `pjud_habilitado` manda sobre la configuración de la Empresa.
-        if (!$this->api->paraCausaLexflow($empresa, $datos['tipo'] . '-' . $datos['rol'] . '-' . $datos['anio'], $datos['tribunal'])->configurado()) {
+        if (!$this->api->paraCausaLexflow($empresa, self::rolLexflow($datos, $d['m']), $datos['tribunal'])->configurado()) {
             return new JsonResponse(['detail' => 'El detalle PJUD no está habilitado para esta causa'], 404);
         }
         $cuaderno = $request->query->get('cuaderno');
         try {
-            $res = $this->detalleVia($empresa, $d['m'], $datos, $forzar, $cuaderno !== null ? (int) $cuaderno : null, $this->credenciales($empresa, $datos), !$forzar && $request->query->getBoolean('solo_estado'));
+            $res = $this->detalleVia($empresa, $d['m'], $datos, $forzar, $cuaderno !== null ? (int) $cuaderno : null, $this->credenciales($empresa, $datos, $d['m']), !$forzar && $request->query->getBoolean('solo_estado'));
         } catch (PjudApiException $e) {
             return new JsonResponse(['detail' => $e->getMessage()], 502);
         }
@@ -282,14 +282,19 @@ class PjudController extends AbstractController
      *
      * @param array{tipo:string,rol:int,anio:int,tribunal:string} $datos
      */
-    private function credenciales(\App\Entity\Empresa $empresa, array $datos, ?\App\Entity\Cliente $cliente = null): \Closure
+    private static function rolLexflow(array $datos, string $materia): string
     {
-        return function () use ($empresa, $datos, $cliente): array {
+        return CausaRepository::rolParaEdapi($datos['tipo'], $datos['rol'], $datos['anio'], $materia === 'penal');
+    }
+
+    private function credenciales(\App\Entity\Empresa $empresa, array $datos, string $materia, ?\App\Entity\Cliente $cliente = null): \Closure
+    {
+        return function () use ($empresa, $datos, $materia, $cliente): array {
             if ($empresa->isLexflowHabilitado()) {
                 try {
                     $this->edapi->paraEmpresa($empresa);
 
-                    return $this->edapi->credencialesPjud($datos['tipo'] . '-' . $datos['rol'] . '-' . $datos['anio'], $datos['tribunal']);
+                    return $this->edapi->credencialesPjud(self::rolLexflow($datos, $materia), $datos['tribunal']);
                 } catch (\RuntimeException $e) {
                     $this->logger->info('Detalle PJUD: sin credenciales de Lexflow, se prueba con las del cliente: ' . $e->getMessage());
                 }

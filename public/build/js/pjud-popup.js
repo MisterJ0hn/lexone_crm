@@ -597,9 +597,9 @@
 
     var sesionSeq = 0;
     /** `sincronizar` = true: antes de mostrar la causa se pide una sincronización para bajar los movimientos nuevos. */
-    function abrir(causaId, sincronizar) {
+    function abrir(causaId, sincronizar, previo) {
         cerrar();
-        estado = { causaId: causaId, datos: null, tab: null, cuaderno: null, verAnexos: false, verReceptor: false, verExtra: null, cargando: true, error: null, timer: null, sesion: ++sesionSeq, previo: sincronizar ? 'listo' : 'nuevo' };
+        estado = { causaId: causaId, datos: null, tab: null, cuaderno: null, verAnexos: false, verReceptor: false, verExtra: null, cargando: true, error: null, timer: null, sesion: ++sesionSeq, previo: previo || (sincronizar ? 'listo' : 'nuevo') };
         el.titulo.textContent = 'Detalle PJUD';
         el.subtitulo.textContent = '';
         el.overlay.style.display = 'flex';
@@ -631,7 +631,10 @@
             if (previo === 'nuevo') { pintarBoton(id, 'sincronizando'); }
             // Con el martillo (listo) el PJUD pudo tener movimientos nuevos desde la última vez: se sincroniza primero.
             if (previo === 'listo') { pintarBoton(id, 'sincronizando'); }
-            abrir(id, previo === 'listo');
+            // Estado Diario y Mis causas (data-pjud-actualizar): el clic siempre llama a /actualizar, sea cual sea el estado.
+            var siempre = b.hasAttribute('data-pjud-actualizar');
+            if (siempre && previo !== 'sincronizando') { pintarBoton(id, 'sincronizando'); }
+            abrir(id, previo === 'listo' || siempre, previo === 'sincronizando' ? 'nuevo' : previo);
             return;
         }
 

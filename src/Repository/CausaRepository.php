@@ -49,6 +49,8 @@ class CausaRepository extends ServiceEntityRepository
 
     /** Materias cuyas causas son apelaciones (Corte de Apelaciones / Corte Suprema). */
     public const MATERIAS_APELACION = [9, 10];
+    /** Materia Penal: en Lexflow su rol se registra sin la letra/tipo (p. ej. "1071-2020", no "Exhorto-1071-2020"). */
+    public const MATERIA_PENAL = 4;
 
     /**
      * Parámetros `roles` y `roles_origen` de los cortes de edapi (causas/cortes y estado-diario/cortes).
@@ -104,7 +106,7 @@ class CausaRepository extends ServiceEntityRepository
                 ->setParameter('apelacion', self::MATERIAS_APELACION);
         }
         $filas = $qb
-            ->select('c.letra, c.rol, c.anio, j.nombre AS juzgado')
+            ->select('c.letra, c.rol, c.anio, j.nombre AS juzgado, IDENTITY(c.materia) AS materiaId')
             ->join('c.agenda', 'a')
             ->join('c.juzgado', 'j')
             ->andWhere('a.empresa = :empresa')
@@ -118,9 +120,17 @@ class CausaRepository extends ServiceEntityRepository
         foreach ($filas as $f) {
             // Edapi compara el nombre exacto y usa el indicador ordinal "º" (el CRM guarda "°").
             $tribunal = trim(str_replace([',', '°'], [' ', 'º'], $f['juzgado']));
-            $roles[strtoupper(trim($f['letra'])) . '-' . trim($f['rol']) . '-' . $f['anio'] . '|' . $tribunal] = true;
+            $roles[self::rolParaEdapi($f['letra'], $f['rol'], $f['anio'], (int) $f['materiaId'] === self::MATERIA_PENAL) . '|' . $tribunal] = true;
         }
         return implode(',', array_keys($roles));
+    }
+
+    /** Rol como lo registra Lexflow: "LETRA-rol-año", o solo "rol-año" en Penal. */
+    public static function rolParaEdapi(?string $letra, $rol, $anio, bool $penal): string
+    {
+        $base = trim((string) $rol) . '-' . $anio;
+
+        return $penal ? $base : strtoupper(trim((string) $letra)) . '-' . $base;
     }
 
     /** Clave comparable "rol|tribunal" sin acentos, °/º, puntos ni espacios de más. */
@@ -142,7 +152,7 @@ class CausaRepository extends ServiceEntityRepository
     public function mapaPorRol(int $empresaId): array
     {
         $filas = $this->createQueryBuilder('c')
-            ->select('c.id, c.letra, c.rol, c.anio, j.nombre AS juzgado, m.nombre AS materia')
+            ->select('c.id, c.letra, c.rol, c.anio, j.nombre AS juzgado, m.nombre AS materia, m.id AS materiaId')
             ->join('c.agenda', 'a')
             ->join('c.juzgado', 'j')
             ->leftJoin('c.materia', 'm')
@@ -155,7 +165,7 @@ class CausaRepository extends ServiceEntityRepository
 
         $mapa = [];
         foreach ($filas as $f) {
-            $mapa[self::claveRol(strtoupper(trim($f['letra'])) . '-' . trim($f['rol']) . '-' . $f['anio'], $f['juzgado'])] = ['id' => $f['id'], 'materia' => $f['materia']];
+            $mapa[self::claveRol(self::rolParaEdapi($f['letra'], $f['rol'], $f['anio'], (int) $f['materiaId'] === self::MATERIA_PENAL), $f['juzgado'])] = ['id' => $f['id'], 'materia' => $f['materia']];
         }
         return $mapa;
     }
