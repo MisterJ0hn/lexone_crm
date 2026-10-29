@@ -436,13 +436,6 @@ class LexflowController extends AbstractController
                 $specs[$i] = $spec;
             }
         }
-        // Las causas que existen en Lexflow se consultan por edapi (pjud/estado); el resto, directo a api-pjud.
-        if ($specs && $empresa->isLexflowHabilitado()) {
-            foreach ($this->api->paraEmpresa($empresa)->estadosPjud($specs) as $i => $estado) {
-                $filas[$i]['pjud_estado'] = $estado;
-                unset($specs[$i]);
-            }
-        }
         // Filas con `pjud_habilitado` true van por la conexión de Lexflow; el resto, por la configuración habitual.
         $porFlag = [true => [], false => []];
         foreach ($specs as $i => $spec) {
