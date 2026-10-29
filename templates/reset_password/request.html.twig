@@ -25,14 +25,22 @@
                     {% for flashError in app.flashes('reset_password_error') %}
                         <div class="alert alert-danger" role="alert">{{ flashError }}</div>
                     {% endfor %}
-                <p class="login-box-msg">Ingrese su dirección de correo electrónico y le enviaremos un enlace para restablecer su contraseña.</p>
+                <p class="login-box-msg">Ingrese el RUT de su empresa y su nombre de usuario, y le enviaremos un enlace para restablecer su contraseña al correo registrado.</p>
 
                 {{ form_start(requestForm) }}
                 <div class="input-group mb-3">
-                     {{ form_row(requestForm.correo,{'label':false,'attr':{'class':'form-control date','placeholder':'Correo'}}) }}
+                     {{ form_row(requestForm.rutEmpresa,{'label':false,'attr':{'class':'form-control','placeholder':'RUT empresa'}}) }}
                     <div class="input-group-append">
                         <div class="input-group-text">
-                            <span class="fas fa-envelope"></span>
+                            <span class="fas fa-building"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                     {{ form_row(requestForm.username,{'label':false,'attr':{'class':'form-control','placeholder':'Usuario'}}) }}
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <span class="fas fa-user"></span>
                         </div>
                     </div>
                 </div>

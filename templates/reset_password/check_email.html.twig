@@ -27,7 +27,7 @@
                     {% endfor %}
                     <div class="row">
 		                    
-                        <p>Un email a sido enviado con el link para su recuperación. Este link expira en  {{ tokenLifetime|date('g') }} hora(s).</p>
+                        <p>Correo enviado{% if maskedEmail %} a <strong>{{ maskedEmail }}</strong>{% endif %} con el link para su recuperación. Este link expira en  {{ tokenLifetime|date('g') }} hora(s).</p>
                         <p>Si no recibe un email, porfavor chequee en su bandeja de Spam ó <a href="{{ path('app_forgot_password_request') }}">Intenelo nuevamente</a>.</p>
                     </div>
             </div>

@@ -43,8 +43,10 @@ class ResetPasswordController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             return $this->processSendingPasswordResetEmail(
-                $form->get('correo')->getData(),
-                $mailer
+                (string) $form->get('rutEmpresa')->getData(),
+                trim((string) $form->get('username')->getData()),
+                $mailer,
+                $request
             );
         }
 
@@ -57,7 +59,7 @@ class ResetPasswordController extends AbstractController
      * Confirmation page after a user has requested a password reset.
      */
     #[Route("/check-email", name: "app_check_email")]
-    public function checkEmail(): Response
+    public function checkEmail(Request $request): Response
     {
         // We prevent users from directly accessing this page
         if (!$this->canCheckEmail()) {
@@ -65,6 +67,7 @@ class ResetPasswordController extends AbstractController
         }
 
         return $this->render('reset_password/check_email.html.twig', [
+            'maskedEmail' => $request->getSession()->remove('reset_password_masked_email'),
             'tokenLifetime' => $this->resetPasswordHelper->getTokenLifetime(),
         ]);
     }
@@ -127,17 +130,15 @@ class ResetPasswordController extends AbstractController
         ]);
     }
 
-    private function processSendingPasswordResetEmail(string $emailFormData, MailerInterface $mailer): RedirectResponse
+    private function processSendingPasswordResetEmail(string $rutEmpresa, string $username, MailerInterface $mailer, Request $request): RedirectResponse
     {
-        $user = $this->entityManager->getRepository(Usuario::class)->findOneBy([
-            'correo' => $emailFormData,
-        ]);
+        $user = $this->buscarUsuario($rutEmpresa, $username);
 
         // Marks that you are allowed to see the app_check_email page.
         $this->setCanCheckEmailInSession();
 
         // Do not reveal whether a user account was found or not.
-        if (!$user) {
+        if (!$user || !$user->getCorreo()) {
             return $this->redirectToRoute('app_check_email');
         }
 
@@ -165,6 +166,41 @@ class ResetPasswordController extends AbstractController
 
         $mailer->send($email);
 
+        $request->getSession()->set('reset_password_masked_email', $this->enmascararCorreo($user->getCorreo()));
+
         return $this->redirectToRoute('app_check_email');
+    }
+
+    /**
+     * Usuario por username cuya empresa tiene el RUT indicado. El RUT se compara
+     * sin puntos, guiones ni espacios para no depender del formato almacenado.
+     */
+    private function buscarUsuario(string $rutEmpresa, string $username): ?Usuario
+    {
+        $rut = strtoupper(preg_replace('/[^0-9kK]/', '', $rutEmpresa));
+        if ($rut === '' || $username === '') {
+            return null;
+        }
+
+        return $this->entityManager->createQueryBuilder()
+            ->select('u')
+            ->from(Usuario::class, 'u')
+            ->join('u.empresa', 'e')
+            ->where('u.username = :username')
+            ->andWhere("UPPER(REPLACE(REPLACE(REPLACE(e.rut, '.', ''), '-', ''), ' ', '')) = :rut")
+            ->setParameter('username', $username)
+            ->setParameter('rut', $rut)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    /** jromero@x.cl => jro***@x.cl */
+    private function enmascararCorreo(string $correo): string
+    {
+        [$local, $dominio] = array_pad(explode('@', $correo, 2), 2, '');
+        $visibles = max(0, mb_strlen($local) - 3);
+
+        return mb_substr($local, 0, $visibles) . '***' . ($dominio !== '' ? '@' . $dominio : '');
     }
 }
