@@ -491,7 +491,7 @@ class PjudApiClient
                 }
             }
             $promesas[$k] = $this->http->requestAsync('POST', $this->base . '/consultar_' . $c['materia'], [
-                'headers' => $cabeceras, 'json' => $cuerpo, 'timeout' => 8,
+                'headers' => $cabeceras, 'json' => $cuerpo, 'timeout' => 20,
             ]);
         }
 
