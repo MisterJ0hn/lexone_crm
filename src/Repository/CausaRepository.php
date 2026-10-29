@@ -120,7 +120,13 @@ class CausaRepository extends ServiceEntityRepository
         foreach ($filas as $f) {
             // Edapi compara el nombre exacto y usa el indicador ordinal "º" (el CRM guarda "°").
             $tribunal = trim(str_replace([',', '°'], [' ', 'º'], $f['juzgado']));
-            $roles[self::rolParaEdapi($f['letra'], $f['rol'], $f['anio'], (int) $f['materiaId'] === self::MATERIA_PENAL) . '|' . $tribunal] = true;
+            if ((int) $f['materiaId'] === self::MATERIA_PENAL) {
+                // Penal: solo el rol. El filtro `rol|tribunal` de edapi compara el tribunal de forma exacta y deja fuera
+                // las causas penales; el mismo rol de otro tribunal puede aparecer de más.
+                $roles[self::rolParaEdapi($f['letra'], $f['rol'], $f['anio'], true)] = true;
+                continue;
+            }
+            $roles[self::rolParaEdapi($f['letra'], $f['rol'], $f['anio'], false) . '|' . $tribunal] = true;
         }
         return implode(',', array_keys($roles));
     }
