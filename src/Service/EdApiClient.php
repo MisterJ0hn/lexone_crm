@@ -184,8 +184,8 @@ class EdApiClient
         if ($this->clienteGuid !== '') {
             $headers['X-Cliente-Guid'] = $this->clienteGuid;
         }
-        // Mismo formato que rolesParaEdapi(): edapi compara el nombre exacto y usa "º".
-        $filtro = strtoupper($rol) . '|' . trim(str_replace([',', '°'], [' ', 'º'], $tribunal));
+        // Solo por rol (el tribunal se compara abajo con claveRol(): el filtro `rol|tribunal` de edapi es exacto).
+        $filtro = strtoupper(trim($rol));
         try {
             $resp = $this->http->get('api/v1/causas', [
                 'headers' => $headers,
@@ -291,15 +291,17 @@ class EdApiClient
      */
     public function causasExistentes(array $causas): array
     {
-        $filtros = [];
+        // Se filtra solo por rol: el filtro `rol|tribunal` de edapi compara el nombre del tribunal de forma exacta y
+        // cualquier diferencia (mayúsculas, º/°, abreviaturas) deja la causa fuera. El tribunal se compara aquí con claveRol().
+        $filtros = $pedidas = [];
         foreach ($causas as [$rol, $tribunal]) {
-            // Mismo formato que credencialesPjud(): edapi compara el nombre exacto y usa "º".
-            $filtros[strtoupper($rol) . '|' . trim(str_replace([',', '°'], [' ', 'º'], $tribunal))] = true;
+            $filtros[strtoupper(trim($rol))] = true;
+            $pedidas[CausaRepository::claveRol($rol, $tribunal)] = true;
         }
         $filtros = array_keys($filtros);
         sort($filtros);
 
-        return $this->cache->get('edapi_causas_' . md5($this->apiKey . '|' . $this->clienteGuid . '|' . implode(',', $filtros)), function (ItemInterface $item) use ($filtros): array {
+        return $this->cache->get('edapi_causas_' . md5($this->apiKey . '|' . $this->clienteGuid . '|' . implode(',', $filtros)), function (ItemInterface $item) use ($filtros, $pedidas): array {
             $item->expiresAfter(60);
             $presentes = [];
             // roles viaja en la URL: se pide en tandas para no pasarse del largo permitido.
@@ -311,7 +313,10 @@ class EdApiClient
                     $flag = is_bool($data['pjud_habilitado'] ?? null) ? $data['pjud_habilitado'] : null;
                     foreach ($data['causas'] ?? [] as $c) {
                         $this->logger?->info('PJUD trace: causa en Lexflow', ['rol' => $c['rol'] ?? null, 'tribunal' => $c['tribunal'] ?? null, 'pjud_habilitado' => $c['pjud_habilitado'] ?? $flag]);
-                        $presentes[CausaRepository::claveRol((string) ($c['rol'] ?? ''), (string) ($c['tribunal'] ?? ''))] = is_bool($c['pjud_habilitado'] ?? null) ? $c['pjud_habilitado'] : $flag;
+                        $clave = CausaRepository::claveRol((string) ($c['rol'] ?? ''), (string) ($c['tribunal'] ?? ''));
+                        if (isset($pedidas[$clave])) {
+                            $presentes[$clave] = is_bool($c['pjud_habilitado'] ?? null) ? $c['pjud_habilitado'] : $flag;
+                        }
                     }
                 } while (++$page <= (int) ($data['total_pages'] ?? 1));
             }
