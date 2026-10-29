@@ -96,6 +96,7 @@ class LexflowController extends AbstractController
 
         // Botón "Detalle PJUD": solo para filas que calzan con una Causa del CRM de materia soportada.
         // El `pjud_habilitado` de cada fila (Lexflow) manda sobre la configuración de la Empresa: true muestra el botón, false lo oculta.
+        $this->aplicarFlagPjud($datos, 'movimientos');
         $pjudEmpresa = $this->pjud->paraEmpresa($empresa)->configurado();
         $pjudInfo = ['configurado' => $pjudEmpresa || $this->algunaHabilitada($datos['movimientos'] ?? []), 'crm' => 0, 'coinciden' => 0, 'externas' => 0, 'sin_soporte' => 0];
         if ($tab === 'materias' && $pjudInfo['configurado'] && !empty($datos['movimientos'])) {
@@ -308,6 +309,7 @@ class LexflowController extends AbstractController
         }
 
         // Botón "Detalle PJUD": igual que en Estado Diario, por causa del CRM o por token externo.
+        $this->aplicarFlagPjud($datos, 'causas');
         $pjudEmpresa = $this->pjud->paraEmpresa($empresa)->configurado();
         $pjudInfo = ['configurado' => $pjudEmpresa || $this->algunaHabilitada($datos['causas'] ?? [])];
         if ($tab === 'materias' && $pjudInfo['configurado'] && !empty($datos['causas'])) {
@@ -461,6 +463,25 @@ class LexflowController extends AbstractController
     private function botonPjudVisible(array $fila, bool $configuradoEmpresa): bool
     {
         return $this->flagPjud($fila) ?? $configuradoEmpresa;
+    }
+
+    /**
+     * edapi informa `pjud_habilitado` una sola vez por respuesta (del cliente), no en cada fila: se copia a las filas
+     * que no lo traen para que el botón "Detalle PJUD" lo respete (true lo muestra, false lo oculta).
+     *
+     * @param array<string,mixed> $datos
+     */
+    private function aplicarFlagPjud(array &$datos, string $clave): void
+    {
+        $flag = is_bool($datos['pjud_habilitado'] ?? null) ? $datos['pjud_habilitado'] : null;
+        if ($flag === null) {
+            return;
+        }
+        foreach ($datos[$clave] ?? [] as $i => $fila) {
+            if (is_array($fila) && !is_bool($fila['pjud_habilitado'] ?? null)) {
+                $datos[$clave][$i]['pjud_habilitado'] = $flag;
+            }
+        }
     }
 
     /** @param list<array<string,mixed>> $filas */
