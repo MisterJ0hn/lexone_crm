@@ -132,6 +132,16 @@ class PjudController extends AbstractController
         if (!$causa || $causa->getAgenda()?->getEmpresa()?->getId() !== $empresa->getId()) {
             return new JsonResponse(['detail' => 'Causa no encontrada'], 404);
         }
+        // Corte de Apelaciones: se identifica por rol, año y corte (sin letra ni tribunal).
+        if ($causa->getMateria()?->getId() === CausaRepository::MATERIA_APELACIONES) {
+            $datos = self::datosApelaciones($causa);
+            if ($datos === null) {
+                return new JsonResponse(['detail' => 'La causa no tiene rol, año y corte completos en el CRM'], 422);
+            }
+            $cliente = $causa->getCliente() ?? $causa->getAgenda()?->getContrato()?->getCliente();
+
+            return $this->respuestaApelaciones($empresa, $datos, $forzar, !$forzar && $request->query->getBoolean('solo_estado'), $this->credenciales($empresa, $datos, 'apelaciones', $cliente));
+        }
         $competencia = self::competencia($causa->getMateria()?->getNombre());
         if ($competencia === null) {
             return new JsonResponse(['detail' => 'El detalle PJUD solo está disponible para causas Civil, Familia, Laboral, Cobranza o Penal'], 422);
@@ -155,6 +165,57 @@ class PjudController extends AbstractController
         $res['materia'] = $competencia;
         $res['crm'] = ['rol' => $datos['tipo'] . '-' . $datos['rol'] . '-' . $datos['anio'], 'tribunal' => $datos['tribunal']];
         return new JsonResponse($res);
+    }
+
+    /**
+     * Detalle de una causa de Corte de Apelaciones (consultar_/sincronizar_apelaciones, body {rol, anio, corte}).
+     * Va por el espejo de api-pjud de edapi cuando la empresa tiene Lexflow; si no, por la configuración de la Empresa.
+     *
+     * @param array{tipo:string,rol:int,anio:int,tribunal:string,tipo_causa:?string} $datos `tribunal` = corte
+     */
+    private function respuestaApelaciones(\App\Entity\Empresa $empresa, array $datos, bool $forzar, bool $soloEstado, \Closure $credenciales): JsonResponse
+    {
+        if (!$this->api->paraEmpresa($empresa)->configurado()) {
+            return new JsonResponse(['detail' => 'La empresa no tiene configurada la API PJUD'], 404);
+        }
+        try {
+            $res = $this->api->detalle('apelaciones', $datos, $forzar, null, $credenciales, $soloEstado);
+        } catch (PjudApiException $e) {
+            return new JsonResponse(['detail' => $e->getMessage()], 502);
+        }
+
+        $res['materia'] = 'apelaciones';
+        $res['crm'] = ['rol' => $datos['rol'] . '-' . $datos['anio'], 'tribunal' => $datos['tribunal']];
+        $res['causa_origen'] = $soloEstado ? null : $this->causaOrigen($empresa, $res['causa']['expediente_primera'] ?? null);
+
+        return new JsonResponse($res);
+    }
+
+    /**
+     * La causa de la cartera (CRM) que calza con el expediente de primera instancia de la apelación
+     * ("C - 711 - 2026" + tribunal), para abrir su detalle desde el popup. null = no está en la cartera.
+     *
+     * @return array{id:int,rol:string,tribunal:string,materia:?string,caratulado:?string}|null
+     */
+    private function causaOrigen(\App\Entity\Empresa $empresa, mixed $expediente): ?array
+    {
+        if (!is_array($expediente) || !preg_match('/^([A-Za-z]+)\s*-\s*(\d+)\s*-\s*(\d{4})$/', trim((string) ($expediente['causa_origen'] ?? '')), $m)) {
+            return null;
+        }
+        $tribunal = trim((string) ($expediente['tribunal'] ?? ''));
+        if ($tribunal === '') {
+            return null;
+        }
+        $mapa = $this->causas->mapaPorRol($empresa->getId());
+        // Penal se registra sin letra; el resto, con ella.
+        foreach ([false, true] as $penal) {
+            $causa = $mapa[CausaRepository::claveRol(CausaRepository::rolParaEdapi($m[1], $m[2], $m[3], $penal), $tribunal)] ?? null;
+            if ($causa) {
+                return ['id' => $causa['id'], 'rol' => strtoupper($m[1]) . '-' . $m[2] . '-' . $m[3], 'tribunal' => $tribunal, 'materia' => $causa['materia'], 'caratulado' => $expediente['caratulado'] ?? null];
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -200,6 +261,9 @@ class PjudController extends AbstractController
      */
     public static function especDeFila(array $fila, ?string $materia = null): ?array
     {
+        if (self::esFilaApelaciones($fila)) {
+            return self::especDeCorte($fila);
+        }
         $materia ??= self::competenciaDeFila($fila);
         $tribunal = trim((string) ($fila['tribunal'] ?? ''));
         if ($materia === null || $tribunal === '' || !preg_match('/^([A-Za-z]+)-(\d+)-(\d{4})$/', trim((string) ($fila['rol'] ?? '')), $m)) {
@@ -218,6 +282,15 @@ class PjudController extends AbstractController
      */
     public static function tokenExterno(array $fila): ?string
     {
+        if (self::esFilaApelaciones($fila)) {
+            $spec = self::especDeCorte($fila);
+            if ($spec === null) {
+                return null;
+            }
+            $json = json_encode(['r' => $spec['causa']['rol'] . '-' . $spec['causa']['anio'], 't' => $spec['causa']['tribunal'], 'm' => 'apelaciones', 'c' => null], JSON_UNESCAPED_UNICODE);
+
+            return 'x.' . rtrim(strtr(base64_encode((string) $json), '+/', '-_'), '=');
+        }
         $competencia = self::competenciaDeFila($fila);
         $rol = trim((string) ($fila['rol'] ?? ''));
         $tribunal = trim((string) ($fila['tribunal'] ?? ''));
@@ -227,6 +300,28 @@ class PjudController extends AbstractController
         $json = json_encode(['r' => $rol, 't' => $tribunal, 'm' => $competencia, 'c' => $fila['tipo_causa'] ?? null], JSON_UNESCAPED_UNICODE);
 
         return 'x.' . rtrim(strtr(base64_encode((string) $json), '+/', '-_'), '=');
+    }
+
+    /** Fila de la pestaña "Cortes" (edapi causas/cortes o estado-diario/cortes) de una Corte de Apelaciones. */
+    private static function esFilaApelaciones(array $fila): bool
+    {
+        return ($fila['tipo'] ?? null) === 'apelaciones' && array_key_exists('era', $fila);
+    }
+
+    /**
+     * Qué consultar para una fila de Cortes: rol y era (año) numéricos y la corte como texto
+     * (`rol-era|corte`, el mismo formato de `roles` de edapi). null = no se puede consultar.
+     *
+     * @return array{materia:string,causa:array{tipo:string,rol:int,anio:int,tribunal:string,tipo_causa:?string}}|null
+     */
+    public static function especDeCorte(array $fila): ?array
+    {
+        $corte = trim((string) ($fila['corte'] ?? ''));
+        if ($corte === '' || !preg_match('/\d+/', (string) ($fila['rol'] ?? ''), $rol) || !preg_match('/\d{4}/', (string) ($fila['era'] ?? ''), $anio)) {
+            return null;
+        }
+
+        return ['materia' => 'apelaciones', 'causa' => ['tipo' => '', 'rol' => (int) $rol[0], 'anio' => (int) $anio[0], 'tribunal' => $corte, 'tipo_causa' => null]];
     }
 
     /**
@@ -244,8 +339,17 @@ class PjudController extends AbstractController
         $d = str_starts_with($token, 'x.') && strlen($token) < 1500
             ? json_decode((string) base64_decode(strtr(substr($token, 2), '-_', '+/')), true)
             : null;
-        if (!is_array($d) || !isset($d['r'], $d['t'], $d['m']) || !in_array($d['m'], PjudApiClient::MATERIAS, true)) {
+        if (!is_array($d) || !isset($d['r'], $d['t'], $d['m']) || !(in_array($d['m'], PjudApiClient::MATERIAS, true) || $d['m'] === 'apelaciones')) {
             return new JsonResponse(['detail' => 'Identificador de causa inválido'], 422);
+        }
+        if ($d['m'] === 'apelaciones') {
+            // Fila de Cortes: rol "261-2026" (rol-era) y la corte como texto.
+            if (!preg_match('/^(\d+)-(\d{4})$/', (string) $d['r'], $m)) {
+                return new JsonResponse(['detail' => 'El rol de la causa de corte no tiene el formato ROL-AÑO'], 422);
+            }
+            $datos = ['tipo' => '', 'rol' => (int) $m[1], 'anio' => (int) $m[2], 'tribunal' => (string) $d['t'], 'tipo_causa' => null];
+
+            return $this->respuestaApelaciones($empresa, $datos, $forzar, !$forzar && $request->query->getBoolean('solo_estado'), $this->credenciales($empresa, $datos, 'apelaciones'));
         }
         if (!preg_match('/^([A-Za-z]+)-(\d+)-(\d{4})$/', (string) $d['r'], $m)) {
             return new JsonResponse(['detail' => 'El rol de la causa no tiene el formato LETRA-NÚMERO-AÑO'], 422);
@@ -284,6 +388,9 @@ class PjudController extends AbstractController
      */
     private static function rolLexflow(array $datos, string $materia): string
     {
+        if ($materia === 'apelaciones') {
+            return $datos['rol'] . '-' . $datos['anio'];
+        }
         return CausaRepository::rolParaEdapi($datos['tipo'], $datos['rol'], $datos['anio'], $materia === 'penal');
     }
 
@@ -322,10 +429,26 @@ class PjudController extends AbstractController
      */
     public static function especDeCausa(Causa $c): ?array
     {
+        if ($c->getMateria()?->getId() === CausaRepository::MATERIA_APELACIONES) {
+            $datos = self::datosApelaciones($c);
+
+            return $datos !== null ? ['materia' => 'apelaciones', 'causa' => $datos] : null;
+        }
         $materia = self::competencia($c->getMateria()?->getNombre());
         $datos = $c->getCorte() !== null ? self::datosCausa($c) : null;
 
         return $materia !== null && $datos !== null ? ['materia' => $materia, 'causa' => $datos] : null;
+    }
+
+    /** Causa de Corte de Apelaciones del CRM: rol numérico, año y corte (va en `tribunal`). Sin letra ni juzgado. @return array{tipo:string,rol:int,anio:int,tribunal:string,tipo_causa:?string}|null */
+    private static function datosApelaciones(Causa $c): ?array
+    {
+        $corte = trim((string) $c->getCorte()?->getNombre());
+        if ($corte === '' || !ctype_digit(trim((string) $c->getRol())) || !$c->getAnio()) {
+            return null;
+        }
+
+        return ['tipo' => '', 'rol' => (int) trim((string) $c->getRol()), 'anio' => (int) $c->getAnio(), 'tribunal' => $corte, 'tipo_causa' => null];
     }
 
     /** @return array{tipo:string,rol:int,anio:int,tribunal:string,tipo_causa:?string}|null */

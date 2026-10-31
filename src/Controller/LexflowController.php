@@ -97,8 +97,12 @@ class LexflowController extends AbstractController
         // Botón "Detalle PJUD": solo para filas que calzan con una Causa del CRM de materia soportada.
         // El `pjud_habilitado` de cada fila (Lexflow) manda sobre la configuración de la Empresa: true muestra el botón, false lo oculta.
         $this->aplicarFlagPjud($datos, 'movimientos');
+        $this->aplicarFlagPjud($datos, 'cortes');
         $pjudEmpresa = $this->pjud->paraEmpresa($empresa)->configurado();
-        $pjudInfo = ['configurado' => $pjudEmpresa || $this->algunaHabilitada($datos['movimientos'] ?? []), 'crm' => 0, 'coinciden' => 0, 'externas' => 0, 'sin_soporte' => 0];
+        $pjudInfo = ['configurado' => $pjudEmpresa || $this->algunaHabilitada($datos['movimientos'] ?? []) || $this->algunaHabilitada($datos['cortes'] ?? []), 'crm' => 0, 'coinciden' => 0, 'externas' => 0, 'sin_soporte' => 0];
+        if ($tab === 'cortes' && $pjudInfo['configurado'] && !empty($datos['cortes'])) {
+            $this->botonesCortes($empresa, $datos['cortes'], $pjudEmpresa);
+        }
         if ($tab === 'materias' && $pjudInfo['configurado'] && !empty($datos['movimientos'])) {
             $mapa = $this->causas->mapaPorRol($empresa->getId());
             $pjudInfo['crm'] = count($mapa);
@@ -310,8 +314,12 @@ class LexflowController extends AbstractController
 
         // Botón "Detalle PJUD": igual que en Estado Diario, por causa del CRM o por token externo.
         $this->aplicarFlagPjud($datos, 'causas');
+        $this->aplicarFlagPjud($datos, 'cortes');
         $pjudEmpresa = $this->pjud->paraEmpresa($empresa)->configurado();
-        $pjudInfo = ['configurado' => $pjudEmpresa || $this->algunaHabilitada($datos['causas'] ?? [])];
+        $pjudInfo = ['configurado' => $pjudEmpresa || $this->algunaHabilitada($datos['causas'] ?? []) || $this->algunaHabilitada($datos['cortes'] ?? [])];
+        if ($tab === 'cortes' && $pjudInfo['configurado'] && !empty($datos['cortes'])) {
+            $this->botonesCortes($empresa, $datos['cortes'], $pjudEmpresa);
+        }
         if ($tab === 'materias' && $pjudInfo['configurado'] && !empty($datos['causas'])) {
             $mapa = $this->causas->mapaPorRol($empresa->getId());
             foreach ($datos['causas'] as &$fila) {
@@ -451,6 +459,23 @@ class LexflowController extends AbstractController
                 $filas[$i]['pjud_estado'] = $estado;
             }
         }
+    }
+
+    /**
+     * Botón "Detalle PJUD" de la pestaña Cortes: solo las filas de Corte de Apelaciones con rol, era y corte
+     * (Suprema no tiene detalle PJUD). El detalle se pide con un token `rol-era|corte`, igual que las causas fuera del CRM.
+     *
+     * @param list<array<string,mixed>> $filas
+     */
+    private function botonesCortes(Empresa $empresa, array &$filas, bool $pjudEmpresa): void
+    {
+        foreach ($filas as &$fila) {
+            if ($this->botonPjudVisible($fila, $pjudEmpresa) && ($token = PjudController::tokenExterno($fila))) {
+                $fila['pjud_token'] = $token;
+            }
+        }
+        unset($fila);
+        $this->estadosPjud($empresa, $filas);
     }
 
     /** `pjud_habilitado` que Lexflow informa para la fila: true/false, o null si no viene. */

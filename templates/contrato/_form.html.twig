@@ -570,7 +570,10 @@
         cambiaEstrategiaJuridica($(".cbomateria").val());
     });
 
+{{ include('causa/_campos_materia_js.html.twig') }}
+
     function cambiaMateriaCausa(materiaId){
+        aplicaCamposApelacion(materiaId, '.txtLetra', '.juzgado', null);
         if(!materiaId){
             $(".cboSubMateria").html('<option value="">Seleccione Servicio</option>');
             return;
@@ -597,8 +600,10 @@
                     $select.append('<option value="'+letra+'">'+letra+'</option>');
                 });
                 $('.letras').html($select);
+                aplicaCamposApelacion(materia_id, '.txtLetra', '.juzgado', null);
             },error:function(error){
                 $('.letras').html('<input type="text" name="txtLetra" placeholder="Letra" class="form-control txtLetra" size="3" maxlength="10">');
+                aplicaCamposApelacion(materia_id, '.txtLetra', '.juzgado', null);
             }
         });
     }

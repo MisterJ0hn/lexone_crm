@@ -225,7 +225,7 @@
                             <td>                                
                                 {% if causa.servicio %}{{ causa.servicio }}{% endif %}
                             </td>
-                            <td>{{ causa.letra }}-{{ causa.rol }}-{{ causa.anio }}</td>
+                            <td>{{ causa.rolCompleto }}</td>
                             <td>{{ causa.corte ? causa.corte.nombre : '' }}</td>
                             <td>{{ causa.juzgado is null ? '' : causa.juzgado }}</td>
                              <td>{{ causa.causaNombre }}</td>
@@ -252,6 +252,7 @@
                                         data-nombre-materia="{{ causa.materia.nombre }}"
                                         ><i class="fas fa-edit"></i></button>
                                     <a href="{{ path('contrato_linea_tiempo_detalle', {'id': causa.id}) }}" class="btn btn-sm text-white bg-dark">LT</a>
+                                    <a href="{{path('contrato_archivos_index',{'id':causa.id})}}" type="button" class="btn btn-success btn-sm" ><i class="fas fa-paperclip"></i></a>
                                     {% if pjud_botones[causa.id] is defined %}{{ pjud.boton(causa.id, pjud_botones[causa.id], true) }}{% endif %}
                                 </div>
                             </td>
@@ -627,7 +628,10 @@
 
     // Modal "Nuevo Cliente": mismo patrón que la causa de panel_abogado/contrata.html.twig. Una fila
     // de campos + botón "+" que agrega la causa a la tabla de abajo (campos ocultos causas[N][...]).
+{{ include('causa/_campos_materia_js.html.twig') }}
+
     function cambiaMateriaCausaConvenio(materiaId){
+        aplicaCamposApelacion(materiaId, '.txtLetra-convenio', '.juzgado-convenio', '.corte-convenio');
         if(!materiaId){
             $(".cboSubMateria-convenio").html('<option value="">Seleccione Servicio</option>');
             $(".corte-convenio").html('<option value="">Seleccione Corte</option>');
@@ -645,6 +649,7 @@
             success:function(data){
                 $(".corte-convenio").html(data);
                 $(".juzgado-convenio").html('<option value="">Seleccione Juzgado</option>');
+                aplicaCamposApelacion($('.cbomateria-convenio').val(), '.txtLetra-convenio', '.juzgado-convenio', '.corte-convenio');
             }
         });
         letrasCausaConvenio(materiaId);
@@ -667,8 +672,10 @@
             success:function(data){
                 $('.letras-convenio').html('<select class="form-control txtLetra-convenio"><option value=""> Letra </option></select>');
                 $.each(data,function(i,letra){ $('.txtLetra-convenio').append($('<option>').val(letra).text(letra)); });
+                aplicaCamposApelacion(materia_id, '.txtLetra-convenio', '.juzgado-convenio', '.corte-convenio');
             },error:function(){
                 $(".letras-convenio").html('<input type="text" placeholder="Letra" class="form-control txtLetra-convenio" size="10" maxlength="10">');
+                aplicaCamposApelacion(materia_id, '.txtLetra-convenio', '.juzgado-convenio', '.corte-convenio');
             }
         });
     }
@@ -694,8 +701,9 @@
                 alert("El rol debe contener solo números");
                 return;
             }
-            if(letra=="" || rol=="" || anio==""){
-                alert("Debe ingresar letra, rol y año completos");
+            var apelacion = esApelacion($('.cbomateria-convenio').val());
+            if((!apelacion && letra=="") || rol=="" || anio==""){
+                alert(apelacion ? "Debe ingresar rol y año completos" : "Debe ingresar letra, rol y año completos");
                 return;
             }
         }
@@ -707,7 +715,7 @@
         function celda(valor, ocultos){
             return $('<td>').append(ocultos || []).append(document.createTextNode(valor));
         }
-        var rolTexto = (letra!="" || rol!="" || anio!="") ? letra+'-'+rol+'-'+anio : '';
+        var rolTexto = (letra!="" || rol!="" || anio!="") ? (letra!="" ? letra+'-' : '')+rol+'-'+anio : '';
         $fila.append(celda($('.cbomateria-convenio option:selected').text(), oculto('materia', $('.cbomateria-convenio').val())));
         $fila.append(celda($('.cboSubMateria-convenio option:selected').text(), oculto('servicio', $('.cboSubMateria-convenio').val())));
         $fila.append(celda(rolTexto, [oculto('letra', letra), oculto('rol', rol), oculto('anio', anio)]));
@@ -722,6 +730,7 @@
         cambiaMateriaCausaConvenio('');
         $('.letras-convenio').html('<input type="text" placeholder="Letra" class="form-control txtLetra-convenio" size="10" maxlength="10">');
         $('.txtRol-convenio, .txtAnio-convenio, .txtCaratulado-convenio').val('');
+        aplicaCamposApelacion(null, '.txtLetra-convenio', '.juzgado-convenio', '.corte-convenio');
     }
 
     // El modal de nuevo cliente sirve para Empresa o Persona: en un contrato Empresa, el botón
@@ -760,6 +769,7 @@
         var $submateria = $fila.find('.cboSubMateria-cliente');
         var $corte = $fila.find('.corte-cliente');
         var $juzgado = $fila.find('.juzgado-cliente');
+        aplicaCamposApelacion(materiaId, $fila.find('.txtLetra-cliente'), $juzgado, $corte);
         if(!materiaId){
             $submateria.html('<option value="">Seleccione Servicio</option>');
             $corte.html('<option value="">Seleccione Corte</option>');
@@ -790,6 +800,7 @@
             success: function(data){
                 $corte.html(data);
                 $juzgado.html('<option value="">Seleccione Juzgado</option>');
+                aplicaCamposApelacion(materiaId, $fila.find('.txtLetra-cliente'), $juzgado, $corte);
             }
         });
 
@@ -808,8 +819,10 @@
                     $select.append('<option value="'+letra+'">'+letra+'</option>');
                 });
                 $letras.html($select);
+                aplicaCamposApelacion(materiaId, $fila.find('.txtLetra-cliente'), $juzgado, $corte);
             },error:function(error){
                 $letras.html('<input type="text" placeholder="Letra" class="form-control txtLetra-cliente" size="10" maxlength="10">');
+                aplicaCamposApelacion(materiaId, $fila.find('.txtLetra-cliente'), $juzgado, $corte);
             }
         });
     }
@@ -895,7 +908,8 @@
             cache:false,
             success:function(data){
                 $(".corte").html(data)
-                if(corte){
+                aplicaCamposApelacion(materia, '.txtLetra', '.juzgado', '.corte')
+                if(corte && !esSuprema(materia)){
                     $(".corte").val(String(corte))
                     cargaJuzgadosEdicion(corte, juzgado)
                 }
@@ -906,7 +920,7 @@
     var materiaEdicion = null
 
     function cargaJuzgadosEdicion(corteId, juzgadoId){
-        if(!corteId){
+        if(!corteId || esApelacion(materiaEdicion)){
             $(".juzgado").html('<option value=""> Seleccione Juzgado </option>')
             return
         }
@@ -947,9 +961,11 @@
                     }
                     $('.txtLetra').val(String(letraSel));
                 }
+                aplicaCamposApelacion(materia_id, '.txtLetra', '.juzgado', '.corte');
             },error:function(error){
                 $(".letras").html('<input type="text" name="txtLetra" placeholder="Letra" class="form-control txtLetra" size="10" maxlength="10">');
                 if(letraSel){ $('.txtLetra').val(letraSel); }
+                aplicaCamposApelacion(materia_id, '.txtLetra', '.juzgado', '.corte');
             }
         });
     }

@@ -90,7 +90,92 @@
     };
     var cFolio = colHtml('Folio', function (r) { return val(r.folio_texto !== undefined && r.folio_texto !== null ? r.folio_texto : r.folio); }, 'c');
 
+    /** Valor de una celda de una tabla genérica: los objetos se muestran como JSON. */
+    function valorGenerico(v) {
+        if (v === null || v === undefined || v === '') { return '-'; }
+        return esc(typeof v === 'object' ? JSON.stringify(v) : v);
+    }
+    /** Tabla cuyas columnas son la unión de las claves de todas las filas (listas que el proveedor aún no define). */
+    function tablaGenerica(filas, vacio) {
+        filas = lista(filas);
+        var claves = [];
+        filas.forEach(function (f) { Object.keys(f).forEach(function (k) { if (claves.indexOf(k) === -1) { claves.push(k); } }); });
+        return tabla(claves.map(function (k) { return colHtml(k, function (r) { return valorGenerico(r[k]); }); }), filas, vacio);
+    }
+    /** "Doc. principal" de los textos del recurso: `fa-check` = es el documento principal, cualquier otro ícono = no lo es. */
+    function docPrincipal(dp) {
+        if (!dp) { return '<span>-</span>'; }
+        var si = !!dp.icono && dp.icono.indexOf('check') !== -1;
+        var svg = si
+            ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7"/></svg>'
+            : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path stroke-linecap="round" d="m9 9 6 6m0-6-6 6"/></svg>';
+        return '<span title="' + (si ? 'Documento principal' : 'No es el documento principal') + '"' + (dp.color ? ' style="color:' + esc(dp.color) + '"' : '') + '>' + svg + '</span>';
+    }
+    /** Pestaña Documentos de Apelaciones: texto del recurso y anexos de la causa. */
+    function documentosApelaciones(d) {
+        var c = d.causa || {}, texto = lista(c.texto), anexo = lista(c.anexo);
+        if (!texto.length && !anexo.length) { return '<p class="text-muted small">Sin documentos registrados.</p>'; }
+        var h = '';
+        if (texto.length) {
+            h += '<p class="pjud-k mb-1">Texto</p>' + tabla([
+                colHtml('Doc. principal', function (t) { return docPrincipal(t.doc_principal); }, 'c'),
+                colHtml('Doc.', function (t) { return t.doc ? pdf(t.doc.url, null, t.doc.color) : '<span>-</span>'; }, 'c'),
+                col('Fecha', 'fecha'), col('Referencia', 'referencia')], texto);
+        }
+        if (anexo.length) {
+            h += '<p class="pjud-k mb-1 mt-3">Anexos</p>' + tabla([
+                colHtml('Doc.', function (a) { return a.doc ? pdf(a.doc.url, null, a.doc.color) : '<span>-</span>'; }, 'c'),
+                col('Código', 'codigo'), col('Tipo Documento', 'tipo_documento'), col('Cantidad', 'cantidad'), col('Observación', 'observacion_documento')], anexo);
+        }
+        return h;
+    }
+    /** Vista "Expediente Primera Instancia" y la causa de la cartera (CRM) que le corresponde. */
+    function expedienteApelaciones(d) {
+        var p = d.causa && d.causa.expediente_primera, o = d.causa_origen;
+        if (!p) { return '<p class="text-muted small">El PJUD no informa expediente de primera instancia.</p>'; }
+        var lupa = o ? ' <button type="button" class="pjud-link" style="color:#2563eb" data-pjud-accion="abrir-origen" data-idx="' + esc(o.id) + '" title="Abrir el detalle PJUD de la causa" aria-label="Abrir el detalle PJUD de la causa">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path stroke-linecap="round" d="m20 20-3.5-3.5"/></svg></button>' : '';
+        return '<div class="pjud-panel"><p class="pjud-panel-titulo">Expediente primera instancia</p>' +
+            '<div class="pjud-grid pjud-grid-2">' +
+            '<p><span class="pjud-k">Causa Origen:</span> ' + val(p.causa_origen) + lupa + '</p>' +
+            '<p><span class="pjud-k">Tribunal:</span> ' + val(p.tribunal) + '</p>' +
+            '<p><span class="pjud-k">Caratulado:</span> ' + val(p.caratulado) + '</p>' +
+            '<p><span class="pjud-k">Materia:</span> ' + val(p.materia) + '</p></div>' +
+            '<p class="pjud-cartera">' + (o
+                ? '<span class="badge badge-success">En tu cartera</span> <span>' + esc(o.rol) + ' — ' + esc(o.materia || 'Sin materia') + ' — ' + esc(o.tribunal) + '</span>'
+                : '<span class="badge badge-secondary">No está en tu cartera</span>') + '</p></div>';
+    }
+
     var MATERIAS = {
+        // Corte de Apelaciones: identifica la causa por rol, era y corte (sin cuadernos). Lleva dos vistas
+        // (Recurso / Expediente Primera Instancia); ver render() y pestanas().
+        apelaciones: {
+            titulo: 'Detalle Causa Corte de Apelaciones',
+            vistas: true,
+            panel: function (c, d) {
+                return [['Libro', c.libro], ['Fecha', c.fecha], ['Corte', c.corte || d.crm.tribunal],
+                    ['Estado Recurso', c.estado_recurso], ['Estado Procesal', c.estado_procesal], ['Ubicación', c.ubicacion],
+                    ['Recurso', c.recurso, 'ancho']];
+            },
+            docs: function (c) {
+                var out = [];
+                if (c.certificado_envio) { out.push(['Certificado de Envío', pdf(c.certificado_envio.url, null, c.certificado_envio.color)]); }
+                if (c.ebook) { out.push(['eBook', pdf(c.ebook.url, null, c.ebook.color)]); }
+                return out;
+            },
+            tabs: [
+                { k: 'movimientos', t: 'Movimientos', vacio: 'El PJUD no registra movimientos en esta causa.', cols: [
+                    cFolio, cDocs, cAnexo('Anexo', 'movimientos'), col('Trámite', 'tramite'), col('Descripción', 'descripcion'),
+                    col('Fecha', 'fecha'), col('Sala', 'sala'), col('Estado', 'estado'), cGeo('Geo', 'georeferencia')] },
+                { k: 'documentos', t: 'Documentos', contador: function (d) { return lista(d.causa && d.causa.texto).length + lista(d.causa && d.causa.anexo).length; },
+                    render: documentosApelaciones },
+                { k: 'liquidantes', t: 'Liquidantes', vacio: 'Sin liquidantes registrados.', cols: [
+                    col('Sujeto', 'sujeto'), col('RUT', 'rut'), col('Persona', 'persona'), col('Nombre o Razón Social', 'razon_social')] },
+                { k: 'exhortos', t: 'Exhortos', render: function (d) { return tablaGenerica(d.secciones && d.secciones.exhortos, 'Sin exhortos registrados.'); } },
+                { k: 'incompetencia', t: 'Incompetencia', render: function (d) { return tablaGenerica(d.secciones && d.secciones.incompetencia, 'Sin incompetencias registradas.'); } },
+            ],
+        },
+
         civil: {
             titulo: 'Detalle Causa Civil',
             panel: function (c, d) {
@@ -252,7 +337,7 @@
         var out = [];
         defs.forEach(function (d) {
             var v = c[d[1]];
-            if (v && v.url) { out.push([d[0], pdf(v.url)]); }
+            if (v && v.url) { out.push([d[0], pdf(v.url, null, v.color)]); }
         });
         return out;
     }
@@ -331,7 +416,15 @@
         }
 
         var c = d.causa;
-        if ((d.estado === 'listo' || d.estado === 'sincronizando') && c && cfg) {
+        if ((d.estado === 'listo' || d.estado === 'sincronizando') && c && cfg && cfg.vistas) {
+            // Apelaciones: el recurso o el expediente de primera instancia.
+            h += '<ul class="nav nav-tabs pjud-tabs mb-3">' + [['recurso', 'Recurso'], ['expediente', 'Expediente Primera Instancia']].map(function (v) {
+                return '<li class="nav-item"><a href="#" class="nav-link ' + (v[0] === estado.vista ? 'active' : '') + '" data-pjud-accion="vista" data-idx="' + v[0] + '">' + v[1] + '</a></li>';
+            }).join('') + '</ul>';
+            h += estado.vista === 'expediente' ? expedienteApelaciones(d) : panel(cfg, c, d) + pestanas(cfg, d);
+            h += '<p class="small text-muted mt-3 mb-0">Consultado directo al Poder Judicial.' +
+                (d.estado === 'listo' ? ' <button type="button" class="btn btn-outline-secondary btn-sm ml-2" data-pjud-accion="actualizar"' + (s.cargando ? ' disabled' : '') + '>' + (s.cargando ? 'Actualizando...' : 'Actualizar desde el PJUD') + '</button>' : '') + '</p>';
+        } else if ((d.estado === 'listo' || d.estado === 'sincronizando') && c && cfg) {
             h += panel(cfg, c, d) + controles(cfg, c, d) + pestanas(cfg, d);
         }
         el.cuerpo.innerHTML = h;
@@ -403,13 +496,13 @@
         h += '<ul class="nav nav-tabs pjud-tabs">';
         tabs.forEach(function (tb) {
             h += '<li class="nav-item"><a href="#" class="nav-link ' + (tb.k === estado.tab ? 'active' : '') + '" data-pjud-accion="tab" data-idx="' + tb.k + '">' +
-                esc(tb.t) + ' <span class="badge badge-light pjud-contador">' + lista(sec[tb.k]).length + '</span></a></li>';
+                esc(tb.t) + ' <span class="badge badge-light pjud-contador">' + (tb.contador ? tb.contador(d) : lista(sec[tb.k]).length) + '</span></a></li>';
         });
         h += '</ul><div class="pt-2">';
         var activa = tabs.filter(function (tb) { return tb.k === estado.tab; })[0];
         var vacio = activa.vacio;
-        if (d.estado === 'sincronizando' && activa.k === tabs[0].k) { vacio = 'El Poder Judicial todavía no entrega los trámites de este cuaderno.'; }
-        h += tabla(activa.cols, lista(sec[activa.k]), vacio) + '</div>';
+        if (d.estado === 'sincronizando' && activa.k === tabs[0].k) { vacio = d.materia === 'apelaciones' ? 'El Poder Judicial todavía no entrega los movimientos.' : 'El Poder Judicial todavía no entrega los trámites de este cuaderno.'; }
+        h += (activa.render ? activa.render(d) : tabla(activa.cols, lista(sec[activa.k]), vacio)) + '</div>';
         return h;
     }
 
@@ -599,7 +692,7 @@
     /** `sincronizar` = true: antes de mostrar la causa se pide una sincronización para bajar los movimientos nuevos. */
     function abrir(causaId, sincronizar, previo) {
         cerrar();
-        estado = { causaId: causaId, datos: null, tab: null, cuaderno: null, verAnexos: false, verReceptor: false, verExtra: null, cargando: true, error: null, timer: null, sesion: ++sesionSeq, previo: previo || (sincronizar ? 'listo' : 'nuevo') };
+        estado = { causaId: causaId, datos: null, tab: null, vista: 'recurso', cuaderno: null, verAnexos: false, verReceptor: false, verExtra: null, cargando: true, error: null, timer: null, sesion: ++sesionSeq, previo: previo || (sincronizar ? 'listo' : 'nuevo') };
         el.titulo.textContent = 'Detalle PJUD';
         el.subtitulo.textContent = '';
         el.overlay.style.display = 'flex';
@@ -649,6 +742,8 @@
         if (accion !== 'cuaderno') { e.preventDefault(); }
 
         if (accion === 'tab') { estado.tab = idx; render(); }
+        else if (accion === 'vista') { estado.vista = idx; render(); }
+        else if (accion === 'abrir-origen') { abrir(idx, false, 'nuevo'); }
         else if (accion === 'actualizar') { pedir('POST', true); }
         else if (accion === 'toggle-anexos') { estado.verAnexos = !estado.verAnexos; render(); }
         else if (accion === 'toggle-receptor') { estado.verReceptor = !estado.verReceptor; render(); }

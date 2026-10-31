@@ -639,6 +639,7 @@
 
     }
 
+    {{ include('causa/_campos_materia_js.html.twig') }}
     function letrasCausa(materia_id){
         $.ajax({
             url:"/materia/"+materia_id+"/causa_letras",
@@ -659,13 +660,16 @@
                 $.each(letras,function(i,letra){
                     $('.txtLetra').append('<option value="'+letra+'">'+letra+'</option>');
                 });
+                aplicaCamposApelacion($('.cbomateria').val(), '.txtLetra', '.juzgado', '.corte');
 
             },error:function(error){
                 $(".letras").html('<input type="text" name="txtLetra" placeholder="Letra" class="form-control txtLetra" size="3" maxlength="10">');
+                aplicaCamposApelacion($('.cbomateria').val(), '.txtLetra', '.juzgado', '.corte');
             }
         });
     }
     function cambiaMateriaCausa(materiaId){
+        aplicaCamposApelacion(materiaId, '.txtLetra', '.juzgado', '.corte');
         if(!materiaId){
             $(".cboSubMateria").html('<option value="">Seleccione Servicio</option>');
             return;
@@ -691,11 +695,12 @@
                     alert("El rol debe contener solo números");
                     return;
                 }
-                if($('.txtLetra').val()=="" || $('.txtRol').val()=="" || $('.txtAnio').val()==""){
-                    alert("Debe ingresar letra, rol y año completos");
+                if((!esApelacion($('.cbomateria').val()) && $('.txtLetra').val()=="") || $('.txtRol').val()=="" || $('.txtAnio').val()==""){
+                    alert(esApelacion($('.cbomateria').val()) ? "Debe ingresar rol y año completos" : "Debe ingresar letra, rol y año completos");
                     return;
                 }
             }
+            var apelacion = esApelacion($('.cbomateria').val());
             $(".loading").html('');
    
             var item_id=Math.floor(Math.random() * 100);
@@ -706,9 +711,10 @@
                                 "<td><input type='hidden' value='"+$('.txtLetra').val()+"' name='hdLetraCausa[]'  >"+
                                 "<input type='hidden' value='"+$('.txtRol').val()+"' name='hdRolCausa[]'  >"+
                                 "<input type='hidden' value='"+$('.txtAnio').val()+"' name='hdAnioCausa[]'  >"
-                                +$('.txtLetra').val()+"-"+$('.txtRol').val()+"-"+$('.txtAnio').val()+"</td>"+
+                                +(apelacion ? "" : $('.txtLetra').val()+"-")+$('.txtRol').val()+"-"+$('.txtAnio').val()+"</td>"+
                                 "<td><input type='hidden' value='"+$('.txtCaratulado').val()+"' name='hdCaratulado[]'  >"+$('.txtCaratulado').val()+"</td>"+
-                                "<td><input type='hidden' value='"+$('.juzgado').val()+"' name='hdJuzgado[]'  >"+$('.juzgado option:selected').text()+"</td>"+
+                                "<td><input type='hidden' value='"+$('.corte').val()+"' name='hdCorte[]'  >"+
+                                "<input type='hidden' value='"+$('.juzgado').val()+"' name='hdJuzgado[]'  >"+(apelacion ? "" : $('.juzgado option:selected').text())+"</td>"+
                                 "<td><button type='button' class='btn btn-danger' onclick='javascript:eliminarCausa("+item_id+")' ><i class='fas fa-trash'></i></button></td>"+
                             "</tr>";
 
@@ -724,6 +730,7 @@
             $('.cboSubMateria').val('');
             $('.cbomateria').val('');
             $('.corte').val('');
+            aplicaCamposApelacion(null, '.txtLetra', '.juzgado', '.corte');
         }else{
             alert("Debe ingresar un servicio");
             console.log("sin servicios");
@@ -1226,7 +1233,8 @@
                 $(".corte").html(data);
                 //$(".loading").html('');
                 $(".juzgado").empty();
-                $(".juzgado").append("<option>Seleccione Juzgado</option>"); 
+                $(".juzgado").append("<option value=''>Seleccione Juzgado</option>");
+                aplicaCamposApelacion($('.cbomateria').val(), '.txtLetra', '.juzgado', '.corte');
             }
         });
         

@@ -331,6 +331,14 @@ class Causa
         return $this->letra;
     }
 
+    /** Rit/Rol para mostrar: Apelaciones y Suprema no usan letra (rol-año); el resto, letra-rol-año. */
+    public function getRolCompleto(): string
+    {
+        $apelacion = in_array($this->getMateria()?->getId(), [\App\Repository\CausaRepository::MATERIA_SUPREMA, \App\Repository\CausaRepository::MATERIA_APELACIONES], true);
+
+        return ($apelacion ? '' : $this->letra . '-') . $this->rol . '-' . $this->anio;
+    }
+
     public function setLetra(?string $letra): self
     {
         $this->letra = $letra;

@@ -5,6 +5,7 @@ namespace App\Controller;
 use Doctrine\ORM\EntityManagerInterface;
 
 use App\Entity\Contrato;
+use App\Repository\CausaRepository;
 use App\Entity\ContratoRol;
 use App\Entity\Usuario;
 use App\Entity\Cuota;
@@ -1145,7 +1146,9 @@ class ContratoController extends AbstractController
         foreach ($contrato->getAgenda()->getCausas() as $causa) {
             if ($causa->getEstado() && ($spec = \App\Controller\PjudController::especDeCausa($causa))) {
                 $specs[$causa->getId()] = $spec;
-                $pares[] = [self::rolDeSpec($spec), $spec['causa']['tribunal']];
+                if ($spec['materia'] !== 'apelaciones') {
+                    $pares[] = [self::rolDeSpec($spec), $spec['causa']['tribunal']];
+                }
             }
         }
         if (!$specs) {
@@ -1158,10 +1161,21 @@ class ContratoController extends AbstractController
         // El `pjud_habilitado` de la causa en Lexflow (true/false) manda sobre la configuración de la Empresa.
         $grupos = [];
         foreach ($specs as $id => $spec) {
-            $clave = \App\Repository\CausaRepository::claveRol(self::rolDeSpec($spec), $spec['causa']['tribunal']);
+            // Corte de Apelaciones: siempre por el espejo de edapi / la configuración habitual, nunca por la causa de Lexflow.
+            if ($spec['materia'] === 'apelaciones') {
+                $grupos['apelaciones'][$id] = $spec;
+                continue;
+            }
+            $clave =\App\Repository\CausaRepository::claveRol(self::rolDeSpec($spec), $spec['causa']['tribunal']);
             $grupos[array_key_exists($clave, $enLexflow) ? json_encode($enLexflow[$clave]) : 'empresa'][$id] = $spec;
         }
         foreach ($grupos as $modo => $grupo) {
+            if ($modo === 'apelaciones') {
+                if ($pjudApi->paraEmpresa($empresa)->configurado()) {
+                    $estados += $pjudApi->estadosIniciales($grupo);
+                }
+                continue;
+            }
             $flag = $modo === 'empresa' ? null : json_decode($modo);
             if ($flag !== false && $pjudApi->paraEmpresa($empresa, $modo === 'empresa', $flag)->configurado()) {
                 $estados += $pjudApi->estadosIniciales($grupo);
@@ -1413,7 +1427,10 @@ class ContratoController extends AbstractController
                 if ($servicio !== null && $servicio->getMateria()->getId() === $materia->getId()) {
                     $causa->setServicio($servicio);
                 }
-                if (!empty($datos['letra'])) {
+                // Suprema: solo rol y año. Apelaciones: rol, año y corte (sin letra ni tribunal).
+                $sinLetra = in_array($materia->getId(), CausaRepository::MATERIAS_APELACION, true);
+                $sinCorte = $materia->getId() === CausaRepository::MATERIA_SUPREMA;
+                if (!empty($datos['letra']) && !$sinLetra) {
                     $causa->setLetra($datos['letra']);
                 }
                 if (!empty($datos['rol'])) {
@@ -1426,10 +1443,10 @@ class ContratoController extends AbstractController
                 // CausaController::agregar(), se setea aunque venga vacío.
                 $causa->setCausaNombre((string) ($datos['caratulado'] ?? ''));
                 // La corte elegida en el formulario manda; si no viene, se toma la del juzgado (como en contrata).
-                if (!empty($datos['corte'])) {
+                if (!empty($datos['corte']) && !$sinCorte) {
                     $causa->setCorte($corteRepository->find($datos['corte']));
                 }
-                if (!empty($datos['juzgado'])) {
+                if (!empty($datos['juzgado']) && !$sinLetra) {
                     $juzgado = $juzgadoRepository->find($datos['juzgado']);
                     $causa->setJuzgado($juzgado);
                     if ($juzgado && $causa->getCorte() === null && $juzgado->getCorte() !== null) {
@@ -1817,11 +1834,16 @@ class ContratoController extends AbstractController
         $estabaCompleta = $lexflowCausas->payload($causa) !== null;
 
         
-        if($request->request->get('juzgado')!=null){            
+        // Suprema: solo rol y año. Apelaciones: rol, año y corte (sin letra ni tribunal).
+        $materiaId = $causa->getMateria()?->getId();
+        $sinLetra = in_array($materiaId, CausaRepository::MATERIAS_APELACION, true);
+        $sinCorte = $materiaId === CausaRepository::MATERIA_SUPREMA;
+
+        if($request->request->get('juzgado')!=null && !$sinLetra){
             $causa->setJuzgado($juzgadoRepository->find($request->request->get('juzgado')));
-           
+
         }
-        if($request->request->get('corte')!=null){            
+        if($request->request->get('corte')!=null && !$sinCorte){
             $causa->setCorte($corteRepository->find($request->request->get('corte')));           
         }
         if($request->request->get('txtNombreCausa')!=null){
@@ -1832,7 +1854,7 @@ class ContratoController extends AbstractController
             $causa->setCausaNombre($request->request->get('txtCaratulado'));
         }
 
-        if($request->request->get('txtLetra')!=null){
+        if($request->request->get('txtLetra')!=null && !$sinLetra){
             $causa->setLetra($request->request->get('txtLetra'));
         }
         if($request->request->get('txtRol')!=null){

@@ -37,6 +37,10 @@
     #pjud-popup .pjud-grid p { margin: 0; }
     #pjud-popup .pjud-der { text-align: right; font-weight: 500; }
     #pjud-popup .pjud-ancho { grid-column: span 3; }
+    /* Apelaciones: vista "Expediente Primera Instancia". */
+    #pjud-popup .pjud-grid-2 { grid-template-columns: repeat(2, 1fr); }
+    #pjud-popup .pjud-panel-titulo { margin: 0; padding: 8px 16px; border-bottom: 1px solid #e5e7eb; font-size: .75rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: #4b5563; }
+    #pjud-popup .pjud-cartera { margin: 0; padding: 8px 16px; border-top: 1px solid #e5e7eb; font-size: .9rem; }
     #pjud-popup .pjud-k { font-weight: 600; color: #6b7280; }
     #pjud-popup .pjud-docs { display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: center; border-top: 1px solid #e5e7eb; padding: 10px 16px; font-size: .9rem; }
     #pjud-popup .pjud-doc { display: inline-flex; align-items: center; gap: 6px; }
@@ -61,7 +65,7 @@
     #pjud-popup .pjud-imgs { display: flex; flex-wrap: wrap; gap: 8px; }
     #pjud-popup .pjud-imgs img { max-height: 240px; border: 1px solid #e5e7eb; border-radius: 6px; }
     #pjud-popup .pjud-sub-footer { text-align: right; padding: 10px 20px; border-top: 1px solid #e5e7eb; }
-    @media (max-width: 767px) { #pjud-popup .pjud-grid { grid-template-columns: 1fr; } #pjud-popup .pjud-ancho { grid-column: auto; } #pjud-popup .pjud-der { text-align: left; } }
+    @media (max-width: 767px) { #pjud-popup .pjud-grid, #pjud-popup .pjud-grid-2 { grid-template-columns: 1fr; } #pjud-popup .pjud-ancho { grid-column: auto; } #pjud-popup .pjud-der { text-align: left; } }
 </style>
 
 <div id="pjud-popup"
@@ -92,5 +96,5 @@
         </div>
     </div>
 </div>
-<script src="/build/js/pjud-popup.js?v=4"></script>
+<script src="/build/js/pjud-popup.js?v=5"></script>
 {% endif %}

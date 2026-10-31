@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Causa;
+use App\Repository\CausaRepository;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -56,15 +57,21 @@ class LexflowCausaCreator
         $anio = (int) $causa->getAnio();
         $juzgado = $causa->getJuzgado();
         $materia = $causa->getMateria()?->getNombre();
-        if ($letra === '' || $rol === '' || $anio <= 0 || $causa->getCorte() === null || $juzgado === null || !$materia) {
+        // Apelaciones: rol y año + corte (hace de "tribunal"). Suprema: solo rol y año ("tribunal" = la materia).
+        $suprema = $causa->getMateria()?->getId() === CausaRepository::MATERIA_SUPREMA;
+        $apelacion = $suprema || $causa->getMateria()?->getId() === CausaRepository::MATERIA_APELACIONES;
+        if ($rol === '' || $anio <= 0 || !$materia
+            || (!$apelacion && ($letra === '' || $juzgado === null || $causa->getCorte() === null))
+            || ($apelacion && !$suprema && $causa->getCorte() === null)) {
             return null;
         }
+        $tribunal = $suprema ? $materia : ($apelacion ? $causa->getCorte()->getNombre() : $juzgado->getNombre());
 
         return [
             'materia' => $materia,
-            'rol' => $letra . '-' . $rol . '-' . $anio,
+            'rol' => ($apelacion ? '' : $letra . '-') . $rol . '-' . $anio,
             // Mismo formato que usa edapi al cruzar roles (ver CausaRepository::rolesParaEdapi): sin comas y con "º".
-            'tribunal' => trim(str_replace([',', '°'], [' ', 'º'], (string) $juzgado->getNombre())),
+            'tribunal' => trim(str_replace([',', '°'], [' ', 'º'], (string) $tribunal)),
             'tipo_causa' => '',
             'ruc' => '',
             'fecha_ingreso' => date('Y-m-d'),

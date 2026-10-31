@@ -39,6 +39,9 @@ class PjudApiClient
      * de movimientos y las secciones que devuelve consultar_movimientos_<materia>.
      */
     private const CONFIG = [
+        // Corte de Apelaciones: sin catálogo ni cuadernos; la causa se identifica por {rol, anio, corte} (corte = texto).
+        'apelaciones' => ['catalogo' => false, 'cuadernos' => false, 'clave_cuaderno' => null,
+            'secciones' => ['movimientos', 'liquidantes', 'exhortos', 'incompetencia']],
         'civil' => ['catalogo' => true, 'cuadernos' => true, 'clave_cuaderno' => 'cuadeno',
             'secciones' => ['historia', 'litigantes', 'notificaciones', 'escritos_resolver', 'exhortos', 'piezas_exhorto']],
         'familia' => ['catalogo' => false, 'cuadernos' => false, 'clave_cuaderno' => 'cuadeno',
@@ -324,10 +327,7 @@ class PjudApiClient
         $cfg = self::CONFIG[$materia] ?? throw new PjudApiException('Materia no soportada por el detalle PJUD.');
         $this->cache->delete($this->claveEstado($materia, $causa));
 
-        $cuerpo = ['corte' => 0, 'tribunal' => 0, 'tipo' => $causa['tipo'], 'rol' => $causa['rol'], 'anio' => $causa['anio']];
-        if ($materia === 'penal') {
-            $cuerpo['tipo'] = $this->tipoPenal($causa['tipo_causa'] ?? null);
-        }
+        $cuerpo = $this->cuerpoBase($materia, $causa);
         if ($cfg['catalogo']) {
             try {
                 [$cuerpo['corte'], $cuerpo['tribunal']] = $this->resolverTribunal($causa['tribunal'], $materia);
@@ -388,8 +388,10 @@ class PjudApiClient
         if ($identificador && (!$cfg['cuadernos'] || $cuadernos)) {
             $elegido = $cfg['cuadernos'] ? $this->elegirCuaderno($cuadernos, $cuaderno) : ['id' => 1];
             try {
+                // Apelaciones no tiene cuadernos: consultar_movimientos_apelaciones recibe solo el identificador.
+                $clavesMov = $materia === 'apelaciones' ? ['identificador' => $identificador] : ['identificador' => $identificador, $cfg['clave_cuaderno'] => $elegido['id']];
                 $mov = $this->peticion('POST', '/consultar_movimientos_' . $materia, [
-                    'json' => ['identificador' => $identificador, $cfg['clave_cuaderno'] => $elegido['id']] + $this->credencialesCuerpo($obtener()),
+                    'json' => $clavesMov + $this->credencialesCuerpo($obtener()),
                 ]);
             } catch (PjudApiException $e) {
                 // Mientras sincroniza, los movimientos pueden no estar listos: se devuelve la cabecera sola.
@@ -416,10 +418,7 @@ class PjudApiClient
     public function sincronizarCausa(string $materia, array $causa, array|\Closure|null $credenciales = null): void
     {
         $cfg = self::CONFIG[$materia] ?? throw new PjudApiException('Materia no soportada por el detalle PJUD.');
-        $cuerpo = ['corte' => 0, 'tribunal' => 0, 'tipo' => $causa['tipo'], 'rol' => $causa['rol'], 'anio' => $causa['anio']];
-        if ($materia === 'penal') {
-            $cuerpo['tipo'] = $this->tipoPenal($causa['tipo_causa'] ?? null);
-        }
+        $cuerpo = $this->cuerpoBase($materia, $causa);
         if ($cfg['catalogo']) {
             [$cuerpo['corte'], $cuerpo['tribunal']] = $this->resolverTribunal($causa['tribunal'], $materia);
         }
@@ -479,10 +478,7 @@ class PjudApiClient
         foreach ($pendientes as $k => $c) {
             $cfg = self::CONFIG[$c['materia']];
             $causa = $c['causa'];
-            $cuerpo = ['corte' => 0, 'tribunal' => 0, 'tipo' => $causa['tipo'], 'rol' => $causa['rol'], 'anio' => $causa['anio']];
-            if ($c['materia'] === 'penal') {
-                $cuerpo['tipo'] = $this->tipoPenal($causa['tipo_causa'] ?? null);
-            }
+            $cuerpo = $this->cuerpoBase($c['materia'], $causa);
             if ($cfg['catalogo']) {
                 try {
                     [$cuerpo['corte'], $cuerpo['tribunal']] = $this->resolverTribunal($causa['tribunal'], $c['materia']);
@@ -540,6 +536,23 @@ class PjudApiClient
         ]));
     }
 
+    /**
+     * Cuerpo base de consultar_/sincronizar_<materia>. Apelaciones: {rol, anio, corte}, con la corte como texto en
+     * `$causa['tribunal']` ("C.A. de Santiago"); las demás: tipo/rol/anio y corte/tribunal en 0 (se resuelven por catálogo).
+     */
+    private function cuerpoBase(string $materia, array $causa): array
+    {
+        if ($materia === 'apelaciones') {
+            return ['rol' => $causa['rol'], 'anio' => $causa['anio'], 'corte' => trim((string) $causa['tribunal'])];
+        }
+        $cuerpo = ['corte' => 0, 'tribunal' => 0, 'tipo' => $causa['tipo'], 'rol' => $causa['rol'], 'anio' => $causa['anio']];
+        if ($materia === 'penal') {
+            $cuerpo['tipo'] = $this->tipoPenal($causa['tipo_causa'] ?? null);
+        }
+
+        return $cuerpo;
+    }
+
     private function tipoPenal(?string $tipoCausa): string
     {
         foreach (self::TIPOS_PENAL as $t) {
@@ -585,6 +598,9 @@ class PjudApiClient
 
     private function normalizarCabecera(string $materia, array $d): array
     {
+        if ($materia === 'apelaciones') {
+            return $this->cabeceraApelaciones($d, (string) ($d['identificador'] ?? ''));
+        }
         if (isset($d['Ruc']) && !isset($d['ruc'])) {
             $d['ruc'] = $d['Ruc'];
         }
@@ -621,8 +637,121 @@ class PjudApiClient
         return $d;
     }
 
+    // ── Corte de Apelaciones ──
+
+    /** Un documento `{doc|url, color}` (o la URL suelta) -> `{url, color}`; null si no hay documento. */
+    private function docApelaciones(mixed $valor, string $ident): ?array
+    {
+        if (is_array($valor)) {
+            $url = $this->urlDocumento($valor['doc'] ?? $valor['url'] ?? null, $ident, 1);
+
+            return $url ? ['url' => $url, 'color' => $valor['color'] ?? null] : null;
+        }
+        $url = is_string($valor) ? $this->urlDocumento($valor, $ident, 1) : null;
+
+        return $url ? ['url' => $url, 'color' => null] : null;
+    }
+
+    /**
+     * `doc_principal` llega como par ícono/color (`fa-check`, `#AD5454`) y la forma exacta no está confirmada: se acepta
+     * objeto (`icono`/`color`), lista o texto. Queda `{icono, color}`.
+     */
+    private static function iconoApelaciones(mixed $valor): ?array
+    {
+        if (is_array($valor) && array_is_list($valor)) {
+            $textos = array_values(array_filter($valor, 'is_string'));
+            if (!$textos) {
+                return null;
+            }
+            $icono = current(array_filter($textos, static fn ($t) => !str_starts_with($t, '#')));
+            $color = current(array_filter($textos, static fn ($t) => str_starts_with($t, '#')));
+
+            return ['icono' => $icono ?: null, 'color' => $color ?: null];
+        }
+        if (is_array($valor)) {
+            $icono = $valor['icono'] ?? $valor['icon'] ?? $valor['clase'] ?? null;
+            $icono ??= current(array_filter($valor, static fn ($v) => is_string($v) && str_starts_with($v, 'fa'))) ?: null;
+            $icono ??= current(array_filter(array_keys($valor), static fn ($k) => is_string($k) && str_starts_with($k, 'fa'))) ?: null;
+            $color = $valor['color'] ?? (current(array_filter($valor, static fn ($v) => is_string($v) && str_starts_with($v, '#'))) ?: null);
+
+            return $icono || $color ? ['icono' => $icono, 'color' => $color] : null;
+        }
+        if (is_string($valor) && $valor !== '') {
+            $esColor = str_starts_with($valor, '#');
+
+            return ['icono' => $esColor ? null : $valor, 'color' => $esColor ? $valor : null];
+        }
+
+        return null;
+    }
+
+    private function cabeceraApelaciones(array $d, string $ident): array
+    {
+        foreach (['certificado_envio', 'ebook'] as $k) {
+            $d[$k] = $this->docApelaciones($d[$k] ?? null, $ident);
+        }
+        $d['texto'] = array_values(array_map(fn ($t) => [
+            'id' => $t['id'] ?? null,
+            'doc_principal' => self::iconoApelaciones($t['doc_principal'] ?? null),
+            'doc' => $this->docApelaciones($t['doc'] ?? null, $ident),
+            'fecha' => $t['fecha'] ?? null,
+            'referencia' => $t['referencia'] ?? null,
+        ], array_filter($d['texto'] ?? [], 'is_array')));
+        $d['anexo'] = array_values(array_map(fn ($a) => [
+            'id' => $a['id'] ?? null,
+            'doc' => $this->docApelaciones($a['doc'] ?? null, $ident),
+            'codigo' => isset($a['codigo']) ? (string) $a['codigo'] : null,
+            'tipo_documento' => trim((string) ($a['tipo_documento'] ?? '')) ?: null,
+            'cantidad' => isset($a['cantidad']) ? (string) $a['cantidad'] : null,
+            'observacion_documento' => $a['observacion_documento'] ?? null,
+        ], array_filter($d['anexo'] ?? [], 'is_array')));
+        $primera = $d['expediente_primera'] ?? null;
+        $d['expediente_primera'] = is_array($primera) && $primera ? $primera : null;
+
+        return $d;
+    }
+
+    /** consultar_movimientos_apelaciones: `doc` pasa a `documentos` y el `doc` de cada anexo del movimiento queda como URL absoluta. */
+    private function seccionesApelaciones(array $mov, string $ident): array
+    {
+        $movimientos = [];
+        foreach ($mov['movimientos'] ?? [] as $item) {
+            if (!is_array($item)) {
+                continue;
+            }
+            $crudos = $item['doc'] ?? [];
+            unset($item['doc']);
+            if (is_string($crudos) || (is_array($crudos) && !array_is_list($crudos))) {
+                $crudos = [$crudos];
+            }
+            $item['documentos'] = array_values(array_filter(array_map(fn ($c) => $this->docApelaciones($c, $ident), (array) $crudos)));
+            $anexos = [];
+            foreach ($item['anexo'] ?? [] as $a) {
+                if (is_array($a)) {
+                    $doc = $this->docApelaciones($a['doc'] ?? null, $ident);
+                    $anexos[] = ['doc' => $doc['url'] ?? null, 'color' => $a['color'] ?? ($doc['color'] ?? null)] + $a;
+                }
+            }
+            $item['anexo'] = $anexos;
+            $geo = $item['georeferencia'] ?? null;
+            $item['georeferencia'] = is_array($geo) && $geo ? $geo : null;
+            $movimientos[] = $item;
+        }
+
+        return [
+            'movimientos' => $movimientos,
+            'liquidantes' => array_values(array_filter($mov['liquidantes'] ?? [], 'is_array')),
+            'exhortos' => array_values(array_filter($mov['exhortos'] ?? [])),
+            // El proveedor lo escribió con la errata `incompentencia`.
+            'incompetencia' => array_values(array_filter($mov['incompetencia'] ?? $mov['incompentencia'] ?? [])),
+        ];
+    }
+
     private function seccionesDe(string $materia, array $mov, string $ident, int $cuaderno): array
     {
+        if ($materia === 'apelaciones') {
+            return $this->seccionesApelaciones($mov, $ident);
+        }
         $cfg = self::CONFIG[$materia];
         $s = [];
         foreach ($cfg['secciones'] as $k) {

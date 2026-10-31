@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Entity\Agenda;
+use App\Repository\CausaRepository;
 use App\Entity\Usuario;
 use App\Entity\ContratoRol;
 use App\Entity\AgendaObservacion;
@@ -321,6 +322,7 @@ class PanelAbogadoController extends AbstractController
     }
     #[Route("/{id}/contrata", name: "panel_abogado_contrata", methods: ["GET","POST"])]
     public function contrata(Agenda $agenda,Request $request,
+                            \App\Repository\CorteRepository $corteRepository,
                             \App\Service\LexflowCausaCreator $lexflowCausas,
                             \App\Service\CorreoBienvenidaService $correoBienvenida,
                             AgendaStatusRepository  $agendaStatusRepository,
@@ -619,6 +621,7 @@ class PanelAbogadoController extends AbstractController
             $anio = $request->request->all('hdAnioCausa');
             $caratulados=$request->request->all('hdCaratulado');
             $hdjuzgados=$request->request->all('hdJuzgado');
+            $hdcortes=$request->request->all('hdCorte');
             $countCausa=count($submaterias);
             for ($i=0; $i < $countCausa ; $i++) {
 
@@ -646,7 +649,10 @@ class PanelAbogadoController extends AbstractController
                 $causa->setMateria($materia);
             // echo $contratoAnexo->getId();
                 //$causa->setAnexo($contratoAnexoRepository->find($contratoAnexo->getId()));
-                if(null !== $letra[$i]){
+                // Suprema: solo rol y año. Apelaciones: rol, año y corte (sin letra ni tribunal).
+                $sinLetra = in_array($materia->getId(), CausaRepository::MATERIAS_APELACION, true);
+                $sinCorte = $materia->getId() === CausaRepository::MATERIA_SUPREMA;
+                if(null !== $letra[$i] && !$sinLetra){
                     $causa->setLetra($letra[$i]);
                 }
                 if(null !== $rol[$i]){
@@ -661,7 +667,7 @@ class PanelAbogadoController extends AbstractController
                 if($servicio!==null && $servicio->getMateria()->getId()===$materia->getId()){
                     $causa->setServicio($servicio);
                 }
-                if(null !== $hdjuzgados[$i]){
+                if(!$sinLetra && null !== $hdjuzgados[$i]){
                     $juzgado=$juzgadoRepository->find($hdjuzgados[$i]);
                     $causa->setJuzgado($juzgado);
                     if($juzgado){
@@ -669,6 +675,9 @@ class PanelAbogadoController extends AbstractController
                             $causa->setCorte($juzgado->getCorte());
                         }
                     }
+                }
+                if($sinLetra && !$sinCorte && !empty($hdcortes[$i])){
+                    $causa->setCorte($corteRepository->find($hdcortes[$i]));
                 }
 
 

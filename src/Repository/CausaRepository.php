@@ -49,12 +49,15 @@ class CausaRepository extends ServiceEntityRepository
 
     /** Materias cuyas causas son apelaciones (Corte de Apelaciones / Corte Suprema). */
     public const MATERIAS_APELACION = [9, 10];
+    /** Corte Suprema: solo rol y año (sin letra, corte ni tribunal). Apelaciones: sin letra ni tribunal, con corte. */
+    public const MATERIA_SUPREMA = 9;
+    public const MATERIA_APELACIONES = 10;
     /** Materia Penal: en Lexflow su rol se registra sin la letra/tipo (p. ej. "1071-2020", no "Exhorto-1071-2020"). */
     public const MATERIA_PENAL = 4;
 
     /**
      * Parámetros `roles` y `roles_origen` de los cortes de edapi (causas/cortes y estado-diario/cortes).
-     * - roles: causas de materia apelación, "libro-rol-era|corte" (máx. 300).
+     * - roles: causas de materia apelación, "rol-era|corte" (máx. 300).
      * - roles_origen: causas de las demás materias (origen de las apelaciones), "rol|tribunal".
      *
      * @return array{roles:string,roles_origen:string}
@@ -63,10 +66,13 @@ class CausaRepository extends ServiceEntityRepository
     {
         $apelaciones = [];
         foreach ($this->causasActivas($empresaId, true) as $f) {
-            if (trim((string) $f['letra']) === '' || trim((string) $f['rol']) === '' || !$f['anio']) {
+            // Apelaciones/Suprema se identifican solo por rol y era (año), sin letra: "rol-era|corte". Edapi exige
+            // rol numérico y era de 4 dígitos (si no, responde 422 a todo el listado), así que se omite lo que no cumpla.
+            $rol = trim((string) $f['rol']);
+            if (!ctype_digit($rol) || !preg_match('/^\d{4}$/', (string) $f['anio'])) {
                 continue;
             }
-            $clave = trim($f['letra']) . '-' . trim($f['rol']) . '-' . $f['anio'];
+            $clave = $rol . '-' . $f['anio'];
             $corte = trim(str_replace(',', ' ', (string) $f['corte']));
             $apelaciones[$clave . ($corte !== '' ? '|' . $corte : '')] = true;
         }

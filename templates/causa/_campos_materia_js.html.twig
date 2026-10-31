@@ -1,0 +1,31 @@
+{# JS sin etiqueta <script>: se incluye dentro del <script> de cada pantalla. #}
+    // Campos de la causa que no se usan según la materia:
+    //  - 9 Corte Suprema: solo rol y año (Letra, Corte y Tribunal desactivados).
+    //  - 10 Corte de Apelaciones: rol, año y corte (Letra y Tribunal desactivados).
+    var MATERIA_SUPREMA = 9;
+    var MATERIA_APELACIONES = 10;
+    function esApelacion(materiaId){
+        materiaId = parseInt(materiaId, 10);
+        return materiaId === MATERIA_SUPREMA || materiaId === MATERIA_APELACIONES;
+    }
+    function esSuprema(materiaId){
+        return parseInt(materiaId, 10) === MATERIA_SUPREMA;
+    }
+    // Recibe los selectores de cada campo; vacía y desactiva los que la materia no usa,
+    // y reactiva los demás. Cualquiera puede ser null si la pantalla no lo tiene.
+    function aplicaCamposApelacion(materiaId, letraSel, juzgadoSel, corteSel){
+        var sinLetraNiTribunal = esApelacion(materiaId);
+        var sinCorte = esSuprema(materiaId);
+        if(letraSel){
+            if(sinLetraNiTribunal){ $(letraSel).val(''); }
+            $(letraSel).prop('disabled', sinLetraNiTribunal);
+        }
+        if(juzgadoSel){
+            if(sinLetraNiTribunal){ $(juzgadoSel).val(''); }
+            $(juzgadoSel).prop('disabled', sinLetraNiTribunal);
+        }
+        if(corteSel){
+            if(sinCorte){ $(corteSel).val(''); }
+            $(corteSel).prop('disabled', sinCorte);
+        }
+    }

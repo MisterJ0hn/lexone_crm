@@ -94,16 +94,22 @@ class CausaController extends AbstractController
             return new Response('Falta la materia de la causa',400);
         }
         $causa->setMateria($materia);
+        // Apelaciones/Suprema no usan letra ni tribunal.
+        $esApelacion = in_array($materia->getId(), CausaRepository::MATERIAS_APELACION, true);
+        if ($esApelacion) {
+            $causa->setLetra(null);
+        }
 
         if($servicio!==null && $servicio->getMateria()->getId()===$materia->getId()){
             $causa->setServicio($servicio);
         }
 
         // La corte elegida en el formulario manda; si no viene, se toma la del juzgado (como en contrata).
-        if($request->query->get('corte')){
+        // Solo ids numéricos: un combo sin "value" enviaba el texto "Seleccione ...".
+        if(ctype_digit((string) $request->query->get('corte')) && $materia->getId()!==CausaRepository::MATERIA_SUPREMA){
             $causa->setCorte($corteRepository->find($request->query->get('corte')));
         }
-        if(null !== $request->query->get('juzgado') && $request->query->get('juzgado') !== ''){
+        if(!$esApelacion && ctype_digit((string) $request->query->get('juzgado'))){
             $juzgado=$juzgadoRepository->find($request->query->get('juzgado'));
             // Cada materia tiene sus propios juzgados.
             if($juzgado && !$materiaJuzgadoRepository->atiende($materia,$juzgado)){

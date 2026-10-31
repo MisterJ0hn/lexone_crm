@@ -222,7 +222,7 @@
             <div class="table-responsive">
                 <table class="table table-sm table-striped text-nowrap">
                     <thead>
-                        <tr><th>FechaIngreso</th><th>Caratulado</th><th>Ubicación</th><th>FechaUbicación</th><th>Corte</th><th>TipoRecurso</th></tr>
+                        <tr><th>FechaIngreso</th><th>Caratulado</th><th>Ubicación</th><th>FechaUbicación</th><th>Corte</th><th>TipoRecurso</th><th></th></tr>
                     </thead>
                     <tbody>
                     {% for c in datos.cortes|default([]) %}
@@ -233,9 +233,10 @@
                             <td class="text-nowrap">{{ m.fecha(c.fecha_ubicacion) }}</td>
                             <td>{{ m.dato(c.corte) }}</td>
                             <td>{{ m.dato(c.tipo_recurso|default(c.tipo|default(null))) }}</td>
+                            <td class="text-nowrap text-right">{% if c.pjud_token|default(null) %}{{ pjud.boton(c.pjud_token, c.pjud_estado|default('nuevo'), false, true) }}{% endif %}</td>
                         </tr>
                     {% else %}
-                        <tr><td colspan="6" class="text-center text-muted py-4">No hay causas de corte</td></tr>
+                        <tr><td colspan="7" class="text-center text-muted py-4">No hay causas de corte</td></tr>
                     {% endfor %}
                     </tbody>
                 </table>

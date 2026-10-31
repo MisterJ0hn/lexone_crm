@@ -57,6 +57,7 @@ class AnexoController extends AbstractController
 
     #[Route("/{id}/causas", name: "anexo_causas", methods: ["GET","POST"])]
     public function causas(Contrato $contrato,
+                            \App\Repository\CorteRepository $corteRepository,
                             \App\Service\LexflowCausaCreator $lexflowCausas,
                             CuotaRepository $cuotaRepository,
                             JuzgadoRepository $juzgadoRepository,
@@ -140,6 +141,7 @@ class AnexoController extends AbstractController
             $anio = $request->request->all('hdAnioCausa');
             $caratulados=$request->request->all('hdCaratulado');
             $hdjuzgados=$request->request->all('hdJuzgado');
+            $hdcortes=$request->request->all('hdCorte');
 
             // Materia es un catálogo global: mismo listado para todas las empresas.
             $materiasHabilitadas=[];
@@ -173,7 +175,10 @@ class AnexoController extends AbstractController
                     continue;
                 }
                 $causa->setMateria($materia);
-                if(null !== $letra[$i]){
+                // Suprema: solo rol y año. Apelaciones: rol, año y corte (sin letra ni tribunal).
+                $sinLetra = in_array($materia->getId(), CausaRepository::MATERIAS_APELACION, true);
+                $sinCorte = $materia->getId() === CausaRepository::MATERIA_SUPREMA;
+                if(null !== $letra[$i] && !$sinLetra){
                     $causa->setLetra($letra[$i]);
                 }
                 if(null !== $rol[$i]){
@@ -188,14 +193,17 @@ class AnexoController extends AbstractController
                 if($servicio!==null && $servicio->getMateria()->getId()===$materia->getId()){
                     $causa->setServicio($servicio);
                 }
-                if(null !== $hdjuzgados[$i]){
+                if(!$sinLetra && null !== $hdjuzgados[$i]){
                     $juzgado=$juzgadoRepository->find($hdjuzgados[$i]);
                     $causa->setJuzgado($juzgado);
-                    if($juzgado){                
+                    if($juzgado){
                         if($juzgado->getCorte()!=null){
                             $causa->setCorte($juzgado->getCorte());
                         }
                     }
+                }
+                if($sinLetra && !$sinCorte && !empty($hdcortes[$i])){
+                    $causa->setCorte($corteRepository->find($hdcortes[$i]));
                 }
 
                 
