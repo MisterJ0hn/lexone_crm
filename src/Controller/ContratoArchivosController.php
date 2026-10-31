@@ -2,9 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Causa;
 use Doctrine\ORM\EntityManagerInterface;
-
-use App\Entity\Contrato;
 use App\Entity\ContratoArchivos;
 use App\Form\ContratoArchivosType;
 use App\Repository\ContratoArchivosRepository;
@@ -21,32 +20,35 @@ class ContratoArchivosController extends AbstractController
     public function __construct(private readonly EntityManagerInterface $entityManager)
     {
     }
-    #[Route("/{id}", name: "contrato_archivos_index", methods: ["GET"])]
-    public function index(Contrato $contrato): Response
+     #[Route(path: '/{id}', name: 'contrato_archivos_index', methods: ['GET'])]
+    public function index(Causa $causa, ContratoArchivosRepository $contratoArchivosRepository): Response
     {
         $this->denyAccessUnlessGranted('view','contrato_archivos');
-
-        $archivos=$contrato->getContratoArchivos();
+        $contrato= $causa->getAgenda()->getContrato();
+        $archivos=$contratoArchivosRepository->findBy(['causa'=>$causa]);
         return $this->render('contrato_archivos/index.html.twig', [
             'contrato_archivos' => $archivos,
-            'contrato'=>$contrato
+            'contrato'=>$contrato,
+            'causa'=>$causa
         ]);
     }
 
-    #[Route("/{id}/new", name: "contrato_archivos_new", methods: ["GET","POST"])]
-    public function new(Contrato $contrato, Request $request): Response
+    #[Route(path: '/{id}/new', name: 'contrato_archivos_new', methods: ['GET', 'POST'])]
+    public function new(Causa $causa, Request $request): Response
     {
         $this->denyAccessUnlessGranted('create','contrato_archivos');
         $user=$this->getUser();
+        $contrato= $causa->getAgenda()->getContrato();
         $contratoArchivo = new ContratoArchivos();
         $contratoArchivo->setFechaSubida(new DateTime(date('Y-m-d h:i:s')));
         $contratoArchivo->setContrato($contrato);
+        $contratoArchivo->setCausa($causa);
         $contratoArchivo->setUsuarioRegistro($user);
         $form = $this->createForm(ContratoArchivosType::class, $contratoArchivo);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->entityManager;
+            $entityManager = $this->getDoctrine()->getManager();
             
             //subida de archivo
 
@@ -78,7 +80,7 @@ class ContratoArchivosController extends AbstractController
                 
             }
 
-            return $this->redirectToRoute('contrato_archivos_index',['id'=>$contrato->getId()]);
+            return $this->redirectToRoute('contrato_archivos_index',['id'=>$causa->getId()]);
         }
 
         return $this->render('contrato_archivos/new.html.twig', [
@@ -88,23 +90,15 @@ class ContratoArchivosController extends AbstractController
         ]);
     }
 
-    #[Route("/{id}", name: "contrato_archivos_show", methods: ["GET"])]
-    /*
-    public function show(ContratoArchivos $contratoArchivo): Response
-    {
-        return $this->render('contrato_archivos/show.html.twig', [
-            'contrato_archivo' => $contratoArchivo,
-        ]);
-    }
-*/
-    #[Route("/{id}/edit", name: "contrato_archivos_edit", methods: ["GET","POST"])]
+   
+    #[Route(path: '/{id}/edit', name: 'contrato_archivos_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, ContratoArchivos $contratoArchivo): Response
     {
         $form = $this->createForm(ContratoArchivosType::class, $contratoArchivo);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->entityManager->flush();
+            $this->getDoctrine()->getManager()->flush();
 
             return $this->redirectToRoute('contrato_archivos_index');
         }
@@ -115,18 +109,18 @@ class ContratoArchivosController extends AbstractController
         ]);
     }
 
-    #[Route("/{id}", name: "contrato_archivos_delete", methods: ["DELETE"])]
+    #[Route(path: '/{id}', name: 'contrato_archivos_delete', methods: ['DELETE'])]
     public function delete(Request $request, ContratoArchivos $contratoArchivo): Response
     {
         $this->denyAccessUnlessGranted('full','contrato_archivos');
-        $contrato =$contratoArchivo->getContrato();
+        $causa =$contratoArchivo->getCausa();
         if ($this->isCsrfTokenValid('delete'.$contratoArchivo->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->entityManager;
+            $entityManager = $this->getDoctrine()->getManager();
             
             $entityManager->remove($contratoArchivo);
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('contrato_archivos_index',['id'=>$contrato->getId()]);
+        return $this->redirectToRoute('contrato_archivos_index',['id'=>$causa->getId()]);
     }
 }

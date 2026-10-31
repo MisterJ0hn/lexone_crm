@@ -3,21 +3,46 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>AdminLTE 3 | Recover Password</title>
+  <title>Mi CRM</title>
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- Font Awesome -->
   <link rel="stylesheet" href="/build/adminlte/plugins/fontawesome-free/css/all.min.css">
+  <style>.fondo-login {
+    position: relative;
+    overflow: hidden;
+    background: none !important;
+}
+.fondo-login::before {
+    content: "";
+    position: fixed;
+    top: -20px;
+    left: -20px;
+    right: -20px;
+    bottom: -20px;
+    background-image: url('/build/img/fondo.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transform: scale(1.05);
+    z-index: -2;
+}
+.fondo-login .login-box {
+    position: relative;
+    z-index: 1;
+}
+.fondo-login .login-logo, .fondo-login .login-logo a { color: #837f7fe3; text-shadow: 0 1px 8px rgb(0 0 0 / .45); }
+</style>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/assets/app.css?v={{ 'now'|date('YmdH') }}">
 </head>
-<body class="hold-transition login-page">
+<body class="hold-transition login-page fondo-login">
     <div class="login-box">
         <div class="login-logo">
-            Mi CRM
+            <a href="#"><b>Lex</b>ONE</a>
         </div>
         <!-- /.login-logo -->
         <div class="card">

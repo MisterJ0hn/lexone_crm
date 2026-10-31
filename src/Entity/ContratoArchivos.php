@@ -27,6 +27,9 @@ class ContratoArchivos
     #[ORM\Column(type: "datetime")]
     private $fechaSubida;
 
+     #[ORM\ManyToOne(targetEntity: Causa::class)]
+    private $causa;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -76,6 +79,17 @@ class ContratoArchivos
     public function setFechaSubida(\DateTimeInterface $fechaSubida): self
     {
         $this->fechaSubida = $fechaSubida;
+
+        return $this;
+    }
+      public function getCausa(): ?Causa
+    {
+        return $this->causa;
+    }
+
+    public function setCausa(?Causa $causa): self
+    {
+        $this->causa = $causa;
 
         return $this;
     }
