@@ -48,8 +48,8 @@ class ContratoArchivosController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            
+            $entityManager = $this->entityManager;
+
             //subida de archivo
 
             $brochureFile =$form->get('url')->getData();
@@ -60,9 +60,12 @@ class ContratoArchivosController extends AbstractController
                
                
                 $originalFilename = pathinfo($brochureFile->getClientOriginalName(), PATHINFO_FILENAME);
-                // this is needed to safely include the file name as part of the URL
-                $safeFilename = $originalFilename;
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$brochureFile->guessExtension();
+                // Nombre seguro: sin rutas, puntos ni caracteres especiales (evita traversal y dobles extensiones).
+                $safeFilename = trim(preg_replace('/[^A-Za-z0-9_-]+/', '_', (function_exists('transliterator_transliterate') ? transliterator_transliterate('Any-Latin; Latin-ASCII', $originalFilename) : false) ?: $originalFilename), '_');
+                $safeFilename = substr($safeFilename !== '' ? $safeFilename : 'archivo', 0, 80);
+                // La extensión ya fue validada contra la lista permitida en ContratoArchivosType.
+                $extension = strtolower($brochureFile->getClientOriginalExtension());
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$extension;
                
                 
                 // Move the file to the directory where brochures are stored
@@ -98,7 +101,7 @@ class ContratoArchivosController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('contrato_archivos_index');
         }
@@ -115,8 +118,8 @@ class ContratoArchivosController extends AbstractController
         $this->denyAccessUnlessGranted('full','contrato_archivos');
         $causa =$contratoArchivo->getCausa();
         if ($this->isCsrfTokenValid('delete'.$contratoArchivo->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
-            
+            $entityManager = $this->entityManager;
+
             $entityManager->remove($contratoArchivo);
             $entityManager->flush();
         }
