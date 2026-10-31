@@ -416,6 +416,12 @@
         }
 
         var c = d.causa;
+        if (d.estado === 'listo' && !c) {
+            // El PJUD respondió sin la causa (p. ej. sin `identificador`): se muestra en vez de dejar el popup vacío.
+            h += '<div class="alert alert-warning"><strong>El Poder Judicial no entregó el detalle de esta causa</strong>' +
+                (d.diagnostico ? '<div class="small mt-1">' + esc(d.diagnostico) + '</div>' : '') +
+                '<button type="button" class="btn btn-outline-secondary btn-sm mt-2" data-pjud-accion="actualizar"' + (s.cargando ? ' disabled' : '') + '>' + (s.cargando ? 'Actualizando...' : 'Reintentar') + '</button></div>';
+        }
         if ((d.estado === 'listo' || d.estado === 'sincronizando') && c && cfg && cfg.vistas) {
             // Apelaciones: el recurso o el expediente de primera instancia.
             h += '<ul class="nav nav-tabs pjud-tabs mb-3">' + [['recurso', 'Recurso'], ['expediente', 'Expediente Primera Instancia']].map(function (v) {

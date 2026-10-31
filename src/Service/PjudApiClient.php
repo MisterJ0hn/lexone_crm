@@ -343,9 +343,12 @@ class PjudApiClient
             $this->sincronizar($materia, $cuerpo, $obtener());
         }
 
-        $detalleEstado = $ultimoError = null;
+        $detalleEstado = $ultimoError = $diagnostico = null;
         try {
             $data = $this->peticion('POST', '/consultar_' . $materia, ['json' => $cuerpo + $this->credencialesCuerpo($obtener())]);
+            // Qué devolvió el PJUD (solo claves): para entender un detalle que llega sin causa.
+            $diagnostico = 'consultar_' . $materia . ' ' . json_encode($cuerpo, JSON_UNESCAPED_UNICODE) . ' -> claves: ' . implode(', ', array_keys(is_array($data['causa'] ?? null) ? $data['causa'] : $data))
+                . (isset($data['mensaje']) && is_string($data['mensaje']) ? ' · mensaje: ' . $data['mensaje'] : '');
             $detalle = $data['causa'] ?? $data;
             $detalleEstado = trim((string) ($detalle['detalle_estado'] ?? '')) ?: null;
             $ultimoError = trim((string) ($detalle['ultimo_error'] ?? '')) ?: null;
@@ -380,6 +383,7 @@ class PjudApiClient
             'mensaje' => $sincronizando ? self::MSG_SINCRONIZANDO : null,
             'detalle_estado' => $detalleEstado,
             'ultimo_error' => $ultimoError,
+            'diagnostico' => $diagnostico,
             'causa' => $identificador ? $this->normalizarCabecera($materia, $detalle) : null,
             'cuaderno_consultado_id' => null,
             'secciones' => array_fill_keys($cfg['secciones'], []),
