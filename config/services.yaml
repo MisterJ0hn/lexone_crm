@@ -8,6 +8,8 @@ parameters:
     edapi_url_defecto: 'https://edapi.temposoft.cl'
     pjud_api_url_defecto: 'https://api-pjud.codifica.cl'
     pjud_api_verify_ssl_defecto: true
+    # Minutos de inactividad tras los cuales se cierra la sesión (0 = sin límite). Solo se cambia aquí.
+    sesion_inactividad_min: 30
     url_raiz: '%kernel.project_dir%'
     url_root: '%kernel.project_dir%/public'
     recaptcha_site_key: '%env(RECAPTCHA_SITE_KEY)%'

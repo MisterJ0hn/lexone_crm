@@ -152,8 +152,13 @@
             </table>
             {% endif %}
             {% endif %}
+            {% if contrato.isProBono %}
+            <h4>Pro Bono</h4>
 
-            <h4>Datos Contrato</h4>
+           
+            {% else %}
+                 <h4>Datos Contrato</h4>
+
             <div class="row">
     
                 <div class="col-sm-12 col-md-3">
@@ -204,11 +209,13 @@
                     <p>{{contrato.fechaPrimerPago|date('Y-m-d')}}</p> 
                 </div>
             </div>
-           
+            {% endif %}
+            <div class="row">
             <div class="col-sm-12 col-md-12">
                 <small class="text-muted">Observación</small>
                 <p>{{contrato.observacion|raw}}</p>   
                 
+            </div>
             </div>
             {% if metodo is defined %}
                 

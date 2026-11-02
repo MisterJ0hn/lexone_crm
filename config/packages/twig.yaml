@@ -6,6 +6,7 @@ twig:
         sesion: '@App\Service\SesionGenerator'
         url_root: '%url_root%'
         url_web: '%url_web%'
+        sesion_inactividad_min: '%sesion_inactividad_min%'
         audio_contratos: '%audio_contratos%'
         pdf_contrato: '%pdf_contratos%'
         img_pagos: '%img_pagos%'
