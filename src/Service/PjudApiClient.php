@@ -246,6 +246,14 @@ class PjudApiClient
             throw new PjudApiException('No se pudo conectar con el servicio de detalle PJUD: ' . mb_substr($e->getMessage(), 0, 220), 0, $e);
         }
         $codigo = $resp->getStatusCode();
+        if (str_contains($ruta, '_apelaciones')) {
+            $this->logger?->info('PJUD apelaciones: respuesta', [
+                'empresa' => $this->empresaId, 'metodo' => $metodo, 'url' => $this->base . $ruta, 'via' => $this->modoEdapi ? 'edapi' : 'api-pjud directo',
+                'http' => $codigo, 'cuerpo_peticion' => $opciones['json'] ?? null ? array_diff_key($opciones['json'], ['clave' => 1, 'password' => 1]) : null,
+                'cuerpo_respuesta' => mb_substr((string) $resp->getBody(), 0, 500),
+            ]);
+            $resp->getBody()->rewind();
+        }
         if ($this->modoEdapi) {
             match ($codigo) {
                 401 => throw new PjudApiException('Lexflow rechazó la API Key (inválida, revocada, vencida o IP del servidor no permitida).'),

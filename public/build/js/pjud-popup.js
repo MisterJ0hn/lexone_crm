@@ -111,22 +111,26 @@
             : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path stroke-linecap="round" d="m9 9 6 6m0-6-6 6"/></svg>';
         return '<span title="' + (si ? 'Documento principal' : 'No es el documento principal') + '"' + (dp.color ? ' style="color:' + esc(dp.color) + '"' : '') + '>' + svg + '</span>';
     }
+    /** Tabla de los textos del recurso (causa.texto) de Apelaciones. */
+    function tablaTextoApelaciones(texto) {
+        return tabla([
+            colHtml('Doc. principal', function (t) { return docPrincipal(t.doc_principal); }, 'c'),
+            colHtml('Doc.', function (t) { return t.doc ? pdf(t.doc.url, null, t.doc.color) : '<span>-</span>'; }, 'c'),
+            col('Fecha', 'fecha'), col('Referencia', 'referencia')], texto);
+    }
+    /** Tabla de los anexos de la causa (causa.anexo) de Apelaciones. */
+    function tablaAnexoApelaciones(anexo) {
+        return tabla([
+            colHtml('Doc.', function (a) { return a.doc ? pdf(a.doc.url, null, a.doc.color) : '<span>-</span>'; }, 'c'),
+            col('Código', 'codigo'), col('Tipo Documento', 'tipo_documento'), col('Cantidad', 'cantidad'), col('Observación', 'observacion_documento')], anexo);
+    }
     /** Pestaña Documentos de Apelaciones: texto del recurso y anexos de la causa. */
     function documentosApelaciones(d) {
         var c = d.causa || {}, texto = lista(c.texto), anexo = lista(c.anexo);
         if (!texto.length && !anexo.length) { return '<p class="text-muted small">Sin documentos registrados.</p>'; }
         var h = '';
-        if (texto.length) {
-            h += '<p class="pjud-k mb-1">Texto</p>' + tabla([
-                colHtml('Doc. principal', function (t) { return docPrincipal(t.doc_principal); }, 'c'),
-                colHtml('Doc.', function (t) { return t.doc ? pdf(t.doc.url, null, t.doc.color) : '<span>-</span>'; }, 'c'),
-                col('Fecha', 'fecha'), col('Referencia', 'referencia')], texto);
-        }
-        if (anexo.length) {
-            h += '<p class="pjud-k mb-1 mt-3">Anexos</p>' + tabla([
-                colHtml('Doc.', function (a) { return a.doc ? pdf(a.doc.url, null, a.doc.color) : '<span>-</span>'; }, 'c'),
-                col('Código', 'codigo'), col('Tipo Documento', 'tipo_documento'), col('Cantidad', 'cantidad'), col('Observación', 'observacion_documento')], anexo);
-        }
+        if (texto.length) { h += '<p class="pjud-k mb-1">Texto</p>' + tablaTextoApelaciones(texto); }
+        if (anexo.length) { h += '<p class="pjud-k mb-1 mt-3">Anexos</p>' + tablaAnexoApelaciones(anexo); }
         return h;
     }
     /** Vista "Expediente Primera Instancia" y la causa de la cartera (CRM) que le corresponde. */
@@ -161,6 +165,9 @@
                 var out = [];
                 if (c.certificado_envio) { out.push(['Certificado de Envío', pdf(c.certificado_envio.url, null, c.certificado_envio.color)]); }
                 if (c.ebook) { out.push(['eBook', pdf(c.ebook.url, null, c.ebook.color)]); }
+                // Texto y Anexo de la causa: carpeta con el total que abre un popup con el detalle.
+                if (lista(c.texto).length) { out.push(['Texto', carpeta(lista(c.texto).length, 'sub-causa', 'texto', 'Ver texto')]); }
+                if (lista(c.anexo).length) { out.push(['Anexo', carpeta(lista(c.anexo).length, 'sub-causa', 'anexo', 'Ver anexos')]); }
                 return out;
             },
             tabs: [
@@ -754,7 +761,11 @@
         else if (accion === 'toggle-anexos') { estado.verAnexos = !estado.verAnexos; render(); }
         else if (accion === 'toggle-receptor') { estado.verReceptor = !estado.verReceptor; render(); }
         else if (accion === 'toggle-extra') { var n = parseInt(idx, 10); estado.verExtra = estado.verExtra === n ? null : n; render(); }
-        else if (accion === 'anexos-tramite') {
+        else if (accion === 'sub-causa') {
+            var cc = (estado.datos && estado.datos.causa) || {};
+            if (idx === 'texto') { abrirSub('Texto', tablaTextoApelaciones(lista(cc.texto))); }
+            else { abrirSub('Anexos de la causa', tablaAnexoApelaciones(lista(cc.anexo))); }
+        } else if (accion === 'anexos-tramite') {
             var f = filaDe(idx);
             if (f) { abrirSub('Anexos del trámite', tabla(estado.datos.materia === 'familia' ? COLS_ANEXO_FAMILIA : COLS_ANEXO, lista(f.anexo))); }
         } else if (accion === 'geo') {
