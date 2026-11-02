@@ -385,7 +385,7 @@
         });
         letrasCausaNueva(materiaId);
         // La corte depende de la materia y habilita el combo de juzgados.
-        $(".juzgado-nueva").html('<option value="">Seleccione Tribunal</option>');
+        $(".juzgado-nueva").html('<option value="">' + textoSeleccioneTribunal(materiaId) + '</option>');
         $.ajax({
             url: "/materia/"+materiaId+"/corte_combo",
             type: "post",
@@ -400,7 +400,7 @@
 
     function cambiaCorteNueva(corteId){
         if(!corteId || esApelacion($(".cbomateria-nueva").val())){
-            $(".juzgado-nueva").html('<option value="">Seleccione Tribunal</option>');
+            $(".juzgado-nueva").html('<option value="">' + textoSeleccioneTribunal($(".cbomateria-nueva").val()) + '</option>');
             return;
         }
         $.ajax({

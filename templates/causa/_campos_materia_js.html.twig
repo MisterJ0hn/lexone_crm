@@ -34,8 +34,32 @@
         var req = esCorteApelaciones(materiaId);
         $c.prop('required', req).attr('placeholder', req ? 'Caratulado *' : 'Caratulado');
     }
+    // Texto de la opción vacía del combo de tribunal: en Corte de Apelaciones no se usa tribunal, así que va sin texto.
+    function textoSeleccioneTribunal(materiaId){
+        return esCorteApelaciones(materiaId) ? '' : 'Seleccione Tribunal';
+    }
+    // Solo en los formularios "Agregar causa" de la línea de tiempo (clases -nueva / -convenio / -cliente):
+    // en Corte de Apelaciones se quita el texto "Letra", "N°" pasa a "Rol", "Año" a "Era" y la opción vacía del tribunal queda sin texto.
+    function aplicaEtiquetasApelaciones(materiaId, letraSel, juzgadoSel){
+        var apel = esCorteApelaciones(materiaId);
+        var $letra, $rol, $anio;
+        if(typeof letraSel === 'string'){
+            if(!/-(nueva|convenio|cliente)$/.test(letraSel)){ return; }
+            $letra = $(letraSel); $rol = $(letraSel.replace('txtLetra', 'txtRol')); $anio = $(letraSel.replace('txtLetra', 'txtAnio'));
+        } else {
+            var $f = $(letraSel).closest('.agregar-causa-cliente');
+            if(!$f.length){ return; }
+            $letra = $f.find('.txtLetra-cliente'); $rol = $f.find('.txtRol-cliente'); $anio = $f.find('.txtAnio-cliente');
+        }
+        $letra.filter('input').attr('placeholder', apel ? '' : 'Letra');
+        $rol.attr('placeholder', apel ? 'Rol' : 'N°');
+        $anio.attr('placeholder', apel ? 'Era' : 'Año');
+        if(juzgadoSel){
+            $(juzgadoSel).find('option[value=""]').first().text(apel ? '' : 'Seleccione Tribunal');
+        }
+    }
     function aplicaCamposApelacion(materiaId, letraSel, juzgadoSel, corteSel){
-        if(letraSel){ aplicaCaratuladoRequerido(materiaId, letraSel); }
+        if(letraSel){ aplicaCaratuladoRequerido(materiaId, letraSel); aplicaEtiquetasApelaciones(materiaId, letraSel, juzgadoSel); }
         var sinLetraNiTribunal = esApelacion(materiaId);
         var sinCorte = esSuprema(materiaId);
         if(letraSel){

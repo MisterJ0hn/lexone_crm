@@ -706,7 +706,7 @@
             type: "post", dataType: "html", cache: false, contentType: false, processData: false, async: true,
             success:function(data){
                 $(".corte-convenio").html(data);
-                $(".juzgado-convenio").html('<option value="">Seleccione Tribunal</option>');
+                $(".juzgado-convenio").html('<option value="">' + textoSeleccioneTribunal(materiaId) + '</option>');
                 aplicaCamposApelacion($('.cbomateria-convenio').val(), '.txtLetra-convenio', '.juzgado-convenio', '.corte-convenio');
             }
         });
@@ -860,7 +860,7 @@
             async: true,
             success: function(data){
                 $corte.html(data);
-                $juzgado.html('<option value="">Seleccione Tribunal</option>');
+                $juzgado.html('<option value="">' + textoSeleccioneTribunal(materiaId) + '</option>');
                 aplicaCamposApelacion(materiaId, $fila.find('.txtLetra-cliente'), $juzgado, $corte);
             }
         });
