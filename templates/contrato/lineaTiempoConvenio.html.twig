@@ -50,12 +50,6 @@
                        
                     </div>
                     <div class="card-body">
-                        <div class="mb-2">
-                            <button type="button" class="btn btn-sm btn-primary"
-                                onclick="abrirEditarCliente('{{ path('contrato_convenio_editar_cliente', {'id': contrato.id, 'cliente': grupo.cliente.id}) }}')">
-                                <i class="fas fa-edit"></i> Modificar datos
-                            </button>
-                        </div>
                         <div class="row">
                             <div class="col-sm-12 col-md-3">
                                 <small class="text-muted">Rut</small><br>
@@ -149,6 +143,15 @@
                                     </div>
                                 </div>
                             </div>
+                            {% if is_granted('edit','clave_pjud') %}
+                            <div class="col-sm-12 col-md-2 d-flex align-items-end">
+                                <button type="button" class="btn btn-sm btn-outline-primary btn-editar-credenciales"
+                                    data-url="{{ path('contrato_convenio_credenciales_pjud', {'id': contrato.id, 'cliente': grupo.cliente.id}) }}"
+                                    data-rut="{{ grupo.cliente.pjudRut }}" data-clave="{{ grupo.cliente.claveUnica }}">
+                                    <i class="fas fa-edit"></i> Modificar
+                                </button>
+                            </div>
+                            {% endif %}
                         </div>
                         {% endif %}
                         <hr>
@@ -467,6 +470,42 @@
     </div>
 </div>
 
+{% if is_granted('edit','clave_pjud') %}
+<!-- Modal: Modificar solo las credenciales PJUD de un cliente -->
+<div class="modal fade" id="modalCredencialesPjud" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="post" action="" id="formCredencialesPjud">
+                <input type="hidden" name="_token" value="{{ csrf_token('credenciales_pjud' ~ contrato.id) }}">
+                <div class="modal-header">
+                    <h5 class="modal-title">Credenciales PJUD</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <small class="text-muted">Rut</small>
+                        <input type="text" name="pjudRut" class="form-control" autocomplete="off">
+                    </div>
+                    <div class="form-group mb-0">
+                        <small class="text-muted">Clave única</small>
+                        <div class="input-group">
+                            <input type="password" name="claveUnica" class="form-control" autocomplete="new-password">
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-outline-secondary" onclick="toggleClaveUnica(this)" title="Mostrar/ocultar"><i class="fas fa-eye"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+
 <!-- Modal: Modificar datos del cliente (el formulario se carga por AJAX) -->
 <div class="modal fade" id="modalEditarCliente" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-xl" role="document">
@@ -562,6 +601,16 @@
         $input.attr('type', visible ? 'password' : 'text');
         $(btn).find('i').toggleClass('fa-eye', visible).toggleClass('fa-eye-slash', !visible);
     }
+
+    // Modal de credenciales PJUD: carga los valores del cliente pulsado y apunta el formulario a su ruta.
+    $(document).on('click', '.btn-editar-credenciales', function(){
+        var $b = $(this), $f = $('#formCredencialesPjud');
+        $f.attr('action', $b.data('url'));
+        $f.find('[name=pjudRut]').val($b.attr('data-rut'));
+        $f.find('[name=claveUnica]').val($b.attr('data-clave')).attr('type', 'password');
+        $f.find('.input-group i').removeClass('fa-eye-slash').addClass('fa-eye');
+        $('#modalCredencialesPjud').modal('show');
+    });
 
     // Modal de edición del cliente: carga el formulario por AJAX.
     function abrirEditarCliente(url){

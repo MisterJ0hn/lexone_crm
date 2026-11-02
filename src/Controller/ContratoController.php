@@ -1502,6 +1502,42 @@ class ContratoController extends AbstractController
     }
 
     /**
+     * Línea de tiempo de Convenio/Empresa: modifica solo las credenciales PJUD (rut y clave única) de un cliente propio.
+     */
+    #[Route("/{id}/convenio/cliente/{cliente}/credenciales-pjud", name: "contrato_convenio_credenciales_pjud", methods: ["POST"])]
+    function guardarCredencialesPjudConvenio(Contrato $contrato, Cliente $cliente, Request $request): Response
+    {
+        $this->denyAccessUnlessGranted('create','linea_tiempo');
+        $this->denyAccessUnlessGranted('edit','clave_pjud');
+        $agenda = $contrato->getAgenda();
+        $tipoCliente = $agenda->getTipoClienteNombre();
+
+        // Solo clientes de este contrato (con causas en su agenda).
+        $pertenece = $contrato->getCliente() !== null && $contrato->getCliente()->getId() === $cliente->getId();
+        foreach ($agenda->getCausas() as $causa) {
+            if ($causa->getCliente() !== null && $causa->getCliente()->getId() === $cliente->getId()) {
+                $pertenece = true;
+                break;
+            }
+        }
+        if (!$pertenece || ($tipoCliente !== 'Convenio' && $tipoCliente !== 'Empresa')) {
+            throw $this->createNotFoundException();
+        }
+        if (!$this->isCsrfTokenValid('credenciales_pjud' . $contrato->getId(), (string) $request->request->get('_token'))) {
+            $this->addFlash('error', 'Token inválido, intente nuevamente.');
+            return $this->redirectToRoute('contrato_linea_tiempo', ['id' => $contrato->getId()]);
+        }
+        $rut = trim((string) $request->request->get('pjudRut', ''));
+        $clave = trim((string) $request->request->get('claveUnica', ''));
+        $cliente->setPjudRut($rut !== '' ? $rut : null);
+        $cliente->setClaveUnica($clave !== '' ? $clave : null);
+        $this->entityManager->flush();
+        $this->addFlash('success', 'Credenciales PJUD actualizadas.');
+
+        return $this->redirectToRoute('contrato_linea_tiempo', ['id' => $contrato->getId()]);
+    }
+
+    /**
      * Edita los datos de un cliente propio de Convenio/Empresa desde la línea de
      * tiempo. GET devuelve el formulario (parcial que se carga dentro del modal de
      * edición); POST guarda y vuelve a la línea de tiempo.
