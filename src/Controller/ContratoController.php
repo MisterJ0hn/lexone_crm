@@ -1477,6 +1477,31 @@ class ContratoController extends AbstractController
     }
 
     /**
+     * Línea de tiempo de Persona: modifica solo las credenciales PJUD (rut y clave única) del cliente del contrato.
+     */
+    #[Route("/{id}/credenciales-pjud", name: "contrato_credenciales_pjud", methods: ["POST"])]
+    function guardarCredencialesPjud(Contrato $contrato, Request $request): Response
+    {
+        $this->denyAccessUnlessGranted('create','linea_tiempo');
+        $cliente = $contrato->getCliente();
+        if ($cliente === null) {
+            throw $this->createNotFoundException();
+        }
+        if (!$this->isCsrfTokenValid('credenciales_pjud' . $contrato->getId(), (string) $request->request->get('_token'))) {
+            $this->addFlash('error', 'Token inválido, intente nuevamente.');
+            return $this->redirectToRoute('contrato_linea_tiempo', ['id' => $contrato->getId()]);
+        }
+        $rut = trim((string) $request->request->get('pjudRut', ''));
+        $clave = trim((string) $request->request->get('claveUnica', ''));
+        $cliente->setPjudRut($rut !== '' ? $rut : null);
+        $cliente->setClaveUnica($clave !== '' ? $clave : null);
+        $this->entityManager->flush();
+        $this->addFlash('success', 'Credenciales PJUD actualizadas.');
+
+        return $this->redirectToRoute('contrato_linea_tiempo', ['id' => $contrato->getId()]);
+    }
+
+    /**
      * Edita los datos de un cliente propio de Convenio/Empresa desde la línea de
      * tiempo. GET devuelve el formulario (parcial que se carga dentro del modal de
      * edición); POST guarda y vuelve a la línea de tiempo.
@@ -1527,6 +1552,14 @@ class ContratoController extends AbstractController
         // El representante legal solo aplica a clientes Empresa (no a Convenio ni a personas dentro de una Empresa).
         if ($tipoCliente !== 'Empresa' || $form->has('sexo')) {
             foreach (['giro', 'repLegalRut', 'repLegalNombre', 'repLegalEstadoCivil', 'repLegalProfesion'] as $campo) {
+                $form->remove($campo);
+            }
+        }
+
+        // Sin privilegio para editar las credenciales PJUD, los campos se quitan del formulario: así form_end()
+        // no los dibuja (form_rest) y, al guardar, no se sobrescriben con null los valores existentes.
+        if (!$this->isGranted('edit', 'clave_pjud')) {
+            foreach (['pjudRut', 'claveUnica'] as $campo) {
                 $form->remove($campo);
             }
         }

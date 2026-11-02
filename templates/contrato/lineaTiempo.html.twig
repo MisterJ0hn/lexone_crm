@@ -7,7 +7,75 @@
 <div class="row">
     <div class="col-sm-12 col-md-12">
         {{ include('cabezera.html.twig') }}
+
+        {% if is_granted('view','clave_pjud') %}
+        <div class="card">
+            <div class="card-body">
+                <h6>Credenciales PJUD</h6>
+                <div class="row">
+                    <div class="col-sm-12 col-md-3">
+                        <small class="text-muted">Rut</small><br>
+                        <div class="input-group input-group-sm">
+                            <input type="password" class="form-control" readonly value="{{ contrato.cliente.pjudRut }}" autocomplete="off">
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-outline-secondary" onclick="toggleClaveUnica(this)" title="Mostrar/ocultar"><i class="fas fa-eye"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-3">
+                        <small class="text-muted">Clave única</small><br>
+                        <div class="input-group input-group-sm">
+                            <input type="password" class="form-control" readonly value="{{ contrato.cliente.claveUnica }}" autocomplete="off">
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-outline-secondary" onclick="toggleClaveUnica(this)" title="Mostrar/ocultar"><i class="fas fa-eye"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    {% if is_granted('edit','clave_pjud') %}
+                    <div class="col-sm-12 col-md-2 d-flex align-items-end">
+                        <button type="button" class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#modalCredencialesPjud"><i class="fas fa-edit"></i> Modificar</button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
         {{ include('contrato/_notas.html.twig') }}
+        
+        {% if is_granted('edit','clave_pjud') %}
+        <div class="modal fade" id="modalCredencialesPjud" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form method="post" action="{{ path('contrato_credenciales_pjud', {id: contrato.id}) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('credenciales_pjud' ~ contrato.id) }}">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Credenciales PJUD</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <small class="text-muted">Rut</small>
+                                <input type="text" name="pjudRut" class="form-control" value="{{ contrato.cliente.pjudRut }}" autocomplete="off">
+                            </div>
+                            <div class="form-group mb-0">
+                                <small class="text-muted">Clave única</small>
+                                <div class="input-group">
+                                    <input type="password" name="claveUnica" class="form-control" value="{{ contrato.cliente.claveUnica }}" autocomplete="new-password">
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-outline-secondary" onclick="toggleClaveUnica(this)" title="Mostrar/ocultar"><i class="fas fa-eye"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endif %}
         <div class="card">
             <div class="card-body">
                 <h6>Agregar Causa</h6>
@@ -220,6 +288,13 @@
 
 <script>
 {{ include('causa/_campos_materia_js.html.twig') }}
+    function toggleClaveUnica(btn){
+        var $input = $(btn).closest('.input-group').find('input');
+        var visible = $input.attr('type') === 'text';
+        $input.attr('type', visible ? 'password' : 'text');
+        $(btn).find('i').toggleClass('fa-eye', visible).toggleClass('fa-eye-slash', !visible);
+    }
+
     $('#exampleModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget) // Button that triggered the modal
         var recipient = button.data('whatever')

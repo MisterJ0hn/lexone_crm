@@ -66,6 +66,7 @@
     {{ include('contrato/_rep_legal_campos.html.twig', {form: form, profesiones: profesiones, rutClass: 'format-rut-edit'}) }}
     {% endif %}
     <hr>
+       {% if is_granted('edit','clave_pjud') %}
     <h5>Credenciales PJUD</h5>
     <div class="row">
         <div class="col-sm-12 col-md-4">
@@ -82,6 +83,7 @@
             </div>
         </div>
     </div>
+    {% endif %}
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>

@@ -127,6 +127,7 @@
                         </div>
                         {% endif %}
                         <hr>
+                        {% if is_granted('view','clave_pjud') %}
                         <h6>Credenciales PJUD</h6>
                         <div class="row">
                             <div class="col-sm-12 col-md-3">
@@ -149,6 +150,7 @@
                                 </div>
                             </div>
                         </div>
+                        {% endif %}
                         <hr>
                         <h6>Agregar Causa</h6>
                         <div class="row agregar-causa-cliente">
@@ -362,6 +364,7 @@
                 </div>
 
                 <hr>
+                {% if is_granted('edit','clave_pjud') %}
                 <h5>Credenciales PJUD</h5>
                 <div class="row">
                     <div class="col-sm-12 col-md-4">
@@ -378,6 +381,7 @@
                         </div>
                     </div>
                 </div>
+                {% endif %}
 
                 <hr>
                 <h5>Causa *</h5>
