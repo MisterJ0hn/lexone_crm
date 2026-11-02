@@ -13,7 +13,29 @@
     }
     // Recibe los selectores de cada campo; vacía y desactiva los que la materia no usa,
     // y reactiva los demás. Cualquiera puede ser null si la pantalla no lo tiene.
+    // Corte de Apelaciones: el caratulado es obligatorio (va en consultar_/sincronizar_apelaciones).
+    function esCorteApelaciones(materiaId){
+        return parseInt(materiaId, 10) === MATERIA_APELACIONES;
+    }
+    // true si el caratulado es válido para la materia; si no, avisa y devuelve false.
+    function validaCaratuladoApelaciones(materiaId, caratulado){
+        if(esCorteApelaciones(materiaId) && $.trim(caratulado || '') === ''){
+            alert("Debe ingresar el caratulado para causas de Corte de Apelaciones");
+            return false;
+        }
+        return true;
+    }
+    // Marca el campo caratulado como requerido (atributo required y placeholder) cuando la materia es Apelaciones.
+    // El selector se deduce del de la letra (.txtLetra-x -> .txtCaratulado-x; en filas de tabla, el de la misma fila).
+    function aplicaCaratuladoRequerido(materiaId, letraSel){
+        var $c = typeof letraSel === 'string'
+            ? $(letraSel.replace('txtLetra', 'txtCaratulado'))
+            : $(letraSel).closest('tr, .agregar-causa-cliente').find('[class*="txtCaratulado"]');
+        var req = esCorteApelaciones(materiaId);
+        $c.prop('required', req).attr('placeholder', req ? 'Caratulado *' : 'Caratulado');
+    }
     function aplicaCamposApelacion(materiaId, letraSel, juzgadoSel, corteSel){
+        if(letraSel){ aplicaCaratuladoRequerido(materiaId, letraSel); }
         var sinLetraNiTribunal = esApelacion(materiaId);
         var sinCorte = esSuprema(materiaId);
         if(letraSel){

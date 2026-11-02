@@ -188,7 +188,7 @@
                             </div>
                             <div class="col-sm-12 col-md-6 mt-1">
                                 <select class="form-control juzgado-cliente">
-                                    <option value="">Seleccione Juzgado</option>
+                                    <option value="">Seleccione Tribunal</option>
                                 </select>
                             </div>
                             <div class="col-sm-12 col-md-11 mt-1">
@@ -420,7 +420,7 @@
                     </div>
                     <div class="col-sm-12 col-md-6 mt-1">
                         <select class="form-control juzgado-convenio">
-                            <option value="">Seleccione Juzgado</option>
+                            <option value="">Seleccione Tribunal</option>
                         </select>
                     </div>
 
@@ -520,7 +520,7 @@
                     <div class="col-sm-12 col-md-6 mt-1">
 
                         <select name="juzgado" class="form-control juzgado">
-                            <option value=""> Seleccione Juzgado </option>
+                            <option value=""> Seleccione Tribunal </option>
                            
                         </select>
                     </div>
@@ -635,7 +635,7 @@
         if(!materiaId){
             $(".cboSubMateria-convenio").html('<option value="">Seleccione Servicio</option>');
             $(".corte-convenio").html('<option value="">Seleccione Corte</option>');
-            $(".juzgado-convenio").html('<option value="">Seleccione Juzgado</option>');
+            $(".juzgado-convenio").html('<option value="">Seleccione Tribunal</option>');
             return;
         }
         $.ajax({
@@ -648,7 +648,7 @@
             type: "post", dataType: "html", cache: false, contentType: false, processData: false, async: true,
             success:function(data){
                 $(".corte-convenio").html(data);
-                $(".juzgado-convenio").html('<option value="">Seleccione Juzgado</option>');
+                $(".juzgado-convenio").html('<option value="">Seleccione Tribunal</option>');
                 aplicaCamposApelacion($('.cbomateria-convenio').val(), '.txtLetra-convenio', '.juzgado-convenio', '.corte-convenio');
             }
         });
@@ -685,6 +685,9 @@
     function agregarCausaConvenio(){
         if($('.cbomateria-convenio').val()==""){
             alert("Debe seleccionar una materia");
+            return;
+        }
+        if(!validaCaratuladoApelaciones($('.cbomateria-convenio').val(), $('.txtCaratulado-convenio').val())){
             return;
         }
         if($('.cboSubMateria-convenio').val()==""){
@@ -773,7 +776,7 @@
         if(!materiaId){
             $submateria.html('<option value="">Seleccione Servicio</option>');
             $corte.html('<option value="">Seleccione Corte</option>');
-            $juzgado.html('<option value="">Seleccione Juzgado</option>');
+            $juzgado.html('<option value="">Seleccione Tribunal</option>');
             return;
         }
         $.ajax({
@@ -799,7 +802,7 @@
             async: true,
             success: function(data){
                 $corte.html(data);
-                $juzgado.html('<option value="">Seleccione Juzgado</option>');
+                $juzgado.html('<option value="">Seleccione Tribunal</option>');
                 aplicaCamposApelacion(materiaId, $fila.find('.txtLetra-cliente'), $juzgado, $corte);
             }
         });
@@ -848,6 +851,9 @@
         var materia = $fila.find('.cbomateria-cliente').val();
         if(!materia){
             alert('Debe seleccionar una materia');
+            return;
+        }
+        if(!validaCaratuladoApelaciones(materia, $fila.find('.txtCaratulado-cliente').val())){
             return;
         }
         $.ajax({
@@ -900,7 +906,7 @@
 
         materiaEdicion = materia
         letrasCausa(materia, letra)
-        $(".juzgado").html('<option value=""> Seleccione Juzgado </option>')
+        $(".juzgado").html('<option value=""> Seleccione Tribunal </option>')
         $.ajax({
             url:"/materia/"+materia+"/corte_combo",
             type:"post",
@@ -921,7 +927,7 @@
 
     function cargaJuzgadosEdicion(corteId, juzgadoId){
         if(!corteId || esApelacion(materiaEdicion)){
-            $(".juzgado").html('<option value=""> Seleccione Juzgado </option>')
+            $(".juzgado").html('<option value=""> Seleccione Tribunal </option>')
             return
         }
         $.ajax({

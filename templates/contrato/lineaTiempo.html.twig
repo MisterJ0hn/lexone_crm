@@ -54,7 +54,7 @@
                     </div>
                     <div class="col-sm-12 col-md-6 mt-1">
                         <select class="form-control juzgado-nueva">
-                            <option value="">Seleccione Juzgado</option>
+                            <option value="">Seleccione Tribunal</option>
                             
                         </select>
                     </div>
@@ -197,7 +197,7 @@
                     <div class="col-sm-12 col-md-6 mt-1  ">
                         
                         <select name="juzgado" class="form-control juzgado">
-                            <option value=""> Seleccione Juzgado </option>
+                            <option value=""> Seleccione Tribunal </option>
                           
                         </select> 
                     </div>   
@@ -250,7 +250,7 @@
 
         // Combos dependientes de la materia de la causa editada, con los valores actuales preseleccionados
         letrasCausa(materia, letra)
-        $(".juzgado").html('<option value=""> Seleccione Juzgado </option>')
+        $(".juzgado").html('<option value=""> Seleccione Tribunal </option>')
         $.ajax({
             url:"/materia/"+materia+"/corte_combo",
             type:"post",
@@ -271,7 +271,7 @@
 
     function cargaJuzgadosEdicion(corteId, juzgadoId){
         if(!corteId || esApelacion(materiaEdicion)){
-            $(".juzgado").html('<option value=""> Seleccione Juzgado </option>')
+            $(".juzgado").html('<option value=""> Seleccione Tribunal </option>')
             return
         }
         $.ajax({
@@ -310,7 +310,7 @@
         });
         letrasCausaNueva(materiaId);
         // La corte depende de la materia y habilita el combo de juzgados.
-        $(".juzgado-nueva").html('<option value="">Seleccione Juzgado</option>');
+        $(".juzgado-nueva").html('<option value="">Seleccione Tribunal</option>');
         $.ajax({
             url: "/materia/"+materiaId+"/corte_combo",
             type: "post",
@@ -325,7 +325,7 @@
 
     function cambiaCorteNueva(corteId){
         if(!corteId || esApelacion($(".cbomateria-nueva").val())){
-            $(".juzgado-nueva").html('<option value="">Seleccione Juzgado</option>');
+            $(".juzgado-nueva").html('<option value="">Seleccione Tribunal</option>');
             return;
         }
         $.ajax({
@@ -366,6 +366,9 @@
         var materia = $(".cbomateria-nueva").val();
         if(!materia){
             alert('Debe seleccionar una materia');
+            return;
+        }
+        if(!validaCaratuladoApelaciones(materia, $(".txtCaratulado-nueva").val())){
             return;
         }
         $.ajax({

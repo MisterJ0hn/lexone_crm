@@ -541,13 +541,18 @@ class PjudApiClient
     }
 
     /**
-     * Cuerpo base de consultar_/sincronizar_<materia>. Apelaciones: {rol, anio, corte}, con la corte como texto en
-     * `$causa['tribunal']` ("C.A. de Santiago"); las demás: tipo/rol/anio y corte/tribunal en 0 (se resuelven por catálogo).
+     * Cuerpo base de consultar_/sincronizar_<materia>. Apelaciones: {rol, anio, corte, caratulado}, con la corte como texto en
+     * `$causa['tribunal']` ("C.A. de Santiago") y el caratulado en `$causa['caratulado']`; las demás: tipo/rol/anio y corte/tribunal en 0 (se resuelven por catálogo).
      */
     private function cuerpoBase(string $materia, array $causa): array
     {
         if ($materia === 'apelaciones') {
-            return ['rol' => $causa['rol'], 'anio' => $causa['anio'], 'corte' => trim((string) $causa['tribunal'])];
+            return [
+                'rol' => $causa['rol'],
+                'anio' => $causa['anio'],
+                'corte' => trim((string) $causa['tribunal']),
+                'caratulado' => trim((string) ($causa['caratulado'] ?? '')),
+            ];
         }
         $cuerpo = ['corte' => 0, 'tribunal' => 0, 'tipo' => $causa['tipo'], 'rol' => $causa['rol'], 'anio' => $causa['anio']];
         if ($materia === 'penal') {

@@ -287,7 +287,7 @@ class PjudController extends AbstractController
             if ($spec === null) {
                 return null;
             }
-            $json = json_encode(['r' => $spec['causa']['rol'] . '-' . $spec['causa']['anio'], 't' => $spec['causa']['tribunal'], 'm' => 'apelaciones', 'c' => null], JSON_UNESCAPED_UNICODE);
+            $json = json_encode(['r' => $spec['causa']['rol'] . '-' . $spec['causa']['anio'], 't' => $spec['causa']['tribunal'], 'm' => 'apelaciones', 'c' => null, 'k' => $spec['causa']['caratulado']], JSON_UNESCAPED_UNICODE);
 
             return 'x.' . rtrim(strtr(base64_encode((string) $json), '+/', '-_'), '=');
         }
@@ -321,7 +321,7 @@ class PjudController extends AbstractController
             return null;
         }
 
-        return ['materia' => 'apelaciones', 'causa' => ['tipo' => '', 'rol' => (int) $rol[0], 'anio' => (int) $anio[0], 'tribunal' => $corte, 'tipo_causa' => null]];
+        return ['materia' => 'apelaciones', 'causa' => ['tipo' => '', 'rol' => (int) $rol[0], 'anio' => (int) $anio[0], 'tribunal' => $corte, 'tipo_causa' => null, 'caratulado' => trim((string) ($fila['caratulado'] ?? ''))]];
     }
 
     /**
@@ -347,7 +347,7 @@ class PjudController extends AbstractController
             if (!preg_match('/^(\d+)-(\d{4})$/', (string) $d['r'], $m)) {
                 return new JsonResponse(['detail' => 'El rol de la causa de corte no tiene el formato ROL-AÑO'], 422);
             }
-            $datos = ['tipo' => '', 'rol' => (int) $m[1], 'anio' => (int) $m[2], 'tribunal' => (string) $d['t'], 'tipo_causa' => null];
+            $datos = ['tipo' => '', 'rol' => (int) $m[1], 'anio' => (int) $m[2], 'tribunal' => (string) $d['t'], 'tipo_causa' => null, 'caratulado' => trim((string) ($d['k'] ?? ''))];
 
             return $this->respuestaApelaciones($empresa, $datos, $forzar, !$forzar && $request->query->getBoolean('solo_estado'), $this->credenciales($empresa, $datos, 'apelaciones'));
         }
@@ -448,7 +448,7 @@ class PjudController extends AbstractController
             return null;
         }
 
-        return ['tipo' => '', 'rol' => (int) trim((string) $c->getRol()), 'anio' => (int) $c->getAnio(), 'tribunal' => $corte, 'tipo_causa' => null];
+        return ['tipo' => '', 'rol' => (int) trim((string) $c->getRol()), 'anio' => (int) $c->getAnio(), 'tribunal' => $corte, 'tipo_causa' => null, 'caratulado' => trim((string) $c->getCausaNombre())];
     }
 
     /** @return array{tipo:string,rol:int,anio:int,tribunal:string,tipo_causa:?string}|null */

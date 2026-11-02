@@ -365,7 +365,7 @@
             </div>   
             <div class="col-sm-12 col-md-6 mt-1">
                 <select name="juzgado" class="form-control juzgado">
-                    <option value=""> Seleccione Juzgado </option>
+                    <option value=""> Seleccione Tribunal </option>
                     {% for juzgado in juzgados %}
                         <option value="{{juzgado.id}}">{{juzgado.nombre}}</option>
                     {% endfor %}
@@ -682,6 +682,9 @@
         console.log("inicia agregar causa");
         if($('.cbomateria').val()==""){
             alert("Debe seleccionar una materia");
+            return;
+        }
+        if(!validaCaratuladoApelaciones($('.cbomateria').val(), $('.txtCaratulado').val())){
             return;
         }
         if($('.cboSubMateria').val()!=""){
@@ -1233,7 +1236,7 @@
                 $(".corte").html(data);
                 //$(".loading").html('');
                 $(".juzgado").empty();
-                $(".juzgado").append("<option value=''>Seleccione Juzgado</option>");
+                $(".juzgado").append("<option value=''>Seleccione Tribunal</option>");
                 aplicaCamposApelacion($('.cbomateria').val(), '.txtLetra', '.juzgado', '.corte');
             }
         });
