@@ -131,7 +131,13 @@
                         <div class="row">
                             <div class="col-sm-12 col-md-3">
                                 <small class="text-muted">Rut</small><br>
-                                <label>{{ grupo.cliente.pjudRut }}</label>
+                              
+                                <div class="input-group input-group-sm">
+                                    <input type="password" class="form-control" readonly value="{{ grupo.cliente.pjudRut }}" autocomplete="off">
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-outline-secondary" onclick="toggleClaveUnica(this)" title="Mostrar/ocultar"><i class="fas fa-eye"></i></button>
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-sm-12 col-md-3">
                                 <small class="text-muted">Clave única</small><br>
