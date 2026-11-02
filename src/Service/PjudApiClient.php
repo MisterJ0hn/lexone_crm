@@ -231,6 +231,14 @@ class PjudApiClient
         if (!$this->configurado()) {
             throw new PjudApiException('La empresa no tiene configurada la API PJUD (configúrela en Empresa).');
         }
+        // Prueba: Corte de Apelaciones solo va por el espejo de edapi; nunca directo a api-pjud.
+        if (!$this->modoEdapi && str_contains($ruta, '_apelaciones')) {
+            $this->logger?->warning('PJUD apelaciones: bloqueado, no hay conexión vía edapi', ['empresa' => $this->empresaId, 'ruta' => $ruta, 'base' => $this->base]);
+            throw new PjudApiException('Apelaciones solo se consulta vía edapi (Lexflow): la empresa no tiene Lexflow habilitado con API Key, o edapi no respondió.');
+        }
+        if ($this->modoEdapi && str_contains($ruta, '_apelaciones')) {
+            $this->logger?->info('PJUD apelaciones: vía edapi', ['empresa' => $this->empresaId, 'ruta' => $this->base . $ruta]);
+        }
         $opciones['headers'] = $this->cabeceras($conToken);
         try {
             $resp = $this->http->request($metodo, $this->base . $ruta, $opciones);
