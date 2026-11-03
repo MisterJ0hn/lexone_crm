@@ -38,13 +38,19 @@
     function textoSeleccioneTribunal(materiaId){
         return esCorteApelaciones(materiaId) ? '' : 'Seleccione Tribunal';
     }
+    // Tras recargar el combo de tribunales al elegir una corte: en Corte de Apelaciones la opción vacía queda sin texto.
+    function quitaTextoTribunalApelaciones(juzgadoSel, materiaId){
+        if(esCorteApelaciones(materiaId)){
+            $(juzgadoSel).find('option[value=""]').first().text('');
+        }
+    }
     // Solo en los formularios "Agregar causa" de la línea de tiempo (clases -nueva / -convenio / -cliente):
     // en Corte de Apelaciones se quita el texto "Letra", "N°" pasa a "Rol", "Año" a "Era" y la opción vacía del tribunal queda sin texto.
     function aplicaEtiquetasApelaciones(materiaId, letraSel, juzgadoSel){
         var apel = esCorteApelaciones(materiaId);
         var $letra, $rol, $anio;
         if(typeof letraSel === 'string'){
-            if(!/-(nueva|convenio|cliente)$/.test(letraSel)){ return; }
+            if(!/-(nueva|convenio|cliente)$/.test(letraSel) && letraSel !== '.txtLetra'){ return; }
             $letra = $(letraSel); $rol = $(letraSel.replace('txtLetra', 'txtRol')); $anio = $(letraSel.replace('txtLetra', 'txtAnio'));
         } else {
             var $f = $(letraSel).closest('.agregar-causa-cliente');
@@ -52,6 +58,7 @@
             $letra = $f.find('.txtLetra-cliente'); $rol = $f.find('.txtRol-cliente'); $anio = $f.find('.txtAnio-cliente');
         }
         $letra.filter('input').attr('placeholder', apel ? '' : 'Letra');
+        $letra.filter('select').find('option[value=""]').first().text(apel ? '' : ' Letra ');
         $rol.attr('placeholder', apel ? 'Rol' : 'N°');
         $anio.attr('placeholder', apel ? 'Era' : 'Año');
         if(juzgadoSel){

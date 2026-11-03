@@ -1,0 +1,60 @@
+{#
+  Modal global "Nuevo canal" (se incluye una vez por página). Cualquier select de canal dentro de un
+  .input-group con un botón [data-canal-nuevo] lo abre; al guardar, la opción queda agregada y seleccionada en ese select.
+#}
+<div class="modal fade" id="modalCanalNuevo" tabindex="-1" role="dialog" aria-hidden="true"
+     data-url="{{ path('canal_rapido') }}"
+     data-csrf="{{ csrf_token('canal_rapido') }}">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Nuevo canal</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="canalNuevoNombre" class="form-control" maxlength="100" placeholder="Nombre del canal" autocomplete="off">
+                <div id="canalNuevoError" class="text-danger small mt-1"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="canalNuevoGuardar">Agregar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+(function () {
+    var $modal = $('#modalCanalNuevo').appendTo('body'), $select = null;
+
+    $(document).on('click', '[data-canal-nuevo]', function () {
+        $select = $(this).closest('.input-group').find('select').first();
+        $('#canalNuevoError').text('');
+        $('#canalNuevoNombre').val('');
+        $modal.modal('show');
+    });
+    $modal.on('shown.bs.modal', function () { $('#canalNuevoNombre').trigger('focus'); });
+    $('#canalNuevoNombre').on('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); $('#canalNuevoGuardar').click(); } });
+
+    $('#canalNuevoGuardar').on('click', function () {
+        var nombre = $.trim($('#canalNuevoNombre').val());
+        if (!nombre) { $('#canalNuevoError').text('Ingrese el nombre del canal.'); return; }
+        var $btn = $(this).prop('disabled', true);
+        $.ajax({
+            url: $modal.data('url'),
+            type: 'post',
+            data: { nombre: nombre },
+            headers: { 'X-CSRF-Token': $modal.data('csrf') },
+            dataType: 'json'
+        }).done(function (r) {
+            if (!$select.find('option').filter(function () { return String(this.value) === String(r.id); }).length) {
+                $select.append($('<option>').val(r.id).text(r.nombre));
+            }
+            $select.val(String(r.id)).trigger('change');
+            $modal.modal('hide');
+        }).fail(function (xhr) {
+            var msg = xhr.status === 403 ? 'Acceso denegado: no tienes privilegios para agregar canales.' : ((xhr.responseJSON && xhr.responseJSON.detail) || 'No se pudo agregar el canal.');
+            $('#canalNuevoError').text(msg);
+        }).always(function () { $btn.prop('disabled', false); });
+    });
+})();
+</script>

@@ -717,7 +717,7 @@
         $.ajax({
             url:"/materia/"+$(".cbomateria-convenio").val()+"/corte/"+$(this).val()+"/juzgado_combo",
             type: "post", dataType: "html", cache: false, contentType: false, processData: false, async: true,
-            success:function(data){ $(".juzgado-convenio").html(data); }
+            success:function(data){ $(".juzgado-convenio").html(data); quitaTextoTribunalApelaciones(".juzgado-convenio", $(".cbomateria-convenio").val()); }
         });
     });
 
@@ -900,6 +900,7 @@
             async: true,
             success: function(data){
                 $fila.find('.juzgado-cliente').html(data);
+                quitaTextoTribunalApelaciones($fila.find('.juzgado-cliente'), $fila.find('.cbomateria-cliente').val());
             }
         });
     }

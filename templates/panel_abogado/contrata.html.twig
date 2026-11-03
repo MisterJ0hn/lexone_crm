@@ -1289,7 +1289,7 @@
                 },
                 success:function(data){
                     $(".juzgado").html(data);
-                    
+                    quitaTextoTribunalApelaciones(".juzgado", $(".cbomateria").val());
                 }
 
             });

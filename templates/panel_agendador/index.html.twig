@@ -126,7 +126,13 @@
         </div>
         <div class="col-sm-6 col-md-3" >
             <small class="text-muted">Canal</small>
-            {{form_row(form.canal,{'label':false,'attr':{'class':'form-control canal','required':true}})}}
+            <div class="input-group">
+                {{ form_widget(form.canal, {'attr': {'class': 'form-control canal', 'required': true}}) }}
+                <div class="input-group-append">
+                    <button type="button" class="btn btn-outline-primary" data-canal-nuevo title="Agregar un canal que no está en el listado"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>
+            {{ form_errors(form.canal) }}
         </div>
         
     
@@ -189,6 +195,7 @@
     </div>
     </div>
 </section>
+{{ include('canal/_modal_nueva.html.twig') }}
 <script>
 
     // Convenio/Empresa: el campo "Nombre" pasa a ser "Razón social".
