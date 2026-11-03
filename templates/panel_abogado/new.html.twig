@@ -273,6 +273,18 @@
   </div>
 <script>
 
+       // Si una llamada ajax falla (p.ej. 403 por falta de privilegios), se reemplaza el "Loading..." por el motivo.
+       $(document).ajaxError(function(event, xhr){
+            var msg = xhr.status === 403
+                ? '<i class="fas fa-ban"></i> <strong>Acceso denegado.</strong> No tienes suficientes privilegios para realizar esta acción, solicita información a tu administrador.'
+                : (xhr.status === 401 ? 'Tu sesión expiró, vuelve a ingresar.' : 'No se pudo cargar la información (error ' + xhr.status + ').');
+            $("#contrato, #abogado").each(function(){
+                if($(this).children('.overlay').length){
+                    $(this).html('<div class="alert alert-danger">' + msg + '</div>');
+                }
+            });
+       });
+
        function contrata(status){
             if(status ==7){
                 $.ajax({

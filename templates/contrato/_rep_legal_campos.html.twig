@@ -4,6 +4,8 @@
   La profesión es un select con botón "+" (data-profesion-nueva), que abre el modal de profesion/_modal_nueva.html.twig.
 #}
 {% set profActual = form.repLegalProfesion.vars.value %}
+{# El select de abajo se dibuja a mano: se marca el campo como renderizado para que form_end() no lo repita como texto ("Rep legal profesion"). #}
+{% do form.repLegalProfesion.setRendered %}
 <div class="row">
     <div class="col-sm-12 col-md-3">
         <small class="text-muted">Nombre</small>

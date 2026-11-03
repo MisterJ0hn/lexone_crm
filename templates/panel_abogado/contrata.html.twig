@@ -141,6 +141,8 @@
     <div class="col-sm-12 col-md-3">
         <small class="text-muted">Profesión u oficio</small>
         {% set profActual = form.repLegalProfesion.vars.value %}
+        {# El select de abajo se dibuja a mano: se marca el campo como renderizado para que form_end() no lo repita como texto ("Rep legal profesion"). #}
+        {% do form.repLegalProfesion.setRendered %}
         <div class="input-group">
             <select name="{{ form.repLegalProfesion.vars.full_name }}" id="{{ form.repLegalProfesion.vars.id }}" class="form-control">
                 <option value="">Seleccione profesión u oficio</option>

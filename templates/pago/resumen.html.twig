@@ -22,9 +22,7 @@
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="col-sm-12 col-md-2">
-                        <input type="number" min="1" class="form-control" name="bFolio" placeholder="Folio" value="{{ bFolio }}">
-                    </div>
+                    
                     <div class="col-sm-12 col-md-2">
                     <select name="bTipofecha" class="form-control">
                         <option value="0" {% if tipoFecha==0 %}
@@ -56,7 +54,8 @@
                 <thead>
                     <tr>
                         <th>{{ knp_pagination_sortable(pagos, 'Id Pago', 'pago.id') }} {% if pagos.isSorted('pago.id') %} <i class="fas fa-sort"></i>{% endif %}</th>
-                       <!-- <th>Colaborador</th>-->
+                       <th>Folio</th>
+                        
                         <th>{{ knp_pagination_sortable(pagos, 'Fecha Comprobante', 'pago.fechaPago') }} {% if pagos.isSorted('pago.fechaPago') %} <i class="fas fa-sort"></i>{% endif %}</th>
                         <th>{{ knp_pagination_sortable(pagos, 'Fecha Ingreso', 'pago.fechaRegistro') }} {% if pagos.isSorted('pago.fechaRegistro') %} <i class="fas fa-sort"></i>{% endif %}</th>
                         <th>{{ knp_pagination_sortable(pagos, 'Tipo Deposito', 'pago.pagoTipo') }} {% if pagos.isSorted('pago.pagoTipo') %} <i class="fas fa-sort"></i>{% endif %}</th> 
@@ -75,7 +74,10 @@
                     <tr>
 
                         <td>{{ pago.id }}</td>
-                       <!-- <td>{{pago.usuarioRegistro.nombre}}</td>-->
+                       
+                       <td>
+                        {{ pago.contrato.folio }}
+                        </td>
                         <td>{{ pago.fechaPago|date("Y-m-d H:i")}}</td>
                         <td>{{ pago.fechaRegistro|date("Y-m-d H:i") }}</td>
                         <td>{{ pago.pagoTipo }}</td>

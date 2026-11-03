@@ -70,6 +70,9 @@ class Pago
     #[ORM\Column(type: "datetime", nullable: true)]
     private $fechaAnulacion;
 
+    #[ORM\ManyToOne(targetEntity: Contrato::class)]
+    private $contrato;
+
     public function __construct()
     {
         $this->pagoCuotas = new ArrayCollection();
@@ -79,6 +82,18 @@ class Pago
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getContrato(): ?Contrato
+    {
+        return $this->contrato;
+    }
+
+    public function setContrato(?Contrato $contrato): self
+    {
+        $this->contrato = $contrato;
+
+        return $this;
     }
 
     public function getPagoTipo(): ?PagoTipo

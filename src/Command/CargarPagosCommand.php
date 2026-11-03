@@ -71,6 +71,7 @@ class CargarPagosCommand extends Command
                     $fechaPago=str_replace(" : ","00:00", $datos[6]);
                     $fechaRegistro=str_replace(" : ","00:00", $datos[8]);
                     $pago=new Pago();
+                    $pago->setContrato($contrato);
                     $pago->setPagoTipo($em->getRepository(PagoTipo::class)->find($datos[1]));
                     $pago->setPagoCanal($em->getRepository(PagoCanal::class)->find($datos[2]));
                     $pago->setMonto($datos[3]);

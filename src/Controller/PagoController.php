@@ -911,6 +911,7 @@ class PagoController extends AbstractController
             $pago->setPagoTipo($tipo);
             $pago->setComprobante("nodisponible.png");
         }
+        $pago->setContrato($contrato);
         $pago->setFechaRegistro(new \DateTime(date('Y-m-d H:i:s')));
         $pago->setUsuarioRegistro($user);
         $form = $this->createForm(PagoType::class, $pago);

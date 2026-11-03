@@ -8,22 +8,16 @@
 
 
 <div class="card">
-    <div class="card-header">
+    <div class="card-body">
         <div class="row">
-            <div>
-            <a href="{{path('contrato_archivos_new',{'id':causa.id})}}" class="btn btn-primary" id="btn-agregar"><i class="fas fa-plus"></i></a>
-            </div>&nbsp;
-            <div >
-            <p class="mt-2 text-primary">Adjuntar archivos</p> 
+            <div class="col-md-6 col-sm-12">
+                
+            <a href="{{path('contrato_archivos_new',{'id':causa.id})}}" class="btn btn-primary" id="btn-agregar"><i class="fas fa-plus"></i> Adjuntar archivo</a>
+        
             </div>
 
         </div>
-        <div class="row">
-            <div>
-            <a href="{{path('contrato_linea_tiempo',{'id':contrato.id})}}" class="btn btn-success" >Volver</a>
-            </div>&nbsp;
-            
-        </div>
+        
     </div>
     <div class="card-body">
         <table class="table">
