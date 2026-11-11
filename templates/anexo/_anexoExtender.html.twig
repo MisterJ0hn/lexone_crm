@@ -68,7 +68,7 @@
         {{ form_start(form,{'action': path('anexo_extender',{'id':contrato.id}), 'method': 'POST'}) }}
         <section>
             <div class="row">
-                 <div class="col-sm-12 col-md-2">
+                 <div class="col-sm-12 col-md-12">
                     {{ include('partials/_honorarios_select.html.twig', {form: form, probono: true}) }}
                 </div>
                 <div class="col-sm-12 col-md-3">

@@ -248,8 +248,8 @@
         {{form_row(form.pagoActual,{'label':false,'attr':{'class':'form-control pago-actual number','autocomplete':"ÑÖcompletes"}})}}
         <strong><label id="m-pago-actual"></label></strong>
     </div>
-    <div class="col-sm-12 col-md-2">
-        {{ include('partials/_honorarios_select.html.twig', {form: form, probono: true}) }}
+    <div class="col-sm-12 col-md-12">
+        {{ include('partials/_honorarios_select.html.twig', {form: form, probono: true, prepago: true}) }}
     </div>
     <div class="col-sm-12 col-md-3">
         <small class="text-muted">Monto contrato *</small>
@@ -791,6 +791,9 @@
         var esProBono = $('.chk-probono').prop('checked');
         if(!esProBono && monto <= 0){
             return falla('Debe ingresar un monto de contrato', $(".monto-contrato"));
+        }
+        if($('.chk-prepago').prop('checked') && !$('.sel-plan-prepago').val()){
+            return falla('Debe seleccionar el plan de pre-pago', $('.sel-plan-prepago'));
         }
         var $valorCuota = $('.valor-cuota').first();
         if($valorCuota.is(':visible') && (parseInt(String($valorCuota.val()).replace(/\D/g, ''), 10) || 0) <= 0){

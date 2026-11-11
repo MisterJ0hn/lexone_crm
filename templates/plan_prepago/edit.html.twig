@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Editar plan de pre-pago{% endblock %}
+
+{% block body %}
+<div class="card">
+    <div class="card-body">
+        {{ form_start(form, {'attr': {'class': 'form-inline'}}) }}
+            {{ form_row(form.nombre, {'label': false, 'attr': {'class': 'form-control mr-2', 'required': true, 'maxlength': 150}}) }}
+            <button class="btn btn-primary">Guardar</button>
+            <a class="btn btn-link" href="{{ path('plan_prepago_index') }}">Volver al listado</a>
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}

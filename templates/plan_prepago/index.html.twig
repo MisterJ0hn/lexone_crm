@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Planes de pre-pago{% endblock %}
+
+{% block body %}
+<div class="card">
+    <div class="card-body">
+        {{ form_start(form, {'attr': {'class': 'form-inline'}}) }}
+            {{ form_row(form.nombre, {'label': false, 'attr': {'class': 'form-control mr-2', 'required': true, 'placeholder': 'Nombre del plan', 'maxlength': 150}}) }}
+            <button class="btn btn-primary">Crear</button>
+        {{ form_end(form) }}
+    </div>
+</div>
+<div class="card">
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Plan</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for plan in planes %}
+                <tr>
+                    <td>{{ plan.nombre }}</td>
+                    <td>
+                        <a href="{{ path('plan_prepago_edit', {'id': plan.id}) }}" title="Editar"><i class="fa fa-pen"></i></a>
+                        <form method="post" action="{{ path('plan_prepago_delete', {'id': plan.id}) }}" style="display:inline" onsubmit="return confirm('¿Desactivar este plan? Los contratos que ya lo usan lo conservan.');">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ plan.id) }}">
+                            <button class="btn btn-link p-0" title="Desactivar"><i class="fa fa-trash text-danger"></i></button>
+                        </form>
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="2">No hay planes registrados.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

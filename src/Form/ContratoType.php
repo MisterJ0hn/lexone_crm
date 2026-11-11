@@ -4,6 +4,13 @@ namespace App\Form;
 
 use App\Entity\Cliente;
 use App\Entity\Contrato;
+use App\Entity\PlanPrepago;
+use Doctrine\ORM\EntityRepository;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -12,6 +19,10 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class ContratoType extends AbstractType
 {
+    public function __construct(private readonly Security $security)
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     { 
         $cliente = $options['cliente'];
@@ -44,6 +55,21 @@ class ContratoType extends AbstractType
             ->add('isAbono')
             ->add('isTotal')
             ->add('isProBono')
+            ->add('isPrePago')
+            // Planes de pre-pago activos de la empresa del usuario (mantenedor plan_prepago).
+            ->add('planPrepago', EntityType::class, [
+                'class' => PlanPrepago::class,
+                'required' => false,
+                'placeholder' => 'Seleccione plan',
+                'query_builder' => function (EntityRepository $er) {
+                    $user = $this->security->getUser();
+                    return $er->createQueryBuilder('p')
+                        ->andWhere('p.estado = true')
+                        ->andWhere('p.empresa = :empresa')
+                        ->setParameter('empresa', $user ? $user->getEmpresaActual() : 0)
+                        ->orderBy('p.nombre', 'ASC');
+                },
+            ])
             ->add('cuotas')
             ->add('valorCuota')
             ->add('situacionLaboral')
@@ -69,6 +95,21 @@ class ContratoType extends AbstractType
             ->add('observacion')
 
         ;
+
+        // Pre-pago exige plan; si el contrato no es pre-pago no debe quedar ningún plan asociado.
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+            $contrato = $event->getData();
+            if (!$contrato instanceof Contrato) {
+                return;
+            }
+            if ($contrato->getIsPrePago()) {
+                if ($contrato->getPlanPrepago() === null) {
+                    $event->getForm()->get('planPrepago')->addError(new FormError('Debe seleccionar el plan de pre-pago.'));
+                }
+            } elseif ($event->getForm()->has('planPrepago')) {
+                $contrato->setPlanPrepago(null);
+            }
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver)

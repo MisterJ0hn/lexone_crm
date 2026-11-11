@@ -194,6 +194,14 @@ class Contrato
     #[ORM\Column(type: "boolean", nullable: true)]
     private $isProBono;
 
+    // Honorarios Pre-pago: se marca con isPrePago y se elige el plan (mantenedor plan_prepago).
+    #[ORM\Column(type: "boolean", nullable: true)]
+    private $isPrePago;
+
+    #[ORM\ManyToOne(targetEntity: PlanPrepago::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private $planPrepago;
+
 
     #[ORM\OneToMany(targetEntity: CausaObservacion::class, mappedBy: "contrato")]
     private $causaObservacions;
@@ -974,6 +982,30 @@ class Contrato
     public function setIsProBono(?bool $isProBono): self
     {
         $this->isProBono = $isProBono;
+
+        return $this;
+    }
+
+    public function getIsPrePago(): ?bool
+    {
+        return $this->isPrePago;
+    }
+
+    public function setIsPrePago(?bool $isPrePago): self
+    {
+        $this->isPrePago = $isPrePago;
+
+        return $this;
+    }
+
+    public function getPlanPrepago(): ?PlanPrepago
+    {
+        return $this->planPrepago;
+    }
+
+    public function setPlanPrepago(?PlanPrepago $planPrepago): self
+    {
+        $this->planPrepago = $planPrepago;
 
         return $this;
     }

@@ -7,25 +7,41 @@
     Parámetros:
       form     : formulario Symfony
       probono  : (opcional) true para incluir la opción Pro-bono (requiere form.isProBono)
+      prepago  : (opcional) true para incluir la opción Pre-pago con su select de plan
+                 (requiere form.isPrePago y form.planPrepago)
 #}
 {# Pro-bono solo si se pide y el formulario realmente tiene el campo (los anexos no lo tienen). #}
 {% set conProbono = probono|default(false) and form.children.isProBono is defined %}
+{% set conPrepago = prepago|default(false) and form.children.isPrePago is defined and form.children.planPrepago is defined %}
+<div class="row">
+<div class="col-sm-12 col-md-3">
 <small class="text-muted">Honorarios *</small>
 <select class="form-control sel-honorarios">
     <option value="">Normal</option>
     <option value="abono">Abono</option>
     <option value="total">Paga el total</option>
     {% if conProbono %}<option value="probono">Pro-bono</option>{% endif %}
+    {% if conPrepago %}<option value="prepago">Pre-pago</option>{% endif %}
 </select>
+</div>
+{% if conPrepago %}
+
+<div class="div-plan-prepago col-sm-12 col-md-3" style="display:none">
+    <small class="text-muted">Plan de pre-pago *</small>
+    {{ form_widget(form.planPrepago, {'attr': {'class': 'form-control sel-plan-prepago'}}) }}
+</div>
+{% endif %}
+</div>
 <div class="honorarios-checks" style="display:none !important">
     {{ form_row(form.isAbono, {'label': false, 'attr': {'class': 'chk-bono'}}) }}
     {{ form_row(form.isTotal, {'label': false, 'attr': {'class': 'chk-total'}}) }}
     {% if conProbono %}{{ form_row(form.isProBono, {'label': false, 'attr': {'class': 'chk-probono'}}) }}{% endif %}
+    {% if conPrepago %}{{ form_row(form.isPrePago, {'label': false, 'attr': {'class': 'chk-prepago'}}) }}{% endif %}
 </div>
 <script>
 $(function () {
     var $sel = $('.sel-honorarios');
-    var mapa = {abono: '.chk-bono', total: '.chk-total', probono: '.chk-probono'};
+    var mapa = {abono: '.chk-bono', total: '.chk-total', probono: '.chk-probono', prepago: '.chk-prepago'};
     var ocupado = false;
 
     // Refleja en el select el estado actual de los checks (y de "incorporación", si existe).
@@ -35,6 +51,14 @@ $(function () {
             if ($(sel).prop('checked')) { valor = k; }
         });
         $sel.val(valor);
+        // Pre-pago: se habilita el select de plan (obligatorio); en otro caso se limpia.
+        var $plan = $('.sel-plan-prepago');
+        if ($plan.length) {
+            var esPrepago = valor === 'prepago';
+            $('.div-plan-prepago').toggle(esPrepago);
+            $plan.prop('required', esPrepago);
+            if (!esPrepago) { $plan.val(''); }
+        }
         // Con "incorporación" marcada, la lógica original oculta Abono y Paga el total.
         var incorporacion = $('.chk-incorporacion').prop('checked');
         $sel.find('option[value="abono"], option[value="total"]').prop('disabled', !!incorporacion);
