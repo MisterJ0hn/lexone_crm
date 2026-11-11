@@ -297,6 +297,51 @@
             </div>
             <div class="modal-body">
                 <input type="hidden" name="esPersona" id="esPersonaNuevoCliente" value="{{ tipoCliente == 'Convenio' ? 1 : 0 }}">
+                {% set principal = contrato.cliente %}
+                {% if principal %}
+                {# Solo al crear una empresa (el bloque .solo-empresa se oculta al crear una persona). #}
+                <div class="solo-empresa mb-2">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" id="btnHeredarDatos"
+                        title="Rellena los campos con los datos de la empresa principal"
+                        data-datos="{{ {
+                            'nombre': principal.nombre,
+                            'rut': principal.rut,
+                            'correo': principal.correo,
+                            'telefono': principal.telefono,
+                            'nacionalidad': principal.nacionalidad ?: (contrato.pais ? contrato.pais.nombre : ''),
+                            'region': (principal.region ?? contrato.cregion) ? (principal.region ?? contrato.cregion).id : '',
+                            'ciudad': (principal.ciudad ?? contrato.cciudad) ? (principal.ciudad ?? contrato.cciudad).id : '',
+                            'comuna': (principal.comuna ?? contrato.ccomuna) ? (principal.comuna ?? contrato.ccomuna).id : '',
+                            'direccion': principal.direccion,
+                            'reunion': (principal.reunion ?? contrato.reunion) ? (principal.reunion ?? contrato.reunion).id : '',
+                            'giro': principal.giro,
+                            'repLegalNombre': principal.repLegalNombre,
+                            'repLegalRut': principal.repLegalRut,
+                            'repLegalEstadoCivil': principal.repLegalEstadoCivil ? principal.repLegalEstadoCivil.id : '',
+                            'repLegalProfesion': principal.repLegalProfesion
+                        }|json_encode|e('html_attr') }}"
+                        data-ids="{{ {
+                            'nombre': formNuevoCliente.nombre.vars.id,
+                            'rut': formNuevoCliente.rut.vars.id,
+                            'correo': formNuevoCliente.correo.vars.id,
+                            'telefono': formNuevoCliente.telefono.vars.id,
+                            'nacionalidad': formNuevoCliente.nacionalidad.vars.id,
+                            'region': formNuevoCliente.region.vars.id,
+                            'ciudad': formNuevoCliente.ciudad.vars.id,
+                            'comuna': formNuevoCliente.comuna.vars.id,
+                            'direccion': formNuevoCliente.direccion.vars.id,
+                            'reunion': formNuevoCliente.reunion.vars.id,
+                            'giro': formNuevoCliente.giro.vars.id,
+                            'repLegalNombre': formNuevoCliente.repLegalNombre.vars.id,
+                            'repLegalRut': formNuevoCliente.repLegalRut.vars.id,
+                            'repLegalEstadoCivil': formNuevoCliente.repLegalEstadoCivil.vars.id,
+                            'repLegalProfesion': formNuevoCliente.repLegalProfesion.vars.id
+                        }|json_encode|e('html_attr') }}">
+                        <i class="fas fa-copy"></i> Heredar datos
+                    </button>
+                    <small class="text-muted">Copia los datos de la empresa principal ({{ principal.nombre }}).</small>
+                </div>
+                {% endif %}
                 <div class="row">
                     <div class="col-sm-12 col-md-4">
                         <small class="text-muted"><span id="lblNombreNuevoCliente">{{ (tipoCliente == 'Empresa') ? 'Razón social' : 'Nombre' }}</span> *</small>
@@ -807,6 +852,37 @@
         if(enEmpresa){
             $titulo.text(persona ? 'Datos nueva persona' : 'Datos nueva empresa');
             $('#lblNombreNuevoCliente').text(persona ? 'Nombre' : 'Razón social');
+        }
+    });
+
+    // "Heredar datos": rellena el modal con los datos de la empresa principal del contrato.
+    // Región -> ciudad -> comuna se cargan en cascada por AJAX (cada combo depende del anterior).
+    $('#btnHeredarDatos').on('click', function(){
+        var d = $(this).data('datos') || {};
+        var ids = $(this).data('ids') || {};
+        function poner(campo){
+            var $c = $('#' + ids[campo]);
+            if(d[campo] !== null && d[campo] !== undefined && d[campo] !== ''){
+                $c.val(d[campo]);
+            }
+            return $c;
+        }
+        $.each(['nombre','rut','correo','telefono','nacionalidad','direccion','reunion','giro',
+                'repLegalNombre','repLegalRut','repLegalEstadoCivil','repLegalProfesion'], function(i, campo){
+            poner(campo).trigger('input').trigger('change');
+        });
+
+        var $region = $('#' + ids.region), $ciudad = $('#' + ids.ciudad), $comuna = $('#' + ids.comuna);
+        if(d.region){
+            $region.val(d.region);
+            $.get("/contrato/" + d.region + "/ciudad_combo", function(html){
+                $ciudad.html(html).val(d.ciudad || '');
+                if(d.ciudad){
+                    $.get("/contrato/" + d.ciudad + "/comuna_combo", function(html2){
+                        $comuna.html(html2).val(d.comuna || '');
+                    });
+                }
+            });
         }
     });
 
