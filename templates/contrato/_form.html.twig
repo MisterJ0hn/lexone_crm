@@ -268,12 +268,8 @@
             </div>
             
             <div class="col-sm-12 col-md-4">
-                <div class="row"> 
-                    <small class="text-muted isAbono">Abono *</small>
-                    <div class="col">{{form_row(form.isAbono,{'label':false,'attr':{'class':' chk-bono'}})}}</div>
-                    <small class="text-muted textTotal">Paga el total *</small>
-                    <div class="col divTotal">{{form_row(form.isTotal,{'label':false,'attr':{'class':' chk-total'}})}}</div>
-        
+                <div class="row">
+                    <div class="col">{% include 'partials/_honorarios_select.html.twig' with {'form': form} only %}</div>
                 </div>
                 <div class="row"> 
                     <div class="col">

@@ -68,30 +68,25 @@
         {{ form_start(form,{'action': path('anexo_renegociar',{'id':contrato.id}), 'method': 'POST'}) }}
         <section>
             <div class="row">
+                <div class="col-sm-12 col-md-2">
+                    {{ include('partials/_honorarios_select.html.twig', {form: form, probono: true}) }}
+                </div>
                 <div class="col-sm-12 col-md-3">
                     <small class="text-muted">Monto contrato *</small>
                       {{form_row(form.MontoContrato,{'label':false,'attr':{'class':'form-control monto-contrato number','required':true,'autocomplete':"ÑÖcompletes"}})}}
 				
                     <strong><label id="m-monto-contrato"></label></strong>
                 </div>
-                <div class="col-sm-12 col-md-3">
-                    <div class="row"> 
-                        <small class="text-muted isAbono">Abono *</small>
-                        <div class="col">{{form_row(form.isAbono,{'label':false,'attr':{'class':' chk-bono'}})}}</div>
-                        <small class="text-muted textTotal">Paga el total *</small>
-                        <div class="col divTotal">{{form_row(form.isTotal,{'label':false,'attr':{'class':' chk-total'}})}}</div>
-                    </div>
-                        
-                    {{form_row(form.abono,{'label':false,'attr':{'class':'form-control primera-cuota number','required':true,'autocomplete':"ÑÖcompletes"}})}}
-                        
-                                    
+                <div class="col-sm-12 col-md-2 div-primera-cuota">   
+                    <small class="text-muted">Monto Abono *</small>                                
+                    {{form_row(form.abono,{'label':false,'attr':{'class':'form-control primera-cuota number','required':true,'autocomplete':"ÑÖcompletes"}})}}                                                            
                     <strong><label id="m-primera-cuota"></label></strong>
                 </div>
-                <div class="col-sm-12 col-md-3">
+                <div class="col-sm-12 col-md-2">
                     <small class="text-muted t-cuotas" >Cuotas *</small>
                     {{form_row(form.nCuotas,{'label':false,'attr':{'class':'form-control cuotas number','required':true,'autocomplete':"ÑÖcompletes"}})}}
                 </div>
-                <div class="col-sm-12 col-md-3">
+                <div class="col-sm-12 col-md-2">
                     <small class="text-muted t-valor-cuota">Valor cuota *</small>
                     {{form_row(form.valorCuota,{'label':false,'attr':{'class':'form-control valor-cuota','required':true,'autocomplete':"ÑÖcompletes"}})}}
                     
@@ -147,7 +142,7 @@
 
 
 <script>
-
+    $('.div-primera-cuota').hide();
     $('.cuotas').change(function(){
         recalcula();
     });
@@ -238,6 +233,7 @@
     function checkAbono(){
  
         if($('.chk-bono').prop( "checked" )){
+            $('.div-primera-cuota').show();
             $('.primera-cuota').css("visibility", "visible");
             $('.t-cuotas').html('Cuotas restantes *');
             $('.t-valor-cuota').html('Valor Cuotas Restantes *');
@@ -260,6 +256,7 @@
             $('.divTotal').hide();
             $('.chk-total').prop("checked", false);
         }else{
+            $('.div-primera-cuota').hide();
             $('.primera-cuota').css("visibility", "hidden");
             $('.primera-cuota').val(0);
             $('#m-primera-cuota').html("");
@@ -287,6 +284,7 @@
      
     function checkTotal(){
         if($(".chk-total").prop( "checked" )){
+            $('.div-primera-cuota').hide();
            $('.cuotas').val(0);
             $('.cuotas').hide();
 

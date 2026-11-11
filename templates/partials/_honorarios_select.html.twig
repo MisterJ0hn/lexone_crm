@@ -1,0 +1,73 @@
+{#
+    Select de modalidad de honorarios (reemplaza los checks Abono / Paga el total / Pro-bono).
+    Los checks originales se mantienen ocultos y son el "origen de verdad": el select solo los
+    marca/desmarca disparando 'change', por lo que toda la lógica y validaciones existentes
+    (JS y backend) siguen funcionando igual.
+
+    Parámetros:
+      form     : formulario Symfony
+      probono  : (opcional) true para incluir la opción Pro-bono (requiere form.isProBono)
+#}
+{# Pro-bono solo si se pide y el formulario realmente tiene el campo (los anexos no lo tienen). #}
+{% set conProbono = probono|default(false) and form.children.isProBono is defined %}
+<small class="text-muted">Honorarios *</small>
+<select class="form-control sel-honorarios">
+    <option value="">Normal</option>
+    <option value="abono">Abono</option>
+    <option value="total">Paga el total</option>
+    {% if conProbono %}<option value="probono">Pro-bono (gratis)</option>{% endif %}
+</select>
+<div class="honorarios-checks" style="display:none !important">
+    {{ form_row(form.isAbono, {'label': false, 'attr': {'class': 'chk-bono'}}) }}
+    {{ form_row(form.isTotal, {'label': false, 'attr': {'class': 'chk-total'}}) }}
+    {% if conProbono %}{{ form_row(form.isProBono, {'label': false, 'attr': {'class': 'chk-probono'}}) }}{% endif %}
+</div>
+<script>
+$(function () {
+    var $sel = $('.sel-honorarios');
+    var mapa = {abono: '.chk-bono', total: '.chk-total', probono: '.chk-probono'};
+    var ocupado = false;
+
+    // Refleja en el select el estado actual de los checks (y de "incorporación", si existe).
+    function sincronizar() {
+        var valor = '';
+        $.each(mapa, function (k, sel) {
+            if ($(sel).prop('checked')) { valor = k; }
+        });
+        $sel.val(valor);
+        // Con "incorporación" marcada, la lógica original oculta Abono y Paga el total.
+        var incorporacion = $('.chk-incorporacion').prop('checked');
+        $sel.find('option[value="abono"], option[value="total"]').prop('disabled', !!incorporacion);
+    }
+
+    $sel.on('change', function () {
+        var v = $sel.val();
+        ocupado = true;
+        // Primero se desmarcan los demás (como haría el usuario), luego se marca el elegido.
+        $.each(mapa, function (k, sel) {
+            var $c = $(sel);
+            if (k !== v && $c.prop('checked')) {
+                $c.prop('checked', false).trigger('change');
+            }
+        });
+        if (mapa[v]) {
+            var $c = $(mapa[v]);
+            if (!$c.prop('checked')) {
+                $c.prop('checked', true).trigger('change');
+            }
+        }
+        ocupado = false;
+        sincronizar();
+    });
+
+    // Cambios hechos por el JS existente sobre los checks.
+    $(Object.values(mapa).join(',') + ',.chk-incorporacion').on('change', function () {
+        if (!ocupado) { sincronizar(); }
+    });
+
+    sincronizar();
+    // Por si la inicialización de la pantalla (modo edición) marca los checks después.
+    setTimeout(sincronizar, 0);
+    $(window).on('load', sincronizar);
+});
+</script>

@@ -248,28 +248,22 @@
         {{form_row(form.pagoActual,{'label':false,'attr':{'class':'form-control pago-actual number','autocomplete':"ÑÖcompletes"}})}}
         <strong><label id="m-pago-actual"></label></strong>
     </div>
+    <div class="col-sm-12 col-md-2">
+        {{ include('partials/_honorarios_select.html.twig', {form: form, probono: true}) }}
+    </div>
     <div class="col-sm-12 col-md-3">
         <small class="text-muted">Monto contrato *</small>
         {{form_row(form.MontoContrato,{'label':false,'attr':{'class':'form-control monto-contrato number','required':true,'autocomplete':"ÑÖcompletes"}})}}
         <strong><label id="m-monto-contrato"></label></strong>
     </div>
     
-    <div class="col-sm-12 col-md-5">
-        <div class="row">
-            <small class="text-muted isAbono">Abono *</small>
-            <div class="col">{{form_row(form.isAbono,{'label':false,'attr':{'class':' chk-bono'}})}}</div>
-            <small class="text-muted textTotal">Paga el total *</small>
-            <div class="col divTotal">{{form_row(form.isTotal,{'label':false,'attr':{'class':' chk-total'}})}}</div>
-            <small class="text-muted textProBono">Pro-bono (gratis)</small>
-            <div class="col divProBono">{{form_row(form.isProBono,{'label':false,'attr':{'class':' chk-probono'}})}}</div>
-        </div>
-        <div class="row">
-            <div class="col">
-                {{form_row(form.primeraCuota,{'label':false,'attr':{'class':'form-control primera-cuota number','required':true,'autocomplete':"ÑÖcompletes"}})}}
+    <div class="col-sm-12 col-md-3 div-primera-cuota">
         
-                <strong><label id="m-primera-cuota"></label></strong>
-            </div>
-        </div>
+        <small class="text-muted">Monto Abono *</small>
+        {{form_row(form.primeraCuota,{'label':false,'attr':{'class':'form-control primera-cuota number','required':true,'autocomplete':"ÑÖcompletes"}})}}
+
+        <strong><label id="m-primera-cuota"></label></strong>
+           
     </div>
     
     <div class="col-sm-12 col-md-2">
@@ -473,7 +467,7 @@
 <script>
 
     $(".ocultar-campo").hide();
-
+    $('.div-primera-cuota').hide();
 
     $(function () {
         //Initialize Select2 Elements
@@ -969,6 +963,7 @@
             $('.t-cuotas').html('Cuotas restantes *');
             $('.t-valor-cuota').html('Valor Cuotas Restantes *');
             $('.t-mes-pago').html('Mes Segundo Pago');
+            $('.div-primera-cuota').show();
             $('.primer-pago').daterangepicker({
                 "singleDatePicker": true,
                 "drops": "up",
@@ -995,6 +990,7 @@
             $('.fecha-incorporacion').hide();
             $('.chk-incorporacion').hide();
         }else{
+            $('.div-primera-cuota').hide();
             $('.primera-cuota').css("visibility", "hidden");
             $('.primera-cuota').val(0);
             $('#m-primera-cuota').html("");
@@ -1055,6 +1051,7 @@
             $('.fecha-incorporacion').hide();
             $('.fecha-incorporacion').prop('required',false);
             $('.chk-incorporacion').hide();
+            $('.div-primera-cuota').hide();
         }else{
             
             $('.chkDiasPago').prop('required',true);
@@ -1079,6 +1076,7 @@
             $('.isIncorporacion').show();
             $('.fecha-incorporacion').show();
             $('.chk-incorporacion').show();
+
         }
     });
     // Pro-bono: contrato gratis, monto 0 y sin cuotas.
@@ -1100,6 +1098,7 @@
             $('.isAbono, .textTotal, .t-cuotas, .t-valor-cuota').hide();
             $('.diasPago, .mesPrimerPago, .vigenciaMeses').hide();
             $('.chkDiasPago').prop('required',false);
+            $('.div-primera-cuota').hide();
         }else{
             $('.monto-contrato').prop('readonly',false);
             $('.cuotas').val(1).show();
