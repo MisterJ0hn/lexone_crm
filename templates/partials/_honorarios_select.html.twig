@@ -15,7 +15,7 @@
     <option value="">Normal</option>
     <option value="abono">Abono</option>
     <option value="total">Paga el total</option>
-    {% if conProbono %}<option value="probono">Pro-bono (gratis)</option>{% endif %}
+    {% if conProbono %}<option value="probono">Pro-bono</option>{% endif %}
 </select>
 <div class="honorarios-checks" style="display:none !important">
     {{ form_row(form.isAbono, {'label': false, 'attr': {'class': 'chk-bono'}}) }}
