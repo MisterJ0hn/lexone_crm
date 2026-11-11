@@ -122,7 +122,7 @@
         </button>
         {{ render(controller('App\\Controller\\RecordatorioController::campana')) }}
         {{ render(controller('App\\Controller\\ChangecompController::index', {'route_name': app.request.attributes.get('_route')|default('/')})) }}
-        <span class="hidden items-center gap-2 sm:inline-flex"><i class="far fa-user-circle text-slate-400"></i>{{ sesion.getSesion.nombre }}</span>
+        <span class="hidden items-center gap-2 sm:inline-flex"><i class="far fa-user-circle text-slate-400"></i><strong>{{ sesion.getSesion.nombre }}</strong></span>
       </div>
     </header>
 
