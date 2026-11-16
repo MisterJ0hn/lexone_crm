@@ -7,6 +7,10 @@ doctrine:
         # either here or in the DATABASE_URL env var (see .env file)
         #server_version: '16'
         use_savepoints: true
+        # MySQL 8 activa ONLY_FULL_GROUP_BY por defecto; varias consultas dependen
+        # del comportamiento laxo de MySQL 5.7. 1002 = PDO::MYSQL_ATTR_INIT_COMMAND.
+        options:
+            1002: "SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))"
     orm:
         auto_generate_proxy_classes: true
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
