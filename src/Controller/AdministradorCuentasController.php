@@ -127,7 +127,7 @@ class AdministradorCuentasController extends AbstractController
                 $encoded=$encoder->hashPassword($usuario,$password);
                 $usuario->setPassword($encoded);
 
-                $usuario->setUsername($usuario->getUsername().$user->getEmpresaActual());
+                $usuario->setUsername($usuario->getUsername());
 
                 $usuario->setTipoDocumento($tipoDocumento->find($request->request->get('cboTipoDocumento')));
 
