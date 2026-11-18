@@ -40,25 +40,17 @@ class Contrato
     #[ORM\Column(type: "datetime", nullable: true)]
     private $fechaCreacion;
 
-    #[ORM\ManyToOne(targetEntity: Sucursal::class, inversedBy: "contratos")]
-    private $sucursal;
-
     #[ORM\ManyToOne(targetEntity: Usuario::class, inversedBy: "contratos")]
     private $usuarioRegistro;
 
-    
     #[ORM\ManyToOne(targetEntity: Cliente::class, inversedBy: "contratos")]
     private $cliente;
-
-  
 
     #[ORM\ManyToOne(targetEntity: Pais::class, inversedBy: "contratos")]
     private $pais;
 
-   
     #[ORM\Column(type: "datetime", nullable: true)]
     private $fechaPrimerPago;
-
 
     #[ORM\ManyToOne(targetEntity: Reunion::class, inversedBy: "contratos")]
     private $reunion;
@@ -208,7 +200,6 @@ class Contrato
         return $this->id;
     }
 
-
     public function getEstadoCivil(): ?EstadoCivil
     {
         return $this->estadoCivil;
@@ -328,17 +319,6 @@ class Contrato
         return $this;
     }
 
-    public function getSucursal(): ?Sucursal
-    {
-        return $this->sucursal;
-    }
-
-    public function setSucursal(?Sucursal $sucursal): self
-    {
-        $this->sucursal = $sucursal;
-
-        return $this;
-    }
 
     public function getUsuarioRegistro(): ?Usuario
     {
@@ -375,7 +355,6 @@ class Contrato
 
         return $this;
     }
-
 
     public function getReunion(): ?Reunion
     {

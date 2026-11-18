@@ -67,7 +67,7 @@ class ContratoType extends AbstractType
                         ->andWhere('p.estado = true')
                         ->andWhere('p.empresa = :empresa')
                         ->setParameter('empresa', $user ? $user->getEmpresaActual() : 0)
-                        ->orderBy('p.nombre', 'ASC');
+                        ->orderBy('p.id', 'ASC');
                 },
             ])
             ->add('cuotas')

@@ -15,8 +15,8 @@ class PanelController extends AbstractController
     public function index(AgendaRepository $agendaRepository, 
                           PagoRepository $pagoRepository): Response
     {
+         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
         
-        $this->denyAccessUnlessGranted('view','panel');
         $user=$this->getUser();
         $otrosL='';
         $otrosA='';
