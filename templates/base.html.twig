@@ -200,15 +200,65 @@
                 $(".ocultar-campo").hide();
 
                 // Cierre de sesión por inactividad: tiempo fijo definido en config/services.yaml (sesion_inactividad_min).
+                // Antes de cerrar, se avisa y se pregunta si se desea continuar.
                 (function () {
                     var minutos = {{ sesion_inactividad_min|default(0)|number_format(0, '', '') }};
                     if (minutos <= 0) { return; }
                     var logout = '{{ path('app_logout') }}';
+                    var keepalive = '{{ path('app_sesion_keepalive') }}';
+                    var totalMs = minutos * 60000;
+                    var avisoMs = Math.min(60000, totalMs / 2);   // el aviso aparece antes de vencer
                     var timer = null;
+                    var avisoAbierto = false;
+
+                    function cerrar() { window.location.href = logout; }
+
                     function reiniciar() {
+                        if (avisoAbierto) { return; }
                         clearTimeout(timer);
-                        timer = setTimeout(function () { window.location.href = logout; }, minutos * 60000);
+                        timer = setTimeout(preguntar, totalMs - avisoMs);
                     }
+
+                    function preguntar() {
+                        avisoAbierto = true;
+                        var restante = Math.ceil(avisoMs / 1000);
+                        Swal.fire({
+                            title: 'Su sesión está por expirar',
+                            html: 'Se cerrará por inactividad en <b></b> segundos.<br>¿Desea continuar?',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'Sí, continuar',
+                            cancelButtonText: 'No, cerrar sesión',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            timer: avisoMs,
+                            timerProgressBar: true,
+                            didOpen: function () {
+                                var b = Swal.getHtmlContainer().querySelector('b');
+                                b.textContent = restante;
+                                var intervalo = setInterval(function () {
+                                    var ms = Swal.getTimerLeft();
+                                    if (ms === undefined || ms === null) { clearInterval(intervalo); return; }
+                                    b.textContent = Math.ceil(ms / 1000);
+                                }, 500);
+                            }
+                        }).then(function (r) {
+                            if (r.isConfirmed) {
+                                // Renueva la sesión en el servidor y reinicia el contador.
+                                fetch(keepalive, { method: 'POST', credentials: 'same-origin' })
+                                    .then(function (resp) {
+                                        if (resp.status === 401) { cerrar(); return; }
+                                        avisoAbierto = false;
+                                        reiniciar();
+                                    })
+                                    .catch(function () { avisoAbierto = false; reiniciar(); });
+                            } else {
+                                // "No" o se acabó el tiempo del aviso.
+                                cerrar();
+                            }
+                        });
+                    }
+
                     ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(function (ev) {
                         document.addEventListener(ev, reiniciar, { passive: true });
                     });

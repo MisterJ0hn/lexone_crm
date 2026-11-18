@@ -30,6 +30,16 @@ class LoginController extends AbstractController
             'recaptcha_site_key' => $this->getParameter('recaptcha_site_key'),]);
     }
 
+    /**
+     * Mantiene viva la sesión: el aviso de inactividad ("¿desea continuar?") llama aquí
+     * para que el servidor renueve la sesión. Responde 401 si ya expiró.
+     */
+    #[Route("/sesion/keepalive", name: "app_sesion_keepalive", methods: ["POST"])]
+    public function keepalive(): Response
+    {
+        return new Response('', $this->getUser() ? Response::HTTP_NO_CONTENT : Response::HTTP_UNAUTHORIZED);
+    }
+
     #[Route("/logout", name: "app_logout")]
     public function logout()
     {

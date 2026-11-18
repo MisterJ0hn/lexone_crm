@@ -43,7 +43,7 @@
             </div>
             <div class="col-md-3">
                 <select id="bUsuario" class="form-control">
-                    <option value="0">Usuario</option>
+                    <option value="0">Tramtador</option>
                 </select>
             </div>
             <div class="col-md-2">
@@ -121,7 +121,7 @@ function cargarFiltrosPorMateria(materiaId) {
             });
             if ($servicio.find('option').filter(function() { return this.value === servicioVal; }).length) { $servicio.val(servicioVal); }
 
-            $usuario.empty().append('<option value="0">Usuario</option>');
+            $usuario.empty().append('<option value="0">Tramitador</option>');
             $.each(data.usuarios, function(i, t) {
                 $usuario.append($('<option>').val(t.id).text(t.nombre));
             });
