@@ -54,7 +54,7 @@ class AdministradorCuentasController extends AbstractController
             
         }
        
-        $pagina=$moduloPerRepository->findOneByName('administrador_cuentas',$user->getEmpresaActual());
+        $pagina=$moduloPerRepository->findOneByName('administrador_cuentas',1);
         //$query=$usuarioRepository->findBy(['usuarioTipo'=>1,'estado'=>$modo]);
 
        
@@ -85,7 +85,7 @@ class AdministradorCuentasController extends AbstractController
     {
         $this->denyAccessUnlessGranted('create','administrador_cuentas');
         $user=$this->getUser();
-        $pagina=$moduloPerRepository->findOneByName('administrador_cuentas',$user->getEmpresaActual());
+        $pagina=$moduloPerRepository->findOneByName('administrador_cuentas',1);
         try{
         $usuario = new Usuario();
         $usuario->setEstado(1);
@@ -147,12 +147,13 @@ class AdministradorCuentasController extends AbstractController
                     if(is_null($usuario->getEmpresaActual())){
                         $usuario->setEmpresaActual($cuenta->getEmpresa()->getId());
                     }
+                    $usuario->setEmpresa($cuenta->getEmpresa());
                 }
 
                 $entityManager->persist($usuario);
                 $entityManager->flush();
 
-                $privilegioTipousuarios=$privilegioTipousuarioRepository->findByEmpresa($user->getEmpresaActual(),$usuario->getUsuarioTipo()->getId());
+                $privilegioTipousuarios=$privilegioTipousuarioRepository->findByEmpresa(1,$usuario->getUsuarioTipo()->getId());
                 foreach($privilegioTipousuarios as $privilegioTipousuario){
                     $privilegio=$privilegioRepository->findBy(["moduloPer"=>$privilegioTipousuario->getModuloPer()->getId(),"usuario"=>$usuario->getId()]);
                     if(!$privilegio){

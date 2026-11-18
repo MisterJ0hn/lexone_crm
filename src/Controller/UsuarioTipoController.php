@@ -27,7 +27,7 @@ class UsuarioTipoController extends AbstractController
     {
         $this->denyAccessUnlessGranted('view','usuario_tipo');
         $user=$this->getUser();
-        $pagina=$this->entityManager->getRepository(ModuloPer::class)->findOneByName('usuario_tipo',$user->getEmpresaActual());
+        $pagina=$this->entityManager->getRepository(ModuloPer::class)->findOneByName('usuario_tipo',1);
         
         if($user->getUsuarioTipo()->getId()==8){
             $listado="";
@@ -35,7 +35,7 @@ class UsuarioTipoController extends AbstractController
             $listado="8";
         }
         return $this->render('usuario_tipo/index.html.twig', [
-            'usuario_tipos' => $usuarioTipoRepository->findByEmpresa($user->getEmpresaActual(),$listado),
+            'usuario_tipos' => $usuarioTipoRepository->findByEmpresa(1,$listado),
             'pagina'=>$pagina->getNombre(),
         ]);
     }
@@ -45,7 +45,7 @@ class UsuarioTipoController extends AbstractController
     {
         $user=$this->getUser();
         $this->denyAccessUnlessGranted('create','usuario_tipo');
-        $pagina=$this->entityManager->getRepository(ModuloPer::class)->findOneByName('usuario_tipo',$user->getEmpresaActual());
+        $pagina=$this->entityManager->getRepository(ModuloPer::class)->findOneByName('usuario_tipo',1);
         
         $usuarioTipo = new UsuarioTipo();
         $empresa=$empresaRepository->find($user->getEmpresaActual());
@@ -83,7 +83,7 @@ class UsuarioTipoController extends AbstractController
     {
         $this->denyAccessUnlessGranted('edit','usuario_tipo');
         $user=$this->getUser();
-        $pagina=$this->entityManager->getRepository(ModuloPer::class)->findOneByName('usuario_tipo',$user->getEmpresaActual());
+        $pagina=$this->entityManager->getRepository(ModuloPer::class)->findOneByName('usuario_tipo',1);
         
         $form = $this->createForm(UsuarioTipoType::class, $usuarioTipo);
         $form->handleRequest($request);
