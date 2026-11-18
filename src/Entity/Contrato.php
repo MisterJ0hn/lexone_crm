@@ -15,31 +15,11 @@ class Contrato
     #[ORM\Column(type: "integer")]
     private $id;
 
-   
-    #[ORM\Column(type: "string", length: 255,nullable: true)]
-    private $ciudad;
-
-   
-    #[ORM\Column(type: "string", length: 255)]
-    private $comuna;
-
     #[ORM\ManyToOne(targetEntity: EstadoCivil::class, inversedBy: "contratos")]
     private $estadoCivil;
 
-    #[ORM\ManyToOne(targetEntity: SituacionLaboral::class, inversedBy: "contratos")]
-    private $situacionLaboral;
-
-    #[ORM\ManyToOne(targetEntity: Escritura::class, inversedBy: "contratos")]
-    private $escritura;
-
     #[ORM\OneToOne(targetEntity: Agenda::class,inversedBy: "contrato", cascade: ["persist", "remove"])]
     private $agenda;
-
-    #[ORM\Column(type: "string", length: 255, nullable: true)]
-    private $tituloContrato;
-
-    #[ORM\Column(type: "decimal", precision: 10, scale: 0, nullable: true)]
-    private $montoNivelDeuda;
 
     #[ORM\Column(type: "decimal", precision: 10, scale: 0, nullable: true)]
     private $MontoContrato;
@@ -50,9 +30,7 @@ class Contrato
     #[ORM\Column(type: "decimal", precision: 10, scale: 0, nullable: true)]
     private $valorCuota;
 
-    #[ORM\Column(type: "decimal", precision: 5, scale: 2, nullable: true)]
-    private $interes;
-
+   
     #[ORM\Column(type: "integer", nullable: true)]
     private $diaPago;
 
@@ -81,11 +59,6 @@ class Contrato
     #[ORM\Column(type: "datetime", nullable: true)]
     private $fechaPrimerPago;
 
-    #[ORM\ManyToOne(targetEntity: ContratoVehiculo::class, inversedBy: "contratos")]
-    private $vehiculo;
-
-    #[ORM\ManyToOne(targetEntity: ContratoVivienda::class, inversedBy: "contratos")]
-    private $vivienda;
 
     #[ORM\ManyToOne(targetEntity: Reunion::class, inversedBy: "contratos")]
     private $reunion;
@@ -235,29 +208,6 @@ class Contrato
         return $this->id;
     }
 
-    public function getCiudad(): ?string
-    {
-        return $this->ciudad;
-    }
-
-    public function setCiudad(string $ciudad): self
-    {
-        $this->ciudad = $ciudad;
-
-        return $this;
-    }
-
-    public function getComuna(): ?string
-    {
-        return $this->comuna;
-    }
-
-    public function setComuna(string $comuna): self
-    {
-        $this->comuna = $comuna;
-
-        return $this;
-    }
 
     public function getEstadoCivil(): ?EstadoCivil
     {
@@ -267,30 +217,6 @@ class Contrato
     public function setEstadoCivil(?EstadoCivil $estadoCivil): self
     {
         $this->estadoCivil = $estadoCivil;
-
-        return $this;
-    }
-
-    public function getSituacionLaboral(): ?SituacionLaboral
-    {
-        return $this->situacionLaboral;
-    }
-
-    public function setSituacionLaboral(?SituacionLaboral $situacionLaboral): self
-    {
-        $this->situacionLaboral = $situacionLaboral;
-
-        return $this;
-    }
-
-    public function getEscritura(): ?Escritura
-    {
-        return $this->escritura;
-    }
-
-    public function setEscritura(?Escritura $escritura): self
-    {
-        $this->escritura = $escritura;
 
         return $this;
     }
@@ -307,30 +233,7 @@ class Contrato
         return $this;
     }
 
-    public function getTituloContrato(): ?string
-    {
-        return $this->tituloContrato;
-    }
-
-    public function setTituloContrato(?string $tituloContrato): self
-    {
-        $this->tituloContrato = $tituloContrato;
-
-        return $this;
-    }
-
-    public function getMontoNivelDeuda(): ?string
-    {
-        return $this->montoNivelDeuda;
-    }
-
-    public function setMontoNivelDeuda(?string $montoNivelDeuda): self
-    {
-        $this->montoNivelDeuda = $montoNivelDeuda;
-
-        return $this;
-    }
-
+   
     public function getMontoContrato(): ?string
     {
         return $this->MontoContrato;
@@ -367,17 +270,6 @@ class Contrato
         return $this;
     }
 
-    public function getInteres(): ?string
-    {
-        return $this->interes;
-    }
-
-    public function setInteres(?string $interes): self
-    {
-        $this->interes = $interes;
-
-        return $this;
-    }
 
     public function getDiaPago(): ?int
     {
@@ -484,29 +376,6 @@ class Contrato
         return $this;
     }
 
-    public function getVehiculo(): ?ContratoVehiculo
-    {
-        return $this->vehiculo;
-    }
-
-    public function setVehiculo(?ContratoVehiculo $vehiculo): self
-    {
-        $this->vehiculo = $vehiculo;
-
-        return $this;
-    }
-
-    public function getVivienda(): ?ContratoVivienda
-    {
-        return $this->vivienda;
-    }
-
-    public function setVivienda(?ContratoVivienda $vivienda): self
-    {
-        $this->vivienda = $vivienda;
-
-        return $this;
-    }
 
     public function getReunion(): ?Reunion
     {

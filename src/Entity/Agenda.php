@@ -61,9 +61,7 @@ class Agenda
     #[ORM\Column(type: "decimal", precision: 10, scale: 0, nullable: true)]
     private $monto;
 
-    #[ORM\OneToMany(targetEntity: UsuarioUsuariocategoria::class, mappedBy: "agenda")]
-    private $usuarioUsuariocategorias;
-
+   
     #[ORM\ManyToOne(targetEntity: Reunion::class, inversedBy: "agendas")]
     private $reunion;
 
@@ -121,7 +119,6 @@ class Agenda
 
     public function __construct()
     {
-        $this->usuarioUsuariocategorias = new ArrayCollection();
         $this->agendaObservacions = new ArrayCollection();
         $this->causas = new ArrayCollection();
         
@@ -310,36 +307,6 @@ class Agenda
     public function setMonto(?string $monto): self
     {
         $this->monto = $monto;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|UsuarioUsuariocategoria[]
-     */
-    public function getUsuarioUsuariocategorias(): Collection
-    {
-        return $this->usuarioUsuariocategorias;
-    }
-
-    public function addUsuarioUsuariocategoria(UsuarioUsuariocategoria $usuarioUsuariocategoria): self
-    {
-        if (!$this->usuarioUsuariocategorias->contains($usuarioUsuariocategoria)) {
-            $this->usuarioUsuariocategorias[] = $usuarioUsuariocategoria;
-            $usuarioUsuariocategoria->setAgenda($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUsuarioUsuariocategoria(UsuarioUsuariocategoria $usuarioUsuariocategoria): self
-    {
-        if ($this->usuarioUsuariocategorias->removeElement($usuarioUsuariocategoria)) {
-            // set the owning side to null (unless already changed)
-            if ($usuarioUsuariocategoria->getAgenda() === $this) {
-                $usuarioUsuariocategoria->setAgenda(null);
-            }
-        }
 
         return $this;
     }

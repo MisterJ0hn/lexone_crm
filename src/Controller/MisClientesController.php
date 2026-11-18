@@ -209,10 +209,23 @@ class MisClientesController extends AbstractController
             ->getQuery()
             ->getSingleScalarResult();
 
-        $diasActividad = null;
-        if ($contrato->getFechaUltimaGestion()) {
-            $diasActividad = (new \DateTime('today'))->diff(new \DateTime($contrato->getFechaUltimaGestion()->format('Y-m-d')))->days;
+        // Última observación del contrato: la más reciente entre contrato_observacion, causa_observacion y contrato_nota.
+        $ultima = null;
+        foreach ([\App\Entity\ContratoObservacion::class, \App\Entity\CausaObservacion::class, \App\Entity\ContratoNota::class] as $clase) {
+            $fecha = $em->createQueryBuilder()
+                ->select('MAX(o.fechaRegistro)')
+                ->from($clase, 'o')
+                ->where('o.contrato = :c')
+                ->setParameter('c', $contrato)
+                ->getQuery()
+                ->getSingleScalarResult();
+            if ($fecha && (null === $ultima || $fecha > $ultima)) {
+                $ultima = $fecha;
+            }
         }
+        $diasActividad = $ultima
+            ? (new \DateTime('today'))->diff(new \DateTime((new \DateTime($ultima))->format('Y-m-d')))->days
+            : (new \DateTime('today'))->diff(new \DateTime((new \DateTime($contrato->getFechaCreacion()->format('Y-m-d')))->format('Y-m-d')))->days;
 
         return [
             'materias'       => array_values($materias),

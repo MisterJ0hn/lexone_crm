@@ -75,23 +75,8 @@
                     <p>{{contrato.estadoCivil}}</p>
                 </div>
                 {% endif %}
-                <div class="col-sm-12 col-md-3 ocultar-campo">
-                    <small class="text-muted">Vivienda</small>
-                   
-                    <p>{{contrato.vivienda}}</p>   
-                </div>
-                <div class="col-sm-12 col-md-3 ocultar-campo">
-                    <small class="text-muted">Vehiculo</small>
-                  
-                    <p>{{contrato.vehiculo}}</p>   
-                </div>
-                {% if esPersonaCli %}
-                <div class="col-sm-12 col-md-3">
-                    <small class="text-muted">Situación Laboral</small><br>
-
-                    <p>{{contrato.situacionLaboral}}</p>
-                </div>
-                {% endif %}
+                
+               
                
                 {% if contrato.agenda.tipoCliente is null or contrato.agenda.tipoCliente.nombre == 'Persona' %}
                 <div class="col-sm-12 col-md-3">

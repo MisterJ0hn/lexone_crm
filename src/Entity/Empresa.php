@@ -108,14 +108,10 @@ class Empresa
     #[ORM\OneToMany(targetEntity: UsuarioTipo::class, mappedBy: "empresa")]
     private $usuarioTipos;
 
-    #[ORM\OneToMany(targetEntity: UsuarioCategoria::class, mappedBy: "empresa")]
-    private $usuarioCategorias;
 
     #[ORM\OneToMany(targetEntity: EstadoCivil::class, mappedBy: "empresa")]
     private $estadoCivils;
 
-    #[ORM\OneToMany(targetEntity: SituacionLaboral::class, mappedBy: "empresa")]
-    private $situacionLaborals;
 
     #[ORM\OneToMany(targetEntity: Escritura::class, mappedBy: "empresa")]
     private $escrituras;
@@ -128,12 +124,6 @@ class Empresa
 
     #[ORM\OneToMany(targetEntity: Pais::class, mappedBy: "empresa")]
     private $pais;
-
-    #[ORM\OneToMany(targetEntity: ContratoVivienda::class, mappedBy: "empresa")]
-    private $contratoViviendas;
-
-    #[ORM\OneToMany(targetEntity: ContratoVehiculo::class, mappedBy: "empresa")]
-    private $contratoVehiculos;
 
     #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: "empresa")]
     private $tickets;
@@ -153,15 +143,14 @@ class Empresa
         $this->moduloPers = new ArrayCollection();
         $this->menuCabezeras = new ArrayCollection();
         $this->usuarioTipos = new ArrayCollection();
-        $this->usuarioCategorias = new ArrayCollection();
+       
         $this->estadoCivils = new ArrayCollection();
-        $this->situacionLaborals = new ArrayCollection();
+
         $this->escrituras = new ArrayCollection();
         $this->juzgados = new ArrayCollection();
         $this->reunions = new ArrayCollection();
         $this->pais = new ArrayCollection();
-        $this->contratoViviendas = new ArrayCollection();
-        $this->contratoVehiculos = new ArrayCollection();
+        
         $this->tickets = new ArrayCollection();
         $this->recordatorioTipos = new ArrayCollection();
         $this->agendas = new ArrayCollection();
@@ -454,35 +443,7 @@ class Empresa
         return $this;
     }
 
-    /**
-     * @return Collection|UsuarioCategoria[]
-     */
-    public function getUsuarioCategorias(): Collection
-    {
-        return $this->usuarioCategorias;
-    }
-
-    public function addUsuarioCategoria(UsuarioCategoria $usuarioCategoria): self
-    {
-        if (!$this->usuarioCategorias->contains($usuarioCategoria)) {
-            $this->usuarioCategorias[] = $usuarioCategoria;
-            $usuarioCategoria->setEmpresa($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUsuarioCategoria(UsuarioCategoria $usuarioCategoria): self
-    {
-        if ($this->usuarioCategorias->removeElement($usuarioCategoria)) {
-            // set the owning side to null (unless already changed)
-            if ($usuarioCategoria->getEmpresa() === $this) {
-                $usuarioCategoria->setEmpresa(null);
-            }
-        }
-
-        return $this;
-    }
+    
 
     /**
      * @return Collection|EstadoCivil[]
@@ -514,36 +475,7 @@ class Empresa
         return $this;
     }
 
-    /**
-     * @return Collection|SituacionLaboral[]
-     */
-    public function getSituacionLaborals(): Collection
-    {
-        return $this->situacionLaborals;
-    }
-
-    public function addSituacionLaboral(SituacionLaboral $situacionLaboral): self
-    {
-        if (!$this->situacionLaborals->contains($situacionLaboral)) {
-            $this->situacionLaborals[] = $situacionLaboral;
-            $situacionLaboral->setEmpresa($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSituacionLaboral(SituacionLaboral $situacionLaboral): self
-    {
-        if ($this->situacionLaborals->removeElement($situacionLaboral)) {
-            // set the owning side to null (unless already changed)
-            if ($situacionLaboral->getEmpresa() === $this) {
-                $situacionLaboral->setEmpresa(null);
-            }
-        }
-
-        return $this;
-    }
-
+  
     /**
      * @return Collection|Escritura[]
      */
@@ -664,66 +596,7 @@ class Empresa
         return $this;
     }
 
-    /**
-     * @return Collection|ContratoVivienda[]
-     */
-    public function getContratoViviendas(): Collection
-    {
-        return $this->contratoViviendas;
-    }
-
-    public function addContratoVivienda(ContratoVivienda $contratoVivienda): self
-    {
-        if (!$this->contratoViviendas->contains($contratoVivienda)) {
-            $this->contratoViviendas[] = $contratoVivienda;
-            $contratoVivienda->setEmpresa($this);
-        }
-
-        return $this;
-    }
-
-    public function removeContratoVivienda(ContratoVivienda $contratoVivienda): self
-    {
-        if ($this->contratoViviendas->removeElement($contratoVivienda)) {
-            // set the owning side to null (unless already changed)
-            if ($contratoVivienda->getEmpresa() === $this) {
-                $contratoVivienda->setEmpresa(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|ContratoVehiculo[]
-     */
-    public function getContratoVehiculos(): Collection
-    {
-        return $this->contratoVehiculos;
-    }
-
-    public function addContratoVehiculo(ContratoVehiculo $contratoVehiculo): self
-    {
-        if (!$this->contratoVehiculos->contains($contratoVehiculo)) {
-            $this->contratoVehiculos[] = $contratoVehiculo;
-            $contratoVehiculo->setEmpresa($this);
-        }
-
-        return $this;
-    }
-
-    public function removeContratoVehiculo(ContratoVehiculo $contratoVehiculo): self
-    {
-        if ($this->contratoVehiculos->removeElement($contratoVehiculo)) {
-            // set the owning side to null (unless already changed)
-            if ($contratoVehiculo->getEmpresa() === $this) {
-                $contratoVehiculo->setEmpresa(null);
-            }
-        }
-
-        return $this;
-    }
-
+    
     /**
      * @return Collection<int, Ticket>
      */

@@ -7,7 +7,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Empresa;
 use App\Entity\Cuenta;
 use App\Entity\UsuarioCuenta;
-use App\Entity\UsuarioCategoria;
 use App\Repository\AccionRepository;
 use App\Repository\CuentaRepository;
 use App\Repository\ModuloRepository;
@@ -138,13 +137,6 @@ class EmpresaController extends AbstractController
             $entityManager->persist($cuenta);
             $entityManager->flush();
 
-            $usuarioCategoria=new UsuarioCategoria();
-            $usuarioCategoria->setEmpresa($empresa);
-            $usuarioCategoria->setNombre('Nivel 1');
-            $usuarioCategoria->setNLeads(1);
-            
-            $entityManager->persist($usuarioCategoria);
-            $entityManager->flush();
 
             $usuarioTipo_managedcompany=$usuarioTipoRepository->findOneBy(['nombreInterno'=>'sys_admin']);
             $usuario=$usuarioRepository->find(1);
@@ -258,7 +250,7 @@ class EmpresaController extends AbstractController
     {
         $this->denyAccessUnlessGranted('edit','empresa');
         if ($this->isCsrfTokenValid('delete'.$empresa->getId(), $request->request->get('_token'))) {
-            echo $empresa->getNombre();
+          
             $entityManager = $this->entityManager;
             
             foreach ($empresa->getCuentas() as $cuenta) {
@@ -294,11 +286,6 @@ class EmpresaController extends AbstractController
 
                     foreach ($usuario->getUsuarioNoDisponibles() as $noDisponible) {
                         $entityManager->remove($noDisponible);
-                        $entityManager->flush();
-                    }
-
-                    foreach ($usuario->getUsuarioUsuariocategorias() as $usuarioCategoria) {
-                        $entityManager->remove($usuarioCategoria);
                         $entityManager->flush();
                     }
 
@@ -356,10 +343,7 @@ class EmpresaController extends AbstractController
                 $entityManager->flush();
             }
     
-            foreach ($empresa->getUsuarioCategorias() as $usuarioCategoria) {
-                $entityManager->remove($usuarioCategoria);
-                $entityManager->flush();
-            }
+            
 
             foreach ($empresa->getModuloPers() as $moduloPer) {
 

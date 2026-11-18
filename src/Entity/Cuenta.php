@@ -40,9 +40,7 @@ class Cuenta
     #[ORM\Column(type: "float", nullable: true)]
     private $pageId;
 
-    #[ORM\OneToMany(targetEntity: UsuarioUsuariocategoria::class, mappedBy: "cuenta")]
-    private $usuarioUsuariocategorias;
-
+   
     #[ORM\OneToMany(targetEntity: Importacion::class, mappedBy: "cuenta")]
     private $importacions;
 
@@ -59,7 +57,6 @@ class Cuenta
         $this->usuarioCuentas = new ArrayCollection();
         $this->agendas = new ArrayCollection();
         $this->sucursals = new ArrayCollection();
-        $this->usuarioUsuariocategorias = new ArrayCollection();
         $this->importacions = new ArrayCollection();
         $this->juzgadoCuentas = new ArrayCollection();
     }
@@ -223,35 +220,7 @@ class Cuenta
         return $this;
     }
 
-    /**
-     * @return Collection|UsuarioUsuariocategoria[]
-     */
-    public function getUsuarioUsuariocategorias(): Collection
-    {
-        return $this->usuarioUsuariocategorias;
-    }
-
-    public function addUsuarioUsuariocategoria(UsuarioUsuariocategoria $usuarioUsuariocategoria): self
-    {
-        if (!$this->usuarioUsuariocategorias->contains($usuarioUsuariocategoria)) {
-            $this->usuarioUsuariocategorias[] = $usuarioUsuariocategoria;
-            $usuarioUsuariocategoria->setCuenta($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUsuarioUsuariocategoria(UsuarioUsuariocategoria $usuarioUsuariocategoria): self
-    {
-        if ($this->usuarioUsuariocategorias->removeElement($usuarioUsuariocategoria)) {
-            // set the owning side to null (unless already changed)
-            if ($usuarioUsuariocategoria->getCuenta() === $this) {
-                $usuarioUsuariocategoria->setCuenta(null);
-            }
-        }
-
-        return $this;
-    }
+   
 
     /**
      * @return Collection|Importacion[]

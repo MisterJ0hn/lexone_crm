@@ -91,6 +91,9 @@
                 </td>
                 <td>
                     <div class="btn-group btn-group-sm" role="group">
+                        {% if is_granted('create','modificar_contrato') %}
+                            <a href="#" class="btn btn-dark btn-sm" onclick="editarObservacion({{ contrato.id }}); return false;"><i class="fas fa-edit"></i></a>
+                        {% endif %}
                         <a href="{{ path('contrato_linea_tiempo', {'id': contrato.id}) }}" class="btn btn-sm btn-dark">LT</a>
                         {% if contrato.pdf %}
                             <a href="{{ url_web }}{{ pdf_contrato }}{{ contrato.pdf }}" class="btn btn-success btn-sm"><i class="fas fa-file-pdf"></i></a>

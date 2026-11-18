@@ -41,7 +41,6 @@ class ContratoTemplateRenderer
             '{{detalle_cuotas}}' => 'Tabla con el detalle de cuotas (N°, vencimiento, monto). Ancho opcional: {{detalle_cuotas:50%}} o {{detalle_cuotas:400px}}. Use ⚙ para elegir columnas y cabeceras',
             '{{comuna_cliente}}' => 'Comuna del cliente',
             '{{ciudad_cliente}}' => 'Ciudad del cliente',
-            '{{situacion_laboral}}' => 'Situación laboral del cliente',
             '{{reunion}}' => 'Reunión (modalidad) del contrato',
         ];
     }
@@ -95,7 +94,7 @@ class ContratoTemplateRenderer
             '{{detalle_cuotas}}' => $this->tablaCuotas($this->cuotasEjemplo()),
             '{{comuna_cliente}}' => 'Providencia',
             '{{ciudad_cliente}}' => 'Santiago',
-            '{{situacion_laboral}}' => 'Dependiente',
+       
             '{{reunion}}' => 'Presencial',
         ];
     }
@@ -126,7 +125,6 @@ class ContratoTemplateRenderer
             '{{detalle_cuotas}}' => $this->detalleCuotasHtml($contrato),
             '{{comuna_cliente}}' => $cliente && $cliente->getComuna() ? (string) $cliente->getComuna()->getNombre() : '',
             '{{ciudad_cliente}}' => $cliente && $cliente->getCiudad() ? (string) $cliente->getCiudad()->getNombre() : '',
-            '{{situacion_laboral}}' => $contrato->getSituacionLaboral() ? (string) $contrato->getSituacionLaboral()->getNombre() : '',
             '{{reunion}}' => ($reunion = $contrato->getReunion() ?? ($cliente ? $cliente->getReunion() : null)) ? (string) $reunion->getNombre() : '',
         ];
     }

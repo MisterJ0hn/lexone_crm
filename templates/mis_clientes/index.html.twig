@@ -64,6 +64,35 @@
     </div>
 </div>
 
+<!-- Modal Observación -->
+<div class="modal fade" id="observacionModal" tabindex="-1" aria-labelledby="observacionModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="observacionModalLabel">Observación del Contrato</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="observacionModalBody"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal resultado de guardado -->
+<div class="modal fade" id="guardadoModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-body text-center">
+        <p class="guardadoModalMensaje mb-3"></p>
+        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 $('#bFecha').daterangepicker({
     "showDropdowns": true,
@@ -167,6 +196,80 @@ $(document).on('click', '#resultado a.page-link, #resultado th a', function(e) {
         }
         cargarClientes(url);
     }
+});
+function editarObservacion(contratoId) {
+    $.ajax({
+        url: "/contrato/" + contratoId + "/observacion_modal",
+        type: "get",
+        dataType: "html",
+        cache: false,
+        success: function(data) {
+            $(".observacionModalBody").html(data);
+            $("#observacionModal").modal('show');
+        },
+        statusCode: {
+            403: function() {
+                $(".observacionModalBody").html("<p>Acceso Denegado</p>");
+                $("#observacionModal").modal('show');
+            }
+        }
+    });
+}
+
+// Historial de cambios por campo del modal (se carga por ajax la primera vez).
+$(document).on('click', '.btn-historial-campo', function() {
+    var boton = $(this);
+    var contenedor = $(boton.attr('data-historial'));
+    if (contenedor.hasClass('show')) { contenedor.collapse('hide'); return; }
+    if (!contenedor.data('cargado')) {
+        contenedor.html('<small class="text-muted">Cargando...</small>');
+        $.ajax({
+            url: boton.attr('data-url'),
+            type: 'get',
+            dataType: 'html',
+            cache: false,
+            success: function(data) { contenedor.html(data).data('cargado', true); },
+            error: function() { contenedor.html('<small class="text-danger">No fue posible cargar el historial.</small>'); }
+        });
+    }
+    contenedor.collapse('show');
+});
+
+// Avisa si el valor ingresado ya quedó registrado antes en el historial de ese campo.
+$(document).on('keyup change', '.campo-con-historial', function() {
+    var campo = $(this), valores = [];
+    try { valores = JSON.parse(campo.attr('data-valores-historial') || '[]'); } catch (e) { valores = []; }
+    var actual = $.trim(campo.val()).toLowerCase(), repetido = false;
+    if (actual !== '') {
+        for (var i = 0; i < valores.length; i++) {
+            if ($.trim(String(valores[i])).toLowerCase() === actual) { repetido = true; break; }
+        }
+    }
+    campo.toggleClass('border-warning', repetido);
+    campo.closest('.input-group').nextAll('.aviso-valor-repetido').first().toggleClass('d-none', !repetido);
+});
+
+$(document).on('submit', '.form-observacion', function(e) {
+    e.preventDefault();
+    var form = $(this);
+    $.ajax({
+        url: form.attr('action'),
+        type: 'post',
+        data: form.serialize(),
+        dataType: 'json',
+        success: function() {
+            $('#observacionModal').modal('hide');
+            $('.guardadoModalMensaje').text('Guardado');
+            $('#guardadoModal').modal('show');
+            cargarClientes(urlContenido + (_filtrosActuales ? '?' + _filtrosActuales : ''));
+        },
+        error: function(xhr) {
+            var msg = 'Ocurrió un error al guardar la observación.';
+            if (xhr.responseJSON && xhr.responseJSON.message) { msg = xhr.responseJSON.message; }
+            $('.guardadoModalMensaje').text(msg);
+            $('#guardadoModal').modal('show');
+        }
+    });
 });
 </script>
 

@@ -7,7 +7,6 @@ use App\Entity\Agenda;
 use App\Entity\Contrato;
 use App\Entity\Cuenta;
 use App\Entity\Cuota;
-use App\Entity\UsuarioUsuariocategoria;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

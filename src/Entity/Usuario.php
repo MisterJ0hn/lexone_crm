@@ -106,9 +106,6 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $sexo;
 
-    #[ORM\ManyToOne(targetEntity: UsuarioCategoria::class, inversedBy: "usuarios")]
-    private $categoria;
-
     #[ORM\ManyToOne(targetEntity: UsuarioStatus::class, inversedBy: "usuarios")]
     private $status;
 
@@ -126,9 +123,6 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $passwordAnt;
-
-    #[ORM\OneToMany(targetEntity: UsuarioUsuariocategoria::class, mappedBy: "usuario", orphanRemoval: true)]
-    private $usuarioUsuariocategorias;
 
     #[ORM\OneToMany(targetEntity: ContratoRol::class, mappedBy: "abogado")]
     private $contratoRols;
@@ -216,9 +210,6 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: "time", nullable: true)]
     private $domingoEnd;
 
-    #[ORM\OneToMany(targetEntity: UsuarioNoDisponible::class, mappedBy: "usuario")]
-    private $usuarioNoDisponibles;
-
     #[ORM\Column(type: "integer", nullable: true)]
     private $sobrecupo;
 
@@ -276,12 +267,11 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
         $this->privilegios = new ArrayCollection();
         $this->agendas = new ArrayCollection();
         $this->agendaAbogados = new ArrayCollection();
-        $this->usuarioUsuariocategorias = new ArrayCollection();
+        
         $this->contratoRols = new ArrayCollection();
         $this->importacions = new ArrayCollection();
         $this->agendaObservacions = new ArrayCollection();
         $this->contratos = new ArrayCollection();
-        $this->usuarioNoDisponibles = new ArrayCollection();
         $this->usuarioLotes = new ArrayCollection();
         $this->reportes = new ArrayCollection();
         $this->contratoAudios = new ArrayCollection();
@@ -677,17 +667,7 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getCategoria(): ?UsuarioCategoria
-    {
-        return $this->categoria;
-    }
 
-    public function setCategoria(?UsuarioCategoria $categoria): self
-    {
-        $this->categoria = $categoria;
-
-        return $this;
-    }
 
     public function getStatus(): ?UsuarioStatus
     {
@@ -793,36 +773,6 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPasswordAnt(?string $passwordAnt): self
     {
         $this->passwordAnt = $passwordAnt;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|UsuarioUsuariocategoria[]
-     */
-    public function getUsuarioUsuariocategorias(): Collection
-    {
-        return $this->usuarioUsuariocategorias;
-    }
-
-    public function addUsuarioUsuariocategoria(UsuarioUsuariocategoria $usuarioUsuariocategoria): self
-    {
-        if (!$this->usuarioUsuariocategorias->contains($usuarioUsuariocategoria)) {
-            $this->usuarioUsuariocategorias[] = $usuarioUsuariocategoria;
-            $usuarioUsuariocategoria->setUsuario($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUsuarioUsuariocategoria(UsuarioUsuariocategoria $usuarioUsuariocategoria): self
-    {
-        if ($this->usuarioUsuariocategorias->removeElement($usuarioUsuariocategoria)) {
-            // set the owning side to null (unless already changed)
-            if ($usuarioUsuariocategoria->getUsuario() === $this) {
-                $usuarioUsuariocategoria->setUsuario(null);
-            }
-        }
 
         return $this;
     }
@@ -1197,36 +1147,6 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     public function setDomingoEnd(?\DateTimeInterface $domingoEnd): self
     {
         $this->domingoEnd = $domingoEnd;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|UsuarioNoDisponible[]
-     */
-    public function getUsuarioNoDisponibles(): Collection
-    {
-        return $this->usuarioNoDisponibles;
-    }
-
-    public function addUsuarioNoDisponible(UsuarioNoDisponible $usuarioNoDisponible): self
-    {
-        if (!$this->usuarioNoDisponibles->contains($usuarioNoDisponible)) {
-            $this->usuarioNoDisponibles[] = $usuarioNoDisponible;
-            $usuarioNoDisponible->setUsuario($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUsuarioNoDisponible(UsuarioNoDisponible $usuarioNoDisponible): self
-    {
-        if ($this->usuarioNoDisponibles->removeElement($usuarioNoDisponible)) {
-            // set the owning side to null (unless already changed)
-            if ($usuarioNoDisponible->getUsuario() === $this) {
-                $usuarioNoDisponible->setUsuario(null);
-            }
-        }
 
         return $this;
     }

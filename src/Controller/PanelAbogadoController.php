@@ -389,13 +389,9 @@ class PanelAbogadoController extends AbstractController
             $cliente->setRut($agenda->getRutCliente());
             $cliente->setTelefonoRecado($agenda->getTelefonoRecadoCliente());
             $contrato->setCliente($cliente);
-            if(is_null($agenda->getCiudadCliente())){
-                $contrato->setCiudad(' ');
-            }else{
-                $contrato->setCiudad($agenda->getCiudadCliente());
-            }
+           
             $contrato->setCuotas(1);
-            $contrato->setMontoNivelDeuda($agenda->getMonto()); 
+           
             $contrato->setPagoActual($agenda->getPagoActual()); 
         }
         //$contrato->setCiudad($agenda->getCiudadCliente());
@@ -692,7 +688,7 @@ class PanelAbogadoController extends AbstractController
             }
             }
 
-            $contrato->setTramitador($user);
+            $contrato->setUsuarioRegistro($user);
 
             $entityManager->persist($contrato);
             $entityManager->flush();

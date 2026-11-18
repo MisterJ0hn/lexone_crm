@@ -84,18 +84,7 @@
 		{{form_row(form.estadoCivil,{'label':false,'attr':{'class':'form-control','required':true}})}}
     </div>
     {% endif %}
-    <div class="col-sm-12 col-md-3 ocultar-campo">
-        <small class="text-muted">Vivienda</small>
-		{{form_row(form.vivienda,{'label':false,'attr':{'class':'form-control'}})}}
-    </div>
-    <div class="col-sm-12 col-md-3 ocultar-campo">
-        <small class="text-muted">Vehiculo</small>
-		{{form_row(form.vehiculo,{'label':false,'attr':{'class':'form-control'}})}}
-    </div>
-    <div class="col-sm-12 col-md-3 ocultar-campo">
-        <small class="text-muted">Situación Laboral *</small>
-		{{form_row(form.situacionLaboral,{'label':false,'attr':{'class':'form-control'}})}}
-    </div>
+    
     <div class="col-sm-12 col-md-3">
         <small class="text-muted">Reunión *</small>
 		{{form_row(form.reunion,{'label':false,'attr':{'class':'form-control','required':'required'}})}}
@@ -239,10 +228,7 @@
             {% endfor %}
         </select>
     </div>-->
-    <div class="col-sm-12 col-md-3 ocultar-campo">
-        <small class="text-muted">Monto Deuda</small>
-		{{form_row(form.montoNivelDeuda,{'label':false,'attr':{'class':'form-control nivel-deuda','autocomplete':"ÑÖcompletes"}})}}
-    </div>
+    
     <div class="col-sm-12 col-md-3 ocultar-campo">
         <small class="text-muted t-pago-actual " >Pago Mensual Deuda</small>
         {{form_row(form.pagoActual,{'label':false,'attr':{'class':'form-control pago-actual number','autocomplete':"ÑÖcompletes"}})}}
