@@ -1,0 +1,173 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mis Clientes{% endblock %}
+
+{% block body %}
+
+<div class="card">
+    <div class="card-body">
+        <div class="row align-items-center">
+            <h3 class="mr-3">Mis Clientes</h3>
+            <h1 class="h4 text-muted" id="total-clientes"></h1>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <div class="row align-items-center">
+            <div class="col-md-3">
+                <input type="text" id="bFiltro" class="form-control"
+                       placeholder="Buscar por nombre, RUT o folio..." value="{{ bFiltro }}">
+            </div>
+            <div class="col-sm-12 col-md-3">
+                <input type="text" class="form-control" name="bFecha" id="bFecha" value="">
+            </div>
+            <div class="col-sm-12 col-md-1">
+                <button class="btn btn-primary" id="btn-buscar" type="button"><i class="fas fa-search"></i></button>
+            </div>
+        </div>
+        <div class="row align-items-center mt-2">
+            <div class="col-md-3">
+                <select id="bMateria" class="form-control">
+                    <option value="0">Materia</option>
+                    {% for materia in materias %}
+                        <option value="{{ materia.id }}">{{ materia.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select id="bServicio" class="form-control">
+                    <option value="0">Servicios</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select id="bTramitador" class="form-control">
+                    <option value="0">Tramitador</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select id="bPrimerPago" class="form-control">
+                    <option value="0">Cuota 1</option>
+                    <option value="1">Pagada</option>
+                    <option value="2">No Pagada</option>
+                </select>
+            </div>
+            <div class="col-md-1">
+                <button id="btn-limpiar" type="button" class="btn btn-dark">Limpiar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="resultado">
+        <div class="text-center py-5"><i class="fas fa-spinner fa-spin fa-2x text-primary"></i></div>
+    </div>
+</div>
+
+<script>
+$('#bFecha').daterangepicker({
+    "showDropdowns": true,
+    "drops": "down",
+    "startDate": "{{ dateInicio }}",
+    "endDate": "{{ dateFin }}",
+    "locale": {"format": "YYYY-MM-DD", "applyLabel": "Aplicar", "cancelLabel": "Cancelar"}
+});
+
+var _filtrosActuales = '';
+var urlContenido = "{{ path('mis_clientes_obtener_contenido') }}";
+var urlFiltros   = "{{ path('mis_clientes_filtros_por_materia') }}";
+
+function cargarFiltrosPorMateria(materiaId) {
+    $.ajax({
+        url: urlFiltros + '?materia=' + materiaId,
+        type: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            var $servicio = $('#bServicio'), $tramitador = $('#bTramitador');
+            var servicioVal = $servicio.val(), tramitadorVal = $tramitador.val();
+
+            $servicio.empty().append('<option value="0">Servicios</option>');
+            $.each(data.servicios, function(i, s) {
+                $servicio.append($('<option>').val(s.id).text(s.nombre));
+            });
+            if ($servicio.find('option[value="' + servicioVal + '"]').length) { $servicio.val(servicioVal); }
+
+            $tramitador.empty().append('<option value="0">Tramitador</option>');
+            $.each(data.tramitadores, function(i, t) {
+                $tramitador.append($('<option>').val(t.id).text(t.nombre));
+            });
+            if ($tramitador.find('option[value="' + tramitadorVal + '"]').length) { $tramitador.val(tramitadorVal); }
+        }
+    });
+}
+
+function cargarClientes(url) {
+    $('#resultado').html('<div class="text-center py-5"><i class="fas fa-spinner fa-spin fa-2x text-primary"></i></div>');
+    $('#total-clientes').html('');
+    $.ajax({
+        url: url,
+        type: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            if (data.error) {
+                $('#resultado').html($('<div class="alert alert-danger m-3">').text(data.error));
+                return;
+            }
+            $('#resultado').html(data.html);
+            $('#total-clientes').text(' ' + data.total_formateado + ' clientes ');
+        },
+        error: function() {
+            $('#resultado').html('<div class="alert alert-danger m-3">Error al cargar los datos.</div>');
+        }
+    });
+}
+
+function buildFiltros() {
+    return 'bFiltro=' + encodeURIComponent($('#bFiltro').val()) +
+           '&bMateria=' + ($('#bMateria').val() || 0) +
+           '&bServicio=' + ($('#bServicio').val() || 0) +
+           '&bTramitador=' + ($('#bTramitador').val() || 0) +
+           '&bPrimerPago=' + ($('#bPrimerPago').val() || 0) +
+           '&bFecha=' + encodeURIComponent($('#bFecha').val());
+}
+
+function buscar() {
+    _filtrosActuales = buildFiltros();
+    cargarClientes(urlContenido + '?' + _filtrosActuales);
+}
+
+$(document).ready(function() {
+    cargarFiltrosPorMateria(0);
+    cargarClientes(urlContenido);
+});
+
+$('#btn-buscar').on('click', buscar);
+$('#bFiltro').on('keypress', function(e) { if (e.which === 13) { buscar(); } });
+$('#bMateria').on('change', function() {
+    $('#bServicio').val('0');
+    cargarFiltrosPorMateria($(this).val());
+    buscar();
+});
+$('#bServicio, #bTramitador, #bPrimerPago, #bFecha').on('change', buscar);
+
+$('#btn-limpiar').on('click', function() {
+    $('#bFiltro').val('');
+    $('#bMateria, #bServicio, #bTramitador, #bPrimerPago').val('0');
+    cargarFiltrosPorMateria(0);
+    _filtrosActuales = '';
+    cargarClientes(urlContenido);
+});
+
+$(document).on('click', '#resultado a.page-link, #resultado th a', function(e) {
+    e.preventDefault();
+    var url = $(this).attr('href');
+    if (url && url !== '#') {
+        if (_filtrosActuales && url.indexOf('bFiltro') === -1) {
+            url += (url.indexOf('?') === -1 ? '?' : '&') + _filtrosActuales;
+        }
+        cargarClientes(url);
+    }
+});
+</script>
+
+{% endblock %}

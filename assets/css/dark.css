@@ -48,3 +48,12 @@ html.dark .swal2-title, html.dark .swal2-html-container { color: #e2e8f0; }
 html.dark .modal-content, html.dark .dropdown-menu, html.dark .popover, html.dark .note-editor .note-editing-area .note-editable { background: #1e293b; color: #e2e8f0; }
 html.dark .form-control, html.dark .custom-select, html.dark input, html.dark select, html.dark textarea { background-color: #0f172a; color: #e2e8f0; border-color: #475569; }
 html.dark .form-control:disabled, html.dark .form-control[readonly] { background-color: #1e293b; }
+/* Alertas: fondos pastel de Tailwind -> fondos oscuros tintados con texto claro. */
+html.dark .alert-success { background-color: #052e22; border-color: #065f46; color: #6ee7b7; }
+html.dark .alert-danger { background-color: #3b0d0d; border-color: #991b1b; color: #fca5a5; }
+html.dark .alert-warning { background-color: #3a2705; border-color: #92400e; color: #fcd34d; }
+html.dark .alert-info { background-color: #082f49; border-color: #075985; color: #7dd3fc; }
+html.dark .alert-primary { background-color: #16233b; border-color: #264370; color: #9bb2d6; }
+html.dark .alert-secondary, html.dark .alert-light { background-color: #1e293b; border-color: #334155; color: #cbd5e1; }
+/* .bg-dark usa slate-800, que en oscuro se invierte a casi blanco; con texto blanco quedaba ilegible. */
+html.dark .bg-dark { background-color: #475569; color: #fff; }

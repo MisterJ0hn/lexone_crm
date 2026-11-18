@@ -19,6 +19,64 @@ class ContratoRepository extends ServiceEntityRepository
         parent::__construct($registry, Contrato::class);
     }
 
+    /**
+     * Contratos vigentes con al menos una causa activa (módulo Mis Clientes).
+     *
+     * @return \Doctrine\ORM\Query
+     */
+    public function findMisClientesQuery(
+        ?int $empresa,
+        ?int $materia,
+        ?string $filtro,
+        ?int $abogado,
+        ?int $tramitador,
+        ?int $servicio,
+        ?int $primerPago,
+        string $fechaInicio,
+        string $fechaFin
+    ) {
+        $qb = $this->createQueryBuilder('c')
+            ->join('c.agenda', 'a')
+            ->join('a.cuenta', 'cu')
+            ->leftJoin('c.cliente', 'cli')
+            ->andWhere('c.fechaDesiste IS NULL')
+            ->andWhere('c.fechaCreacion BETWEEN :fini AND :ffin')
+            ->andWhere("c.fechaCreacion >= datesub(current_timestamp(), c.vigencia, 'month')")
+            ->andWhere('EXISTS (SELECT 1 FROM App\Entity\Causa ca0 WHERE ca0.agenda = a AND ca0.estado = 1 AND (ca0.causaFinalizada IS NULL OR ca0.causaFinalizada = 0))')
+            ->setParameter('fini', $fechaInicio . ' 00:00:00')
+            ->setParameter('ffin', $fechaFin . ' 23:59:59');
+
+        if (null !== $empresa) {
+            $qb->andWhere('cu.empresa = :empresa')->setParameter('empresa', $empresa);
+        }
+        if (null !== $abogado) {
+            $qb->andWhere('a.abogado = :abogado')->setParameter('abogado', $abogado);
+        }
+        if (null !== $tramitador) {
+            $qb->andWhere('c.tramitador = :tramitador')->setParameter('tramitador', $tramitador);
+        }
+        if (null !== $filtro) {
+            $qb->andWhere('(cli.nombre LIKE :filtro OR cli.rutHash = :filtroRutHash OR c.folio LIKE :filtro)')
+                ->setParameter('filtro', '%' . $filtro . '%')
+                ->setParameter('filtroRutHash', \App\Security\Cifrado::hash($filtro, 'rut'));
+        }
+        if (null !== $materia) {
+            $qb->andWhere('EXISTS (SELECT 1 FROM App\Entity\Causa ca1 WHERE ca1.agenda = a AND ca1.estado = 1 AND (ca1.causaFinalizada IS NULL OR ca1.causaFinalizada = 0) AND ca1.materia = :materia)')
+                ->setParameter('materia', $materia);
+        }
+        if (null !== $servicio) {
+            $qb->andWhere('EXISTS (SELECT 1 FROM App\Entity\Causa ca2 WHERE ca2.agenda = a AND ca2.estado = 1 AND (ca2.causaFinalizada IS NULL OR ca2.causaFinalizada = 0) AND ca2.servicio = :servicio)')
+                ->setParameter('servicio', $servicio);
+        }
+        if (null !== $primerPago) {
+            // 1 = primera cuota pagada, 2 = no pagada
+            $pendiente = 'EXISTS (SELECT 1 FROM App\Entity\Cuota q WHERE q.contrato = c AND q.numero = 1 AND (q.anular IS NULL OR q.anular = 0) AND (q.pagado IS NULL OR q.monto > q.pagado))';
+            $qb->andWhere($primerPago === 2 ? $pendiente : 'NOT ' . $pendiente);
+        }
+
+        return $qb->orderBy('c.folio', 'ASC')->getQuery();
+    }
+
     public function findRange($inicio, $fin)
     {
         $query=$this->createQueryBuilder('c');
