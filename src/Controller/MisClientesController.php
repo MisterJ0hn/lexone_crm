@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Causa;
+use App\Entity\Contrato;
 use App\Entity\Cuota;
 use App\Entity\Materia;
 use App\Entity\Servicio;
@@ -35,7 +36,7 @@ class MisClientesController extends AbstractController
 
         return $this->render('mis_clientes/index.html.twig', [
             'bFiltro'    => '',
-            'materias'   => $em->getRepository(Materia::class)->findBy(['empresa' => $empresa], ['nombre' => 'ASC']),
+            'materias'   => $em->getRepository(Materia::class)->findBy([], ['orden' => 'ASC', 'nombre' => 'ASC']),
             'dateInicio' => (new \DateTime())->modify('-24 months')->format('Y-m-d'),
             'dateFin'    => date('Y-m-d'),
         ]);
@@ -56,8 +57,9 @@ class MisClientesController extends AbstractController
 
             $filtro     = $q->get('bFiltro') !== null && $q->get('bFiltro') !== '' ? $q->get('bFiltro') : null;
             $materia    = (int) $q->get('bMateria', 0) ?: null;
-            $servicio   = (int) $q->get('bServicio', 0) ?: null;
-            $tramitador = (int) $q->get('bTramitador', 0) ?: null;
+            $servicio   = trim((string) $q->get('bServicio', '0'));
+            $servicio   = ($servicio === '' || $servicio === '0') ? null : $servicio;
+            $usuarioRegistro = (int) $q->get('bUsuario', 0) ?: null;
             $primerPago = (int) $q->get('bPrimerPago', 0) ?: null;
 
             if ($q->get('bFecha')) {
@@ -73,10 +75,10 @@ class MisClientesController extends AbstractController
                 throw new \InvalidArgumentException('Rango de fechas inválido.');
             }
 
-            [$empresa, $usuario, $tramitador] = $this->alcanceUsuario($user, $tramitador);
+            [$empresa, $usuario, $usuarioRegistro] = $this->alcanceUsuario($user, $usuarioRegistro);
 
             $query = $contratoRepository->findMisClientesQuery(
-                $empresa, $materia, $filtro, $usuario, $tramitador, $servicio, $primerPago, $dateInicio, $dateFin
+                $empresa, $materia, $filtro, $usuario, $usuarioRegistro, $servicio, $primerPago, $dateInicio, $dateFin
             );
 
             $contratos = $paginator->paginate(
@@ -121,22 +123,34 @@ class MisClientesController extends AbstractController
         if ($materiaId) {
             $criterio['materia'] = $materiaId;
         }
-        $servicios = array_map(
-            fn(Servicio $s) => ['id' => $s->getId(), 'nombre' => $s->getNombre()],
-            $em->getRepository(Servicio::class)->findBy($criterio, ['nombre' => 'ASC'])
-        );
-
-        if ($this->esAlcanceEmpresa($user)) {
-            $usuarios = $em->getRepository(Usuario::class)->findBy(['usuarioTipo' => self::TIPO_TRAMITADOR, 'estado' => 1]);
-        } else {
-            $usuarios = $em->getRepository(Usuario::class)->findBy(['id' => $user->getId(), 'estado' => 1]);
+        // Varias materias repiten el nombre de un servicio: se agrupa por nombre.
+        // El valor del filtro es el nombre (no el id).
+        $nombres = [];
+        foreach ($em->getRepository(Servicio::class)->findBy($criterio, ['nombre' => 'ASC']) as $s) {
+            $nombres[mb_strtolower(trim($s->getNombre()))] ??= trim($s->getNombre());
         }
-        $tramitadores = array_map(
-            fn(Usuario $u) => ['id' => $u->getId(), 'nombre' => $u->getNombre()],
-            $usuarios
-        );
+        $servicios = array_map(fn(string $n) => ['id' => $n, 'nombre' => $n], array_values($nombres));
 
-        return new JsonResponse(['servicios' => $servicios, 'tramitadores' => $tramitadores]);
+        // Usuarios que registraron contratos (visibles para quien consulta).
+        $qb = $em->createQueryBuilder()
+            ->select('DISTINCT u.id AS id, u.nombre AS nombre')
+            ->from(Contrato::class, 'c')
+            ->join('c.usuarioRegistro', 'u')
+            ->join('c.agenda', 'a')
+            ->join('a.cuenta', 'cu')
+            ->where('cu.empresa = :empresa')
+            ->setParameter('empresa', $empresa)
+            ->orderBy('u.nombre', 'ASC');
+        [, $abogado, $usuarioRegistro] = $this->alcanceUsuario($user, null);
+        if (null !== $abogado) {
+            $qb->andWhere('a.abogado = :abogado')->setParameter('abogado', $abogado);
+        }
+        if (null !== $usuarioRegistro) {
+            $qb->andWhere('u.id = :ur')->setParameter('ur', $usuarioRegistro);
+        }
+        $usuarios = $qb->getQuery()->getArrayResult();
+
+        return new JsonResponse(['servicios' => $servicios, 'usuarios' => $usuarios]);
     }
 
     private function esAlcanceEmpresa($user): bool
@@ -145,21 +159,21 @@ class MisClientesController extends AbstractController
     }
 
     /**
-     * @return array{0: ?int, 1: ?int, 2: ?int} [empresa, abogado, tramitador]
+     * @return array{0: ?int, 1: ?int, 2: ?int} [empresa, abogado, usuarioRegistro]
      */
-    private function alcanceUsuario($user, ?int $tramitador): array
+    private function alcanceUsuario($user, ?int $usuarioRegistro): array
     {
         $tipo = $user->getUsuarioTipo()->getId();
 
         if ($this->esAlcanceEmpresa($user)) {
-            return [$user->getEmpresaActual(), null, $tramitador];
+            return [$user->getEmpresaActual(), null, $usuarioRegistro];
         }
         if ($tipo === self::TIPO_TRAMITADOR) {
             // Un tramitador solo ve los contratos que tiene asignados.
             return [$user->getEmpresaActual(), null, $user->getId()];
         }
 
-        return [$user->getEmpresaActual(), $user->getId(), $tramitador];
+        return [$user->getEmpresaActual(), $user->getId(), $usuarioRegistro];
     }
 
     /**

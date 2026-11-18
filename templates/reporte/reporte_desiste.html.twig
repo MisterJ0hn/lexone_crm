@@ -79,7 +79,7 @@
                         <th scope="col" align="right">{{ knp_pagination_sortable(reportes, 'Folio', 'contrato.folio') }} {% if reportes.isSorted('contrato.folio') %} <i class="fas fa-sort"></i>{% endif %}</th>
                         <th scope="col" >{{ knp_pagination_sortable(reportes, 'Cliente', 'contrato.cliente.nombre') }} {% if reportes.isSorted('contrato.cliente.nombre') %} <i class="fas fa-sort"></i>{% endif %}</th>
                         <th scope="col" >{{ knp_pagination_sortable(reportes, 'Abogado', 'abogado.nombre') }} {% if reportes.isSorted('abogado.nombre') %} <i class="fas fa-sort"></i>{% endif %}</th>
-                        <th scope="col" >{{ knp_pagination_sortable(reportes, 'Tramitador', 'contrato.tramitador.nombre') }} {% if reportes.isSorted('contrato.tramitador.nombre') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th scope="col" >{{ knp_pagination_sortable(reportes, 'Tramitador', 'contrato.usuarioRegistro.nombre') }} {% if reportes.isSorted('contrato.usuarioRegistro.nombre') %} <i class="fas fa-sort"></i>{% endif %}</th>
                         <th scope="col" >{{ knp_pagination_sortable(reportes, 'Estado', 'status.nombre') }} {% if reportes.isSorted('status.nombre') %} <i class="fas fa-sort"></i>{% endif %}</th>
                         <th scope="col" >{{ knp_pagination_sortable(reportes, 'Fecha Contrato', 'contrato.fechaCreacion') }} {% if reportes.isSorted('contrato.fechaCreacion') %} <i class="fas fa-sort"></i>{% endif %}</th>
                         <th scope="col" >{{ knp_pagination_sortable(reportes, 'Aviso Termino', 'contrato.fechaDesiste') }} {% if reportes.isSorted('contrato.fechaDesiste') %} <i class="fas fa-sort"></i>{% endif %}</th>
@@ -97,7 +97,7 @@
                         <td>{{ reporte.contrato.folio }}</td>
                         <td align="left">{{ reporte.contrato.cliente}}</td>
                         <td align="left">{{ reporte.abogado}}</td>
-                         <td align="left">{{ reporte.contrato.tramitador}}</td>
+                         <td align="left">{{ reporte.contrato.usuarioRegistro}}</td>
                         <td align="left">{{ reporte.status}}</td>
                         <td>{{ reporte.contrato.fechaCreacion?reporte.contrato.fechaCreacion|date('Y-m-d H:i'):''}}</td>
                         <td>{{ reporte.contrato.fechaDesiste?reporte.contrato.fechaDesiste|date('Y-m-d  H:i'):''}}</td>

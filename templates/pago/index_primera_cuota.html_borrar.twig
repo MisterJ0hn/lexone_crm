@@ -18,7 +18,7 @@
                     <tr>
                         <th>{{ knp_pagination_sortable(cuotas, 'Folio', 'contrato.folio') }} {% if cuotas.isSorted('contrato.folio') %} <i class="fas fa-sort"></i>{% endif %}</th>
                         <th>{{ knp_pagination_sortable(cuotas, 'AgendaId', 'contrato.agenda.id') }} {% if cuotas.isSorted('contrato.agenda.id') %} <i class="fas fa-sort"></i>{% endif %}</th>
-                        <th>{{ knp_pagination_sortable(cuotas, 'Abogado', 'contrato.agenda.abogado') }} {% if cuotas.isSorted('contrato.agenda.abogado') %} <i class="fas fa-sort"></i>{% endif %}</th><<th>{{ knp_pagination_sortable(cuotas, 'Tramitador', 'contrato.tramitador') }} {% if cuotas.isSorted('contrato.tramitador') %} <i class="fas fa-sort"></i>{% endif %}</th>                       
+                        <th>{{ knp_pagination_sortable(cuotas, 'Abogado', 'contrato.agenda.abogado') }} {% if cuotas.isSorted('contrato.agenda.abogado') %} <i class="fas fa-sort"></i>{% endif %}</th><<th>{{ knp_pagination_sortable(cuotas, 'Tramitador', 'contrato.usuarioRegistro') }} {% if cuotas.isSorted('contrato.usuarioRegistro') %} <i class="fas fa-sort"></i>{% endif %}</th>                       
                         <th>{{ knp_pagination_sortable(cuotas, 'Cliente', 'contrato.nombre') }} {% if cuotas.isSorted('contrato.nombre') %} <i class="fas fa-sort"></i>{% endif %}</th>
                         <th>{{ knp_pagination_sortable(cuotas, 'Contrató', 'contrato.fechaCreacion') }} {% if cuotas.isSorted('contrato.fechaCreacion') %} <i class="fas fa-sort"></i>{% endif %}</th>
                         <th>{{ knp_pagination_sortable(cuotas, 'MontoCto.', 'contrato.montoContrato') }} {% if cuotas.isSorted('contrato.montoContrato') %} <i class="fas fa-sort"></i>{% endif %}</th>                                            
@@ -45,7 +45,7 @@
                         <td>{{ contrato.agenda.id }}</td>
                        
                         <td>{{ contrato.agenda.abogado.nombre }}</td>
-                        <td>{{ contrato.tramitador.nombre|default('') }}</td>
+                        <td>{{ contrato.usuarioRegistro.nombre|default('') }}</td>
                        
                         <td>{{ contrato.nombre }}</td>
                        

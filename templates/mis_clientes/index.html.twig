@@ -14,7 +14,7 @@
 </div>
 
 <div class="card">
-    <div class="card-header">
+    <div class="card-body">
         <div class="row align-items-center">
             <div class="col-md-3">
                 <input type="text" id="bFiltro" class="form-control"
@@ -42,8 +42,8 @@
                 </select>
             </div>
             <div class="col-md-3">
-                <select id="bTramitador" class="form-control">
-                    <option value="0">Tramitador</option>
+                <select id="bUsuario" class="form-control">
+                    <option value="0">Usuario</option>
                 </select>
             </div>
             <div class="col-md-2">
@@ -83,20 +83,20 @@ function cargarFiltrosPorMateria(materiaId) {
         type: 'GET',
         dataType: 'json',
         success: function(data) {
-            var $servicio = $('#bServicio'), $tramitador = $('#bTramitador');
-            var servicioVal = $servicio.val(), tramitadorVal = $tramitador.val();
+            var $servicio = $('#bServicio'), $usuario = $('#bUsuario');
+            var servicioVal = $servicio.val(), usuarioVal = $usuario.val();
 
             $servicio.empty().append('<option value="0">Servicios</option>');
             $.each(data.servicios, function(i, s) {
-                $servicio.append($('<option>').val(s.id).text(s.nombre));
+                $servicio.append($('<option>').val(s.nombre).text(s.nombre));
             });
-            if ($servicio.find('option[value="' + servicioVal + '"]').length) { $servicio.val(servicioVal); }
+            if ($servicio.find('option').filter(function() { return this.value === servicioVal; }).length) { $servicio.val(servicioVal); }
 
-            $tramitador.empty().append('<option value="0">Tramitador</option>');
-            $.each(data.tramitadores, function(i, t) {
-                $tramitador.append($('<option>').val(t.id).text(t.nombre));
+            $usuario.empty().append('<option value="0">Usuario</option>');
+            $.each(data.usuarios, function(i, t) {
+                $usuario.append($('<option>').val(t.id).text(t.nombre));
             });
-            if ($tramitador.find('option[value="' + tramitadorVal + '"]').length) { $tramitador.val(tramitadorVal); }
+            if ($usuario.find('option[value="' + usuarioVal + '"]').length) { $usuario.val(usuarioVal); }
         }
     });
 }
@@ -126,7 +126,7 @@ function buildFiltros() {
     return 'bFiltro=' + encodeURIComponent($('#bFiltro').val()) +
            '&bMateria=' + ($('#bMateria').val() || 0) +
            '&bServicio=' + ($('#bServicio').val() || 0) +
-           '&bTramitador=' + ($('#bTramitador').val() || 0) +
+           '&bUsuario=' + ($('#bUsuario').val() || 0) +
            '&bPrimerPago=' + ($('#bPrimerPago').val() || 0) +
            '&bFecha=' + encodeURIComponent($('#bFecha').val());
 }
@@ -148,11 +148,11 @@ $('#bMateria').on('change', function() {
     cargarFiltrosPorMateria($(this).val());
     buscar();
 });
-$('#bServicio, #bTramitador, #bPrimerPago, #bFecha').on('change', buscar);
+$('#bServicio, #bUsuario, #bPrimerPago, #bFecha').on('change', buscar);
 
 $('#btn-limpiar').on('click', function() {
     $('#bFiltro').val('');
-    $('#bMateria, #bServicio, #bTramitador, #bPrimerPago').val('0');
+    $('#bMateria, #bServicio, #bUsuario, #bPrimerPago').val('0');
     cargarFiltrosPorMateria(0);
     _filtrosActuales = '';
     cargarClientes(urlContenido);

@@ -65,11 +65,8 @@ class Contrato
     #[ORM\ManyToOne(targetEntity: Sucursal::class, inversedBy: "contratos")]
     private $sucursal;
 
-    
-    private $contratoTramitadores;
-
     #[ORM\ManyToOne(targetEntity: Usuario::class, inversedBy: "contratos")]
-    private $tramitador;
+    private $usuarioRegistro;
 
     
     #[ORM\ManyToOne(targetEntity: Cliente::class, inversedBy: "contratos")]
@@ -451,14 +448,14 @@ class Contrato
         return $this;
     }
 
-    public function getTramitador(): ?Usuario
+    public function getUsuarioRegistro(): ?Usuario
     {
-        return $this->tramitador;
+        return $this->usuarioRegistro;
     }
 
-    public function setTramitador(?Usuario $tramitador): self
+    public function setUsuarioRegistro(?Usuario $usuarioRegistro    ): self
     {
-        $this->tramitador = $tramitador;
+        $this->usuarioRegistro = $usuarioRegistro;
 
         return $this;
     }

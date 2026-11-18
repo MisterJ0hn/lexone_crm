@@ -39,6 +39,10 @@ class Configuracion
 
     #[ORM\Column(type: "integer")]
     private $maxDiasComision;
+
+    #[ORM\Column(type: "integer",nullable: true)]
+    private $deudaMinima;
+
     #[ORM\Column(type: "integer", nullable: true)]
     private $passwordHistorial;
 
@@ -155,6 +159,17 @@ class Configuracion
     public function setMaxDiasComision(int $maxDiasComision): self
     {
         $this->maxDiasComision = $maxDiasComision;
+
+        return $this;
+    }
+     public function getDeudaMinima(): ?int
+    {
+        return $this->deudaMinima;
+    }
+
+    public function setDeudaMinima(?int $deudaMinima): self
+    {
+        $this->deudaMinima = $deudaMinima;
 
         return $this;
     }

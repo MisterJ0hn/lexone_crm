@@ -7,7 +7,7 @@
                 <th>Cliente</th>
                 <th>Materia</th>
                 <th>Servicio</th>
-                <th>Tramitador</th>
+                <th>Usuario</th>
                 <th title="Rit/Rol de la causa">Rit / Rol</th>
                 <th>Cuota 1</th>
                 <th><i class="fas fa-traffic-light"></i></th>
@@ -51,11 +51,7 @@
                     {% endfor %}
                 </td>
                 <td>
-                    {% if contrato.tramitador %}
-                        <strong>{{ contrato.tramitador.nombre ?? '—' }}</strong>
-                    {% else %}
-                        <span class="text-muted">—</span>
-                    {% endif %}
+                    {{ contrato.usuarioRegistro.nombre ?? '—' }}
                 </td>
                 <td>
                     {% for rit in extra.rits %}

@@ -43,7 +43,7 @@
                         <th>{{ knp_pagination_sortable(cuotas, 'Folio', 'contrato.folio') }} {% if cuotas.isSorted('contrato.folio') %} <i class="fas fa-sort"></i>{% endif %}</th>
                         <th>{{ knp_pagination_sortable(cuotas, 'Sucursal', 'contrato.sucursal') }} {% if cuotas.isSorted('contrato.sucursal') %} <i class="fas fa-sort"></i>{% endif %}</th>
                         <th>{{ knp_pagination_sortable(cuotas, 'Abogado', 'contrato.agenda.abogado') }} {% if cuotas.isSorted('contrato.agenda.abogado') %} <i class="fas fa-sort"></i>{% endif %}</th>
-                        <th>{{ knp_pagination_sortable(cuotas, 'Tramitador', 'contrato.tramitador') }} {% if cuotas.isSorted('contrato.tramitador') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                        <th>{{ knp_pagination_sortable(cuotas, 'Tramitador', 'contrato.usuarioRegistro') }} {% if cuotas.isSorted('contrato.usuarioRegistro') %} <i class="fas fa-sort"></i>{% endif %}</th>
                         <th>{{ knp_pagination_sortable(cuotas, 'Cobrador', 'contrato.lotes.usuarioLotes.usuario') }} {% if cuotas.isSorted('contrato.lotes.usuarioLotes.usuario') %} <i class="fas fa-sort"></i>{% endif %}</th>
                         <th>{{ knp_pagination_sortable(cuotas, 'Cliente', 'contrato.nombre') }} {% if cuotas.isSorted('contrato.nombre') %} <i class="fas fa-sort"></i>{% endif %}</th>
                         <th>{{ knp_pagination_sortable(cuotas, 'Rut', 'contrato.rut') }} {% if cuotas.isSorted('contrato.rut') %} <i class="fas fa-sort"></i>{% endif %}</th>
@@ -67,7 +67,7 @@
                         <td>{{ contrato.folio }}</td>
                         <td>{{ contrato.sucursal}}</td>
                         <td>{{ contrato.agenda.abogado.nombre }}</td>
-                        <td>{{ contrato.tramitador.nombre }}</td>
+                        <td>{{ contrato.usuarioRegistro.nombre }}</td>
                         <td>{{contrato.lotes.usuarioLotes.usuario}}</td>
                         <td>{{ contrato.nombre }}</td>
                         <td align="center">{{ contrato.rut }}</td>

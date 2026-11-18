@@ -29,8 +29,8 @@ class ContratoRepository extends ServiceEntityRepository
         ?int $materia,
         ?string $filtro,
         ?int $abogado,
-        ?int $tramitador,
-        ?int $servicio,
+        ?int $usuarioRegistro,
+        ?string $servicio,
         ?int $primerPago,
         string $fechaInicio,
         string $fechaFin
@@ -52,8 +52,8 @@ class ContratoRepository extends ServiceEntityRepository
         if (null !== $abogado) {
             $qb->andWhere('a.abogado = :abogado')->setParameter('abogado', $abogado);
         }
-        if (null !== $tramitador) {
-            $qb->andWhere('c.tramitador = :tramitador')->setParameter('tramitador', $tramitador);
+        if (null !== $usuarioRegistro) {
+            $qb->andWhere('c.usuarioRegistro = :usuarioRegistro')->setParameter('usuarioRegistro', $usuarioRegistro);
         }
         if (null !== $filtro) {
             $qb->andWhere('(cli.nombre LIKE :filtro OR cli.rutHash = :filtroRutHash OR c.folio LIKE :filtro)')
@@ -65,7 +65,8 @@ class ContratoRepository extends ServiceEntityRepository
                 ->setParameter('materia', $materia);
         }
         if (null !== $servicio) {
-            $qb->andWhere('EXISTS (SELECT 1 FROM App\Entity\Causa ca2 WHERE ca2.agenda = a AND ca2.estado = 1 AND (ca2.causaFinalizada IS NULL OR ca2.causaFinalizada = 0) AND ca2.servicio = :servicio)')
+            // Se compara por nombre: distintas materias repiten el nombre del servicio.
+            $qb->andWhere('EXISTS (SELECT 1 FROM App\Entity\Causa ca2 JOIN ca2.servicio sv2 WHERE ca2.agenda = a AND ca2.estado = 1 AND (ca2.causaFinalizada IS NULL OR ca2.causaFinalizada = 0) AND sv2.nombre = :servicio)')
                 ->setParameter('servicio', $servicio);
         }
         if (null !== $primerPago) {

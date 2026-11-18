@@ -88,7 +88,7 @@
                         <td>{{ contrato.nombre }}</td>
                         <!--<td>{{ contrato.agenda.agendador.nombre }}</td>
                         <td>{{ contrato.agenda.abogado ? contrato.agenda.abogado.nombre:'' }}</td>
-                        <td>{{ contrato.tramitador.nombre }}</td>
+                        <td>{{ contrato.usuarioRegistro.nombre }}</td>
                         <td>{{ contrato.sucursal}}</td>-->
                         <td>{{ contrato.fechaCreacion|date('d-m-Y H:i') }}</td>
                         <td><a href="{{path('app_ticket_new',{'id':contrato.folio})}}" class="btn btn-primary">Crear</a></td>

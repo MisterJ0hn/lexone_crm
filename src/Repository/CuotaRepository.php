@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Configuracion;
 use App\Entity\Cuota;
 use App\Security\Cifrado;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -58,7 +59,7 @@ class CuotaRepository extends ServiceEntityRepository
                 break;
             case 7://Tramitador
                 if(!is_null($usuario))
-                    $query->andWhere('co.tramitador = '.$usuario);
+                    $query->andWhere('co.usuarioRegistro = '.$usuario);
                 break;
         }
         
@@ -129,7 +130,7 @@ class CuotaRepository extends ServiceEntityRepository
                 break;
             case 7://Tramitador
                 if(!is_null($usuario))
-                    $query->andWhere('co.tramitador = '.$usuario);
+                    $query->andWhere('co.usuarioRegistro = '.$usuario);
                 break;
         }
         
@@ -250,7 +251,7 @@ class CuotaRepository extends ServiceEntityRepository
                 break;
             case 7://Tramitador
                 if(!is_null($usuario))
-                    $query->andWhere('co.tramitador = '.$usuario);
+                    $query->andWhere('co.usuarioRegistro = '.$usuario);
                 break;
         }
         
@@ -410,7 +411,7 @@ class CuotaRepository extends ServiceEntityRepository
                 break;
             case 7://Tramitador
                 if(!is_null($usuario))
-                    $query->andWhere('co.tramitador = '.$usuario);
+                    $query->andWhere('co.usuarioRegistro = '.$usuario);
                 break;
         }
         
@@ -437,6 +438,30 @@ class CuotaRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+    
+    public function findProximaFechaPago($contrato_id){
+        /**JRM: 2025-11-13 - Se agrega función de si la deuda es menor a la deuda minima, 
+        *devuelva la fecha de la siguiente cuota
+        */
+        $configuracion = $this->getEntityManager()->getRepository(Configuracion::class)->find(1);
+
+
+        $query = $this->createQueryBuilder('c');
+        $query->select('c.fechaPago')
+            ->where('c.contrato = :contrato_id')
+           // ->andWhere('(c.anular IS NULL OR c.anular = false)')
+            //->andWhere('(c.pagado IS NULL)')
+            ->andWhere('(c.monto>(c.pagado+'.$configuracion->getDeudaMinima().') or c.pagado is null)')
+            ->andWhere(' c.monto>0 ')
+            ->andWhere('c.anular is null or c.anular = false')
+            ->orderBy('c.fechaPago', 'ASC')
+            ->setMaxResults(1)
+            ->setParameter('contrato_id', $contrato_id); // Uso de un parámetro para evitar inyección SQL
+    
+        return $query->getQuery()
+            ->getOneOrNullResult();
+    }
+
     // /**
     //  * @return Cuota[] Returns an array of Cuota objects
     //  */

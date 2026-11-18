@@ -2,6 +2,7 @@
 
 namespace App\Twig;
 
+use App\Entity\Configuracion;
 use App\Entity\Contrato;
 use App\Entity\ContratoAnexo;
 use App\Entity\Vencimiento;
