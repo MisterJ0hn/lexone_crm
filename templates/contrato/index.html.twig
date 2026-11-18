@@ -37,11 +37,7 @@
                         <th>{{ knp_pagination_sortable(contratos, 'Cliente', 'agenda.tipoCliente') }} {% if contratos.isSorted('agenda.tipoCliente') %} <i class="fas fa-sort"></i>{% endif %}</th>
                        <th>{{ knp_pagination_sortable(contratos, 'Folio', 'folio') }} {% if contratos.isSorted('folio') %} <i class="fas fa-sort"></i>{% endif %}</th>
                         <th>{{ knp_pagination_sortable(contratos, 'Nombre', 'cliente.nombre') }} {% if contratos.isSorted('cliente.nombre') %} <i class="fas fa-sort"></i>{% endif %}</th>
-                       <!-- <th>{{ knp_pagination_sortable(contratos, 'Agendador', 'agenda.agendador') }} {% if contratos.isSorted('agenda.agendador') %} <i class="fas fa-sort"></i>{% endif %}</th>
-                        <th>{{ knp_pagination_sortable(contratos, 'Abogado', 'agenda.abogado') }} {% if contratos.isSorted('agenda.abogado') %} <i class="fas fa-sort"></i>{% endif %}</th>
-                        <th>{{ knp_pagination_sortable(contratos, 'Tramitador', 'tramitador') }} {% if contratos.isSorted('tramitador') %} <i class="fas fa-sort"></i>{% endif %}</th>
-                        <th>{{ knp_pagination_sortable(contratos, 'Sucursal', 'sucursal') }} {% if contratos.isSorted('sucursal') %} <i class="fas fa-sort"></i>{% endif %}</th>-->
-                        <th>{{ knp_pagination_sortable(contratos, 'Fecha Contrato', 'fechaCreacion') }} {% if contratos.isSorted('fechaCreacion') %} <i class="fas fa-sort"></i>{% endif %}</th>
+                           <th>{{ knp_pagination_sortable(contratos, 'Fecha Contrato', 'fechaCreacion') }} {% if contratos.isSorted('fechaCreacion') %} <i class="fas fa-sort"></i>{% endif %}</th>
                         
                         <th>Acciones</th>
                         
@@ -53,11 +49,7 @@
                         <td>{{contrato.agenda.tipoCliente.nombre}}</td>
                         <td>{{ contrato.folio }}</td>
                         <td>{{ contrato.cliente.nombre }}</td>
-                        <!--<td>{{ contrato.agenda.agendador.nombre }}</td>
-                        <td>{{ contrato.agenda.abogado ? contrato.agenda.abogado.nombre:'' }}</td>
-                       <td>{{ contrato.usuarioRegistro ? contrato.usuarioRegistro.nombre : '' }}</td>
-                        <td>{{ contrato.sucursal}}</td> -->
-                        <td>{{ contrato.fechaCreacion|date('d-m-Y H:i') }}</td>
+                                <td>{{ contrato.fechaCreacion|date('d-m-Y H:i') }}</td>
                         {% if sesion.getSesion.usuarioTipo.id in [1,3,4,6,8,7] %}
                         <td>
                         <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
