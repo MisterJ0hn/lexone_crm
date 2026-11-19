@@ -548,10 +548,7 @@ class PanelAbogadoController extends AbstractController
             }
 
 
-            foreach ($agenda->getCuenta()->getSucursals() as $sucursal) {
-                $contrato->setSucursal($sucursal);
-            }
-            
+    
             //$contrato->setTramitador($usuarioRepository->find($request->request->get('cboTramitador')));
             //$contrato->setFechaPrimeraCuota(new \DateTime(date("Y-m-d 00:00:00")));
             $contrato->setFechaPrimerPago(new \DateTime(date($request->request->get('txtFechaPago')."-1 00:00:00")));
