@@ -35,7 +35,7 @@ class PasswordCaducadoController extends AbstractController
                 $passwordService->aplicarNuevoPassword($usuario, $plainPassword);
                 $this->addFlash('success', 'Contraseña actualizada correctamente. Ya puedes continuar.');
 
-                return $this->redirectToRoute('dashboard');
+                return $this->redirectToRoute('/');
             }
         }
 

@@ -100,7 +100,7 @@
 
   <!-- Menú lateral -->
   <aside id="appSidebar" class="fixed inset-y-0 left-0 z-40 flex w-64 -translate-x-full flex-col border-r border-slate-200 bg-white transition-transform lg:translate-x-0">
-    <a href="{{ path('dashboard') }}" class="flex h-16 shrink-0 items-center gap-3 border-b border-slate-100 px-5 no-underline hover:no-underline">
+    <a href="{{ path('/') }}" class="flex h-16 shrink-0 items-center gap-3 border-b border-slate-100 px-5 no-underline hover:no-underline">
       <img src="/build/img/empresas/{{ sesion.getEmpresaActual.logo }}" alt="{{ sesion.getEmpresaActual.nombre }}" class="h-9 w-9 rounded-lg object-contain">
       <span class="truncate text-sm font-semibold text-slate-900"><br></span>
     </a>
@@ -115,7 +115,7 @@
       <button type="button" data-sidebar-toggle class="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100" title="Mostrar/ocultar el menú" aria-label="Mostrar u ocultar el menú">
         <i class="fas fa-bars"></i>
       </button>
-      <a href="{{ path('dashboard') }}" class="text-[13px] font-medium text-slate-600 no-underline hover:text-slate-900 hover:no-underline">Inicio</a>
+      <a href="{{ path('/') }}" class="text-[13px] font-medium text-slate-600 no-underline hover:text-slate-900 hover:no-underline">Inicio</a>
       <div class="ml-auto flex min-w-0 items-center gap-4 text-[13px] text-slate-600">
         <button type="button" id="btnTema" class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100" title="Cambiar tema claro/oscuro" aria-label="Cambiar tema" data-url="{{ path('tema_guardar') }}" data-token="{{ csrf_token('tema') }}">
           <i class="fas {{ (app.user and app.user.tema == 'oscuro') ? 'fa-sun' : 'fa-moon' }}"></i>

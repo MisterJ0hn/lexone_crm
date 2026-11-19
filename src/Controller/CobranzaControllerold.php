@@ -51,7 +51,7 @@ class CobranzaControllerold extends AbstractController
     {
         $this->addFlash('error','No se puede acceder al módulo puesto que no tiene configurado el semáforo.');
 
-        return $this->redirectToRoute('dashboard');
+        return $this->redirectToRoute('/');
     }
 
     #[Route("/", name: "cobranza_index", methods: ["GET"])]
