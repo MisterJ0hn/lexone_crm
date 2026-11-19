@@ -29,6 +29,12 @@ class ContratoArchivosType extends AbstractType
         'application/zip',
         'application/x-zip-compressed',
         'application/octet-stream', // algunos .doc/.xls antiguos; la extensión sigue validándose
+        // Contenedor binario OLE2 de Office 97-2003 (.xls/.doc/.ppt): según la versión de libmagic,
+        // finfo lo informa con alguno de estos nombres en vez de application/vnd.ms-excel.
+        'application/CDFV2',
+        'application/x-cfb',
+        'application/x-ole-storage',
+        'application/vnd.ms-office',
         'text/plain',
         'text/csv',
         'image/jpeg',
