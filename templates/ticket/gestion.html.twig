@@ -67,24 +67,6 @@
 
 
 <script>
-    $.ajax({
-        url:"/usuario/3/combo",
-        type: "post",
-        dataType: "html",
-        cache: false,
-        contentType: false,
-        processData: false,
-        async: true,
-        beforeSend: function(){
-            $(".loading").html(' <div class="overlay"><i class="fas fa-sync-alt fa-spin"></i><div class="text-bold pt-2">Loading...</div></div>');
-            
-        },
-        success:function(data){
-            $(".encargado").html(data);
-            $(".loading").html('');
-        }
-
-    });
     $('.destino').on('change',function(){
         $.ajax({
             url:"/usuario/"+$(this).val()+"/combo",
