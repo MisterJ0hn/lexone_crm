@@ -37,6 +37,7 @@ class VencimientoController extends AbstractController
         $vencimiento = new Vencimiento();
         $vencimiento->setEmpresa($empresaRepository->find($user->getEmpresaActual()));
         $vencimiento->setMontoMax(0);
+        $vencimiento->setIcono('fas fa-circle');
         $form = $this->createForm(VencimientoType::class, $vencimiento);
          $form->add('color', ChoiceType::class, [
             'choices' => [
