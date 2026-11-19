@@ -8,6 +8,7 @@ use App\Entity\Empresa;
 use App\Entity\UsuarioCuenta;
 use App\Entity\Cuenta;
 use App\Entity\Privilegio;
+use App\Entity\UsuarioTipo;
 use App\Form\UsuarioType;
 use App\Repository\UsuarioRepository;
 use App\Repository\UsuarioTipoRepository;
@@ -321,6 +322,15 @@ class UsuarioController extends AbstractController
 
         return $this->redirectToRoute('usuario_index');
     }
+     #[Route(path: '/{id}/combo', name: 'usuario_combo', methods: ['GET', 'POST'])]
+    public function combo(UsuarioTipo $usuarioTipo,UsuarioRepository $usuarioRepository): Response
+    {
+        return $this->render('usuario/combo.html.twig', [
+            'usuarios' => $usuarioRepository->findBy(['usuarioTipo'=>$usuarioTipo->getId(),'estado'=>1]) 
+            
+        ]);
+    }
+
     #[Route("/{id}", name: "usuario_delete", methods: ["DELETE"])]
     public function delete(Request $request, Usuario $usuario, UsuarioRepository $usuarioRepository): Response
     {
