@@ -5,17 +5,13 @@
             <div class="col-sm-6 col-md-3">
                 <small class="text-muted">Destino</small><br>
                 <select name="cboDestino" class="form-control destino" required>
-                    
+                    <option value=''>Seleccione Destino</option>
                     {% for usuarioTipo in usuarioTipos %}
-             
-                        {% if usuarioTipo.id == 3  %}
-                        <option value="{{usuarioTipo.id}}" 
-                        {% if usuarioTipo.id==3 %}
-                            selected
+                        {% if usuarioTipo.id != 9  %}
+                        {% if usuarioTipo.id != 8  %}
+                        <option value="{{usuarioTipo.id}}">{{usuarioTipo.nombre}}</option>
                         {% endif %}
-                        >{{usuarioTipo.nombre}}</option>
                         {% endif %}
-              
                     {% endfor %}
                 </select>
             </div>
