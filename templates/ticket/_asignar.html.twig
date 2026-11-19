@@ -2,7 +2,7 @@
             {{form_row(form.motivo,{'label':false,'attr':{'class':'form-control cuotas number','required':true,'style':'visibility:hidden'}})}}
         
         <div class="row">
-            <div class="ocultar-campo">
+            <div class="col-sm-6 col-md-3">
                 <small class="text-muted">Destino</small><br>
                 <select name="cboDestino" class="form-control destino" required>
                     
@@ -19,7 +19,7 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="col-sm-6 col-md-1 ocultar-campo">
+            <div class="col-sm-6 col-md-1">
                 <div class="loading"></div>
             </div>
             <div class="col-sm-6 col-md-3">
