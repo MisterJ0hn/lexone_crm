@@ -43,24 +43,7 @@
 				</div>
 
 				
-				<div class="col-sm-6 col-md-3">
-					<small class="text-muted">Colaborador *</small>
-					
-					<select name="cboTipoDocumento" class="form-control" required>
-						<option></option>
-						{% for tipo_documento in tipo_documentos %}
-							<option value="{{tipo_documento.id}}"
-							{% if usuario.tipoDocumento.id is defined %}
-
-									{% if  usuario.tipoDocumento.id ==tipo_documento.id %}
-										selected
-									{% endif %}
-							
-							{% endif %}
-							>{{tipo_documento.nombre}}</option>
-						{% endfor %}}
-					</select>
-				</div>
+		
 				{% if usuario is defined %}
 					<div class="col-sm-6 col-md-3">
 					<small class="text-muted">FechaIngreso *</small>
@@ -94,13 +77,9 @@
 				</div>
 				<div class="col-sm-6 col-md-3">
 					<small class="text-muted">Usuario</small>
-					<div class="input-group">
+				
+					{{form_row(form.username,{'label':false,'attr':{'class':'form-control','placeholder':'Usuario'}})}}			
                             
-							{{form_row(form.username,{'label':false,'attr':{'class':'form-control','placeholder':'Usuario'}})}}			
-                            <div class="input-group-append">
-                               <a href="#" class="btn btn-outline-success">{{empresaActual}}</a> 
-                            </div>
-                        </div>
 				
 				</div>
 				<div class="col-sm-6 col-md-3">

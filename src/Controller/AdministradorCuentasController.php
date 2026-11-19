@@ -129,9 +129,6 @@ class AdministradorCuentasController extends AbstractController
                 $usuario->setPassword($encoded);
 
                 $usuario->setUsername($usuario->getUsername());
-
-                $usuario->setTipoDocumento($tipoDocumento->find($request->request->get('cboTipoDocumento')));
-
                 $usuario->setFechaNacimiento(new \DateTime(date('Y-m-d H:i',strtotime($request->request->get('fecha_nacimiento')))));
                 $usuario->setFechaActivacion(new \DateTime(date('Y-m-d H:i',strtotime($request->request->get('fecha_ingreso')))));
 
@@ -260,9 +257,6 @@ class AdministradorCuentasController extends AbstractController
 
             //$categoria=$this->entityManager->getRepository(UsuarioCategoria::class)->find($request->request->get('cboUsuarioCategoria'));
             //$usuario->setCategoria($categoria);
-
-
-            $usuario->setTipoDocumento($tipoDocumento->find($request->request->get('cboTipoDocumento')));
 
             //$status=$this->entityManager->getRepository(UsuarioStatus::class)->find($request->request->get('cboStatues'));
             //$usuario->setStatus($status);
