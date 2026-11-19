@@ -201,7 +201,6 @@ class AdministradoresController extends AbstractController
         $empresa=$empresaRepository->find($user->getEmpresaActual());
         $usuarioCuenta=$this->entityManager->getRepository(UsuarioCuenta::class)->findOneBy(['usuario'=>$usuario->getId()]);
    
-        $usuarioCategorias=$empresa->getUsuarioCategorias();
         $cuentas=$empresa->getCuentas();
 
         $statues=$this->entityManager->getRepository(UsuarioStatus::class)->findBy(['id'=>[1,2]]);
@@ -283,7 +282,7 @@ class AdministradoresController extends AbstractController
             'form' => $form->createView(),
             'pagina'=>$pagina->getNombre(),
             'cuentas'=>$cuentas,
-            'usuarioCategorias'=>$usuarioCategorias,
+            'usuarioCategorias'=>[],
 
             'statues'=>$statues,
             'id_cuenta'=>$usuarioCuenta->getCuenta()->getId(),
