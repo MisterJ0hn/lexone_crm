@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Empresa;
 use App\Entity\Cuenta;
 use App\Entity\UsuarioCuenta;
+use App\EventListener\TenantSubscriber;
 use App\Repository\AccionRepository;
 use App\Repository\CuentaRepository;
 use App\Repository\ModuloRepository;
@@ -166,6 +167,25 @@ class EmpresaController extends AbstractController
             'form' => $form->createView(),
             'pagina'=>'Nueva empresa',
         ]);
+    }
+
+    /**
+     * Atajo desde el listado de empresas: deja esa empresa como la activa en sesión
+     * y abre su administrador de cuentas (que lista los usuarios de la empresa activa).
+     * Sólo el super-admin puede cambiar de empresa; para los demás la empresa es fija
+     * y el TenantAccessListener ya rechaza (404) una empresa que no es la suya.
+     */
+    #[Route("/{id}/administrador_cuentas", name: "empresa_administrador_cuentas", methods: ["GET"])]
+    public function administradorCuentas(Request $request, Empresa $empresa): Response
+    {
+        $this->denyAccessUnlessGranted('view','administrador_cuentas');
+        $user = $this->getUser();
+        $tipo = $user->getUsuarioTipo();
+        if ($tipo !== null && $tipo->getId() === 8) {
+            $request->getSession()->set(TenantSubscriber::SESSION_KEY, $empresa->getId());
+        }
+
+        return $this->redirectToRoute('administrador_cuentas_index');
     }
 
     #[Route("/{id}", name: "empresa_show", methods: ["GET"])]

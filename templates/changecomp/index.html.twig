@@ -1,7 +1,7 @@
 
 
     {% if sesion.getSesion.usuarioTipo.id==8  %}
-        <form action="{{path('changecomp_new')}}" method="post" id="frmChange">
+        <!--<form action="{{path('changecomp_new')}}" method="post" id="frmChange">
             <select  class="form-control form-control-sm changecomp !w-36 sm:!w-56" name="company" id="company">
                 {% for empresa in empresas %}
                 <option value="{{empresa.id}}"
@@ -14,7 +14,7 @@
             
         
             <input type="hidden" name="route" value="{{route}}">
-        </form> 
+        </form>--> 
     {% else %}
         {% for empresa in empresas %}
                 
