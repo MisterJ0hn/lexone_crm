@@ -10,7 +10,7 @@
                 <div class="col-sm-6 col-md-4">
                     <small class="text_mute">Rut</small>
                    
-                    {{ form_row(form.rut,{'label':false,'attr':{'class':'form-control'}})}}
+                    {{ form_row(form.rut,{'label':false,'attr':{'class':'form-control','data-rut-format':'','maxlength':12,'placeholder':'12.345.678-9'}})}}
                     
                 </div>
                 <div class="col-sm-6 col-md-4">
@@ -91,6 +91,7 @@
             </div>
             <button class="btn btn-primary">{{ button_label|default('Guardar') }}</button>
 
+            <script src="/assets/rut-format.js?v={{ 'now'|date('YmdH') }}"></script>
             <script>
                $('.datetimepicker-input').daterangepicker({
                     "singleDatePicker": true,

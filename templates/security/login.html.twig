@@ -92,6 +92,9 @@
                                value="{{ last_rut_empresa }}"
                                name="rut_empresa"
                                id="inputRutEmpresa"
+                               data-rut-format
+                               inputmode="text"
+                               maxlength="12"
                                class="form-control"
                                placeholder="RUT empresa"
                                required
@@ -176,5 +179,6 @@
         </div>
     </div>
 
+<script src="/assets/rut-format.js?v={{ 'now'|date('YmdH') }}"></script>
 </body>
 </html>
