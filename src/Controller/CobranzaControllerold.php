@@ -43,6 +43,17 @@ class CobranzaControllerold extends AbstractController
     public function __construct(private readonly EntityManagerInterface $entityManager)
     {
     }
+    /**
+     * Cobranza depende de los vencimientos (semáforo) configurados por empresa: sin
+     * ellos no hay umbrales con que clasificar las cuotas.
+     */
+    private function sinSemaforo(): Response
+    {
+        $this->addFlash('error','No se puede acceder al módulo puesto que no tiene configurado el semáforo.');
+
+        return $this->redirectToRoute('dashboard');
+    }
+
     #[Route("/", name: "cobranza_index", methods: ["GET"])]
     public function index(ContratoRepository $contratoRepository, 
                         CuotaRepository $cuotaRepository,
@@ -66,6 +77,9 @@ class CobranzaControllerold extends AbstractController
         //   "maximo ".$vencimiento->getValMax();
         //$vencimiento=$vencimientoArray[0];
         $vencimientos=$vencimientoRepository->findBy(['empresa'=>$user->getEmpresaActual()],["valMin"=>'ASC']);
+        if($vencimiento === null || count($vencimientos) === 0){
+            return $this->sinSemaforo();
+        }
         $otros=' DATEDIFF(now(),co.proximoVencimiento) >= '.$vencimiento->getValMin();
         if($user->getUsuarioTipo()->getId() == 1 || $user->getUsuarioTipo()->getId()==3){
             $otros=" 1=1 ";
@@ -431,6 +445,9 @@ class CobranzaControllerold extends AbstractController
         $filtro=null;
         $folio=null;
         $compania=null;
+        if(count($vencimientoArray) === 0){
+            return $this->sinSemaforo();
+        }
         $vencimiento=$vencimientoArray[0];
         $otros=' DATEDIFF(now(),c.fechaPago)>'.$vencimiento->getValMax();
         $fecha=null;
