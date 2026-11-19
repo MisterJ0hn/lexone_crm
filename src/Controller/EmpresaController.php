@@ -133,6 +133,8 @@ class EmpresaController extends AbstractController
             $cuenta=new Cuenta();
             $cuenta->setNombre('Predeterminada');
             $cuenta->setFechaCreacion(new \DateTime(date("Y-m-d h:i:s")));
+            $cuenta->setVigenciaContratos(24);
+            
             $cuenta->setEmpresa($empresa);
 
             $entityManager->persist($cuenta);

@@ -97,6 +97,7 @@ class AdministradorCuentasController extends AbstractController
         $cuentas=$empresa->getCuentas();
         
         
+        
         $usuario->setUsuarioTipo($usuarioTipoRepository->find(1));
         $usuario->setFechaActivacion(new \DateTime(date('Y-m-d H:i:s')));
         
@@ -134,8 +135,8 @@ class AdministradorCuentasController extends AbstractController
                 $usuario->setFechaNacimiento(new \DateTime(date('Y-m-d H:i',strtotime($request->request->get('fecha_nacimiento')))));
                 $usuario->setFechaActivacion(new \DateTime(date('Y-m-d H:i',strtotime($request->request->get('fecha_ingreso')))));
 
-                $getcuentas=$_POST['cboEmpresa'];
-                foreach($getcuentas as $getcuenta){
+                
+                foreach($cuentas as $getcuenta){
                     $cuenta=$this->entityManager->getRepository(Cuenta::class)->find($getcuenta);
 
                     $usuarioCuenta=new UsuarioCuenta();
@@ -182,7 +183,7 @@ class AdministradorCuentasController extends AbstractController
             'agendador' => $usuario,
             'form' => $form->createView(),
             'pagina'=>$pagina->getNombre()." empresa: ".$empresa->getNombre(),
-            'cuentas'=>$cuentas,
+           
             'empresaActual'=>$user->getEmpresaActual(),
             'tipo_documentos'=>$tipoDocumento->findAll(),
         ]);
@@ -269,27 +270,7 @@ class AdministradorCuentasController extends AbstractController
             $usuario->setFechaNacimiento(new \DateTime(date('Y-m-d H:i',strtotime($request->request->get('fecha_nacimiento')))));
             $usuario->setFechaActivacion(new \DateTime(date('Y-m-d H:i',strtotime($request->request->get('fecha_ingreso')))));
 
-            $usuarioCuentas=$usuario->getUsuarioCuentas();
-            foreach($usuarioCuentas as $usuarioCuenta){
-                $usuario->removeUsuarioCuenta($usuarioCuenta);
-            }
-            $getcuentas=$_POST['cboEmpresa'];
-         
-            foreach($getcuentas as $getcuenta){
-                $cuenta=$this->entityManager->getRepository(Cuenta::class)->find($getcuenta);
-                
-                $usuarioCuenta=new UsuarioCuenta();
-
-                $usuarioCuenta->setCuenta($cuenta);
-                $usuarioCuenta->setUsuario($usuario);
-
-                $entityManager->persist($usuarioCuenta);
-                $entityManager->flush();
-                $usuario->setEmpresa($cuenta->getEmpresa());
-                if(is_null($usuario->getEmpresaActual())){
-                    $usuario->setEmpresaActual($cuenta->getEmpresa()->getId());
-                }
-            }
+            
             $entityManager->persist($usuario);
             $entityManager->flush();
 
