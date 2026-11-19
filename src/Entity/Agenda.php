@@ -83,7 +83,8 @@ class Agenda
     #[ORM\OneToOne(targetEntity: Contrato::class,  mappedBy: "agenda")]
     private $contrato;
 
-    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    // `lead` es palabra reservada en MySQL 8 (función de ventana LEAD): va entre comillas invertidas.
+    #[ORM\Column(name: "`lead`", type: "string", length: 255, nullable: true)]
     private $lead;
 
     #[ORM\Column(type: "string", length: 255, nullable: true)]
