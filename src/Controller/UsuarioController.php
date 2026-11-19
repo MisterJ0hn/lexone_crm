@@ -325,8 +325,9 @@ class UsuarioController extends AbstractController
      #[Route(path: '/{id}/combo', name: 'usuario_combo', methods: ['GET', 'POST'])]
     public function combo(UsuarioTipo $usuarioTipo,UsuarioRepository $usuarioRepository): Response
     {
+        $user=$this->getUser();
         return $this->render('usuario/combo.html.twig', [
-            'usuarios' => $usuarioRepository->findBy(['usuarioTipo'=>$usuarioTipo->getId(),'estado'=>1]) 
+            'usuarios' => $usuarioRepository->findBy(['usuarioTipo'=>$usuarioTipo->getId(),'estado'=>1,'empresa'=>$user->getEmpresaActual()]), 
             
         ]);
     }
