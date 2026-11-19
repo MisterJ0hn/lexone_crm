@@ -36,17 +36,18 @@ class VencimientoController extends AbstractController
         $user=$this->getUser();
         $vencimiento = new Vencimiento();
         $vencimiento->setEmpresa($empresaRepository->find($user->getEmpresaActual()));
+        $vencimiento->setMontoMax(0);
         $form = $this->createForm(VencimientoType::class, $vencimiento);
          $form->add('color', ChoiceType::class, [
             'choices' => [
-                'Warning' => 'Warning',
-                'Success' => 'Success',
-                'Danger' => 'Danger',
+                'Naranjo' => 'warning',
+                'Verde' => 'success',
+                'Rojo' => 'danger',
             ],
             'attr' => ['class' => 'form-control'],
         ]);
         $form->add('nombre');
-        $form->add('montoMax');
+   
         
         $form->handleRequest($request);
 
@@ -82,14 +83,14 @@ class VencimientoController extends AbstractController
         $form = $this->createForm(VencimientoType::class, $vencimiento);
         $form->add('color', ChoiceType::class, [
             'choices' => [
-                'Warning' => 'warning',
-                'Success' => 'success',
-                'Danger' => 'danger',
+                'Naranjo' => 'warning',
+                'Verde' => 'success',
+                'Rojo' => 'danger',
             ],
             'attr' => ['class' => 'form-control'],
         ]);
         $form->add('nombre');
-        $form->add('montoMax');
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
