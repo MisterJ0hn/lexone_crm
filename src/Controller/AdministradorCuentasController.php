@@ -56,7 +56,7 @@ class AdministradorCuentasController extends AbstractController
        
         $pagina=$moduloPerRepository->findOneByName('administrador_cuentas',1);
         //$query=$usuarioRepository->findBy(['usuarioTipo'=>1,'estado'=>$modo]);
-
+        $empresa=$this->entityManager->getRepository(Empresa::class)->find($user->getEmpresaActual());
        
         $query=$usuarioRepository->findByEmpresa($user->getEmpresaActual(),['usuarioTipo'=>1,'estado'=>$modo]);
 
@@ -69,7 +69,7 @@ class AdministradorCuentasController extends AbstractController
 
         return $this->render('administrador_cuentas/index.html.twig', [
             'usuarios' => $usuarios,
-            'pagina'=>$pagina->getNombre(),
+            'pagina'=>$pagina->getNombre()." empresa: ".$empresa->getNombre(),
             'modo'=>$modo,
         ]);
     }
@@ -181,7 +181,7 @@ class AdministradorCuentasController extends AbstractController
         return $this->render('administrador_cuentas/new.html.twig', [
             'agendador' => $usuario,
             'form' => $form->createView(),
-            'pagina'=>$pagina->getNombre(),
+            'pagina'=>$pagina->getNombre()." empresa: ".$empresa->getNombre(),
             'cuentas'=>$cuentas,
             'empresaActual'=>$user->getEmpresaActual(),
             'tipo_documentos'=>$tipoDocumento->findAll(),
@@ -193,10 +193,11 @@ class AdministradorCuentasController extends AbstractController
     {
         $this->denyAccessUnlessGranted('view','administrador_cuentas');
         $user=$this->getUser();
-        $pagina=$moduloPerRepository->findOneByName('administrador_cuentas',$user->getEmpresaActual());
+        $pagina=$moduloPerRepository->findOneByName('administrador_cuentas',1);
+        $empresa=$this->entityManager->getRepository(Empresa::class)->find($user->getEmpresaActual());
         return $this->render('usuario/show.html.twig', [
             'usuario' => $usuario,
-            'pagina'=>$pagina->getNombre(),
+            'pagina'=>$pagina->getNombre()." empresa: ".$empresa->getNombre(),
         ]);
     }
 
@@ -211,11 +212,11 @@ class AdministradorCuentasController extends AbstractController
     {
         $this->denyAccessUnlessGranted('edit','administrador_cuentas');
         $user=$this->getUser();
-        $pagina=$moduloPerRepository->findOneByName('administrador_cuentas',$user->getEmpresaActual());
+        $pagina=$moduloPerRepository->findOneByName('administrador_cuentas',1);
         $empresa=$this->entityManager->getRepository(Empresa::class)->find($user->getEmpresaActual());
         $usuarioCuenta=$this->entityManager->getRepository(UsuarioCuenta::class)->findOneBy(['usuario'=>$usuario->getId()]);
    
-        $usuarioCategorias=$empresa->getUsuarioCategorias();
+        
         $cuentas=$empresa->getCuentas();
 
         $statues=$this->entityManager->getRepository(UsuarioStatus::class)->findBy(['id'=>[1,2]]);
@@ -302,9 +303,9 @@ class AdministradorCuentasController extends AbstractController
         return $this->render('administrador_cuentas/edit.html.twig', [
             'usuario' => $usuario,
             'form' => $form->createView(),
-            'pagina'=>$pagina->getNombre(),
+            'pagina'=>$pagina->getNombre()." empresa: ".$empresa->getNombre(),
             'cuentas'=>$cuentas,
-            'usuarioCategorias'=>$usuarioCategorias,
+            'usuarioCategorias'=>[],
             'empresaActual'=>$user->getEmpresaActual(),
             'statues'=>$statues,
             'id_cuenta'=>$id_cuenta,

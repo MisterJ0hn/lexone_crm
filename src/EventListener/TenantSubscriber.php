@@ -9,6 +9,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 
 /**
@@ -47,12 +48,15 @@ class TenantSubscriber implements EventSubscriberInterface
     private Security $security;
     private EmpresaRepository $empresaRepository;
     private TenantContext $tenantContext;
+    private EntityManagerInterface $em;
 
     public function __construct(
         Security $security,
         EmpresaRepository $empresaRepository,
-        TenantContext $tenantContext
+        TenantContext $tenantContext,
+        EntityManagerInterface $em
     ) {
+        $this->em = $em;
         $this->security = $security;
         $this->empresaRepository = $empresaRepository;
         $this->tenantContext = $tenantContext;
@@ -106,6 +110,13 @@ class TenantSubscriber implements EventSubscriberInterface
 
         $empresaId = $usuario->getEmpresaActual();
         $this->tenantContext->setEmpresaId($empresaId);
+        $this->tenantContext->setSuperAdmin($esSuperAdmin);
+
+        // Aislamiento SQL: usuarios normales sólo ven datos de su empresa. El
+        // super-admin queda sin filtro (administra todas las empresas).
+        if (!$esSuperAdmin && $empresaId !== null) {
+            $this->em->getFilters()->enable('tenant')->activarPara($this->em, (int) $empresaId);
+        }
 
         if ($empresaId !== null) {
             $empresa = $this->empresaRepository->find($empresaId);

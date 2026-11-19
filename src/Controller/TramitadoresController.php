@@ -41,7 +41,7 @@ class TramitadoresController extends AbstractController
             $modo=0;
         }
 
-        $pagina=$moduloPerRepository->findOneByName('tramitadores',$user->getEmpresaActual());
+        $pagina=$moduloPerRepository->findOneByName('tramitadores',1);
         $query=$usuarioRepository->findByEmpresa($user->getEmpresaActual(),['usuarioTipo'=>7,'estado'=>$modo]);
         $usuarios=$paginator->paginate(
             $query, /* query NOT result */

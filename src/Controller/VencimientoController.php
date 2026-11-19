@@ -41,10 +41,13 @@ class VencimientoController extends AbstractController
             'choices' => [
                 'Warning' => 'Warning',
                 'Success' => 'Success',
-                'danger' => 'danger',
+                'Danger' => 'Danger',
             ],
             'attr' => ['class' => 'form-control'],
         ]);
+        $form->add('nombre');
+        $form->add('montoMax');
+        
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -79,9 +82,9 @@ class VencimientoController extends AbstractController
         $form = $this->createForm(VencimientoType::class, $vencimiento);
         $form->add('color', ChoiceType::class, [
             'choices' => [
-                'Amarillo' => 'warning',
-                'Verde' => 'success',
-                'Rojo' => 'danger',
+                'Warning' => 'warning',
+                'Success' => 'success',
+                'Danger' => 'danger',
             ],
             'attr' => ['class' => 'form-control'],
         ]);

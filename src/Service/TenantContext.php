@@ -15,6 +15,18 @@ class TenantContext
 {
     private ?int $empresaId = null;
 
+    private bool $superAdmin = false;
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->superAdmin;
+    }
+
+    public function setSuperAdmin(bool $superAdmin): void
+    {
+        $this->superAdmin = $superAdmin;
+    }
+
     public function getEmpresaId(): ?int
     {
         return $this->empresaId;

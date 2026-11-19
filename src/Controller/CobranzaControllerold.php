@@ -55,7 +55,7 @@ class CobranzaControllerold extends AbstractController
     {
         $this->denyAccessUnlessGranted('view','cobranza');
         $user=$this->getUser();
-        $pagina=$moduloPerRepository->findOneByName('cobranza',$user->getEmpresaActual());
+        $pagina=$moduloPerRepository->findOneByName('cobranza',1);
         $vencimiento=$vencimientoRepository->findOneMaxNotNull($user->getEmpresaActual(),'v.valMax','ASC');
         $filtro=null;
         $folio=null;
@@ -65,12 +65,12 @@ class CobranzaControllerold extends AbstractController
        
         //   "maximo ".$vencimiento->getValMax();
         //$vencimiento=$vencimientoArray[0];
-        $vencimientos=$vencimientoRepository->findBy(['empresa'=>$user->getEmpresaActual(),'soloPorAdmin'=>false],["valMin"=>'ASC']);
+        $vencimientos=$vencimientoRepository->findBy(['empresa'=>$user->getEmpresaActual()],["valMin"=>'ASC']);
         $otros=' DATEDIFF(now(),co.proximoVencimiento) >= '.$vencimiento->getValMin();
         if($user->getUsuarioTipo()->getId() == 1 || $user->getUsuarioTipo()->getId()==3){
             $otros=" 1=1 ";
         }
-        $primerVencimiento=$vencimientoRepository->findOneBy(['empresa'=>$user->getEmpresaActual(),'soloPorAdmin'=>false],['valMin'=>'ASC']);
+        $primerVencimiento=$vencimientoRepository->findOneBy(['empresa'=>$user->getEmpresaActual()],['valMin'=>'ASC']);
 
         $condicionSegmento=function($v){
             if($v->getValMax() !== null && $v->getValMin() > 0){
@@ -256,7 +256,7 @@ class CobranzaControllerold extends AbstractController
     {
         $this->denyAccessUnlessGranted('view','cobranza');
         $user=$this->getUser();
-        $pagina=$moduloPerRepository->findOneByName('cobranza_finalizado',$user->getEmpresaActual());
+        $pagina=$moduloPerRepository->findOneByName('cobranza_finalizado',1);
         $filtro=null;
         $folio=null;
         $compania=null;
@@ -347,7 +347,7 @@ class CobranzaControllerold extends AbstractController
 
         $this->denyAccessUnlessGranted('view','cobranza_resumen');
         $user=$this->getUser();
-        $pagina=$moduloPerRepository->findOneByName('cobranza_resumen',$user->getEmpresaActual());
+        $pagina=$moduloPerRepository->findOneByName('cobranza_resumen',1);
         $filtro=null;
         $folio=null;
         $compania=null;
@@ -426,7 +426,7 @@ class CobranzaControllerold extends AbstractController
     {
         $this->denyAccessUnlessGranted('view','cobranza_excel');
         $user=$this->getUser();
-        $pagina=$moduloPerRepository->findOneByName('cobranza',$user->getEmpresaActual());
+        $pagina=$moduloPerRepository->findOneByName('cobranza',1);
         $vencimientoArray=$vencimientoRepository->findBy(['empresa'=>$user->getEmpresaActual()],['id'=>'ASC'],1);
         $filtro=null;
         $folio=null;
@@ -645,7 +645,7 @@ class CobranzaControllerold extends AbstractController
     {
         $this->denyAccessUnlessGranted('view','cobranza');
         $user=$this->getUser();
-        $pagina=$moduloPerRepository->findOneByName('cobranza',$user->getEmpresaActual());
+        $pagina=$moduloPerRepository->findOneByName('cobranza',1);
         $cobranzas=$cobranzaRepository->findByContrato($contrato->getId());
 
         return $this->render('cobranza/vercobranzas.html.twig', [
@@ -661,7 +661,7 @@ class CobranzaControllerold extends AbstractController
     {
         $this->denyAccessUnlessGranted('view','cobranza');
         $user=$this->getUser();
-        $pagina=$moduloPerRepository->findOneByName('cobranza',$user->getEmpresaActual());
+        $pagina=$moduloPerRepository->findOneByName('cobranza',1);
         $cobranzas=$cobranzaRepository->findByContrato($contrato->getId());
         return $this->render('cobranza/vercobranza_show.html.twig', [
             'pagina'=>"Detalle ".$pagina->getNombre(),
@@ -691,7 +691,7 @@ class CobranzaControllerold extends AbstractController
     {
         $this->denyAccessUnlessGranted('create','cobranza');
         $user=$this->getUser();
-        $pagina=$moduloPerRepository->findOneByName('cobranza',$user->getEmpresaActual());
+        $pagina=$moduloPerRepository->findOneByName('cobranza',1);
         $cobranza = new Cobranza();
         $cobranza->setFechaHora(new \DateTime(date('Y-m-d H:i')));
         $cobranza->setFecha(new \DateTime(date('Y-m-d')));
@@ -739,7 +739,7 @@ class CobranzaControllerold extends AbstractController
     { 
         $this->denyAccessUnlessGranted('edit','cobranza');
         $user=$this->getUser();
-        $pagina=$moduloPerRepository->findOneByName('cobranza',$user->getEmpresaActual());
+        $pagina=$moduloPerRepository->findOneByName('cobranza',1);
 
         $configuracion=$configuracionRepository->find(1);
        
@@ -775,7 +775,7 @@ class CobranzaControllerold extends AbstractController
     {
         $this->denyAccessUnlessGranted('edit','cobranza');
         $user=$this->getUser();
-        $pagina=$moduloPerRepository->findOneByName('cobranza',$user->getEmpresaActual());
+        $pagina=$moduloPerRepository->findOneByName('cobranza',1);
         
         $form = $this->createForm(CobranzaType::class, $cobranza);
         $form->add('fechaHora',DateType::class,array('widget'=>'single_text','html5'=>false));
@@ -806,7 +806,7 @@ class CobranzaControllerold extends AbstractController
         $this->denyAccessUnlessGranted('create','cobranza');
         $user=$this->getUser();
         
-        $pagina=$moduloPerRepository->findOneByName('cobranza',$user->getEmpresaActual());
+        $pagina=$moduloPerRepository->findOneByName('cobranza',1);
 
         if(null !== $request->query->get('status')){
             $error_toast=$contratoFunciones->terminarContrato($contrato,$request->query->get('status'),$request->request->get('txtObservacion'));

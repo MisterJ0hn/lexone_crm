@@ -78,7 +78,7 @@ class ContratoController extends AbstractController
     {
         $this->denyAccessUnlessGranted('view','contrato');
         $user=$this->getUser();
-        $pagina=$moduloPerRepository->findOneByName('contrato',$user->getEmpresaActual());
+        $pagina=$moduloPerRepository->findOneByName('contrato',1);
         $filtro=null;
         $error='';
         $error_toast="";
@@ -230,7 +230,7 @@ class ContratoController extends AbstractController
     {
         $this->denyAccessUnlessGranted('view','contrato');
         $user=$this->getUser();
-        $pagina=$moduloPerRepository->findOneByName('contrato',$user->getEmpresaActual());
+        $pagina=$moduloPerRepository->findOneByName('contrato',1);
 
         // Empresa/Convenio: credenciales PJUD de cada sub cliente (Causa::$cliente), sin repetir clientes.
         $subclientes = [];
@@ -320,7 +320,7 @@ class ContratoController extends AbstractController
         $this->denyAccessUnlessGranted('edit','contrato');
         $user=$this->getUser();
 
-        $pagina=$moduloPerRepository->findOneByName('contrato',$user->getEmpresaActual());
+        $pagina=$moduloPerRepository->findOneByName('contrato',1);
         $juzgados=$juzgadoRepository->findAll();
         $form = $this->createForm(ContratoType::class, $contrato,['cliente' => $contrato->getCliente()]);
         $form->add('fechaPrimeraCuota',DateType::class,array('widget'=>'single_text','html5'=>false));
@@ -978,7 +978,7 @@ class ContratoController extends AbstractController
         $this->denyAccessUnlessGranted('create','terminos');
         $user=$this->getUser();
         
-        $pagina=$moduloPerRepository->findOneByName('contrato',$user->getEmpresaActual());
+        $pagina=$moduloPerRepository->findOneByName('contrato',1);
 
         if(null !== $request->query->get('status')){
             $error_toast=$contratoFunciones->terminarContrato($contrato,$request->query->get('status'),$request->request->get('txtObservacion'));
@@ -1063,7 +1063,7 @@ class ContratoController extends AbstractController
     {
         $this->denyAccessUnlessGranted('create','linea_tiempo');
         $user=$this->getUser();
-        $pagina=$moduloPerRepository->findOneByName('linea_tiempo',$user->getEmpresaActual());
+        $pagina=$moduloPerRepository->findOneByName('linea_tiempo',1);
 
         $cuenta=$contrato->getAgenda()->getCuenta();
 
@@ -1632,7 +1632,7 @@ class ContratoController extends AbstractController
     {
         $this->denyAccessUnlessGranted('create','linea_tiempo');
         $user=$this->getUser();
-        $pagina=$moduloPerRepository->findOneByName('linea_tiempo',$user->getEmpresaActual());
+        $pagina=$moduloPerRepository->findOneByName('linea_tiempo',1);
         $fechaUltimoIngreso=$causa->getFechaUltimoIngreso();
         
         

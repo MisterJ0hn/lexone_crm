@@ -35,7 +35,7 @@ class EmpresaController extends AbstractController
     {
         $this->denyAccessUnlessGranted('view','empresa');
         $user=$this->getUser();
-        $pagina=$moduloPerRepository->findOneByName('empresa',$user->getEmpresaActual());
+        $pagina=$moduloPerRepository->findOneByName('empresa',1);
         $fechas="";
         $json_criterio='{';
         if($request->request->get('txtFechaBusqueda')){

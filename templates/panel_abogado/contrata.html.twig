@@ -785,7 +785,9 @@
         if($valorCuota.is(':visible') && (parseInt(String($valorCuota.val()).replace(/\D/g, ''), 10) || 0) <= 0){
             return falla('Debe ingresar el valor de la cuota', $valorCuota);
         }
-        if(!esProBono && $('input[name="chkDiasPago"]').length && !$('input[name="chkDiasPago"]:checked').length){
+        // "Paga el total" se cobra de una vez: no usa día de pago, igual que pro-bono.
+        var esPagoTotal = $('.chk-total').prop('checked');
+        if(!esProBono && !esPagoTotal && $('input[name="chkDiasPago"]').length && !$('input[name="chkDiasPago"]:checked').length){
             return falla('Debe seleccionar un día de pago', $('.diasPago'));
         }
 

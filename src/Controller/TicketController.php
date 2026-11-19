@@ -41,7 +41,7 @@ class TicketController extends AbstractController
         $this->denyAccessUnlessGranted('view','ticket');
         $user=$this->getUser();
 
-        $pagina=$this->entityManager->getRepository(ModuloPer::class)->findOneByName('ticket',$user->getEmpresaActual());
+        $pagina=$this->entityManager->getRepository(ModuloPer::class)->findOneByName('ticket',1);
         
         
         $statues='1';
@@ -155,7 +155,7 @@ class TicketController extends AbstractController
         $user=$this->getUser();
         $ticket=null;
         $contratos=null;
-        $pagina=$this->entityManager->getRepository(ModuloPer::class)->findOneByName('ticket_new',$user->getEmpresaActual());
+        $pagina=$this->entityManager->getRepository(ModuloPer::class)->findOneByName('ticket_new',1);
         
 
         $folio = $request->request->get('txtFolio');
@@ -261,7 +261,7 @@ class TicketController extends AbstractController
 
         $user=$this->getUser();
 
-        $pagina=$this->entityManager->getRepository(ModuloPer::class)->findOneByName('ticket_new',$user->getEmpresaActual());
+        $pagina=$this->entityManager->getRepository(ModuloPer::class)->findOneByName('ticket_new',1);
         
 
         $ticket = new Ticket();

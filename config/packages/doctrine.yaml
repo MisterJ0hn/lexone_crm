@@ -15,6 +15,11 @@ doctrine:
         auto_generate_proxy_classes: true
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
         auto_mapping: true
+        filters:
+            # Aislamiento por empresa. Se activa por request en TenantSubscriber.
+            tenant:
+                class: App\Doctrine\TenantFilter
+                enabled: false
         mappings:
             App:
                 is_bundle: false

@@ -67,7 +67,7 @@ class PanelAbogadoController extends AbstractController
         $this->denyAccessUnlessGranted('view','panel_abogado');
 
         $user=$this->getUser();
-        $pagina=$moduloPerRepository->findOneByName('panel_abogado',$user->getEmpresaActual());
+        $pagina=$moduloPerRepository->findOneByName('panel_abogado',1);
         $filtro=null;
         $compania=null;
         $fecha=null;
@@ -526,6 +526,11 @@ class PanelAbogadoController extends AbstractController
             $agenda->setStatus($agendaStatusRepository->find('7'));
             $contrato->setDiaPago($request->request->get('chkDiasPago'));
             $contrato->setFechaCreacion(new \DateTime(date("Y-m-d H:i:s")));
+
+            // Pago total: se cobra de una vez y el formulario no pide día de pago.
+            if ($contrato->getIsTotal() && !$contrato->getDiaPago()) {
+                $contrato->setDiaPago(1);
+            }
 
             // Pro-bono: contrato gratuito, no genera cuotas (la generación en
             // ContratoController no crea ninguna sin abono/total y con valor cuota 0).

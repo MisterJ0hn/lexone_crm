@@ -51,7 +51,7 @@ class AdministradoresController extends AbstractController
             $modo=0;
             
         }
-        $pagina=$moduloPerRepository->findOneByName('administradores',$user->getEmpresaActual());
+        $pagina=$moduloPerRepository->findOneByName('administradores',1);
         $query=$usuarioRepository->findBy(['usuarioTipo'=>8,'estado'=>$modo]);
         $usuarios=$paginator->paginate(
             $query, /* query NOT result */
@@ -77,7 +77,7 @@ class AdministradoresController extends AbstractController
     {
         $this->denyAccessUnlessGranted('create','administradores');
         $user=$this->getUser();
-        $pagina=$moduloPerRepository->findOneByName('administradores',$user->getEmpresaActual());
+        $pagina=$moduloPerRepository->findOneByName('administradores',1);
         $usuario = new Usuario();
         $usuario->setEstado(1);
         $empresa=$this->entityManager->getRepository(Empresa::class)->find($user->getEmpresaActual());
@@ -177,7 +177,7 @@ class AdministradoresController extends AbstractController
     {
         $this->denyAccessUnlessGranted('view','administradores');
         $user=$this->getUser();
-        $pagina=$moduloPerRepository->findOneByName('administradores',$user->getEmpresaActual());
+        $pagina=$moduloPerRepository->findOneByName('administradores',1);
         return $this->render('usuario/show.html.twig', [
             'usuario' => $usuario,
             'pagina'=>$pagina->getNombre(),
@@ -197,7 +197,7 @@ class AdministradoresController extends AbstractController
     {
         $this->denyAccessUnlessGranted('edit','administradores');
         $user=$this->getUser();
-        $pagina=$moduloPerRepository->findOneByName('administradores',$user->getEmpresaActual());
+        $pagina=$moduloPerRepository->findOneByName('administradores',1);
         $empresa=$empresaRepository->find($user->getEmpresaActual());
         $usuarioCuenta=$this->entityManager->getRepository(UsuarioCuenta::class)->findOneBy(['usuario'=>$usuario->getId()]);
    
@@ -242,8 +242,6 @@ class AdministradoresController extends AbstractController
             
             $entityManager = $this->entityManager;
 
-            $categoria=$usuarioCategoriaRepository->find(1);
-            $usuario->setCategoria($categoria);
             $usuario->setFechaNacimiento(new \DateTime(date('Y-m-d H:i',strtotime($request->request->get('fecha_nacimiento')))));
             
 

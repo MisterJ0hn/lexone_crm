@@ -26,7 +26,7 @@ class MisDatosController extends AbstractController
     {
         $this->denyAccessUnlessGranted('view','mis_datos');
         $u=$this->getUser();
-        $pagina=$moduloPerRepository->findOneByName('mis_datos',$u->getEmpresaActual());
+        $pagina=$moduloPerRepository->findOneByName('mis_datos',1);
         return $this->render('mis_datos/index.html.twig', [
             'misdatos' => $u,
             'pagina'=>$pagina->getNombre(),
