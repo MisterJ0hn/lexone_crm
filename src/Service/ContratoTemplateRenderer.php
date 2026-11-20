@@ -42,6 +42,10 @@ class ContratoTemplateRenderer
             '{{comuna_cliente}}' => 'Comuna del cliente',
             '{{ciudad_cliente}}' => 'Ciudad del cliente',
             '{{reunion}}' => 'Reunión (modalidad) del contrato',
+            '{{razon_social}}' => 'Razón social (nombre del cliente tipo Empresa/Convenio)',
+            '{{giro}}' => 'Giro comercial del cliente (Empresa/Convenio)',
+            '{{rut_representante_legal}}' => 'Rut del representante legal (Empresa/Convenio)',
+            '{{monto_contrato_palabras}}' => 'Monto del contrato escrito en palabras',
         ];
     }
 
@@ -96,6 +100,10 @@ class ContratoTemplateRenderer
             '{{ciudad_cliente}}' => 'Santiago',
        
             '{{reunion}}' => 'Presencial',
+            '{{razon_social}}' => 'Inversiones Ejemplo SpA',
+            '{{giro}}' => 'Asesorías y servicios empresariales',
+            '{{rut_representante_legal}}' => '9.876.543-2',
+            '{{monto_contrato_palabras}}' => self::montoEnPalabras(900000),
         ];
     }
 
@@ -126,7 +134,78 @@ class ContratoTemplateRenderer
             '{{comuna_cliente}}' => $cliente && $cliente->getComuna() ? (string) $cliente->getComuna()->getNombre() : '',
             '{{ciudad_cliente}}' => $cliente && $cliente->getCiudad() ? (string) $cliente->getCiudad()->getNombre() : '',
             '{{reunion}}' => ($reunion = $contrato->getReunion() ?? ($cliente ? $cliente->getReunion() : null)) ? (string) $reunion->getNombre() : '',
+            '{{razon_social}}' => $cliente ? (string) $cliente->getNombre() : '',
+            '{{giro}}' => $cliente ? (string) $cliente->getGiro() : '',
+            '{{rut_representante_legal}}' => $cliente ? (string) $cliente->getRepLegalRut() : '',
+            '{{monto_contrato_palabras}}' => $contrato->getMontoContrato() !== null ? self::montoEnPalabras((int) round((float) $contrato->getMontoContrato())) : '',
         ];
+    }
+
+    /**
+     * Monto entero en palabras (español), p.ej. 900000 => "novecientos mil pesos".
+     */
+    public static function montoEnPalabras(int $n): string
+    {
+        if ($n < 0) {
+            return 'menos ' . self::montoEnPalabras(-$n);
+        }
+        if ($n === 0) {
+            return 'cero pesos';
+        }
+        if ($n === 1) {
+            return 'un peso';
+        }
+        $texto = self::numeroEnPalabras($n);
+        $texto = preg_replace('/(?<=\s|^)uno$/u', 'un', $texto);
+        $texto = preg_replace('/veintiuno$/u', 'veintiún', $texto);
+        // "un millón de pesos", "dos millones de pesos"
+        $sufijo = ($n % 1000000 === 0) ? ' de pesos' : ' pesos';
+
+        return $texto . $sufijo;
+    }
+
+    private static function numeroEnPalabras(int $n): string
+    {
+        static $unidades = ['', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez', 'once', 'doce', 'trece', 'catorce', 'quince', 'dieciséis', 'diecisiete', 'dieciocho', 'diecinueve', 'veinte', 'veintiuno', 'veintidós', 'veintitrés', 'veinticuatro', 'veinticinco', 'veintiséis', 'veintisiete', 'veintiocho', 'veintinueve'];
+        static $decenas = [3 => 'treinta', 4 => 'cuarenta', 5 => 'cincuenta', 6 => 'sesenta', 7 => 'setenta', 8 => 'ochenta', 9 => 'noventa'];
+        static $centenas = [1 => 'ciento', 2 => 'doscientos', 3 => 'trescientos', 4 => 'cuatrocientos', 5 => 'quinientos', 6 => 'seiscientos', 7 => 'setecientos', 8 => 'ochocientos', 9 => 'novecientos'];
+
+        if ($n < 30) {
+            return $unidades[$n];
+        }
+        if ($n < 100) {
+            $d = intdiv($n, 10);
+            $u = $n % 10;
+
+            return $decenas[$d] . ($u ? ' y ' . $unidades[$u] : '');
+        }
+        if ($n < 1000) {
+            if ($n === 100) {
+                return 'cien';
+            }
+            $c = intdiv($n, 100);
+            $r = $n % 100;
+
+            return $centenas[$c] . ($r ? ' ' . self::numeroEnPalabras($r) : '');
+        }
+        if ($n < 1000000) {
+            $miles = intdiv($n, 1000);
+            $r = $n % 1000;
+            $pref = $miles === 1 ? 'mil' : self::numeroEnPalabras($miles) . ' mil';
+            $pref = str_replace('uno mil', 'un mil', $pref);
+            $pref = preg_replace('/uno mil$/', 'un mil', $pref);
+
+            return $pref . ($r ? ' ' . self::numeroEnPalabras($r) : '');
+        }
+        $millones = intdiv($n, 1000000);
+        $r = $n % 1000000;
+        if ($millones === 1) {
+            $pref = 'un millón';
+        } else {
+            $pref = preg_replace('/uno$/', 'un', self::numeroEnPalabras($millones)) . ' millones';
+        }
+
+        return $pref . ($r ? ' ' . self::numeroEnPalabras($r) : '');
     }
 
     /**
