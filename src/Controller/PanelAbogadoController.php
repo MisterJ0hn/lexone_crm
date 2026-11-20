@@ -441,7 +441,7 @@ class PanelAbogadoController extends AbstractController
             'data' => $plantillasDisponibles[0] ?? null,
             'choice_label' => 'nombre',
             'required' => false,
-            'placeholder' => 'Plantilla predeterminada',
+            'placeholder' => 'Seleccione una plantilla',
             'label' => 'Plantilla de Contrato',
         ]);
 
