@@ -37,6 +37,10 @@ class DocxToHtmlConverter
         'numero_folio' => 'folio',
         'cuotas_contrato' => 'cuotas',
         'vigencia_contrato' => 'vigencia',
+        'comuna' => 'comuna_cliente',
+        'ciudad' => 'ciudad_cliente',
+        'telefono' => 'cliente_telefono',
+        'direccion' => 'cliente_direccion',
     ];
 
     /** @var array<string, array{based: ?string, p: array, r: array, default: bool, type: string}> */
@@ -47,6 +51,10 @@ class DocxToHtmlConverter
     private \ZipArchive $zip;
     private \DOMXPath $xp;
     private array $avisos = [];
+    /** @var array<string, array<int, array<string,mixed>>> numId => nivel => definición */
+    private array $numeracion = [];
+    /** @var array<string, array<int,int>> numId => nivel => contador actual */
+    private array $contadores = [];
     private float $margenIzqPagina = 0.0;
     private bool $hayImagenAnclada = false;
     /** @var array<string,int> tamaño/fuente => caracteres, para dar a las tablas del sistema el estilo del cuerpo */
@@ -61,6 +69,7 @@ class DocxToHtmlConverter
     public function convertir(string $ruta): array
     {
         $this->estilos = $this->rDefecto = $this->relaciones = $this->avisos = [];
+        $this->numeracion = $this->contadores = [];
         $this->hayImagenAnclada = false;
         $this->histTam = $this->histFuente = [];
         $this->tokensValidos = array_map(
@@ -84,6 +93,7 @@ class DocxToHtmlConverter
             }
             $this->cargarEstilos($this->leerXml('word/styles.xml'));
             $this->cargarRelaciones($this->leerXml('word/_rels/document.xml.rels'));
+            $this->cargarNumeracion($this->leerXml('word/numbering.xml'));
 
             $this->xp = new \DOMXPath($docXml);
             $this->xp->registerNamespace('w', self::NS_W);
@@ -261,6 +271,117 @@ class DocxToHtmlConverter
         return $r;
     }
 
+    private function cargarNumeracion(?\DOMDocument $dom): void
+    {
+        if ($dom === null) {
+            return;
+        }
+        $xp = new \DOMXPath($dom);
+        $xp->registerNamespace('w', self::NS_W);
+        $abstractos = [];
+        foreach ($xp->query('//w:abstractNum') as $a) {
+            $niveles = [];
+            foreach ($xp->query('w:lvl', $a) as $l) {
+                $fmt = $xp->query('w:numFmt', $l)->item(0);
+                $txt = $xp->query('w:lvlText', $l)->item(0);
+                $ind = $xp->query('w:pPr/w:ind', $l)->item(0);
+                $ini = $xp->query('w:start', $l)->item(0);
+                $izq = null;
+                $col = null;
+                if ($ind instanceof \DOMElement) {
+                    $v = $ind->getAttributeNS(self::NS_W, 'left') ?: $ind->getAttributeNS(self::NS_W, 'start');
+                    $izq = $v !== '' ? (int) $v / 20 : null;
+                    $h = $ind->getAttributeNS(self::NS_W, 'hanging');
+                    $col = $h !== '' ? (int) $h / 20 : null;
+                }
+                $niveles[(int) $l->getAttributeNS(self::NS_W, 'ilvl')] = [
+                    'fmt' => $fmt instanceof \DOMElement ? $fmt->getAttributeNS(self::NS_W, 'val') : 'decimal',
+                    'texto' => $txt instanceof \DOMElement ? $txt->getAttributeNS(self::NS_W, 'val') : '%1.',
+                    'inicio' => $ini instanceof \DOMElement ? (int) $ini->getAttributeNS(self::NS_W, 'val') : 1,
+                    'izq' => $izq,
+                    'colgante' => $col,
+                ];
+            }
+            $abstractos[$a->getAttributeNS(self::NS_W, 'abstractNumId')] = $niveles;
+        }
+        foreach ($xp->query('//w:num') as $n) {
+            $ref = $xp->query('w:abstractNumId', $n)->item(0);
+            if ($ref instanceof \DOMElement) {
+                $this->numeracion[$n->getAttributeNS(self::NS_W, 'numId')] = $abstractos[$ref->getAttributeNS(self::NS_W, 'val')] ?? [];
+            }
+        }
+    }
+
+    /**
+     * Texto del marcador (viñeta o número) del siguiente elemento de la lista.
+     *
+     * @param array<string,mixed> $def
+     */
+    private function marcadorLista(string $numId, int $nivel, array $def): string
+    {
+        $this->contadores[$numId] ??= [];
+        $cont = &$this->contadores[$numId];
+        $cont[$nivel] = isset($cont[$nivel]) ? $cont[$nivel] + 1 : (int) ($def['inicio'] ?? 1);
+        foreach (array_keys($cont) as $k) {
+            if ($k > $nivel) {
+                unset($cont[$k]);
+            }
+        }
+        if ($def['fmt'] === 'bullet') {
+            $t = (string) $def['texto'];
+
+            // Viñetas de las fuentes Symbol/Wingdings (área privada) => viñeta común.
+            return ($t === '' || preg_match('/[\x{F000}-\x{F0FF}]/u', $t)) ? '•' : $t;
+        }
+        $texto = (string) $def['texto'];
+        for ($l = 0; $l <= 8; $l++) {
+            if (!str_contains($texto, '%' . ($l + 1))) {
+                continue;
+            }
+            $fmtNivel = (string) ($this->numeracion[$numId][$l]['fmt'] ?? 'decimal');
+            $valor = $cont[$l] ?? (int) ($this->numeracion[$numId][$l]['inicio'] ?? 1);
+            $texto = str_replace('%' . ($l + 1), $this->formatoNumero($valor, $fmtNivel), $texto);
+        }
+
+        return $texto;
+    }
+
+    private function formatoNumero(int $n, string $fmt): string
+    {
+        $letras = static function (int $n): string {
+            $r = '';
+            while ($n > 0) {
+                --$n;
+                $r = chr(97 + $n % 26) . $r;
+                $n = intdiv($n, 26);
+            }
+
+            return $r;
+        };
+
+        return match ($fmt) {
+            'lowerLetter' => $letras($n),
+            'upperLetter' => strtoupper($letras($n)),
+            'lowerRoman' => strtolower($this->romano($n)),
+            'upperRoman' => $this->romano($n),
+            'decimalZero' => str_pad((string) $n, 2, '0', STR_PAD_LEFT),
+            default => (string) $n,
+        };
+    }
+
+    private function romano(int $n): string
+    {
+        $r = '';
+        foreach (['M' => 1000, 'CM' => 900, 'D' => 500, 'CD' => 400, 'C' => 100, 'XC' => 90, 'L' => 50, 'XL' => 40, 'X' => 10, 'IX' => 9, 'V' => 5, 'IV' => 4, 'I' => 1] as $sim => $v) {
+            while ($n >= $v) {
+                $r .= $sim;
+                $n -= $v;
+            }
+        }
+
+        return $r;
+    }
+
     /** @return array<string,mixed> propiedades de párrafo */
     private function leerPpr(\DOMElement $ppr): array
     {
@@ -288,8 +409,12 @@ class DocxToHtmlConverter
                 $p['reglaLinea'] = $this->w($sp, 'lineRule') ?: 'auto';
             }
         }
-        if ($this->hijo($ppr, 'numPr')) {
+        if ($num = $this->hijo($ppr, 'numPr')) {
             $p['lista'] = true;
+            $id = $this->hijo($num, 'numId');
+            $nivel = $this->hijo($num, 'ilvl');
+            $p['numId'] = $id ? $this->w($id, 'val') : '';
+            $p['ilvl'] = $nivel ? (int) $this->w($nivel, 'val') : 0;
         }
 
         return $p;
@@ -408,10 +533,21 @@ class DocxToHtmlConverter
             $cuerpo = '&nbsp;';
         }
 
-        $estiloP = $this->cssParrafo($propP) . $css;
         if (!empty($propP['lista'])) {
-            $this->avisos[] = 'Hay listas con numeración automática de Word; se importaron como párrafos sin su número, revise el texto.';
+            $nivelNum = $this->numeracion[$propP['numId'] ?? ''][$propP['ilvl'] ?? 0] ?? null;
+            if ($nivelNum !== null && $nivelNum['fmt'] !== 'none') {
+                // La sangría de la lista aplica salvo que el párrafo traiga la suya.
+                $propP['izq'] = $pDirecto['izq'] ?? $nivelNum['izq'] ?? ($propP['izq'] ?? 0);
+                $propP['colgante'] = $pDirecto['colgante'] ?? $nivelNum['colgante'] ?? ($propP['colgante'] ?? 0);
+                unset($propP['primera']);
+                $marcador = $this->marcadorLista((string) $propP['numId'], (int) $propP['ilvl'], $nivelNum);
+                $ancho = (float) $propP['colgante'];
+                $cuerpo = '<span style="display:inline-block;width:' . $this->pt($ancho > 0 ? $ancho : 12) . ';">'
+                    . htmlspecialchars($marcador, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</span>' . $cuerpo;
+            }
         }
+
+        $estiloP = $this->cssParrafo($propP) . $css;
 
         return '<p' . ($estiloP !== '' ? ' style="' . $estiloP . '"' : '') . '>' . $cuerpo . '</p>';
     }
@@ -614,7 +750,10 @@ class DocxToHtmlConverter
             if ($encontrado) {
                 $nombre = $encontrado[0];
                 $nombre = strtr($nombre, ['á' => 'a', 'é' => 'e', 'í' => 'i', 'ó' => 'o', 'ú' => 'u', 'ñ' => 'n', 'Á' => 'a', 'É' => 'e', 'Í' => 'i', 'Ó' => 'o', 'Ú' => 'u', 'Ñ' => 'n']);
-                $token = self::ALIAS_VARIABLES[$nombre] ?? $nombre;
+                $token = self::ALIAS_VARIABLES[$nombre] ?? self::ALIAS_VARIABLES[mb_strtolower($nombre)] ?? $nombre;
+                if (!in_array($token, $this->tokensValidos, true) && in_array(mb_strtolower($token), $this->tokensValidos, true)) {
+                    $token = mb_strtolower($token);
+                }
                 if (in_array($token, $this->tokensValidos, true)) {
                     foreach (mb_str_split('{{' . $token . '}}') as $c) {
                         $salida[] = [$chars[$i][0], $c, null];
@@ -908,7 +1047,6 @@ class DocxToHtmlConverter
 
         $ancla = $this->xp->query('.//wp:anchor', $drawing)->item(0);
         if ($ancla instanceof \DOMElement) {
-            $this->hayImagenAnclada = true;
             $izq = 0.0;
             $off = $this->xp->query('wp:positionH/wp:posOffset', $ancla)->item(0);
             $desde = $this->xp->query('wp:positionH', $ancla)->item(0);
@@ -916,6 +1054,21 @@ class DocxToHtmlConverter
                 $izq = max(0.0, (int) $off->textContent / 12700 - $this->margenIzqPagina);
             } elseif ($off) {
                 $izq = max(0.0, (int) $off->textContent / 12700);
+            }
+
+            $arriba = 0.0;
+            $offV = $this->xp->query('wp:positionV/wp:posOffset', $ancla)->item(0);
+            if ($offV) {
+                $arriba = (int) $offV->textContent / 12700;
+            }
+            if ($this->xp->query('wp:wrapNone', $ancla)->length === 0) {
+                $this->hayImagenAnclada = true;
+            }
+            if ($this->xp->query('wp:wrapNone', $ancla)->length > 0) {
+                // Sin ajuste de texto (detrás/delante): no ocupa espacio en el flujo.
+                $img = str_replace('style="', 'style="position:relative;left:' . $this->pt($izq) . ';top:' . $this->pt($arriba) . ';', $img);
+
+                return '<div style="height:0pt;line-height:0pt;font-size:0pt;">' . $img . '</div>';
             }
 
             return '<span style="display:block;margin-left:' . $this->pt($izq) . '">' . $img . '</span>';
