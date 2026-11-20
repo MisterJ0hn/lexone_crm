@@ -5,20 +5,19 @@ services:
       dockerfile: docker/php/Dockerfile
     volumes:
       - .:/var/www/html
-      # Limites de subida de PHP-FPM (los .docx de clientes superan los 2 MB por defecto).
-      - ./docker/php/uploads.ini:/usr/local/etc/php/conf.d/zz-uploads.ini:ro
     environment:
       APP_ENV: prod
-      APP_DEBUG: "1"
+      APP_DEBUG: "0"
       # La base de datos vive en la maquina local (host), no en un contenedor.
       # host.docker.internal resuelve al host desde dentro del contenedor.
-      DATABASE_URL: "mysql://ejamtest:quL9Vd6gYoShtIIN@host.docker.internal:3306/codi_ejamtest_php8?serverVersion=5.7&charset=utf8mb4"
+      DATABASE_URL: "mysql://lexone_crm:@3[CJ;i7hm9]@mysql:3306/lexone_crm?serverVersion=8.0&charset=utf8mb4"
       WKHTMLTOPDF_PATH: /usr/bin/wkhtmltopdf
       WKHTMLTOIMAGE_PATH: /usr/bin/wkhtmltoimage
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:
       - lexone
+      - database_net
 
   nginx:
     image: nginx:alpine
@@ -44,7 +43,10 @@ services:
       - php
     networks:
       - lexone
+      - database_net
 
 networks:
   lexone:
     driver: bridge
+  database_net:
+    external: true
