@@ -44,6 +44,7 @@ class ContratoTemplateRenderer
             '{{reunion}}' => 'Reunión (modalidad) del contrato',
             '{{razon_social}}' => 'Razón social (nombre del cliente tipo Empresa/Convenio)',
             '{{giro}}' => 'Giro comercial del cliente (Empresa/Convenio)',
+            '{{nombre_representante_legal}}' => 'Nombre del representante legal (Empresa/Convenio)',
             '{{rut_representante_legal}}' => 'Rut del representante legal (Empresa/Convenio)',
             '{{monto_contrato_palabras}}' => 'Monto del contrato escrito en palabras',
         ];
@@ -102,6 +103,7 @@ class ContratoTemplateRenderer
             '{{reunion}}' => 'Presencial',
             '{{razon_social}}' => 'Inversiones Ejemplo SpA',
             '{{giro}}' => 'Asesorías y servicios empresariales',
+            '{{nombre_representante_legal}}' => 'María Fernanda Soto Rojas',
             '{{rut_representante_legal}}' => '9.876.543-2',
             '{{monto_contrato_palabras}}' => self::montoEnPalabras(900000),
         ];
@@ -136,6 +138,7 @@ class ContratoTemplateRenderer
             '{{reunion}}' => ($reunion = $contrato->getReunion() ?? ($cliente ? $cliente->getReunion() : null)) ? (string) $reunion->getNombre() : '',
             '{{razon_social}}' => $cliente ? (string) $cliente->getNombre() : '',
             '{{giro}}' => $cliente ? (string) $cliente->getGiro() : '',
+            '{{nombre_representante_legal}}' => $cliente ? (string) $cliente->getRepLegalNombre() : '',
             '{{rut_representante_legal}}' => $cliente ? (string) $cliente->getRepLegalRut() : '',
             '{{monto_contrato_palabras}}' => $contrato->getMontoContrato() !== null ? self::montoEnPalabras((int) round((float) $contrato->getMontoContrato())) : '',
         ];
