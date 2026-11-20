@@ -451,11 +451,14 @@ class CuotaRepository extends ServiceEntityRepository
             ->where('c.contrato = :contrato_id')
            // ->andWhere('(c.anular IS NULL OR c.anular = false)')
             //->andWhere('(c.pagado IS NULL)')
-            ->andWhere('(c.monto>(c.pagado+'.$configuracion->getDeudaMinima().') or c.pagado is null)')
+            // La deuda mínima puede venir vacía (NULL) en la configuración: se toma como 0
+            // y se pasa como parámetro (antes se pegaba en el DQL y rompía la consulta).
+            ->andWhere('(c.monto>(c.pagado+:deudaMinima) or c.pagado is null)')
             ->andWhere(' c.monto>0 ')
             ->andWhere('c.anular is null or c.anular = false')
             ->orderBy('c.fechaPago', 'ASC')
             ->setMaxResults(1)
+            ->setParameter('deudaMinima', (float) ($configuracion ? $configuracion->getDeudaMinima() : 0))
             ->setParameter('contrato_id', $contrato_id); // Uso de un parámetro para evitar inyección SQL
     
         return $query->getQuery()
