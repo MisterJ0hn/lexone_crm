@@ -235,7 +235,7 @@
         <strong><label id="m-pago-actual"></label></strong>
     </div>
     <div class="col-sm-12 col-md-12">
-        {{ include('partials/_honorarios_select.html.twig', {form: form, probono: true, prepago: true}) }}
+        {{ include('partials/_honorarios_select.html.twig', {form: form, probono: true, prepago: true, seleccione: true}) }}
     </div>
     <div class="col-sm-12 col-md-3">
         <small class="text-muted">Monto contrato *</small>
@@ -736,6 +736,8 @@
     // visible (p. ej. Sexo y Estado civil no existen en Convenio/Empresa).
     function camposObligatorios(){
         return [
+            ['una plantilla de contrato', '#{{ form.contratoTemplate.vars.id }}', true],
+            ['un tipo de pago', '.sel-honorarios', true],
             ['Nombre', '#{{ form.nombre is defined ? form.nombre.vars.id : '' }}'],
             ['Rut', '.format-rut'],
             ['Email', '.emailCliente'],
@@ -766,7 +768,7 @@
         for(var k=0; k<obligatorios.length; k++){
             var $c = $(obligatorios[k][1]).first();
             if($c.length && $c.is(':visible') && $.trim($c.val() || '') === ''){
-                return falla('Debe ingresar: ' + obligatorios[k][0], $c);
+                return falla((obligatorios[k][2] ? 'Debe seleccionar ' : 'Debe ingresar: ') + obligatorios[k][0], $c);
             }
         }
         if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($.trim($('.emailCliente').val()))){

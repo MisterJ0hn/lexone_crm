@@ -7,17 +7,21 @@
     Parámetros:
       form     : formulario Symfony
       probono  : (opcional) true para incluir la opción Pro-bono (requiere form.isProBono)
+      seleccione: (opcional) true para anteponer la opción "Seleccione un tipo" (valor vacío) y
+                 dejarla por defecto; "Normal" pasa a tener valor "normal"
       prepago  : (opcional) true para incluir la opción Pre-pago con su select de plan
                  (requiere form.isPrePago y form.planPrepago)
 #}
 {# Pro-bono solo si se pide y el formulario realmente tiene el campo (los anexos no lo tienen). #}
 {% set conProbono = probono|default(false) and form.children.isProBono is defined %}
+{% set conSeleccione = seleccione|default(false) %}
 {% set conPrepago = prepago|default(false) and form.children.isPrePago is defined and form.children.planPrepago is defined %}
 <div class="row">
 <div class="col-sm-12 col-md-3">
 <small class="text-muted">Tipo de pago *</small>
 <select class="form-control sel-honorarios">
-    <option value="">Normal</option>
+    {% if conSeleccione %}<option value="" selected>Seleccione un tipo</option>{% endif %}
+    <option value="{{ conSeleccione ? 'normal' : '' }}">Normal</option>
     <option value="abono">Abono</option>
     <option value="total">Paga el total</option>
     {% if conProbono %}<option value="probono">Pro-bono</option>{% endif %}
@@ -50,7 +54,11 @@ $(function () {
         $.each(mapa, function (k, sel) {
             if ($(sel).prop('checked')) { valor = k; }
         });
-        $sel.val(valor);
+        if (valor === '' && {{ conSeleccione ? 'true' : 'false' }} && $sel.val() === '') {
+            // Sin elección del usuario: se mantiene "Seleccione un tipo".
+        } else {
+            $sel.val(valor === '' && {{ conSeleccione ? 'true' : 'false' }} ? 'normal' : valor);
+        }
         // Pre-pago: se habilita el select de plan (obligatorio); en otro caso se limpia.
         var $plan = $('.sel-plan-prepago');
         if ($plan.length) {

@@ -436,13 +436,11 @@ class PanelAbogadoController extends AbstractController
         $form->add('contratoTemplate', EntityType::class, [
             'class' => ContratoTemplate::class,
             'choices' => $plantillasDisponibles,
-            // Seleccionada por defecto la primera disponible (solo en el GET inicial;
-            // al enviar el formulario manda lo que eligió el usuario).
-            'data' => $plantillasDisponibles[0] ?? null,
+            // Sin selección por defecto: el usuario debe elegir (validado en el formulario).
             'choice_label' => 'nombre',
-            'required' => false,
+            'required' => true,
             'placeholder' => 'Seleccione una plantilla',
-            'label' => 'Plantilla de Contrato',
+            'label' => 'Plantilla de Contrato *',
         ]);
 
         $form->add('cuotas', ChoiceType::class,[
