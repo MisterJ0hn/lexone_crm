@@ -83,6 +83,7 @@ class ContratoTemplateRenderer
     {
         return [
             '{{cliente_nombre}}' => 'Juan Andrés Pérez Soto',
+            '{{razon_social}}' => 'Inversiones Ejemplo SpA',
             '{{cliente_rut}}' => '12.345.678-5',
             '{{cliente_email}}' => 'juan.perez@ejemplo.cl',
             '{{cliente_telefono}}' => '+56 9 1234 5678',
@@ -91,6 +92,7 @@ class ContratoTemplateRenderer
             '{{folio}}' => '1024',
             '{{cuotas}}' => '6',
             '{{monto_contrato}}' => '900.000',
+            '{{monto_contrato_palabras}}' => self::montoEnPalabras(900000),
             '{{fecha_contrato}}' => date('d-m-Y'),
             '{{causas}}' => $this->causasEjemplo(null),
             '{{nacionalidad}}' => 'Chilena',
@@ -99,13 +101,11 @@ class ContratoTemplateRenderer
             '{{detalle_cuotas}}' => $this->tablaCuotas($this->cuotasEjemplo()),
             '{{comuna_cliente}}' => 'Providencia',
             '{{ciudad_cliente}}' => 'Santiago',
-       
             '{{reunion}}' => 'Presencial',
-            '{{razon_social}}' => 'Inversiones Ejemplo SpA',
             '{{giro}}' => 'Asesorías y servicios empresariales',
             '{{nombre_representante_legal}}' => 'María Fernanda Soto Rojas',
             '{{rut_representante_legal}}' => '9.876.543-2',
-            '{{monto_contrato_palabras}}' => self::montoEnPalabras(900000),
+     
         ];
     }
 

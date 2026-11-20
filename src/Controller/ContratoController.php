@@ -860,7 +860,7 @@ class ContratoController extends AbstractController
             $timePrimerPago = strtotime($primerPago);
             $timeFechaActual = strtotime(date("Y-m-d"));
 
-            if ($timeFechaActual >= $timePrimerPago) {
+            if ($timeFechaActual > $timePrimerPago) {
                 $sumames = 1;
             } else {
                 if ($isIncorporacion == true) {

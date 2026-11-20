@@ -825,7 +825,8 @@
         var valorCuota = parseInt($('.valor-cuota').val()) || 0;
         var numeroCuota = 1;
         var hoy = new Date();
-
+        hoy.setHours(0, 0, 0, 0);
+        
         if(isAbono || isTotal){
             cuotas.push({numero: numeroCuota, fecha: hoy, monto: primeraCuotaMonto});
             numeroCuota++;
@@ -855,7 +856,7 @@
         var primerPagoFecha = new Date(anioBase, mesBase, diaValido(mesBase, diaPago));
 
         var sumaMeses = 0;
-        if(hoy >= primerPagoFecha){
+        if(hoy > primerPagoFecha){
             sumaMeses = 1;
         }else if(isIncorporacion && fechaPrimeraCuota.getMonth() === hoy.getMonth() && fechaPrimeraCuota.getFullYear() === hoy.getFullYear()){
             sumaMeses = 1;
