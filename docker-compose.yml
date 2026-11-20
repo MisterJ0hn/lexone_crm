@@ -5,6 +5,8 @@ services:
       dockerfile: docker/php/Dockerfile
     volumes:
       - .:/var/www/html
+      # Limites de subida de PHP-FPM (los .docx de clientes superan los 2 MB por defecto).
+      - ./docker/php/uploads.ini:/usr/local/etc/php/conf.d/zz-uploads.ini:ro
     environment:
       APP_ENV: prod
       APP_DEBUG: "1"

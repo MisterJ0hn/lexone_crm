@@ -121,8 +121,13 @@ class ContratoTemplateController extends AbstractController
         }
 
         $archivo = $request->files->get('docx');
-        if (!$archivo instanceof UploadedFile || !$archivo->isValid()) {
+        if (!$archivo instanceof UploadedFile) {
             return new JsonResponse(['detail' => 'Seleccione un archivo .docx.'], 422);
+        }
+        if (!$archivo->isValid()) {
+            // Se informa el motivo real (límite de tamaño, carpeta temporal, etc.) para poder diagnosticar.
+            return new JsonResponse(['detail' => 'No se pudo recibir el archivo: ' . $archivo->getErrorMessage()
+                . ' (upload_max_filesize=' . ini_get('upload_max_filesize') . ', post_max_size=' . ini_get('post_max_size') . ')'], 422);
         }
         if (strtolower((string) $archivo->getClientOriginalExtension()) !== 'docx') {
             return new JsonResponse(['detail' => 'El archivo debe ser un .docx (Word 2007 o superior).'], 422);
