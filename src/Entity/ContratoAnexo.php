@@ -73,6 +73,14 @@ class ContratoAnexo
     #[ORM\Column(type: "boolean", nullable: true)]
     private $estado;
 
+    // Honorarios Pre-pago del anexo: una cuota por mes generada por app:cuotas-prepago.
+    #[ORM\Column(type: "boolean", nullable: true)]
+    private $isPrePago;
+
+    #[ORM\ManyToOne(targetEntity: PlanPrepago::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private $planPrepago;
+
     public function __construct()
     {
         $this->cuotas = new ArrayCollection();
@@ -349,6 +357,30 @@ class ContratoAnexo
     public function setEstado(?bool $estado): self
     {
         $this->estado = $estado;
+
+        return $this;
+    }
+
+    public function getIsPrePago(): ?bool
+    {
+        return $this->isPrePago;
+    }
+
+    public function setIsPrePago(?bool $isPrePago): self
+    {
+        $this->isPrePago = $isPrePago;
+
+        return $this;
+    }
+
+    public function getPlanPrepago(): ?PlanPrepago
+    {
+        return $this->planPrepago;
+    }
+
+    public function setPlanPrepago(?PlanPrepago $planPrepago): self
+    {
+        $this->planPrepago = $planPrepago;
 
         return $this;
     }

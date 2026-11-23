@@ -237,7 +237,7 @@
     <div class="col-sm-12 col-md-12">
         {{ include('partials/_honorarios_select.html.twig', {form: form, probono: true, prepago: true, seleccione: true}) }}
     </div>
-    <div class="col-sm-12 col-md-3">
+    <div class="col-sm-12 col-md-3 col-monto-contrato">
         <small class="text-muted">Monto contrato *</small>
         {{form_row(form.MontoContrato,{'label':false,'attr':{'class':'form-control monto-contrato number','required':true,'autocomplete':"ÑÖcompletes"}})}}
         <strong><label id="m-monto-contrato"></label></strong>
@@ -252,7 +252,7 @@
            
     </div>
     
-    <div class="col-sm-12 col-md-2">
+    <div class="col-sm-12 col-md-2 col-cuotas">
         <small class="text-muted t-cuotas" >Cuotas *</small>
 		{{form_row(form.cuotas,{'label':false,'attr':{'class':'form-control cuotas number','required':true,'autocomplete':"ÑÖcompletes"}})}}
     </div>
@@ -485,8 +485,14 @@
     $('.interes').change(function(){
         recalcula();
     });
+    // Pre-pago: se ocultan Cuotas y Monto contrato; quedan cuotas=1 y monto=valor cuota.
+    // La ocultación de campos de Pre-pago vive en partials/_honorarios_select.html.twig.
+    function esPrepago(){
+        return $('.chk-prepago').prop('checked');
+    }
     function recalcula()
     {
+        if (esPrepago()) { return; }
         var _montoContrato=$('.monto-contrato').val();
         var _primeraCuota=$('.primera-cuota').val();
         console.log(_montoContrato);

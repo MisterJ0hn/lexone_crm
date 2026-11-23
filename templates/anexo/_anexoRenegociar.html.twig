@@ -69,9 +69,9 @@
         <section>
             <div class="row">
                 <div class="col-sm-12 col-md-12">
-                    {{ include('partials/_honorarios_select.html.twig', {form: form, probono: true}) }}
+                    {{ include('partials/_honorarios_select.html.twig', {form: form, probono: true, prepago: true}) }}
                 </div>
-                <div class="col-sm-12 col-md-3">
+                <div class="col-sm-12 col-md-3 col-monto-contrato">
                     <small class="text-muted">Monto contrato *</small>
                       {{form_row(form.MontoContrato,{'label':false,'attr':{'class':'form-control monto-contrato number','required':true,'autocomplete':"ÑÖcompletes"}})}}
 				
@@ -82,7 +82,7 @@
                     {{form_row(form.abono,{'label':false,'attr':{'class':'form-control primera-cuota number','required':true,'autocomplete':"ÑÖcompletes"}})}}                                                            
                     <strong><label id="m-primera-cuota"></label></strong>
                 </div>
-                <div class="col-sm-12 col-md-2">
+                <div class="col-sm-12 col-md-2 col-cuotas">
                     <small class="text-muted t-cuotas" >Cuotas *</small>
                     {{form_row(form.nCuotas,{'label':false,'attr':{'class':'form-control cuotas number','required':true,'autocomplete':"ÑÖcompletes"}})}}
                 </div>
@@ -180,6 +180,7 @@
     });
     function recalcula()
     {
+        if ($('.chk-prepago').prop('checked')) { return; }
         var _montoContrato=$('.monto-contrato').val();
         var _primeraCuota=$('.primera-cuota').val();
         console.log(_montoContrato);

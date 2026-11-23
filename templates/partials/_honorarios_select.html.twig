@@ -97,6 +97,28 @@ $(function () {
         if (!ocupado) { sincronizar(); }
     });
 
+{% if conPrepago %}
+    // Pre-pago: se ocultan Cuotas y Monto contrato (.col-cuotas / .col-monto-contrato de la pantalla);
+    // queda solo Valor cuota, con cuotas = 1 y monto = valor cuota. El servidor lo fuerza igual.
+    function aplicarPrepago() {
+        if (!$('.col-monto-contrato').length) { return; } // pantallas sin esta lógica (p. ej. edición de contrato)
+        var on = $('.chk-prepago').prop('checked');
+        $('.col-monto-contrato, .col-cuotas').toggle(!on);
+        $('.monto-contrato, .cuotas').prop('required', !on);
+        if (on) {
+            $('.cuotas').val(1);
+            $('.monto-contrato').val($('.valor-cuota').val());
+            $('.valor-cuota, #m-valor-cuota, .t-valor-cuota').show();
+        } else if (typeof recalcula === 'function') {
+            recalcula();
+        }
+    }
+    $('.chk-prepago').on('change', aplicarPrepago);
+    $('.valor-cuota').on('input change', function () {
+        if ($('.col-monto-contrato').length && $('.chk-prepago').prop('checked')) { $('.monto-contrato').val($(this).val()); }
+    });
+{% endif %}
+
     sincronizar();
     // Por si la inicialización de la pantalla (modo edición) marca los checks después.
     setTimeout(sincronizar, 0);

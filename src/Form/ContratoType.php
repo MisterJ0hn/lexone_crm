@@ -105,6 +105,11 @@ class ContratoType extends AbstractType
                 if ($contrato->getPlanPrepago() === null) {
                     $event->getForm()->get('planPrepago')->addError(new FormError('Debe seleccionar el plan de pre-pago.'));
                 }
+                // Contrato nuevo pre-pago: una sola cuota y monto = valor cuota (no se confía en el cliente).
+                if ($contrato->getId() === null) {
+                    $contrato->setCuotas(1);
+                    $contrato->setMontoContrato($contrato->getValorCuota());
+                }
             } elseif ($event->getForm()->has('planPrepago')) {
                 $contrato->setPlanPrepago(null);
             }
