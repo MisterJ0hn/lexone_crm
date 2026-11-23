@@ -21,8 +21,8 @@ use Symfony\Component\Routing\Annotation\Route;
 class MisClientesController extends AbstractController
 {
     /** Tipos de usuario que ven toda la empresa. */
-    private const TIPOS_EMPRESA = [1, 3, 4, 8, 11, 12];
-    private const TIPO_TRAMITADOR = 7;
+    private const TIPOS_EMPRESA = [1, 8];
+    private const TIPO_TRAMITADOR = 3;
 
     #[Route(path: '/', name: 'mis_clientes_index', methods: ['GET'])]
     public function index(EntityManagerInterface $em, Request $request): Response
