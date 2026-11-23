@@ -128,7 +128,7 @@ class UsuarioController extends AbstractController
 
                 $usuarioCuenta=new UsuarioCuenta();
 
-                $usuario->setTipoDocumento($tipoDocumento->find($request->request->get('cboTipoDocumento')));
+             
 
                 $usuario->setFechaNacimiento(new \DateTime(date('Y-m-d H:i',strtotime($request->request->get('fecha_nacimiento')))));
                 $usuario->setFechaActivacion(new \DateTime(date('Y-m-d H:i',strtotime($request->request->get('fecha_ingreso')))));
@@ -177,7 +177,7 @@ class UsuarioController extends AbstractController
             'pagina'=>$pagina->getNombre(),
             'cuentas'=>$cuentas,
             'empresaActual'=>$user->getEmpresaActual(),
-            'tipo_documentos'=>$tipoDocumento->findAll(),
+           
             
         ]);
     }
@@ -244,10 +244,6 @@ class UsuarioController extends AbstractController
 
                 $entityManager = $this->entityManager;
 
-                
-
-                $usuario->setTipoDocumento($tipoDocumento->find($request->request->get('cboTipoDocumento')));
-
                 $usuario->setFechaNacimiento(new \DateTime(date('Y-m-d H:i',strtotime($request->request->get('fecha_nacimiento')))));
                 $usuario->setFechaActivacion(new \DateTime(date('Y-m-d H:i',strtotime($request->request->get('fecha_ingreso')))));
                 
@@ -293,8 +289,7 @@ class UsuarioController extends AbstractController
             'pagina'=>$pagina->getNombre(),
             'cuentas'=>$cuentas,
             'id_cuenta'=>$id_cuenta,
-            'empresaActual'=>$user->getEmpresaActual(),
-            'tipo_documentos'=>$tipoDocumento->findAll(),
+            'empresaActual'=>$user->getEmpresaActual(),        
             'cuentas_sel'=>$usuario->getUsuarioCuentas(),
         ]);
     }

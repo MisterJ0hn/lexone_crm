@@ -21,24 +21,7 @@
 				<small class="text-muted">Nombre *</small>
 				{{form_row(form.nombre,{'label':false,'attr':{'class':'form-control','required':true}})}}
 			</div>
-			<div class="col-sm-6 col-md-3">
-				<small class="text-muted">Colaborador *</small>
-				
-				<select name="cboTipoDocumento" class="form-control" required>
-					<option></option>
-					{% for tipo_documento in tipo_documentos %}
-						<option value="{{tipo_documento.id}}"
-						{% if usuario.tipoDocumento.id is defined %}
-
-								{% if  usuario.tipoDocumento.id ==tipo_documento.id %}
-									selected
-								{% endif %}
-						
-						{% endif %}
-						>{{tipo_documento.nombre}}</option>
-					{% endfor %}}
-				</select>
-			</div>
+			
 			<div class="col-sm-6 col-md-3">
 				<small class="text-muted">Rut *</small>
 				{{form_row(form.rut,{'label':false,'attr':{'class':'form-control','placeholder':'Rut','required':true}})}}
@@ -49,7 +32,7 @@
 				{{form_row(form.correo,{'label':false,'attr':{'class':'form-control','required':true}})}}
 			</div>
 			<div class="col-sm-6 col-md-3">
-				<small class="text-muted">Telefono *</small>
+				<small class="text-muted">Telefono Personal*</small>
 				{{form_row(form.telefono,{'label':false,'attr':{'class':'form-control','required':true}})}}
 				
 			</div>
