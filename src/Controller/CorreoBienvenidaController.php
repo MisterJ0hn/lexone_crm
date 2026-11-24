@@ -3,6 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\CorreoBienvenida;
+use App\Entity\Empresa;
+use App\Service\EmpresaMailer;
+use Symfony\Component\Mime\Email;
 use App\Entity\TipoCliente;
 use App\Form\CorreoBienvenidaType;
 use App\Repository\CorreoBienvenidaRepository;
@@ -104,6 +107,74 @@ class CorreoBienvenidaController extends AbstractController
         $this->entityManager->flush();
 
         return new JsonResponse(['ok' => true]);
+    }
+
+    /**
+     * Prueba el SMTP del popup (sin guardarlo): envía un correo de prueba al destino indicado usando
+     * los datos tal como están en el formulario. Responde JSON.
+     */
+    #[Route("/remitente/probar", name: "correo_bienvenida_remitente_probar", methods: ["POST"])]
+    public function probarRemitente(Request $request, EmpresaRepository $empresaRepository, EmpresaMailer $empresaMailer): JsonResponse
+    {
+        $this->denyAccessUnlessGranted('edit', 'contrato_template');
+        if (!$this->isCsrfTokenValid('correo_bienvenida_remitente', (string) $request->headers->get('X-CSRF-Token'))) {
+            return new JsonResponse(['detail' => 'Token inválido, recargue la página.'], 400);
+        }
+
+        $host = trim((string) $request->request->get('host'));
+        $puerto = (int) $request->request->get('puerto');
+        $cifrado = (string) $request->request->get('cifrado');
+        $usuario = trim((string) $request->request->get('usuario'));
+        $password = (string) $request->request->get('password');
+        $correo = trim((string) $request->request->get('remitenteCorreo'));
+        $nombre = trim((string) $request->request->get('remitenteNombre'));
+        $destino = trim((string) $request->request->get('destino'));
+
+        if ($host === '' || !preg_match('/^[A-Za-z0-9.\-]+$/', $host)) {
+            return new JsonResponse(['detail' => 'Ingrese un servidor SMTP válido (ej. smtp.midominio.cl).'], 422);
+        }
+        if ($puerto < 1 || $puerto > 65535) {
+            return new JsonResponse(['detail' => 'El puerto debe estar entre 1 y 65535.'], 422);
+        }
+        if (!in_array($cifrado, ['ssl', 'tls', 'ninguno'], true)) {
+            return new JsonResponse(['detail' => 'Seleccione el tipo de cifrado.'], 422);
+        }
+        if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
+            return new JsonResponse(['detail' => 'Ingrese un correo de remitente válido.'], 422);
+        }
+        if (!filter_var($destino, FILTER_VALIDATE_EMAIL)) {
+            return new JsonResponse(['detail' => 'Ingrese un correo de destino válido para la prueba.'], 422);
+        }
+        if (mb_strlen($nombre) > 150 || mb_strlen($usuario) > 255 || mb_strlen($password) > 255) {
+            return new JsonResponse(['detail' => 'Alguno de los datos es demasiado largo.'], 422);
+        }
+
+        // Empresa temporal (nunca se persiste) con los datos del formulario.
+        $actual = $empresaRepository->find($this->getUser()->getEmpresaActual());
+        $prueba = (new Empresa())
+            ->setSmtpHost($host)
+            ->setSmtpPuerto($puerto)
+            ->setSmtpCifrado($cifrado)
+            ->setSmtpUsuario($usuario !== '' ? $usuario : null)
+            ->setSmtpPassword($usuario === '' ? null : ($password !== '' ? $password : $actual?->getSmtpPassword()))
+            ->setSmtpRemitenteCorreo($correo)
+            ->setSmtpRemitenteNombre($nombre !== '' ? $nombre : null);
+
+        $mailer = $empresaMailer->mailer($prueba);
+        if ($mailer === null) {
+            return new JsonResponse(['detail' => 'Configuración SMTP incompleta.'], 422);
+        }
+        try {
+            $mailer->send((new Email())
+                ->from($empresaMailer->remitente($prueba))
+                ->to($destino)
+                ->subject('[PRUEBA] Configuración de correo')
+                ->html('<p>Este es un correo de prueba de la configuración SMTP.</p><p>Si lo recibió, el envío de correos de la empresa funciona correctamente.</p>'));
+        } catch (\Throwable $e) {
+            return new JsonResponse(['detail' => 'No se pudo enviar la prueba: ' . mb_substr($e->getMessage(), 0, 300)], 502);
+        }
+
+        return new JsonResponse(['ok' => true, 'destino' => $destino]);
     }
 
     #[Route("/{id}/edit", name: "correo_bienvenida_edit", requirements: ['id' => '\d+'], methods: ["GET","POST"])]

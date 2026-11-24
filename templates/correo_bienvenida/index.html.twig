@@ -108,6 +108,16 @@
                         <input type="text" id="smtpRemitenteNombre" class="form-control" maxlength="150" autocomplete="off" value="{{ empresa.smtpRemitenteNombre }}">
                     </div>
                 </div>
+                <hr>
+                <label for="smtpDestinoPrueba" class="mb-1">Probar configuración</label>
+                <div class="input-group">
+                    <input type="email" id="smtpDestinoPrueba" class="form-control" maxlength="255" placeholder="Correo donde recibir la prueba" autocomplete="off">
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-outline-primary" id="smtpProbar"><i class="fas fa-paper-plane"></i> Enviar prueba</button>
+                    </div>
+                </div>
+                <small class="text-muted">Usa los datos de arriba tal como están, sin guardarlos.</small>
+                <div id="smtpResultado" class="small mt-1"></div>
                 <div id="smtpError" class="text-danger small"></div>
             </div>
             <div class="modal-footer">
@@ -134,6 +144,25 @@
         var p = {ssl: 465, tls: 587}[this.value];
         if (p && !$.trim($('#smtpPuerto').val())) { $('#smtpPuerto').val(p); }
     });
+    $('#smtpProbar').on('click', function () {
+        var $btn = $(this).prop('disabled', true), $res = $('#smtpResultado').removeClass('text-success text-danger').text('Enviando prueba...');
+        $('#smtpError').text('');
+        $.ajax({
+            url: "{{ path('correo_bienvenida_remitente_probar') }}", type: 'post', dataType: 'json', timeout: 90000,
+            headers: { 'X-CSRF-Token': $modal.data('csrf') },
+            data: {
+                host: $('#smtpHost').val(), puerto: $('#smtpPuerto').val(), cifrado: $('#smtpCifrado').val(),
+                usuario: $('#smtpUsuario').val(), password: $('#smtpPassword').val(),
+                remitenteCorreo: $('#smtpRemitenteCorreo').val(), remitenteNombre: $('#smtpRemitenteNombre').val(),
+                destino: $('#smtpDestinoPrueba').val()
+            }
+        }).done(function (r) {
+            $res.addClass('text-success').text('Prueba enviada a ' + r.destino + '. Revise su bandeja (y spam).');
+        }).fail(function (xhr) {
+            $res.addClass('text-danger').text(xhr.status === 403 ? 'Acceso denegado: no tienes privilegios para editar.' : ((xhr.responseJSON && xhr.responseJSON.detail) || 'No se pudo enviar la prueba.'));
+        }).always(function () { $btn.prop('disabled', false); });
+    });
+    $modal.on('hidden.bs.modal', function () { $('#smtpResultado').text(''); });
     $('#smtpGuardar').on('click', function () {
         var $btn = $(this).prop('disabled', true), $err = $('#smtpError').text('');
         $.ajax({
