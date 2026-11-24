@@ -29,6 +29,10 @@ class Pago
     #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $boleta;
 
+    /** Tipo del documento tributario del pago: "Factura" o "Boleta" (el número va en $boleta). */
+    #[ORM\Column(type: "string", length: 20, nullable: true)]
+    private $tipoDocumento;
+
     #[ORM\Column(type: "text", nullable: true)]
     private $observacion;
 
@@ -128,6 +132,18 @@ class Pago
     public function setMonto(int $monto): self
     {
         $this->monto = $monto;
+
+        return $this;
+    }
+
+    public function getTipoDocumento(): ?string
+    {
+        return $this->tipoDocumento;
+    }
+
+    public function setTipoDocumento(?string $tipoDocumento): self
+    {
+        $this->tipoDocumento = $tipoDocumento;
 
         return $this;
     }

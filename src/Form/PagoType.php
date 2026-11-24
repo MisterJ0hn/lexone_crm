@@ -7,6 +7,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Validator\Constraints\Regex;
 use App\Entity\CuentaCorriente;
 use App\Entity\PagoCanal;
 use Doctrine\ORM\EntityRepository;
@@ -18,7 +20,15 @@ class PagoType extends AbstractType
     {
         $builder
             ->add('monto')
-            ->add('boleta')
+            ->add('tipoDocumento', ChoiceType::class, [
+                'required' => false,
+                'placeholder' => 'Seleccione',
+                'choices' => ['Factura' => 'Factura', 'Boleta' => 'Boleta'],
+            ])
+            ->add('boleta', null, [
+                'required' => false,
+                'constraints' => [new Regex(pattern: '/^\d*$/', message: 'El número de boleta/factura debe contener solo números.')],
+            ])
             ->add('observacion')
             
             ->add('ncomprobante')

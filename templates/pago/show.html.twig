@@ -35,9 +35,9 @@
                         
                     </div>
                     <div class="col-sm-12 col-md-4">
-                        <small class="text-muted">N° Boleta</small>
+                        <small class="text-muted">N° Boleta/Factura</small>
                         <br>
-                        {{pago.boleta}}
+                        {% if pago.tipoDocumento %}<small>{{pago.tipoDocumento}}</small> {% endif %}{{pago.boleta}}
                     
                     </div>
                     <div class="col-sm-12 col-md-4">

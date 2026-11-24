@@ -31,8 +31,12 @@
                             {{form_row(form.ncomprobante,{'label':false,'attr':{'class':'form-control'}})}}
                         </div>
                         <div class="col-sm-12 col-md-4">
-                            <small class="text-muted">N° Boleta</small>
-                            {{form_row(form.boleta,{'label':false,'attr':{'class':'form-control'}})}}
+                            <small class="text-muted">Tipo Documento</small>
+                            {{form_row(form.tipoDocumento,{'label':false,'attr':{'class':'form-control'}})}}
+                        </div>
+                        <div class="col-sm-12 col-md-4">
+                            <small class="text-muted">N° Boleta/Factura</small>
+                            {{form_row(form.boleta,{'label':false,'attr':{'class':'form-control solo-numeros','inputmode':'numeric','pattern':'[0-9]*','autocomplete':'off'}})}}
                         </div>-->
                         <div class="col-sm-12 col-md-4">
                             <small class="text-muted">Tipo Deposito (*)</small>
@@ -118,4 +122,11 @@
 
     });
     
+</script>
+<script>
+// N° Boleta/Factura: solo dígitos (también al pegar).
+$(document).on('input', 'input.solo-numeros', function () {
+    var limpio = this.value.replace(/\D+/g, '');
+    if (limpio !== this.value) { this.value = limpio; }
+});
 </script>
