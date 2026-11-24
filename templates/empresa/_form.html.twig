@@ -87,7 +87,40 @@
                     <small class="text_mute">API PJUD: password{% if empresa is defined and empresa.pjudPassword %} <span class="text-success">(ya registrada; deje vacío para conservarla)</span>{% endif %}</small>
                     {{ form_row(form.pjudPassword,{'label':false,'attr':{'class':'form-control','autocomplete':'new-password'}})}}
                 </div>
-                
+
+            </div>
+            <hr>
+            <h1>Correo (SMTP)</h1>
+            <small class="text_mute d-block">Servidor con el que la empresa envía sus correos (p. ej. el correo de bienvenida del contrato). El remitente de esos correos es el que se indica aquí.</small>
+            <div class="row mt-3">
+                <div class="col-sm-6 col-md-4">
+                    <small class="text_mute">Servidor SMTP</small>
+                    {{ form_row(form.smtpHost,{'label':false,'attr':{'class':'form-control','autocomplete':'off','placeholder':'smtp.ejemplo.cl'}})}}
+                </div>
+                <div class="col-sm-6 col-md-2">
+                    <small class="text_mute">Puerto</small>
+                    {{ form_row(form.smtpPuerto,{'label':false,'attr':{'class':'form-control','autocomplete':'off','placeholder':'465'}})}}
+                </div>
+                <div class="col-sm-6 col-md-3">
+                    <small class="text_mute">Cifrado</small>
+                    {{ form_row(form.smtpCifrado,{'label':false,'attr':{'class':'form-control'}})}}
+                </div>
+                <div class="col-sm-6 col-md-3">
+                    <small class="text_mute">Usuario</small>
+                    {{ form_row(form.smtpUsuario,{'label':false,'attr':{'class':'form-control','autocomplete':'off'}})}}
+                </div>
+                <div class="col-sm-6 col-md-4">
+                    <small class="text_mute">Contraseña{% if empresa is defined and empresa.smtpPassword %} <span class="text-success">(ya registrada; deje vacío para conservarla)</span>{% endif %}</small>
+                    {{ form_row(form.smtpPassword,{'label':false,'attr':{'class':'form-control','autocomplete':'new-password'}})}}
+                </div>
+                <div class="col-sm-6 col-md-4">
+                    <small class="text_mute">Correo del remitente</small>
+                    {{ form_row(form.smtpRemitenteCorreo,{'label':false,'attr':{'class':'form-control','autocomplete':'off','placeholder':'contacto@ejemplo.cl'}})}}
+                </div>
+                <div class="col-sm-6 col-md-4">
+                    <small class="text_mute">Nombre del remitente</small>
+                    {{ form_row(form.smtpRemitenteNombre,{'label':false,'attr':{'class':'form-control','autocomplete':'off'}})}}
+                </div>
             </div>
             <button class="btn btn-primary">{{ button_label|default('Guardar') }}</button>
 

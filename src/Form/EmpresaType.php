@@ -7,6 +7,9 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -51,6 +54,13 @@ class EmpresaType extends AbstractType
             ->add('pjudClientKey', null, ['required' => false])
             ->add('pjudEmail', null, ['required' => false])
             ->add('pjudPassword', PasswordType::class, ['required' => false, 'mapped' => false])
+            ->add('smtpHost', null, ['required' => false])
+            ->add('smtpPuerto', IntegerType::class, ['required' => false])
+            ->add('smtpCifrado', ChoiceType::class, ['choices' => ['SSL/TLS (465)' => 'ssl', 'STARTTLS (587)' => 'tls', 'Sin cifrado' => 'ninguno']])
+            ->add('smtpUsuario', null, ['required' => false])
+            ->add('smtpPassword', PasswordType::class, ['required' => false, 'mapped' => false])
+            ->add('smtpRemitenteCorreo', EmailType::class, ['required' => false])
+            ->add('smtpRemitenteNombre', null, ['required' => false])
             ->add('edapiKey', null, ['required' => false])
             ->add('edapiClienteGuid', null, ['required' => false])
             ->add('edapiLlavePrivada', TextareaType::class, ['required' => false, 'mapped' => false])

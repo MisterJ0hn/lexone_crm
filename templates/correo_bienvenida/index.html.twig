@@ -6,15 +6,29 @@
 <div class="card">
     <div class="card-header">
         <h3 class="card-title">Correo de Bienvenida</h3>
+        {% if is_granted('edit', 'contrato_template') %}
+            <div class="card-tools">
+                <button type="button" class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#modalRemitente">
+                    <i class="fas fa-envelope"></i> Configurar remitente
+                </button>
+            </div>
+        {% endif %}
     </div>
     <div class="card-body">
+        {% if not empresa.tieneSmtp %}
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle"></i> La empresa aún no tiene el remitente (SMTP) configurado: los correos no se enviarán hasta que lo configure con el botón <strong>Configurar remitente</strong>.
+            </div>
+        {% else %}
+            <p class="mb-2"><strong>Remitente:</strong> {{ empresa.smtpRemitenteNombre ? empresa.smtpRemitenteNombre ~ ' ' : '' }}&lt;{{ empresa.smtpRemitenteCorreo }}&gt; <span class="text-muted">· {{ empresa.smtpHost }}:{{ empresa.smtpPuerto }}</span></p>
+        {% endif %}
         <p class="text-muted">Se envía al correo del cliente al crear un contrato, usando el template HTML configurado para su tipo de cliente.</p>
         <table class="table table-striped">
             <thead>
                 <tr>
                     <th>Tipo de Cliente</th>
                     <th>Asunto</th>
-                    <th>Remitente</th>
+                    <th>Nombre remitente</th>
                     <th>Estado</th>
                     <th>Última modificación</th>
                     <th></th>
@@ -25,7 +39,7 @@
                 <tr>
                     <td>{{ fila.tipo }}</td>
                     <td>{{ fila.correo ? fila.correo.asunto : '-' }}</td>
-                    <td>{{ fila.correo ? fila.correo.remitenteCorreo : '-' }}</td>
+                    <td>{{ fila.correo and fila.correo.remitenteNombre ? fila.correo.remitenteNombre : '-' }}</td>
                     <td>
                         {% if fila.correo and fila.correo.activo %}
                             <span class="badge badge-success">Activo</span>
@@ -43,4 +57,87 @@
         </table>
     </div>
 </div>
+
+{% if is_granted('edit', 'contrato_template') %}
+<div class="modal fade" id="modalRemitente" tabindex="-1" role="dialog" aria-hidden="true"
+     data-url="{{ path('correo_bienvenida_remitente') }}" data-csrf="{{ csrf_token('correo_bienvenida_remitente') }}">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Configurar remitente (SMTP)</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted small">Datos del servidor de correo con el que la empresa envía los correos. El remitente de los correos será el indicado aquí.</p>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label for="smtpHost">Servidor SMTP</label>
+                        <input type="text" id="smtpHost" class="form-control" maxlength="255" placeholder="smtp.midominio.cl" autocomplete="off" value="{{ empresa.smtpHost }}">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="smtpPuerto">Puerto</label>
+                        <input type="number" id="smtpPuerto" class="form-control" min="1" max="65535" placeholder="465" autocomplete="off" value="{{ empresa.smtpPuerto }}">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="smtpCifrado">Cifrado</label>
+                        <select id="smtpCifrado" class="form-control">
+                            <option value="ssl" {{ empresa.smtpCifrado == 'ssl' ? 'selected' }}>SSL/TLS (465)</option>
+                            <option value="tls" {{ empresa.smtpCifrado == 'tls' ? 'selected' }}>STARTTLS (587)</option>
+                            <option value="ninguno" {{ empresa.smtpCifrado == 'ninguno' ? 'selected' }}>Sin cifrado</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="smtpUsuario">Usuario</label>
+                        <input type="text" id="smtpUsuario" class="form-control" maxlength="255" autocomplete="off" value="{{ empresa.smtpUsuario }}">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="smtpPassword">Contraseña{% if empresa.smtpPassword %} <small class="text-success">(ya registrada; deje vacío para conservarla)</small>{% endif %}</label>
+                        <input type="password" id="smtpPassword" class="form-control" maxlength="255" autocomplete="new-password">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="smtpRemitenteCorreo">Correo del remitente</label>
+                        <input type="email" id="smtpRemitenteCorreo" class="form-control" maxlength="255" placeholder="contacto@midominio.cl" autocomplete="off" value="{{ empresa.smtpRemitenteCorreo }}">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="smtpRemitenteNombre">Nombre del remitente</label>
+                        <input type="text" id="smtpRemitenteNombre" class="form-control" maxlength="150" autocomplete="off" value="{{ empresa.smtpRemitenteNombre }}">
+                    </div>
+                </div>
+                <div id="smtpError" class="text-danger small"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="smtpGuardar">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+(function () {
+    var $modal = $('#modalRemitente');
+    $modal.on('shown.bs.modal', function () { $('#smtpHost').trigger('focus'); });
+    $('#smtpCifrado').on('change', function () {
+        var p = {ssl: 465, tls: 587}[this.value];
+        if (p && !$.trim($('#smtpPuerto').val())) { $('#smtpPuerto').val(p); }
+    });
+    $('#smtpGuardar').on('click', function () {
+        var $btn = $(this).prop('disabled', true), $err = $('#smtpError').text('');
+        $.ajax({
+            url: $modal.data('url'), type: 'post', dataType: 'json',
+            headers: { 'X-CSRF-Token': $modal.data('csrf') },
+            data: {
+                host: $('#smtpHost').val(), puerto: $('#smtpPuerto').val(), cifrado: $('#smtpCifrado').val(),
+                usuario: $('#smtpUsuario').val(), password: $('#smtpPassword').val(),
+                remitenteCorreo: $('#smtpRemitenteCorreo').val(), remitenteNombre: $('#smtpRemitenteNombre').val()
+            }
+        }).done(function () {
+            window.location.reload();
+        }).fail(function (xhr) {
+            $err.text(xhr.status === 403 ? 'Acceso denegado: no tienes privilegios para editar.' : ((xhr.responseJSON && xhr.responseJSON.detail) || 'No se pudo guardar.'));
+            $btn.prop('disabled', false);
+        });
+    });
+})();
+</script>
+{% endif %}
 {% endblock %}

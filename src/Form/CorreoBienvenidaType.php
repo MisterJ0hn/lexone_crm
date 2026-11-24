@@ -5,7 +5,6 @@ namespace App\Form;
 use App\Entity\CorreoBienvenida;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -18,8 +17,8 @@ class CorreoBienvenidaType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('remitenteNombre', TextType::class, ['label' => 'Nombre del remitente', 'required' => false])
-            ->add('remitenteCorreo', EmailType::class, ['label' => 'Correo del remitente'])
+            // El correo del remitente es el del SMTP de la empresa; aquí solo se puede cambiar el nombre mostrado.
+            ->add('remitenteNombre', TextType::class, ['label' => 'Nombre del remitente (opcional)', 'required' => false])
             ->add('asunto', TextType::class, ['label' => 'Asunto (admite variables)'])
             // Si se sube un archivo, su contenido reemplaza al del textarea (ver el controller).
             ->add('archivo', FileType::class, [

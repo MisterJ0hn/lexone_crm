@@ -86,6 +86,12 @@ class EmpresaController extends AbstractController
                 $empresa->setPjudPassword($pjudPassword);
             }
 
+            // Password SMTP: no se muestra en el formulario; vacío = conservar la actual.
+            $smtpPassword = (string) $form->get('smtpPassword')->getData();
+            if ($smtpPassword !== '') {
+                $empresa->setSmtpPassword($smtpPassword);
+            }
+
             // Llave privada RSA de edapi: no se muestra; vacío = conservar la actual.
             $llave = \App\Service\EdApiClient::normalizarLlavePrivada((string) $form->get('edapiLlavePrivada')->getData());
             if ($llave !== '') {
@@ -214,6 +220,12 @@ class EmpresaController extends AbstractController
             $pjudPassword = (string) $form->get('pjudPassword')->getData();
             if ($pjudPassword !== '') {
                 $empresa->setPjudPassword($pjudPassword);
+            }
+
+            // Password SMTP: no se muestra en el formulario; vacío = conservar la actual.
+            $smtpPassword = (string) $form->get('smtpPassword')->getData();
+            if ($smtpPassword !== '') {
+                $empresa->setSmtpPassword($smtpPassword);
             }
 
             // Llave privada RSA de edapi: no se muestra; vacío = conservar la actual.

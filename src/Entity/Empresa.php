@@ -84,6 +84,32 @@ class Empresa
     #[ORM\Column(type: "smallint", options: ["default" => 1])]
     private int $pjudMetodoLogin = 1;
 
+    /**
+     * Servidor SMTP con el que la empresa envía sus correos (p. ej. el de bienvenida de contrato).
+     * smtpCifrado: 'ssl' (SMTPS, típicamente 465), 'tls' (STARTTLS, típicamente 587) o 'ninguno'.
+     * El remitente de esos correos es smtpRemitenteCorreo / smtpRemitenteNombre.
+     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private ?string $smtpHost = null;
+
+    #[ORM\Column(type: "integer", nullable: true)]
+    private ?int $smtpPuerto = null;
+
+    #[ORM\Column(type: "string", length: 10, options: ["default" => "ssl"])]
+    private string $smtpCifrado = 'ssl';
+
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private ?string $smtpUsuario = null;
+
+    #[ORM\Column(type: "encrypted_string", length: 255, nullable: true)]
+    private ?string $smtpPassword = null;
+
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private ?string $smtpRemitenteCorreo = null;
+
+    #[ORM\Column(type: "string", length: 150, nullable: true)]
+    private ?string $smtpRemitenteNombre = null;
+
     #[ORM\OneToMany(targetEntity: Cuenta::class, mappedBy: "empresa")]
     private $cuentas;
 
@@ -825,5 +851,34 @@ class Empresa
     {
         $this->edapiClienteGuid = $edapiClienteGuid;
         return $this;
+    }
+
+    public function getSmtpHost(): ?string { return $this->smtpHost; }
+    public function setSmtpHost(?string $smtpHost): self { $this->smtpHost = $smtpHost !== null ? trim($smtpHost) : null; return $this; }
+
+    public function getSmtpPuerto(): ?int { return $this->smtpPuerto; }
+    public function setSmtpPuerto(?int $smtpPuerto): self { $this->smtpPuerto = $smtpPuerto; return $this; }
+
+    public function getSmtpCifrado(): string { return $this->smtpCifrado; }
+    public function setSmtpCifrado(?string $smtpCifrado): self { $this->smtpCifrado = in_array($smtpCifrado, ['ssl', 'tls', 'ninguno'], true) ? $smtpCifrado : 'ssl'; return $this; }
+
+    public function getSmtpUsuario(): ?string { return $this->smtpUsuario; }
+    public function setSmtpUsuario(?string $smtpUsuario): self { $this->smtpUsuario = $smtpUsuario !== null ? trim($smtpUsuario) : null; return $this; }
+
+    public function getSmtpPassword(): ?string { return $this->smtpPassword; }
+    public function setSmtpPassword(?string $smtpPassword): self { $this->smtpPassword = $smtpPassword; return $this; }
+
+    public function getSmtpRemitenteCorreo(): ?string { return $this->smtpRemitenteCorreo; }
+    public function setSmtpRemitenteCorreo(?string $smtpRemitenteCorreo): self { $this->smtpRemitenteCorreo = $smtpRemitenteCorreo !== null ? trim($smtpRemitenteCorreo) : null; return $this; }
+
+    public function getSmtpRemitenteNombre(): ?string { return $this->smtpRemitenteNombre; }
+    public function setSmtpRemitenteNombre(?string $smtpRemitenteNombre): self { $this->smtpRemitenteNombre = $smtpRemitenteNombre; return $this; }
+
+    /** El SMTP se puede usar si tiene servidor, puerto y un remitente válido. */
+    public function tieneSmtp(): bool
+    {
+        return trim((string) $this->smtpHost) !== ''
+            && (int) $this->smtpPuerto > 0
+            && filter_var((string) $this->smtpRemitenteCorreo, FILTER_VALIDATE_EMAIL) !== false;
     }
 }

@@ -34,7 +34,7 @@ class CorreoBienvenidaController extends AbstractController
     }
 
     #[Route("/", name: "correo_bienvenida_index", methods: ["GET"])]
-    public function index(TipoClienteRepository $tipoClienteRepository, CorreoBienvenidaRepository $correoRepository): Response
+    public function index(TipoClienteRepository $tipoClienteRepository, CorreoBienvenidaRepository $correoRepository, EmpresaRepository $empresaRepository): Response
     {
         $this->denyAccessUnlessGranted('view', 'contrato_template');
         $empresaId = $this->getUser()->getEmpresaActual();
@@ -47,7 +47,63 @@ class CorreoBienvenidaController extends AbstractController
             ];
         }
 
-        return $this->render('correo_bienvenida/index.html.twig', ['filas' => $filas]);
+        return $this->render('correo_bienvenida/index.html.twig', [
+            'filas' => $filas,
+            'empresa' => $empresaRepository->find($empresaId),
+        ]);
+    }
+
+    /**
+     * Guarda el SMTP de la empresa actual (con el que se envían los correos y del que sale el remitente).
+     * Contraseña vacía = conservar la actual. Responde JSON para el popup del listado.
+     */
+    #[Route("/remitente", name: "correo_bienvenida_remitente", methods: ["POST"])]
+    public function remitente(Request $request, EmpresaRepository $empresaRepository): JsonResponse
+    {
+        $this->denyAccessUnlessGranted('edit', 'contrato_template');
+        if (!$this->isCsrfTokenValid('correo_bienvenida_remitente', (string) $request->headers->get('X-CSRF-Token'))) {
+            return new JsonResponse(['detail' => 'Token inválido, recargue la página.'], 400);
+        }
+
+        $host = trim((string) $request->request->get('host'));
+        $puerto = (int) $request->request->get('puerto');
+        $cifrado = (string) $request->request->get('cifrado');
+        $usuario = trim((string) $request->request->get('usuario'));
+        $password = (string) $request->request->get('password');
+        $correo = trim((string) $request->request->get('remitenteCorreo'));
+        $nombre = trim((string) $request->request->get('remitenteNombre'));
+
+        if ($host === '' || !preg_match('/^[A-Za-z0-9.\-]+$/', $host)) {
+            return new JsonResponse(['detail' => 'Ingrese un servidor SMTP válido (ej. smtp.midominio.cl).'], 422);
+        }
+        if ($puerto < 1 || $puerto > 65535) {
+            return new JsonResponse(['detail' => 'El puerto debe estar entre 1 y 65535.'], 422);
+        }
+        if (!in_array($cifrado, ['ssl', 'tls', 'ninguno'], true)) {
+            return new JsonResponse(['detail' => 'Seleccione el tipo de cifrado.'], 422);
+        }
+        if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
+            return new JsonResponse(['detail' => 'Ingrese un correo de remitente válido.'], 422);
+        }
+        if (mb_strlen($nombre) > 150 || mb_strlen($usuario) > 255 || mb_strlen($password) > 255) {
+            return new JsonResponse(['detail' => 'Alguno de los datos es demasiado largo.'], 422);
+        }
+
+        $empresa = $empresaRepository->find($this->getUser()->getEmpresaActual());
+        $empresa->setSmtpHost($host)
+            ->setSmtpPuerto($puerto)
+            ->setSmtpCifrado($cifrado)
+            ->setSmtpUsuario($usuario !== '' ? $usuario : null)
+            ->setSmtpRemitenteCorreo($correo)
+            ->setSmtpRemitenteNombre($nombre !== '' ? $nombre : null);
+        if ($usuario === '') {
+            $empresa->setSmtpPassword(null);
+        } elseif ($password !== '') {
+            $empresa->setSmtpPassword($password);
+        }
+        $this->entityManager->flush();
+
+        return new JsonResponse(['ok' => true]);
     }
 
     #[Route("/{id}/edit", name: "correo_bienvenida_edit", requirements: ['id' => '\d+'], methods: ["GET","POST"])]
@@ -88,6 +144,8 @@ class CorreoBienvenidaController extends AbstractController
             'variables' => ContratoTemplateRenderer::catalogo(),
             'ejemplo' => CorreoBienvenidaService::escapar(CorreoBienvenidaService::ejemplo((string) $tipo)),
             'imagenDatos' => $this->imagenComoDatos($correo),
+            'smtpRemitente' => $empresa->tieneSmtp() ? $empresa->getSmtpRemitenteCorreo() : null,
+            'smtpRemitenteNombre' => $empresa->getSmtpRemitenteNombre(),
         ]);
     }
 
@@ -96,7 +154,7 @@ class CorreoBienvenidaController extends AbstractController
      * (asunto, remitente, HTML e imagen), guardado o no. Responde JSON para la vista previa.
      */
     #[Route("/{id}/prueba", name: "correo_bienvenida_prueba", requirements: ['id' => '\d+'], methods: ["POST"])]
-    public function prueba(TipoCliente $tipo, Request $request, CorreoBienvenidaRepository $correoRepository, CorreoBienvenidaService $servicio): JsonResponse
+    public function prueba(TipoCliente $tipo, Request $request, CorreoBienvenidaRepository $correoRepository, CorreoBienvenidaService $servicio, EmpresaRepository $empresaRepository): JsonResponse
     {
         $this->denyAccessUnlessGranted('edit', 'contrato_template');
         if (!$this->isCsrfTokenValid('correo_bienvenida_prueba', (string) $request->headers->get('X-CSRF-Token'))) {
@@ -104,14 +162,14 @@ class CorreoBienvenidaController extends AbstractController
         }
 
         $destino = trim((string) $request->request->get('destino'));
-        $desdeCorreo = trim((string) $request->request->get('remitenteCorreo'));
         $asunto = trim((string) $request->request->get('asunto'));
         $html = (string) $request->request->get('contenido');
         if (!filter_var($destino, FILTER_VALIDATE_EMAIL)) {
             return new JsonResponse(['detail' => 'Ingrese un correo de destino válido.'], 422);
         }
-        if (!filter_var($desdeCorreo, FILTER_VALIDATE_EMAIL)) {
-            return new JsonResponse(['detail' => 'Falta el correo del remitente (o no es válido).'], 422);
+        $empresa = $empresaRepository->find($this->getUser()->getEmpresaActual());
+        if (!$empresa->tieneSmtp()) {
+            return new JsonResponse(['detail' => 'La empresa no tiene el SMTP configurado (servidor, puerto y correo del remitente).'], 422);
         }
         if ($asunto === '' || trim($html) === '') {
             return new JsonResponse(['detail' => 'El asunto y el contenido del correo no pueden estar vacíos.'], 422);
@@ -135,7 +193,7 @@ class CorreoBienvenidaController extends AbstractController
             }
         }
 
-        $error = $servicio->enviarPrueba($destino, $desdeCorreo, trim((string) $request->request->get('remitenteNombre')) ?: null, $asunto, $html, $rutaImagen, (string) $tipo);
+        $error = $servicio->enviarPrueba($empresa, $destino, trim((string) $request->request->get('remitenteNombre')) ?: null, $asunto, $html, $rutaImagen, (string) $tipo);
         if ($error !== null) {
             return new JsonResponse(['detail' => 'No se pudo enviar la prueba: ' . $error], 502);
         }

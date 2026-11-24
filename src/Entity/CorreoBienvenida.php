@@ -30,7 +30,8 @@ class CorreoBienvenida
     #[ORM\Column(type: "string", length: 150, nullable: true)]
     private $remitenteNombre;
 
-    #[ORM\Column(type: "string", length: 255)]
+    /** En desuso: el remitente es el configurado en el SMTP de la empresa. Se conserva por compatibilidad. */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $remitenteCorreo;
 
     #[ORM\Column(type: "string", length: 255)]

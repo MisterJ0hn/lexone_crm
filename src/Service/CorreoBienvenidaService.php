@@ -3,11 +3,11 @@
 namespace App\Service;
 
 use App\Entity\Contrato;
+use App\Entity\Empresa;
 use App\Repository\CorreoBienvenidaRepository;
 use App\Repository\TipoClienteRepository;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 
@@ -21,10 +21,24 @@ class CorreoBienvenidaService
         private readonly CorreoBienvenidaRepository $correos,
         private readonly TipoClienteRepository $tiposCliente,
         private readonly ContratoTemplateRenderer $renderer,
-        private readonly MailerInterface $mailer,
+        private readonly EmpresaMailer $empresaMailer,
         private readonly LoggerInterface $logger,
         #[Autowire('%kernel.project_dir%/var/correo_bienvenida')] private readonly string $directorioImagenes,
     ) {
+    }
+
+    private const SIN_SMTP = 'la empresa no tiene el SMTP configurado (Empresa → Correo SMTP: servidor, puerto y correo del remitente).';
+
+    /**
+     * El correo remitente siempre es el configurado en el SMTP de la empresa; el template solo puede
+     * (opcionalmente) cambiar el nombre que se muestra.
+     */
+    private function remitente(Empresa $empresa, ?string $nombre): Address
+    {
+        $base = $this->empresaMailer->remitente($empresa);
+        $nombre = trim((string) $nombre);
+
+        return new Address($base->getAddress(), $nombre !== '' ? $nombre : $base->getName());
     }
 
     /**
@@ -75,12 +89,17 @@ class CorreoBienvenidaService
 
     /**
      * Envía un correo de prueba con datos de ejemplo al destino indicado, con el contenido que se está
-     * editando (no hace falta haberlo guardado). Nunca lanza.
+     * editando (no hace falta haberlo guardado), por el SMTP de la empresa. Nunca lanza.
      *
      * @return string|null null si se envió; si no, el motivo legible.
      */
-    public function enviarPrueba(string $destino, string $desdeCorreo, ?string $desdeNombre, string $asunto, string $html, ?string $rutaImagen, string $tipoCliente): ?string
+    public function enviarPrueba(Empresa $empresa, string $destino, ?string $desdeNombre, string $asunto, string $html, ?string $rutaImagen, string $tipoCliente): ?string
     {
+        $mailer = $this->empresaMailer->mailer($empresa);
+        if ($mailer === null) {
+            return self::SIN_SMTP;
+        }
+
         $crudo = self::ejemplo($tipoCliente);
         $seguras = self::escapar($crudo);
         $conImagen = $rutaImagen !== null && is_file($rutaImagen);
@@ -88,14 +107,14 @@ class CorreoBienvenidaService
 
         try {
             $email = (new Email())
-                ->from(new Address($desdeCorreo, (string) $desdeNombre))
+                ->from($this->remitente($empresa, $desdeNombre))
                 ->to($destino)
                 ->subject('[PRUEBA] ' . strtr($asunto, $crudo))
                 ->html(strtr($html, $seguras));
             if ($conImagen) {
                 $email->embedFromPath($rutaImagen, 'imagen');
             }
-            $this->mailer->send($email);
+            $mailer->send($email);
             $this->logger->info('Correo de bienvenida de prueba enviado a ' . $destino);
 
             return null;
@@ -133,6 +152,12 @@ class CorreoBienvenidaService
             return 'no hay un correo de bienvenida activo con contenido para el tipo de cliente ' . ($tipo ?? 'Persona') . ' (Plantillas de Contrato → Correo de bienvenida).';
         }
 
+        $empresa = $agenda->getEmpresa();
+        $mailer = $this->empresaMailer->mailer($empresa);
+        if ($mailer === null) {
+            return self::SIN_SMTP;
+        }
+
         $variables = $this->renderer->variables($contrato);
         // Los datos del cliente se escapan para no inyectar HTML en el correo; {{causas}} ya es HTML.
         $seguras = self::escapar($variables);
@@ -144,14 +169,14 @@ class CorreoBienvenidaService
 
         try {
             $email = (new Email())
-                ->from(new Address($config->getRemitenteCorreo(), (string) $config->getRemitenteNombre()))
+                ->from($this->remitente($empresa, $config->getRemitenteNombre()))
                 ->to($destino)
                 ->subject(strtr((string) $config->getAsunto(), $variables))
                 ->html(strtr($config->getContenido(), $seguras));
             if ($conImagen) {
                 $email->embedFromPath($rutaImagen, 'imagen');
             }
-            $this->mailer->send($email);
+            $mailer->send($email);
             return null;
         } catch (\Throwable $e) {
             $this->logger->error('No se pudo enviar el correo de bienvenida del contrato ' . $contrato->getId() . ': ' . $e->getMessage());
