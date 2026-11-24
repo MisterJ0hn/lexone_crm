@@ -93,6 +93,14 @@ class CorreoBienvenidaController extends AbstractController
         }
 
         $empresa = $empresaRepository->find($this->getUser()->getEmpresaActual());
+        // Solo se guarda una configuración que se probó con éxito (con estos mismos datos).
+        $efectiva = $usuario === '' ? '' : ($password !== '' ? $password : (string) $empresa->getSmtpPassword());
+        $huella = $this->huellaSmtp($host, $puerto, $cifrado, $usuario, $efectiva, $correo, $nombre);
+        if (!hash_equals((string) $request->getSession()->get('smtp_probado', ''), $huella)) {
+            return new JsonResponse(['detail' => 'Debe probar la configuración con éxito antes de guardarla.'], 422);
+        }
+        $request->getSession()->remove('smtp_probado');
+
         $empresa->setSmtpHost($host)
             ->setSmtpPuerto($puerto)
             ->setSmtpCifrado($cifrado)
@@ -160,6 +168,7 @@ class CorreoBienvenidaController extends AbstractController
             ->setSmtpRemitenteCorreo($correo)
             ->setSmtpRemitenteNombre($nombre !== '' ? $nombre : null);
 
+        $efectiva = $usuario === '' ? '' : ($password !== '' ? $password : (string) $actual?->getSmtpPassword());
         $mailer = $empresaMailer->mailer($prueba);
         if ($mailer === null) {
             return new JsonResponse(['detail' => 'Configuración SMTP incompleta.'], 422);
@@ -174,7 +183,15 @@ class CorreoBienvenidaController extends AbstractController
             return new JsonResponse(['detail' => 'No se pudo enviar la prueba: ' . mb_substr($e->getMessage(), 0, 300)], 502);
         }
 
+        // Queda registrado que esta configuración exacta funciona: habilita guardarla.
+        $request->getSession()->set('smtp_probado', $this->huellaSmtp($host, $puerto, $cifrado, $usuario, $efectiva, $correo, $nombre));
+
         return new JsonResponse(['ok' => true, 'destino' => $destino]);
+    }
+
+    private function huellaSmtp(string $host, int $puerto, string $cifrado, string $usuario, string $password, string $correo, string $nombre): string
+    {
+        return hash_hmac('sha256', json_encode([$host, $puerto, $cifrado, $usuario, $password, $correo, $nombre]), $this->getParameter('kernel.secret'));
     }
 
     #[Route("/{id}/edit", name: "correo_bienvenida_edit", requirements: ['id' => '\d+'], methods: ["GET","POST"])]

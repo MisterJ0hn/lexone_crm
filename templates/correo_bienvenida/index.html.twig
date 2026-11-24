@@ -116,13 +116,13 @@
                         <button type="button" class="btn btn-outline-primary" id="smtpProbar"><i class="fas fa-paper-plane"></i> Enviar prueba</button>
                     </div>
                 </div>
-                <small class="text-muted">Usa los datos de arriba tal como están, sin guardarlos.</small>
+                <small class="text-muted">Usa los datos de arriba tal como están, sin guardarlos. Para poder guardar, la prueba debe ser exitosa; si modifica algún dato debe probar de nuevo.</small>
                 <div id="smtpResultado" class="small mt-1"></div>
                 <div id="smtpError" class="text-danger small"></div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" id="smtpGuardar">Guardar</button>
+                <button type="button" class="btn btn-primary" id="smtpGuardar" disabled title="Pruebe la configuración con éxito para poder guardarla">Guardar</button>
             </div>
         </div>
     </div>
@@ -144,8 +144,15 @@
         var p = {ssl: 465, tls: 587}[this.value];
         if (p && !$.trim($('#smtpPuerto').val())) { $('#smtpPuerto').val(p); }
     });
+    // Guardar solo se habilita tras una prueba exitosa; cualquier cambio en los datos la invalida.
+    $modal.find('input, select').not('#smtpDestinoPrueba').on('input change', function () {
+        $('#smtpGuardar').prop('disabled', true);
+        $('#smtpResultado').removeClass('text-success text-danger').text('');
+    });
+    $modal.on('shown.bs.modal hidden.bs.modal', function () { $('#smtpGuardar').prop('disabled', true); });
     $('#smtpProbar').on('click', function () {
         var $btn = $(this).prop('disabled', true), $res = $('#smtpResultado').removeClass('text-success text-danger').text('Enviando prueba...');
+        $('#smtpGuardar').prop('disabled', true);
         $('#smtpError').text('');
         $.ajax({
             url: "{{ path('correo_bienvenida_remitente_probar') }}", type: 'post', dataType: 'json', timeout: 90000,
@@ -157,7 +164,8 @@
                 destino: $('#smtpDestinoPrueba').val()
             }
         }).done(function (r) {
-            $res.addClass('text-success').text('Prueba enviada a ' + r.destino + '. Revise su bandeja (y spam).');
+            $res.addClass('text-success').text('Prueba enviada a ' + r.destino + '. Revise su bandeja (y spam). Ya puede guardar la configuración.');
+            $('#smtpGuardar').prop('disabled', false);
         }).fail(function (xhr) {
             $res.addClass('text-danger').text(xhr.status === 403 ? 'Acceso denegado: no tienes privilegios para editar.' : ((xhr.responseJSON && xhr.responseJSON.detail) || 'No se pudo enviar la prueba.'));
         }).always(function () { $btn.prop('disabled', false); });
