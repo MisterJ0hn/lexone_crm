@@ -42,11 +42,23 @@
                         </div>
                         <div class="col-sm-12 col-md-4">
                             <small class="text-muted">Cta. Cte. (*)</small>
-                            {{form_row(form.cuentaCorriente,{'label':false,'attr':{'class':'form-control'}})}}
+                            <div class="input-group">
+                                {{form_widget(form.cuentaCorriente,{'label':false,'attr':{'class':'form-control'}})}}
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-outline-secondary" data-catalogo-nuevo="cuenta_corriente" title="Agregar nuevo"><i class="fas fa-plus"></i></button>
+                                </div>
+                            </div>
+                            {{form_errors(form.cuentaCorriente)}}
                         </div>
                         <div class="col-sm-12 col-md-4">
                             <small class="text-muted">Canal (*)</small>
-                            {{form_row(form.pagoCanal,{'label':false,'attr':{'class':'form-control'}})}}
+                            <div class="input-group">
+                                {{form_widget(form.pagoCanal,{'label':false,'attr':{'class':'form-control'}})}}
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-outline-secondary" data-catalogo-nuevo="pago_canal" title="Agregar nuevo"><i class="fas fa-plus"></i></button>
+                                </div>
+                            </div>
+                            {{form_errors(form.pagoCanal)}}
                         </div>
                         <div class="col-sm-12 col-md-12">
                             <small class="text-muted">Observación</small>
@@ -260,3 +272,4 @@
 
  
 </script>
+{{ include('pago/_modal_catalogo.html.twig') }}

@@ -914,8 +914,7 @@ class PagoController extends AbstractController
         $pago->setContrato($contrato);
         $pago->setFechaRegistro(new \DateTime(date('Y-m-d H:i:s')));
         $pago->setUsuarioRegistro($user);
-        $form = $this->createForm(PagoType::class, $pago);
-        //$form->add('pagoCanal');
+        $form = $this->createForm(PagoType::class, $pago, ['empresa' => (int) $user->getEmpresaActual()]);
     
         $form->handleRequest($request);
 
@@ -972,7 +971,7 @@ class PagoController extends AbstractController
             $cuota=$pagoCuota->getCuota();
             $contrato=$cuota->getContrato();
         }
-        $form = $this->createForm(PagoType::class, $pago);
+        $form = $this->createForm(PagoType::class, $pago, ['empresa' => (int) $user->getEmpresaActual()]);
         //$form->add('fechaRegistro',DateType::class,array('widget'=>'single_text','html5'=>false));
         //$form->add('fechaPago',DateType::class,array('widget'=>'single_text','html5'=>false));
         $form->handleRequest($request);

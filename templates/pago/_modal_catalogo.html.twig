@@ -1,0 +1,60 @@
+{#
+  Modal "Nueva cuenta corriente / Nuevo canal de pago". Un botón [data-catalogo-nuevo="cuenta_corriente|pago_canal"]
+  dentro de un .input-group lo abre; al guardar, la opción queda agregada y seleccionada en el select del grupo.
+#}
+<div class="modal fade" id="modalCatalogoNuevo" tabindex="-1" role="dialog" aria-hidden="true"
+     data-csrf="{{ csrf_token('pago_catalogo_rapido') }}"
+     data-url-cuenta_corriente="{{ path('pago_catalogo_rapido', {tipo: 'cuenta_corriente'}) }}"
+     data-url-pago_canal="{{ path('pago_catalogo_rapido', {tipo: 'pago_canal'}) }}">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="catalogoNuevoTitulo"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="catalogoNuevoNombre" class="form-control" maxlength="255" placeholder="Nombre" autocomplete="off">
+                <div id="catalogoNuevoError" class="text-danger small mt-1"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="catalogoNuevoGuardar">Agregar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+(function () {
+    var $modal = $('#modalCatalogoNuevo').appendTo('body'), $select = null, tipo = '';
+    var titulos = {cuenta_corriente: 'Nueva cuenta corriente', pago_canal: 'Nuevo canal de pago'};
+
+    $(document).on('click', '[data-catalogo-nuevo]', function () {
+        tipo = $(this).attr('data-catalogo-nuevo');
+        $select = $(this).closest('.input-group').find('select').first();
+        $('#catalogoNuevoTitulo').text(titulos[tipo]);
+        $('#catalogoNuevoError').text('');
+        $('#catalogoNuevoNombre').val('');
+        $modal.modal('show');
+    });
+    $modal.on('shown.bs.modal', function () { $('#catalogoNuevoNombre').trigger('focus'); });
+    $('#catalogoNuevoNombre').on('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); $('#catalogoNuevoGuardar').click(); } });
+
+    $('#catalogoNuevoGuardar').on('click', function () {
+        var nombre = $.trim($('#catalogoNuevoNombre').val());
+        if (!nombre) { $('#catalogoNuevoError').text('Ingrese el nombre.'); return; }
+        var $btn = $(this).prop('disabled', true);
+        $.ajax({
+            url: $modal.attr('data-url-' + tipo), type: 'post', dataType: 'json',
+            data: { nombre: nombre }, headers: { 'X-CSRF-Token': $modal.attr('data-csrf') }
+        }).done(function (r) {
+            if (!$select.find('option').filter(function () { return this.value == r.id; }).length) {
+                $select.append($('<option>').val(r.id).text(r.nombre));
+            }
+            $select.val(r.id).trigger('change');
+            $modal.modal('hide');
+        }).fail(function (xhr) {
+            $('#catalogoNuevoError').text((xhr.responseJSON && xhr.responseJSON.detail) || 'No se pudo agregar.');
+        }).always(function () { $btn.prop('disabled', false); });
+    });
+})();
+</script>

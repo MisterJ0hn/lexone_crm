@@ -16,6 +16,11 @@ class CuentaCorriente
     #[ORM\Column(type: "string", length: 255)]
     private $nombre;
 
+    /** Empresa dueña de la cuenta (catálogo por empresa). */
+    #[ORM\ManyToOne(targetEntity: Empresa::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private $empresa;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -32,6 +37,18 @@ class CuentaCorriente
 
         return $this;
     }
+    public function getEmpresa(): ?Empresa
+    {
+        return $this->empresa;
+    }
+
+    public function setEmpresa(?Empresa $empresa): self
+    {
+        $this->empresa = $empresa;
+
+        return $this;
+    }
+
     public function __toString(){
         return $this->getNombre();
     }
