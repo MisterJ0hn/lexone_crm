@@ -146,7 +146,7 @@
                         {% if is_granted('create','modificar_contrato') %}
                             <a href="#" class="btn btn-dark btn-sm" onclick="editarObservacion({{ contrato.id }}); return false;"><i class="fas fa-edit"></i></a>
                         {% endif %}
-                        <a href="{{ path('contrato_linea_tiempo', {'id': contrato.id}) }}" class="btn btn-sm btn-dark"><i class="fas fa-balance-scale-right"></i></a>
+                        <a href="{{ path('contrato_linea_tiempo', {'id': contrato.id}) }}" class="btn  btn-sm bg-calipso"><i class="fas fa-concierge-bell"></i></a>
                         {% if contrato.pdf %}
                             <a href="{{ url_web }}{{ pdf_contrato }}{{ contrato.pdf }}" class="btn btn-success btn-sm"><i class="fas fa-file-pdf"></i></a>
                         {% endif %}
