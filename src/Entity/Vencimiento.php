@@ -65,9 +65,33 @@ class Vencimiento
         return $this;
     }
 
+    /** Color por defecto cuando no hay uno válido (verde, igual al "success" del tema). */
+    public const COLOR_DEFECTO = '#15803d';
+
+    /** Nombres de clase del tema anterior (valores ya guardados) y su equivalente hexadecimal. */
+    private const COLORES_LEGADOS = [
+        'success' => '#15803d',
+        'danger'  => '#b91c1c',
+        'warning' => '#b45309',
+        'info'    => '#0369a1',
+        'primary' => '#1f3a5f',
+    ];
+
+    /**
+     * Siempre devuelve #rrggbb. Los registros antiguos que guardaron un nombre de clase
+     * (success, danger, warning...) se convierten al vuelo; al editar y guardar quedan en hex.
+     */
     public function getColor(): ?string
     {
-        return $this->color;
+        $c = strtolower(trim((string) $this->color));
+        if (preg_match('/^#[0-9a-f]{6}$/', $c)) {
+            return $c;
+        }
+        if (preg_match('/^#[0-9a-f]{3}$/', $c)) {
+            return '#' . $c[1] . $c[1] . $c[2] . $c[2] . $c[3] . $c[3];
+        }
+
+        return self::COLORES_LEGADOS[$c] ?? self::COLOR_DEFECTO;
     }
 
     public function setColor(?string $color): self
