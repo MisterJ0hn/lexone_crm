@@ -49,6 +49,7 @@ class CausaController extends AbstractController
         $causa=new Causa();
         $causa->setEstado(1);
         $causa->setAgenda($agenda);
+        $causa->setUsuario($this->getUser());
 
         // Agendas de tipo Convenio/Empresa: la causa se crea asociada a uno de los
         // clientes propios del contrato (ver ContratoController::nuevoClienteConvenio).

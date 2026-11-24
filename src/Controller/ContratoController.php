@@ -235,12 +235,7 @@ class ContratoController extends AbstractController
         // Empresa/Convenio: credenciales PJUD de cada sub cliente (Causa::$cliente), sin repetir clientes.
         $subclientes = [];
         if (in_array($contrato->getAgenda()->getTipoClienteNombre(), ['Empresa', 'Convenio'], true)) {
-            foreach ($contrato->getAgenda()->getCausas() as $causa) {
-                $cliente = $causa->getCliente();
-                if ($cliente !== null) {
-                    $subclientes[$cliente->getId()] = $cliente;
-                }
-            }
+            $subclientes = $contrato->getClientesConvenio();
         }
         return $this->render('contrato/show.html.twig', [
             'subclientes' => $subclientes,
@@ -1075,21 +1070,19 @@ class ContratoController extends AbstractController
         // modal de edición se cargan por AJAX según la materia de la causa editada.
         if ($tipoCliente === 'Convenio' || $tipoCliente === 'Empresa') {
             // Convenio/Empresa: el contrato agrupa varios clientes propios, cada uno
-            // con sus propias causas (Causa::$cliente). Se listan agrupando las
-            // causas de la agenda por cliente.
+            // con sus propias causas (Causa::$cliente). Un cliente aparece aunque aún no
+            // tenga causas (Contrato::$subclientes); a cada uno se le agrupan sus causas.
             $clientes = [];
+            foreach ($contrato->getClientesConvenio() as $cliente) {
+                $clientes[$cliente->getId()] = [
+                    'cliente' => $cliente,
+                    'causas' => [],
+                ];
+            }
             foreach ($contrato->getAgenda()->getCausas() as $causa) {
-                $cliente = $causa->getCliente();
-                if ($cliente === null) {
-                    continue;
+                if ($causa->getCliente() !== null) {
+                    $clientes[$causa->getCliente()->getId()]['causas'][] = $causa;
                 }
-                if (!isset($clientes[$cliente->getId()])) {
-                    $clientes[$cliente->getId()] = [
-                        'cliente' => $cliente,
-                        'causas' => [],
-                    ];
-                }
-                $clientes[$cliente->getId()]['causas'][] = $causa;
             }
 
             $formNuevoCliente = $this->createForm(ClienteConvenioType::class, new Cliente());
@@ -1271,16 +1264,10 @@ class ContratoController extends AbstractController
 
         $nota = (new ContratoNota())->setContrato($contrato)->setObservacion($observacion)->setUsuario($this->getUser());
 
-        // Observación de un sub cliente (Convenio/Empresa): debe ser un cliente con causas en este contrato.
+        // Observación de un sub cliente (Convenio/Empresa): debe ser un cliente de este contrato.
         $clienteId = $request->request->get('cliente');
         if ($clienteId !== null && $clienteId !== '') {
-            $clienteNota = null;
-            foreach ($contrato->getAgenda()->getCausas() as $causa) {
-                if ($causa->getCliente() !== null && (string) $causa->getCliente()->getId() === (string) $clienteId) {
-                    $clienteNota = $causa->getCliente();
-                    break;
-                }
-            }
+            $clienteNota = $contrato->getClientesConvenio()[(int) $clienteId] ?? null;
             if ($clienteNota === null) {
                 throw $this->createNotFoundException('Cliente no encontrado en este contrato.');
             }
@@ -1355,8 +1342,8 @@ class ContratoController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Al menos una causa es obligatoria al crear el cliente (pueden venir varias,
-            // en causas[N][...]): sin una materia válida en cada una no se crea ni el
+            // Las causas son opcionales al crear el cliente (pueden venir varias, en causas[N][...]).
+            // Las que vengan deben tener materia válida: si alguna no la tiene no se crea ni el
             // cliente ni ninguna causa. Mismos campos que ya usa CausaController::agregar().
             $causasPost = $request->request->all('causas');
             $causasDatos = [];
@@ -1370,16 +1357,11 @@ class ContratoController extends AbstractController
                     $materia = $servicio->getMateria();
                 }
                 if ($materia === null) {
-                    $this->addFlash('error', 'Debe ingresar la materia de cada causa: es obligatoria para crear el cliente.');
+                    $this->addFlash('error', 'Debe ingresar la materia de cada causa agregada (o quitar la causa de la lista).');
                     return $this->redirectToRoute('contrato_linea_tiempo', ['id' => $contrato->getId()]);
                 }
                 $causasDatos[] = ['datos' => $datos, 'materia' => $materia, 'servicio' => $servicio];
             }
-            if ($causasDatos === []) {
-                $this->addFlash('error', 'Debe ingresar la materia de la causa: es obligatoria para crear el cliente.');
-                return $this->redirectToRoute('contrato_linea_tiempo', ['id' => $contrato->getId()]);
-            }
-
             $entityManager = $this->entityManager;
 
             // Reutilizamos un cliente ya existente por RUT en vez de duplicarlo. El
@@ -1413,6 +1395,7 @@ class ContratoController extends AbstractController
                 $cliente->setSexo($form->has('sexo') ? $form->get('sexo')->getData() : null);
             }
 
+            $contrato->addSubcliente($cliente);
             $entityManager->persist($cliente);
             $entityManager->flush();
 
@@ -1422,6 +1405,7 @@ class ContratoController extends AbstractController
                 $causa->setEstado(1);
                 $causa->setAgenda($contrato->getAgenda());
                 $causa->setCliente($cliente);
+                $causa->setUsuario($this->getUser());
                 $causa->setMateria($materia);
 
                 if ($servicio !== null && $servicio->getMateria()->getId() === $materia->getId()) {
@@ -1512,14 +1496,9 @@ class ContratoController extends AbstractController
         $agenda = $contrato->getAgenda();
         $tipoCliente = $agenda->getTipoClienteNombre();
 
-        // Solo clientes de este contrato (con causas en su agenda).
-        $pertenece = $contrato->getCliente() !== null && $contrato->getCliente()->getId() === $cliente->getId();
-        foreach ($agenda->getCausas() as $causa) {
-            if ($causa->getCliente() !== null && $causa->getCliente()->getId() === $cliente->getId()) {
-                $pertenece = true;
-                break;
-            }
-        }
+        // Solo clientes de este contrato.
+        $pertenece = ($contrato->getCliente() !== null && $contrato->getCliente()->getId() === $cliente->getId())
+            || isset($contrato->getClientesConvenio()[$cliente->getId()]);
         if (!$pertenece || ($tipoCliente !== 'Convenio' && $tipoCliente !== 'Empresa')) {
             throw $this->createNotFoundException();
         }
@@ -1554,15 +1533,10 @@ class ContratoController extends AbstractController
         $agenda = $contrato->getAgenda();
         $tipoCliente = $agenda->getTipoClienteNombre();
 
-        // Solo se pueden editar clientes que pertenecen a este contrato (tienen causas
-        // en su agenda): evita editar clientes de otra agenda/empresa cambiando el id.
-        $pertenece = $contrato->getCliente() !== null && $contrato->getCliente()->getId() === $cliente->getId();
-        foreach ($agenda->getCausas() as $causa) {
-            if ($causa->getCliente() !== null && $causa->getCliente()->getId() === $cliente->getId()) {
-                $pertenece = true;
-                break;
-            }
-        }
+        // Solo se pueden editar clientes que pertenecen a este contrato: evita editar
+        // clientes de otra agenda/empresa cambiando el id.
+        $pertenece = ($contrato->getCliente() !== null && $contrato->getCliente()->getId() === $cliente->getId())
+            || isset($contrato->getClientesConvenio()[$cliente->getId()]);
         if (!$pertenece || ($tipoCliente !== 'Convenio' && $tipoCliente !== 'Empresa')) {
             throw $this->createNotFoundException();
         }

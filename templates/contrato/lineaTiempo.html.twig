@@ -78,7 +78,7 @@
         {% endif %}
         <div class="card">
             <div class="card-body">
-                <h6>Agregar Causa</h6>
+                <h6>Agregar Causa/Servicio</h6>
                 <div class="row agregar-causa-nueva">
                     <div class="col-sm-12 col-md-3 mt-1">
                         <select class="form-control cbomateria-nueva" onchange="cambiaMateriaCausaNueva(this.value)">
@@ -141,6 +141,7 @@
                     <thead>
                         <tr>
                             <!--<th>Id</th>-->
+                            <th>Creada por</th>
                             
                             
                             <th>Servicio</th>
@@ -159,6 +160,7 @@
                            <!-- <td>
                             {{causa.id}}
                             </td>-->
+                            <td><small>{{ causa.usuario ? causa.usuario.nombre : '-' }}</small></td>
                             
                             <td>
                                 <strong>{{causa.materia.nombre}}</strong>

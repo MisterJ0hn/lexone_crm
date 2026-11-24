@@ -21,8 +21,8 @@ use Symfony\Component\Routing\Annotation\Route;
 class MisClientesController extends AbstractController
 {
     /** Tipos de usuario que ven toda la empresa. */
-    private const TIPOS_EMPRESA = [1, 8];
-    private const TIPO_TRAMITADOR = 3;
+    private const TIPOS_EMPRESA = [1, 3,8];
+    private const TIPO_TRAMITADOR = 9; //el usuario tramitador no existe en la tabla de usuario_tipo, dejo el 9 por defecto.
 
     #[Route(path: '/', name: 'mis_clientes_index', methods: ['GET'])]
     public function index(EntityManagerInterface $em, Request $request): Response
@@ -59,7 +59,8 @@ class MisClientesController extends AbstractController
             $materia    = (int) $q->get('bMateria', 0) ?: null;
             $servicio   = trim((string) $q->get('bServicio', '0'));
             $servicio   = ($servicio === '' || $servicio === '0') ? null : $servicio;
-            $usuarioRegistro = (int) $q->get('bUsuario', 0) ?: null;
+            // Filtro "Tramitador": usuario que creó la causa (Causa::$usuario). 0 = todos.
+            $usuarioCausa = (int) $q->get('bUsuario', 0) ?: null;
             $primerPago = (int) $q->get('bPrimerPago', 0) ?: null;
 
             if ($q->get('bFecha')) {
@@ -75,10 +76,12 @@ class MisClientesController extends AbstractController
                 throw new \InvalidArgumentException('Rango de fechas inválido.');
             }
 
-            [$empresa, $usuario, $usuarioRegistro] = $this->alcanceUsuario($user, $usuarioRegistro);
+            // El filtro ya no se aplica sobre el usuario que registró el contrato: aquí solo queda el
+            // alcance de acceso del usuario (un tramitador sigue viendo solo sus contratos).
+            [$empresa, $usuario, $usuarioRegistro] = $this->alcanceUsuario($user, null);
 
             $query = $contratoRepository->findMisClientesQuery(
-                $empresa, $materia, $filtro, $usuario, $usuarioRegistro, $servicio, $primerPago, $dateInicio, $dateFin
+                $empresa, $materia, $filtro, $usuario, $usuarioRegistro, $servicio, $primerPago, $dateInicio, $dateFin, $usuarioCausa
             );
 
             $contratos = $paginator->paginate(
@@ -131,14 +134,17 @@ class MisClientesController extends AbstractController
         }
         $servicios = array_map(fn(string $n) => ['id' => $n, 'nombre' => $n], array_values($nombres));
 
-        // Usuarios que registraron contratos (visibles para quien consulta).
+        // Usuarios que crearon causas activas en contratos visibles para quien consulta (filtro "Tramitador").
         $qb = $em->createQueryBuilder()
             ->select('DISTINCT u.id AS id, u.nombre AS nombre')
-            ->from(Contrato::class, 'c')
-            ->join('c.usuarioRegistro', 'u')
-            ->join('c.agenda', 'a')
+            ->from(Causa::class, 'ca')
+            ->join('ca.usuario', 'u')
+            ->join('ca.agenda', 'a')
             ->join('a.cuenta', 'cu')
+            ->join(Contrato::class, 'c', 'WITH', 'c.agenda = a')
             ->where('cu.empresa = :empresa')
+            ->andWhere('ca.estado = 1')
+            ->andWhere('ca.causaFinalizada IS NULL OR ca.causaFinalizada = 0')
             ->setParameter('empresa', $empresa)
             ->orderBy('u.nombre', 'ASC');
         [, $abogado, $usuarioRegistro] = $this->alcanceUsuario($user, null);
@@ -146,7 +152,8 @@ class MisClientesController extends AbstractController
             $qb->andWhere('a.abogado = :abogado')->setParameter('abogado', $abogado);
         }
         if (null !== $usuarioRegistro) {
-            $qb->andWhere('u.id = :ur')->setParameter('ur', $usuarioRegistro);
+            // Un tramitador solo ve los contratos que tiene asignados.
+            $qb->andWhere('c.usuarioRegistro = :ur')->setParameter('ur', $usuarioRegistro);
         }
         $usuarios = $qb->getQuery()->getArrayResult();
 

@@ -46,6 +46,14 @@ class Contrato
     #[ORM\ManyToOne(targetEntity: Cliente::class, inversedBy: "contratos")]
     private $cliente;
 
+    /**
+     * Sub clientes propios de un contrato Convenio/Empresa. Se registran al crearlos, aunque todavía
+     * no tengan causas (antes solo existían a través de Causa::$cliente).
+     */
+    #[ORM\ManyToMany(targetEntity: Cliente::class)]
+    #[ORM\JoinTable(name: "contrato_cliente")]
+    private $subclientes;
+
     #[ORM\ManyToOne(targetEntity: Pais::class, inversedBy: "contratos")]
     private $pais;
 
@@ -182,6 +190,7 @@ class Contrato
     public function __construct()
     {
         $this->contratoRols = new ArrayCollection();
+        $this->subclientes = new ArrayCollection();
         $this->detalleCuotas = new ArrayCollection();
         $this->contratoAnexos = new ArrayCollection();
         $this->cobranzas = new ArrayCollection();
@@ -193,6 +202,42 @@ class Contrato
         $this->contratoArchivos = new ArrayCollection();
   
         
+    }
+
+    /** @return Collection<int,Cliente> */
+    public function getSubclientes(): Collection
+    {
+        return $this->subclientes;
+    }
+
+    public function addSubcliente(Cliente $cliente): self
+    {
+        if (!$this->subclientes->contains($cliente)) {
+            $this->subclientes->add($cliente);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Sub clientes del contrato (Convenio/Empresa), sin repetir y por id: los registrados en la relación
+     * propia más los que ya existían solo a través de las causas de la agenda.
+     *
+     * @return array<int,Cliente>
+     */
+    public function getClientesConvenio(): array
+    {
+        $clientes = [];
+        foreach ($this->subclientes as $cliente) {
+            $clientes[$cliente->getId()] = $cliente;
+        }
+        foreach ($this->getAgenda()?->getCausas() ?? [] as $causa) {
+            if ($causa->getCliente() !== null) {
+                $clientes[$causa->getCliente()->getId()] ??= $causa->getCliente();
+            }
+        }
+
+        return $clientes;
     }
 
     public function getId(): ?int

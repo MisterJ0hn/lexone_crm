@@ -33,7 +33,8 @@ class ContratoRepository extends ServiceEntityRepository
         ?string $servicio,
         ?int $primerPago,
         string $fechaInicio,
-        string $fechaFin
+        string $fechaFin,
+        ?int $usuarioCausa = null
     ) {
         $qb = $this->createQueryBuilder('c')
             ->join('c.agenda', 'a')
@@ -54,6 +55,11 @@ class ContratoRepository extends ServiceEntityRepository
         }
         if (null !== $usuarioRegistro) {
             $qb->andWhere('c.usuarioRegistro = :usuarioRegistro')->setParameter('usuarioRegistro', $usuarioRegistro);
+        }
+        if (null !== $usuarioCausa) {
+            // Filtro "Tramitador": contratos que tienen una causa activa creada por ese usuario (Causa::$usuario).
+            $qb->andWhere('EXISTS (SELECT 1 FROM App\Entity\Causa ca3 WHERE ca3.agenda = a AND ca3.estado = 1 AND (ca3.causaFinalizada IS NULL OR ca3.causaFinalizada = 0) AND ca3.usuario = :usuarioCausa)')
+                ->setParameter('usuarioCausa', $usuarioCausa);
         }
         if (null !== $filtro) {
             $qb->andWhere('(cli.nombre LIKE :filtro OR cli.rutHash = :filtroRutHash OR c.folio LIKE :filtro)')

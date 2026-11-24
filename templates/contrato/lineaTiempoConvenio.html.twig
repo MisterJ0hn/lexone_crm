@@ -155,7 +155,7 @@
                         </div>
                         {% endif %}
                         <hr>
-                        <h6>Agregar Causa</h6>
+                        <h6>Agregar Causa/Servicio</h6>
                         <div class="row agregar-causa-cliente">
                             <div class="col-sm-12 col-md-3 mt-1">
                                 <select class="form-control cbomateria-cliente" onchange="cambiaMateriaCausaCliente(this)">
@@ -217,6 +217,7 @@
                 <table class="table table-head-fixed text-nowrap table-striped table-sm">
                     <thead>
                         <tr>
+                            <th>Creada por</th>
                             <th>Materia</th>
                             
                             <th>Servicio</th>
@@ -231,6 +232,7 @@
                     {% for causa in grupo.causas %}
                     {% if causa.estado == true %}
                         <tr>
+                            <td><small>{{ causa.usuario ? causa.usuario.nombre : '-' }}</small></td>
                             <td><strong>{{ causa.materia.nombre }}</strong></td>
                            
                             <td>                                
@@ -431,8 +433,14 @@
                 </div>
                
                 <hr>
-                <h5>Causa *</h5>
-                <small class="text-muted">Complete los datos y presione <i class="fas fa-plus"></i> para agregarla a la lista; puede agregar todas las que necesite (al menos una es obligatoria).</small>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Causa/Servicio <small class="text-muted">(opcional)</small></h5>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" id="btnToggleCausasNuevo" title="Mostrar/ocultar causas" aria-expanded="false" aria-controls="bloqueCausasNuevo">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <div id="bloqueCausasNuevo" style="display:none;">
+                <small class="text-muted">Complete los datos y presione <i class="fas fa-plus"></i> para agregarla a la lista; puede agregar todas las que necesite.</small>
                 <div class="row">
                     <div class="col-sm-12 col-md-3 mt-1">
                         <select class="form-control cbomateria-convenio" onchange="cambiaMateriaCausaConvenio(this.value)" >
@@ -505,6 +513,7 @@
                         <tbody class="detalle-causas-convenio"></tbody>
                     </table>
                 </div>
+                </div>{# /#bloqueCausasNuevo #}
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
@@ -886,15 +895,17 @@
         }
     });
 
-    // Al menos una causa en la lista para poder crear el cliente.
-    $('#modalNuevoCliente form').on('submit', function(e){
-        if($('.detalle-causas-convenio tr').length === 0){
-            e.preventDefault();
-            alert("Debe agregar al menos una causa a la lista (botón +)");
-            // El manejador global de base.html.twig deshabilita los botones al enviar; se reactivan.
-            setTimeout(function(){ $('button').prop('disabled', false); }, 0);
-        }
+    // Las causas del cliente nuevo son opcionales: el bloque parte oculto y el ojo lo muestra/oculta.
+    function mostrarCausasNuevo(mostrar){
+        $('#bloqueCausasNuevo').toggle(mostrar);
+        $('#btnToggleCausasNuevo').attr('aria-expanded', mostrar ? 'true' : 'false')
+            .find('i').toggleClass('fa-eye', !mostrar).toggleClass('fa-eye-slash', mostrar);
+    }
+    $('#btnToggleCausasNuevo').on('click', function(){
+        mostrarCausasNuevo(!$('#bloqueCausasNuevo').is(':visible'));
     });
+    // Cada vez que se abre el modal el bloque vuelve a quedar oculto.
+    $('#modalNuevoCliente').on('show.bs.modal', function(){ mostrarCausasNuevo(false); });
 
     // Agregar una causa a un cliente (subcliente) ya existente, directo desde su
     // tarjeta (a diferencia de la causa inicial opcional del modal "Nuevo Cliente").
@@ -1009,8 +1020,12 @@
             success: function(){
                 location.reload();
             },
-            error: function(){
-                alert('No se pudo agregar la causa');
+            error: function(xhr){
+                // Muestra el motivo real (el título de la página de error de Symfony o el texto de la respuesta).
+                var m = /<title>([\s\S]*?)<\/title>/i.exec(xhr.responseText || '');
+                var detalle = m ? $.trim(m[1]).replace(/\s+/g, ' ') : $.trim(xhr.responseText || '').substring(0, 300);
+                console.error('causa_new ' + xhr.status, xhr.responseText);
+                alert('No se pudo agregar la causa (HTTP ' + xhr.status + ')' + (detalle ? ': ' + detalle : ''));
             }
         });
     }

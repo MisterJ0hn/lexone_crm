@@ -98,6 +98,11 @@ class Causa
     #[ORM\JoinColumn(nullable: true)]
     private $cliente;
 
+    /** Usuario que agregó la causa (línea de tiempo). Null en las causas anteriores a este registro. */
+    #[ORM\ManyToOne(targetEntity: Usuario::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private $usuario;
+
     public function __construct()
     {
         $this->estadosProcesales = new ArrayCollection();
@@ -395,6 +400,18 @@ class Causa
     }
 
    
+
+    public function getUsuario(): ?Usuario
+    {
+        return $this->usuario;
+    }
+
+    public function setUsuario(?Usuario $usuario): self
+    {
+        $this->usuario = $usuario;
+
+        return $this;
+    }
 
     public function getCliente(): ?Cliente
     {
