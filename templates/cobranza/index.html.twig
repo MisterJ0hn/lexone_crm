@@ -31,7 +31,7 @@
         <div class="col-sm-6 col-md-3">
             
             <div class="info-box">
-                <span class="info-box-icon text-{{vencimiento.color}}"><i class="{{ vencimiento.icono }}"></i></span>
+                <span class="info-box-icon" style="color: {{ vencimiento.color }};"><i class="{{ vencimiento.icono }}"></i></span>
     
                 <div class="info-box-content">
                 <span class="info-box-text">{{vencimiento.nombre}}</span>
@@ -53,7 +53,7 @@
         
     </div>
     </section>
-    <div class="alert alert-{{vencimientoSeleccionado.color}}" role="alert">
+    <div class="alert" role="alert" style="color: {{ vencimientoSeleccionado.color }}; border-color: {{ vencimientoSeleccionado.color }}; background-color: {{ vencimientoSeleccionado.color }}1a;">
         <h4 class="alert-heading"> {{vencimientoSeleccionado.nombre}}</h4>
     </div>
 

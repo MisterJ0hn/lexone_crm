@@ -9,7 +9,6 @@ use App\Form\VencimientoType;
 use App\Repository\EmpresaRepository;
 use App\Repository\VencimientoRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -38,15 +37,8 @@ class VencimientoController extends AbstractController
         $vencimiento->setEmpresa($empresaRepository->find($user->getEmpresaActual()));
         $vencimiento->setMontoMax(0);
         $vencimiento->setIcono('fas fa-circle');
+        $vencimiento->setColor(Vencimiento::COLOR_DEFECTO);
         $form = $this->createForm(VencimientoType::class, $vencimiento);
-         $form->add('color', ChoiceType::class, [
-            'choices' => [
-                'Naranjo' => 'warning',
-                'Verde' => 'success',
-                'Rojo' => 'danger',
-            ],
-            'attr' => ['class' => 'form-control'],
-        ]);
         $form->add('nombre');
    
         
@@ -82,14 +74,6 @@ class VencimientoController extends AbstractController
             throw $this->createAccessDeniedException("No tienes permiso para editar este vencimiento");
         }
         $form = $this->createForm(VencimientoType::class, $vencimiento);
-        $form->add('color', ChoiceType::class, [
-            'choices' => [
-                'Naranjo' => 'warning',
-                'Verde' => 'success',
-                'Rojo' => 'danger',
-            ],
-            'attr' => ['class' => 'form-control'],
-        ]);
         $form->add('nombre');
 
         $form->handleRequest($request);

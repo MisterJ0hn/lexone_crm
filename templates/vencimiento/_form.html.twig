@@ -16,12 +16,23 @@
                             {{form_row(form.valMax,{'label':false,'attr':{'class':'form-control'}})}}
                     </div>
                     <div class="col-md-6 col-sm-12">
-                        <small class="text-muted" for="inputNombre">Color</small>
-                            {{form_row(form.color,{'label':false,'attr':{'class':'form-control'}})}}
+                        <small class="text-muted">Color</small>
+                        <div class="d-flex align-items-center" style="gap:.5rem;">
+                            <div style="width:70px;">{{form_widget(form.color)}}</div>
+                            <input type="text" id="vencimientoColorHex" class="form-control" maxlength="7" placeholder="#rrggbb" style="max-width:110px;font-family:monospace;" autocomplete="off">
+                        </div>
+                        {{ form_errors(form.color) }}
                     </div>
                     <div class="col-md-6 col-sm-12">
-                        <small class="text-muted" for="inputNombre">Icono</small>
+                        <small class="text-muted">Icono</small>
                             {{form_row(form.icono,{'label':false,'attr':{'class':'form-control'}})}}
+                    </div>
+                    <div class="col-12">
+                        <small class="text-muted">Previsualización</small>
+                        <div class="d-flex align-items-center" style="gap:1rem;">
+                            <span id="vencimientoPreviewIcono" style="font-size:2rem;line-height:1;"><i></i></span>
+                            <span id="vencimientoPreviewChip" class="badge" style="color:#fff;font-size:.9rem;padding:.4rem .8rem;"></span>
+                        </div>
                     </div>
                    
                 </div>
@@ -33,3 +44,34 @@
 
     
 {{ form_end(form) }}
+
+<script>
+(function () {
+    var color = document.querySelector('.js-vencimiento-color');
+    var hex = document.getElementById('vencimientoColorHex');
+    var icono = document.getElementById('{{ form.icono.vars.id }}');
+    var nombre = document.getElementById('{{ form.nombre.vars.id }}');
+    var pIcono = document.getElementById('vencimientoPreviewIcono');
+    var chip = document.getElementById('vencimientoPreviewChip');
+    if (!color || !hex) { return; }
+    var HEX = /^#[0-9a-fA-F]{6}$/;
+
+    function pintar() {
+        var c = color.value;
+        pIcono.style.color = c;
+        pIcono.firstElementChild.className = icono && icono.value ? icono.value : 'fas fa-circle';
+        chip.style.backgroundColor = c;
+        chip.textContent = (nombre && nombre.value ? nombre.value + ' · ' : '') + c;
+    }
+    color.addEventListener('input', function () { hex.value = color.value; pintar(); });
+    hex.addEventListener('input', function () {
+        var v = hex.value.trim();
+        if (v && v[0] !== '#') { v = '#' + v; }
+        if (HEX.test(v)) { color.value = v.toLowerCase(); pintar(); }
+    });
+    hex.addEventListener('blur', function () { hex.value = color.value; });
+    [icono, nombre].forEach(function (el) { if (el) { el.addEventListener('input', pintar); } });
+    hex.value = color.value;
+    pintar();
+})();
+</script>

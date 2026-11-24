@@ -76,13 +76,24 @@ class AppExtension extends AbstractExtension
     }
 
     /**
+     * HTML del punto del semáforo. El color es #rrggbb (se valida y escapa) y se aplica en línea.
+     */
+    private function puntoSemaforo($color, $icono): string
+    {
+        $color = preg_match('/^#[0-9a-fA-F]{6}$/', (string) $color) ? $color : Vencimiento::COLOR_DEFECTO;
+        $icono = htmlspecialchars((string) $icono, ENT_QUOTES);
+
+        return "<p style='color:$color' ><i class='$icono' ></i></p>";
+    }
+
+    /**
      * Semáforo de cobranza: misma regla que usa el listado para armar los segmentos
      * (DATEDIFF(now, contrato.proximoVencimiento) dentro del rango y cuota.monto >= montoMax),
      * limitado a los vencimientos de la empresa del contrato.
      */
     public function semaforoCobranza(Contrato $contrato, $montoCuota)
     {
-        $color = 'success';
+        $color = Vencimiento::COLOR_DEFECTO;
         $icono = 'fas fa-circle';
         $proximo = $contrato->getProximoVencimiento();
         $dif = $proximo ? (int) (new DateTime('today'))->diff(new DateTime($proximo->format('Y-m-d')))->format('%r%a') * -1 : 0;
@@ -106,7 +117,7 @@ class AppExtension extends AbstractExtension
             }
         }
 
-        return "<p class='text-$color' ><i class='$icono' ></i></p>";
+        return $this->puntoSemaforo($color, $icono);
     }
 
     /**
@@ -115,7 +126,7 @@ class AppExtension extends AbstractExtension
      */
     public function semaforo($fecha, $difPago=1){
 
-        $color="";
+        $color=Vencimiento::COLOR_DEFECTO;
         $icono="";
         $inicio=strtotime($fecha);
         $fin=strtotime(date("Y-m-d"));
@@ -160,7 +171,7 @@ class AppExtension extends AbstractExtension
         }
     
         
-        return "<p class='text-$color' ><i class='$icono' ></i></p>";
+        return $this->puntoSemaforo($color, $icono);
     }
 
     /**
@@ -169,7 +180,7 @@ class AppExtension extends AbstractExtension
      */
     public function semaforoContrato($fecha, $difPago=1){
 
-        $color="text-success";
+        $color=Vencimiento::COLOR_DEFECTO;
         $icono="fas fa-circle";
         $inicio=strtotime($fecha);
         $fin=strtotime(date("Y-m-d"));
@@ -214,7 +225,7 @@ class AppExtension extends AbstractExtension
         }
     
         
-        return "<p class='text-$color' ><i class='$icono' ></i></p>";
+        return $this->puntoSemaforo($color, $icono);
     }
     public function ultimoPago($contrato){
         $em=$this->container->get('doctrine');
